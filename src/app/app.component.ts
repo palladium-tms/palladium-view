@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PalladiumApiService} from './servises/palladium-api.service';
 @Component({
-  selector: 'app-products',
+  selector: 'app-main',
   template: `<ul>
     {{products}}
     <li *ngFor="let product of products">
