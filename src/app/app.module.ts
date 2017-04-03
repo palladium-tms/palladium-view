@@ -3,13 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AppComponent } from './app.component';
 import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
+import { ProductsComponent } from './products/products.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    TopToolbarComponent
+    TopToolbarComponent,
+    ProductsComponent
   ],
   imports: [
     BrowserModule,
@@ -17,6 +17,6 @@ import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
     HttpModule
   ],
   providers: [],
-  bootstrap: [AppComponent, TopToolbarComponent]
+  bootstrap: [TopToolbarComponent, ProductsComponent]
 })
 export class AppModule { }
