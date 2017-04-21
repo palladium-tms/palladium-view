@@ -5,21 +5,26 @@ import { TopToolbarComponent } from './top-toolbar/top-toolbar.component';
 import { NotFoundComponent } from './base-components/not-found.component';
 import { ProductsComponent } from './products/products.component';
 import { HttpModule } from '@angular/http';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './_guards/auth.guard';
+import { AuthenticationService } from '../servises/authentication.service';
+import { FormsModule } from '@angular/forms';
 
 const appRoutes: Routes = [
-{ path: '', component: ProductsComponent },
-{ path: '**', component: NotFoundComponent }
+  { path: 'login', component: LoginComponent },
+  { path: '', component: ProductsComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
   declarations: [
     TopToolbarComponent,
     ProductsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    LoginComponent
   ],
-  imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes)
-  ],
-  providers: [],
+  imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule],
+  providers: [AuthGuard, AuthenticationService],
   bootstrap: [TopToolbarComponent]
 })
 export class AppModule { }

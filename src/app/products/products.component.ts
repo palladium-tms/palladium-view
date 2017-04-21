@@ -14,7 +14,7 @@ export class ProductsComponent implements OnInit {
   constructor(private httpService: PalladiumApiService) {}
 
   ngOnInit() {
-    this.httpService.getData('/products')
+    this.httpService.getData('/api/products')
       .subscribe(
         products => {
           this.products = products['products'];

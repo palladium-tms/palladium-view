@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AppSettings} from '../appSettings';
-import {Http, Response} from '@angular/http';
+import {Headers, Http, Response} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
@@ -12,8 +12,11 @@ import 'rxjs/add/operator/toPromise';
 export class PalladiumApiService {
 
   constructor(private http: Http) {}
+
   getData(path) {
-    return this.http.get(AppSettings.API_ENDPOINT + path)
+    // console.log(JSON.parse(localStorage.getItem('auth_data'))['token']);
+    const headers = new Headers({ 'Authorization': JSON.parse(localStorage.getItem('auth_data'))['token']});
+    return this.http.get(AppSettings.API_ENDPOINT + path, {headers: headers})
       .map(this.extractData)
       .catch(this.handleError);
   }
