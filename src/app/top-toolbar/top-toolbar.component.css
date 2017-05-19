@@ -37,4 +37,16 @@ a.palladium-link{
   font-size: 18px;
   color: #ffffff;
 }
+.logout-block{
+  margin-top: 8px;
+  display:inline-block;
+  float: right;
+}
+a.logout-link{
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 18px;
+  color: #ffffff;
+}
 /*hard class edit*/
