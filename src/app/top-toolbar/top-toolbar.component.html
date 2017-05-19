@@ -2,5 +2,8 @@
   <div class="palladium-name-block">
     <a class="link palladium-link">Palladium</a>
   </div>
+  <div *ngIf="authorize" class="logout-block">
+    <a class="link logout-link" (click)="logout()">logout</a>
+  </div>
 </div>
 <router-outlet></router-outlet>
