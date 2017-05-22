@@ -14,12 +14,23 @@ export class ProductsComponent implements OnInit {
   constructor(private httpService: PalladiumApiService) {}
 
   ngOnInit() {
+    this.get_products();
+  }
+
+  get_products() {
     this.httpService.getData('/api/products')
       .subscribe(
         products => {
-          console.log('*****************');
-          console.log(products['products']);
           this.products = products['products'];
+        },
+        error =>  this.errorMessage = <any>error);
+  }
+
+  delete_product(product_id) {
+    this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_id)
+      .subscribe(
+        products => {
+          this.get_products();
         },
         error =>  this.errorMessage = <any>error);
   }

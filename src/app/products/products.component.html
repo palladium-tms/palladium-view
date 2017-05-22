@@ -1,5 +1,6 @@
 <ul>
   <li *ngFor="let product of products">
     {{product | json}}
+    <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id)"></div>
   </li>
 </ul>
