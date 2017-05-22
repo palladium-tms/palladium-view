@@ -17,6 +17,8 @@ export class ProductsComponent implements OnInit {
     this.httpService.getData('/api/products')
       .subscribe(
         products => {
+          console.log('*****************');
+          console.log(products['products']);
           this.products = products['products'];
         },
         error =>  this.errorMessage = <any>error);

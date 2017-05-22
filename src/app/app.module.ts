@@ -9,6 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { AuthenticationService } from '../servises/authentication.service';
 import { FormsModule } from '@angular/forms';
+import { MainComponent } from './main/main.component';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [
+    MainComponent,
     TopToolbarComponent,
     ProductsComponent,
     NotFoundComponent,
@@ -25,6 +27,6 @@ const appRoutes: Routes = [
   ],
   imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule],
   providers: [AuthGuard, AuthenticationService],
-  bootstrap: [TopToolbarComponent]
+  bootstrap: [MainComponent]
 })
 export class AppModule { }
