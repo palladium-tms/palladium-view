@@ -38,8 +38,9 @@ export class ProductsComponent implements OnInit {
     this.httpService.postData('/api/product_edit', params)
       .subscribe(
         products => {
-          if (products.errors.length === 0) {
+          if (Object.keys(products.errors).length === 0) {
             this.products[index].name = products.product_data.name;
+            this.products[index].updated_at = products.product_data.updated_at;
           } else {
             console.log(products.errors);
           }
