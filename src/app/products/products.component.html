@@ -1,6 +1,12 @@
 <ul>
-  <li *ngFor="let product of products">
+  <li *ngFor="let product of products; let index = index">
     {{product | json}}
     <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id)"></div>
+    <div style="display: inline-block">
+      <form #f="ngForm" (ngSubmit)="edit_product(f, product.id, index)" novalidate>
+        <input name="product_name" ngModel required #product_name="ngModel">
+        <button style="background-color: #42711d">Submit</button>
+      </form>
+    </div>
   </li>
 </ul>

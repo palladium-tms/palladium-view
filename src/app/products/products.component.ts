@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {Product} from '../models/product';
 @Component({
@@ -16,7 +17,6 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.get_products();
   }
-
   get_products() {
     this.httpService.getData('/api/products')
       .subscribe(
@@ -25,12 +25,24 @@ export class ProductsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
-
   delete_product(product_id) {
     this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_id)
       .subscribe(
         products => {
           this.get_products();
+        },
+        error =>  this.errorMessage = <any>error);
+  }
+  edit_product(form: NgForm, id: number, index: number) {
+    const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  id;
+    this.httpService.postData('/api/product_edit', params)
+      .subscribe(
+        products => {
+          if (products.errors.length === 0) {
+            this.products[index].name = products.product_data.name;
+          } else {
+            console.log(products.errors);
+          }
         },
         error =>  this.errorMessage = <any>error);
   }
