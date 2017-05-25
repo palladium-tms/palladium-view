@@ -1,5 +1,5 @@
 <ul>
-  <li *ngFor="let product of products; let index = index">
+  <li *ngFor="let product of products; let index = index" [routerLink]="['/product', product.id]" >
     {{product | json}}
     <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id)"></div>
     <div style="display: inline-block">
@@ -10,3 +10,4 @@
     </div>
   </li>
 </ul>
+<router-outlet></router-outlet>

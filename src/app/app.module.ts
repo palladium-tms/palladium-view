@@ -10,11 +10,16 @@ import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../servises/authentication.service';
 import {FormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
+import { PlansComponent } from './plans/plans.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
-  {path: '', component: ProductsComponent, canActivate: [AuthGuard]},
-  {path: '**', redirectTo: ''}
+  {path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
+    {path: 'product/:id', component: PlansComponent}
+  ]},
+  // {path: 'product/:id', component: ProductsComponent, canActivate: [AuthGuard]},
+  // {path: 'product/:id', component: PlansComponent, canActivate: [AuthGuard], outlet: 'plans'},
+  {path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 
 @NgModule({
@@ -22,6 +27,7 @@ const appRoutes: Routes = [
     MainComponent,
     TopToolbarComponent,
     ProductsComponent,
+    PlansComponent,
     NotFoundComponent,
     LoginComponent
   ],
