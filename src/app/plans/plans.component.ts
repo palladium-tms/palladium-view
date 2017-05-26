@@ -46,4 +46,13 @@ export class PlansComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
+
+  delete_plan(plan_id, index) {
+    this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + plan_id)
+      .subscribe(
+        plans => {
+          this.plans.splice(index, 1);
+        },
+        error =>  this.errorMessage = <any>error);
+  }
 }
