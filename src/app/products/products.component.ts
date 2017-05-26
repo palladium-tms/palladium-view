@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {Product} from '../models/product';
+import {Router} from '@angular/router';
+
+
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
@@ -12,7 +15,7 @@ import {Product} from '../models/product';
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   errorMessage;
-  constructor(private httpService: PalladiumApiService) {}
+  constructor(private httpService: PalladiumApiService, private router: Router) {}
 
   ngOnInit() {
     this.get_products();
@@ -20,16 +23,21 @@ export class ProductsComponent implements OnInit {
   get_products() {
     this.httpService.getData('/api/products')
       .subscribe(
-        products => {
+        (products) => {
           this.products = products['products'];
+          console.log(products['products']);
         },
         error =>  this.errorMessage = <any>error);
   }
-  delete_product(product_id) {
+  delete_product(product_id, index) {
     this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_id)
       .subscribe(
         products => {
-          this.get_products();
+          this.products.splice(index, 1);
+          console.log(products);
+          if (this.router.url === '/product/' + products['product']) {
+            this.router.navigate(['/']);
+          }
         },
         error =>  this.errorMessage = <any>error);
   }

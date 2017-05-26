@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-plans',
@@ -27,6 +28,30 @@ export class PlansComponent implements OnInit {
       .subscribe(
         responce => {
           return(this.plans = responce['plans']);
+        },
+        error =>  this.errorMessage = <any>error);
+  }
+
+  edit_plan(form: NgForm, id: number, index: number) {
+    const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  id;
+    this.httpService.postData('/api/plan_edit', params)
+      .subscribe(
+        plans => {
+          if (Object.keys(plans.errors).length === 0) {
+            this.plans[index].name = plans.plan_data.name;
+            this.plans[index].updated_at = plans.plan_data.updated_at;
+          } else {
+            console.log(plans.errors);
+          }
+        },
+        error =>  this.errorMessage = <any>error);
+  }
+
+  delete_plan(plan_id, index) {
+    this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + plan_id)
+      .subscribe(
+        plans => {
+          this.plans.splice(index, 1);
         },
         error =>  this.errorMessage = <any>error);
   }
