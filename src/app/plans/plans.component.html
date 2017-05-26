@@ -1,4 +1,10 @@
 <p>--------------------------------------------------------------------------</p>
-<li *ngFor="let plan of plans">
+<li *ngFor="let plan of plans; let index = index">
   {{ plan | json }}
+  <div style="display: inline-block">
+    <form #f="ngForm" (ngSubmit)="edit_plan(f, plan.id, index)" novalidate>
+      <input name="plan_name" ngModel required #plan_name="ngModel">
+      <button style="background-color: #42711d">Submit</button>
+    </form>
+  </div>
 </li>
