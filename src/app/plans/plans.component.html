@@ -1,7 +1,8 @@
 <p>--------------------------------------------------------------------------</p>
 <li *ngFor="let plan of plans; let index = index">
-  {{ plan | json }}
-  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_plan(plan.id, index)"></div>
+  <span [routerLink]="['./plan', plan.id]">  {{ plan | json }}</span>
+  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
+       (click)="delete_plan(plan.id, index)"></div>
   <div style="display: inline-block">
     <form #f="ngForm" (ngSubmit)="edit_plan(f, plan.id, index)" novalidate>
       <input name="plan_name" ngModel required #plan_name="ngModel">
@@ -9,3 +10,4 @@
     </form>
   </div>
 </li>
+<router-outlet></router-outlet>
