@@ -41,4 +41,19 @@ export class RunsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
+  edit_run(form: NgForm, id: number, index: number) {
+    const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  id;
+    this.httpService.postData('/api/run_edit', params)
+      .subscribe(
+        runs => {
+          if (Object.keys(runs.errors).length === 0) {
+            console.log(runs);
+            this.runs[index].name = runs.run_data.name;
+            this.runs[index].updated_at = runs.run_data.updated_at;
+          } else {
+            console.log(runs.errors);
+          }
+        },
+        error =>  this.errorMessage = <any>error);
+  }
 }
