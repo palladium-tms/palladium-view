@@ -34,8 +34,7 @@ export class ProductsComponent implements OnInit {
       .subscribe(
         products => {
           this.products.splice(index, 1);
-          console.log(products);
-          if (this.router.url === '/product/' + products['product']) {
+          if ( this.router.url.indexOf('/product/' + products['product']) >= 0) {
             this.router.navigate(['/']);
           }
         },

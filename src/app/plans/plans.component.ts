@@ -3,6 +3,7 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-plans',
@@ -13,7 +14,7 @@ export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [];
   errorMessage;
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService ) { }
+  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -52,6 +53,9 @@ export class PlansComponent implements OnInit {
       .subscribe(
         plans => {
           this.plans.splice(index, 1);
+          if ( this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {
+            this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
+          }
         },
         error =>  this.errorMessage = <any>error);
   }

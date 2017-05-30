@@ -32,4 +32,13 @@ export class RunsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
+
+  delete_run(run_id, index) {
+    this.httpService.postData('/api/run_delete', 'run_data[id]=' + run_id)
+      .subscribe(
+        runs => {
+          this.runs.splice(index, 1);
+        },
+        error =>  this.errorMessage = <any>error);
+  }
 }

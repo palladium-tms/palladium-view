@@ -1,4 +1,6 @@
 <p>--------------------------------------------------------------------------</p>
 <li *ngFor="let run of runs">
-  {{ run | json }}
+  <span>{{ run | json }}</span>
+  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
+       (click)="delete_run(run.id, index)"></div>
 </li>
