@@ -13,6 +13,7 @@ import {MainComponent} from './main/main.component';
 import {PlansComponent} from './plans/plans.component';
 import {RunsComponent} from './runs/runs.component';
 import {ResultSetsComponent} from './result-sets/result-sets.component';
+import { ResultsComponent } from './results/results.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -22,7 +23,9 @@ const appRoutes: Routes = [
       path: 'product/:id', component: PlansComponent, children: [
       {
         path: 'plan/:id', component: RunsComponent, children: [
-        { path: 'run/:id', component: ResultSetsComponent }
+        { path: 'run/:id', component: ResultSetsComponent, children: [
+          { path: 'result_set/:id', component: ResultsComponent }
+        ] }
       ]
       }
     ]
@@ -43,7 +46,8 @@ const appRoutes: Routes = [
     RunsComponent,
     NotFoundComponent,
     LoginComponent,
-    ResultSetsComponent
+    ResultSetsComponent,
+    ResultsComponent
   ],
   imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule],
   providers: [AuthGuard, AuthenticationService],

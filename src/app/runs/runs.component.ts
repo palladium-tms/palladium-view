@@ -3,6 +3,7 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-runs',
@@ -14,7 +15,7 @@ export class RunsComponent implements OnInit {
   runs: Run[] = [];
   errorMessage;
 
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService ) { }
+  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService, private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -38,6 +39,9 @@ export class RunsComponent implements OnInit {
       .subscribe(
         runs => {
           this.runs.splice(index, 1);
+          if ( this.router.url.indexOf('/run/' + runs['run']) >= 0) {
+            this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
+          }
         },
         error =>  this.errorMessage = <any>error);
   }

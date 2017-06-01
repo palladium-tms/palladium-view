@@ -39,7 +39,7 @@ export class ResultSetsComponent implements OnInit {
       .subscribe(
         result_sets => {
           this.result_sets.splice(index, 1);
-          if ( this.router.url.indexOf('/result_set/' + result_sets['result_set']) >= 0) {
+          if ( this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
             this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
           }
         },

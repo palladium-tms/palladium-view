@@ -1,6 +1,6 @@
 <p>--------------------------------------------------------------------------</p>
 <li *ngFor="let result_set of result_sets; let index = index">
-  <span>  {{ result_set | json }}</span>
+  <span [routerLink]="['./result_set', result_set.id]">  {{ result_set | json }}</span>
   <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
        (click)="delete_result_set(result_set.id, index)"></div>
   <div style="display: inline-block">
