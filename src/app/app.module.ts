@@ -10,16 +10,25 @@ import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../servises/authentication.service';
 import {FormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
-import { PlansComponent } from './plans/plans.component';
-import { RunsComponent } from './runs/runs.component';
+import {PlansComponent} from './plans/plans.component';
+import {RunsComponent} from './runs/runs.component';
+import {ResultSetsComponent} from './result-sets/result-sets.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
-  {path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
-    {path: 'product/:id', component: PlansComponent, children: [
-      {path: 'plan/:id', component: RunsComponent}
-    ]}
-  ]},
+  {
+    path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
+    {
+      path: 'product/:id', component: PlansComponent, children: [
+      {
+        path: 'plan/:id', component: RunsComponent, children: [
+        { path: 'run/:id', component: ResultSetsComponent }
+      ]
+      }
+    ]
+    }
+  ]
+  }
   // {path: 'product/:id', component: ProductsComponent, canActivate: [AuthGuard]},
   // {path: 'product/:id', component: PlansComponent, canActivate: [AuthGuard], outlet: 'plans'},
   // {path: '**', redirectTo: '', pathMatch: 'full'}
@@ -33,7 +42,8 @@ const appRoutes: Routes = [
     PlansComponent,
     RunsComponent,
     NotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    ResultSetsComponent
   ],
   imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule],
   providers: [AuthGuard, AuthenticationService],
