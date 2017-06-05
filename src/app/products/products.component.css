@@ -1,0 +1,13 @@
+.product-block{
+  border: solid  #710003;
+  display: block;
+  width: 20em;
+  max-height: 10em;
+  margin: 1em;
+}
+.setting-button{
+  float: right;
+  padding-right: 2px;
+  display: none;
+  cursor: pointer;
+}

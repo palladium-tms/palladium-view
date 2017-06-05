@@ -1,11 +1,8 @@
-  <li *ngFor="let product of products; let index = index">
-    <span [routerLink]="['/product', product.id]" > {{product | json}}</span>
-    <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id, index)"></div>
-    <div style="display: inline-block">
-      <form #f="ngForm" (ngSubmit)="edit_product(f, product.id, index)" novalidate>
-        <input name="product_name" ngModel required #product_name="ngModel">
-        <button style="background-color: #42711d">Submit</button>
-      </form>
+  <div class="product-block" *ngFor="let product of products; let index = index"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div id="{{index}}" class="setting-button" (click)="settings(product.id, index)">
+      <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
-  </li>
+    <span id="product-name-{{index}}" [routerLink]="['/product', product.id]"> {{product.name}}</span>
+  </div>
 <router-outlet></router-outlet>
+  <!--<div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id, index)"></div>-->

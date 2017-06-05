@@ -3,7 +3,7 @@ import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
-
+declare var $: any;
 
 @Component({
   selector: 'app-products',
@@ -53,5 +53,16 @@ export class ProductsComponent implements OnInit {
           }
         },
         error =>  this.errorMessage = <any>error);
+  }
+
+  show_settings_button(index) {
+      $('.setting-button' + '#' + index).css('display', 'block');
+  };
+  hide_settings_button(index) {
+    $('#' + index + '.setting-button').css('display', 'none');
+  };
+
+  settings(product_id, index) {
+    console.log('open settings');
   }
 }
