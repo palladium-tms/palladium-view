@@ -1,8 +1,26 @@
   <div class="product-block" *ngFor="let product of products; let index = index"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-    <div id="{{index}}" class="setting-button" (click)="settings(product.id, index)">
+    <div id="{{index}}" class="setting-button" (click)="settingsModal.open()">
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <span id="product-name-{{index}}" [routerLink]="['/product', product.id]"> {{product.name}}</span>
+    <div class="row">
+      <modal #settingsModal>
+        <modal-header>
+          <h1>Product settings</h1>
+        </modal-header>
+        <modal-content>
+          Change product name
+          <form #f="ngForm" (ngSubmit)="edit_product(f, product.id, index)" novalidate>
+            <input class="product-name" name="product_name" ngModel required #product_name="ngModel">
+          </form>
+        </modal-content>
+        <modal-footer>
+          <button class="btn-save button primary" (click)="f.ngSubmit.emit(f); settingsModal.close()">Save</button>
+        </modal-footer>
+      </modal>
+    </div>
   </div>
-<router-outlet></router-outlet>
+
+
+  <router-outlet></router-outlet>
   <!--<div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id, index)"></div>-->
