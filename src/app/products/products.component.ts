@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
-
+declare var $: any;
 
 @Component({
   selector: 'app-products',
@@ -15,8 +15,8 @@ import {Router} from '@angular/router';
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   errorMessage;
+  product_settings_data = {};
   constructor(private httpService: PalladiumApiService, private router: Router) {}
-
   ngOnInit() {
     this.get_products();
   }
@@ -25,33 +25,51 @@ export class ProductsComponent implements OnInit {
       .subscribe(
         (products) => {
           this.products = products['products'];
-          console.log(products['products']);
         },
         error =>  this.errorMessage = <any>error);
   }
-  delete_product(product_id, index) {
-    this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_id)
+  delete_product(product_settings_data, modal) {
+    if (confirm('Your question')) {
+      // do things if OK
+    this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_settings_data['id'])
       .subscribe(
         products => {
-          this.products.splice(index, 1);
+          this.products.splice(product_settings_data['index'], 1);
           if ( this.router.url.indexOf('/product/' + products['product']) >= 0) {
             this.router.navigate(['/']);
           }
         },
         error =>  this.errorMessage = <any>error);
+      modal.close();
+    }
   }
-  edit_product(form: NgForm, id: number, index: number) {
-    const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  id;
+  edit_product(form: NgForm, product_settings_data, modal, valid: boolean) {
+    if ( !valid ) { return; }
+    const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  product_settings_data['id'];
     this.httpService.postData('/api/product_edit', params)
       .subscribe(
         products => {
           if (Object.keys(products.errors).length === 0) {
-            this.products[index].name = products.product_data.name;
-            this.products[index].updated_at = products.product_data.updated_at;
+            this.products[product_settings_data['index']].name = products.product_data.name;
+            this.products[product_settings_data['index']].updated_at = products.product_data.updated_at;
           } else {
             console.log(products.errors);
           }
         },
         error =>  this.errorMessage = <any>error);
+    modal.close();
+  }
+
+  show_settings_button(index) {
+      $('.setting-button' + '#' + index).css('display', 'block');
+  };
+  hide_settings_button(index) {
+    $('#' + index + '.setting-button').css('display', 'none');
+  };
+
+  settings(modal, product, index, form) {
+    this.product_settings_data = {id: product.id, index: index};
+    modal.open();
+    form.controls['product_name'].setValue(product.name);
   }
 }

@@ -14,6 +14,8 @@ import {PlansComponent} from './plans/plans.component';
 import {RunsComponent} from './runs/runs.component';
 import {ResultSetsComponent} from './result-sets/result-sets.component';
 import { ResultsComponent } from './results/results.component';
+import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
+import {ModalModule} from 'ngx-modal';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -49,7 +51,8 @@ const appRoutes: Routes = [
     ResultSetsComponent,
     ResultsComponent
   ],
-  imports: [BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule],
+  imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule,
+    Angular2FontawesomeModule],
   providers: [AuthGuard, AuthenticationService],
   bootstrap: [MainComponent]
 })

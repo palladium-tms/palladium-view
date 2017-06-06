@@ -1,6 +1,6 @@
 <div class="navbar-app">
   <div class="palladium-name-block">
-    <a class="link palladium-link" href="/">Palladium</a>
+    <a class="link palladium-link" [routerLink]="['/']">Palladium</a>
   </div>
   <div *ngIf="authorize" class="logout-block">
     <a class="link logout-link" (click)="logout()">logout</a>
