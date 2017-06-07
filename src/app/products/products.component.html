@@ -1,10 +1,10 @@
 <div class="product-space" routerLinkActive="to-reduce" >
 <div class="product-block" routerLinkActive="active" *ngFor="let product of products; let index = index"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-    <div id="{{index}}" class="setting-button" (click)="settings(settingsModal, product, index, settingsform);">
-      <i class="fa fa-cog" aria-hidden="true"></i>
-    </div>
     <div class="product-name">
       <a id="product-name-{{index}}" [routerLink]="['/product', product.id]"> {{product.name}}</a>
+      <div id="{{index}}" class="setting-button" (click)="settings(settingsModal, product, index, settingsform);">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </div>
     </div>
   </div>
     <modal #settingsModal>
