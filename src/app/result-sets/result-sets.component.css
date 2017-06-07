@@ -16,7 +16,7 @@
   display: none;
   cursor: pointer;
 }
-div.result-set-name{
+div.result-set-name-and-status{
   width: auto;
   overflow: hidden;
   text-overflow: ellipsis;

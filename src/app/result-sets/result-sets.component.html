@@ -1,7 +1,8 @@
 <div class="result-set-space" routerLinkActive="to-reduce" >
   <div class="result-set-block" routerLinkActive="active"  *ngFor="let result_set of result_sets; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-    <div class="result-set-name">
+    <div class="result-set-name-and-status">
       <a id="result_set-name-{{index}}" [routerLink]="['./result_set', result_set.id]">{{result_set.name}}</a>
+      <span>{{result_set.status}}</span>
       <div id="{{index}}" class="result-set-setting-button" (click)="settings(result_setsettingsModal, result_set, index, settingsform);">
         <i class="fa fa-cog" aria-hidden="true"></i>
       </div>
