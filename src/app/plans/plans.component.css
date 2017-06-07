@@ -1,0 +1,33 @@
+.plan-space{
+  display: inline-block;
+  float:left;
+  height: 100%;
+  width: 20em;
+}
+.plan-block{
+  border: solid #a9a7aa 1px;
+  display: block;
+  width: auto;
+  max-height: 10em;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+input.plan-name{
+  width: 100%;
+  font-size: 18px;
+}
+.plan-delete-button{
+  float: left;
+}
+.to-reduce{
+  width: 10em;
+}
+.active{
+  background-color: rgba(134, 255, 14, 0.33);
+}
+.plan-setting-button{
+  float: right;
+  padding-right: 2px;
+  display: none;
+  cursor: pointer;
+}

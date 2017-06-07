@@ -28,13 +28,12 @@ export class ProductsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
-  delete_product(product_settings_data, modal) {
+  delete_product(modal) {
     if (confirm('Your question')) {
-      // do things if OK
-    this.httpService.postData('/api/product_delete', 'product_data[id]=' + product_settings_data['id'])
+    this.httpService.postData('/api/product_delete', 'product_data[id]=' + this.product_settings_data['id'])
       .subscribe(
         products => {
-          this.products.splice(product_settings_data['index'], 1);
+          this.products.splice(this.product_settings_data['index'], 1);
           if ( this.router.url.indexOf('/product/' + products['product']) >= 0) {
             this.router.navigate(['/']);
           }
@@ -43,15 +42,15 @@ export class ProductsComponent implements OnInit {
       modal.close();
     }
   }
-  edit_product(form: NgForm, product_settings_data, modal, valid: boolean) {
+  edit_product(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
-    const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  product_settings_data['id'];
+    const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  this.product_settings_data['id'];
     this.httpService.postData('/api/product_edit', params)
       .subscribe(
         products => {
           if (Object.keys(products.errors).length === 0) {
-            this.products[product_settings_data['index']].name = products.product_data.name;
-            this.products[product_settings_data['index']].updated_at = products.product_data.updated_at;
+            this.products[this.product_settings_data['index']].name = products.product_data.name;
+            this.products[this.product_settings_data['index']].updated_at = products.product_data.updated_at;
           } else {
             console.log(products.errors);
           }
@@ -59,14 +58,12 @@ export class ProductsComponent implements OnInit {
         error =>  this.errorMessage = <any>error);
     modal.close();
   }
-
   show_settings_button(index) {
       $('.setting-button' + '#' + index).css('display', 'block');
   };
   hide_settings_button(index) {
     $('#' + index + '.setting-button').css('display', 'none');
   };
-
   settings(modal, product, index, form) {
     this.product_settings_data = {id: product.id, index: index};
     modal.open();
