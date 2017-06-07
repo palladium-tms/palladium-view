@@ -22,7 +22,6 @@ export class RunsComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
-      // this.get_plans(this.product_id);
       this.get_runs(this.plan_id);
     });
   }
@@ -36,16 +35,19 @@ export class RunsComponent implements OnInit {
         error =>  this.errorMessage = <any>error);
   }
 
-  delete_run(run_id, index) {
-    this.httpService.postData('/api/run_delete', 'run_data[id]=' + run_id)
+  delete_run(modal) {
+    if (confirm('A u shuare?')) {
+      this.httpService.postData('/api/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
       .subscribe(
         runs => {
-          this.runs.splice(index, 1);
+          this.runs.splice(this.run_settings_data['index'], 1);
           if ( this.router.url.indexOf('/run/' + runs['run']) >= 0) {
             this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
           }
         },
         error =>  this.errorMessage = <any>error);
+    modal.close();
+    }
   }
   edit_run(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }

@@ -29,7 +29,7 @@ export class ProductsComponent implements OnInit {
         error =>  this.errorMessage = <any>error);
   }
   delete_product(modal) {
-    if (confirm('Your question')) {
+    if (confirm('A u shuare?')) {
     this.httpService.postData('/api/product_delete', 'product_data[id]=' + this.product_settings_data['id'])
       .subscribe(
         products => {

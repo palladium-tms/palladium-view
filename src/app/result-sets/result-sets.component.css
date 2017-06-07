@@ -1,0 +1,42 @@
+.result-set-space{
+  display: inline-block;
+  float:left;
+  width: 20em;
+}
+.result-set-block{
+  border: solid #a9a7aa 1px;
+  display: block;
+  max-height: 10em;
+  margin: 0.5em;
+  padding: 0.5em;
+}
+.setting-button{
+  float: right;
+  padding-right: 2px;
+  display: none;
+  cursor: pointer;
+}
+div.result-set-name{
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.to-reduce{
+}
+.active{
+  background-color: rgba(134, 255, 14, 0.33);
+}
+.result-set-setting-button{
+  float: right;
+  padding-right: 2px;
+  display: none;
+  cursor: pointer;
+}
+input.result-set-name{
+  width: 100%;
+  font-size: 18px;
+}
+.result-set-delete-button{
+  float: left;
+}
+

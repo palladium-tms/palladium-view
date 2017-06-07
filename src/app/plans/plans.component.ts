@@ -52,7 +52,7 @@ export class PlansComponent implements OnInit {
   }
 
   delete_plan(modal) {
-    if (confirm('Your question')) {
+    if (confirm('A u shuare?')) {
       this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
       .subscribe(
         plans => {
