@@ -4,6 +4,7 @@ import {Run} from '../models/run';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
+declare var $: any;
 
 @Component({
   selector: 'app-runs',
@@ -14,6 +15,7 @@ export class RunsComponent implements OnInit {
   plan_id = null;
   runs: Run[] = [];
   errorMessage;
+  run_settings_data = {};
 
   constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService, private router: Router ) { }
 
@@ -45,19 +47,33 @@ export class RunsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
-  edit_run(form: NgForm, id: number, index: number) {
-    const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  id;
+  edit_run(form: NgForm, modal, valid: boolean) {
+    if ( !valid ) { return; }
+    const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  this.run_settings_data['id'];
     this.httpService.postData('/api/run_edit', params)
       .subscribe(
         runs => {
           if (Object.keys(runs.errors).length === 0) {
             console.log(runs);
-            this.runs[index].name = runs.run_data.name;
-            this.runs[index].updated_at = runs.run_data.updated_at;
+            this.runs[this.run_settings_data['index']].name = runs.run_data.name;
+            this.runs[this.run_settings_data['index']].updated_at = runs.run_data.updated_at;
           } else {
             console.log(runs.errors);
           }
         },
         error =>  this.errorMessage = <any>error);
+    modal.close();
+  }
+  show_settings_button(index) {
+    $('#' + index + '.run-setting-button').css('display', 'block');
+  };
+  hide_settings_button(index) {
+    $('#' + index + '.run-setting-button').css('display', 'none');
+  };
+
+  settings(modal, run, index, form) {
+    this.run_settings_data = {id: run.id, index: index};
+    modal.open();
+    form.controls['run_name'].setValue(run.name);
   }
 }

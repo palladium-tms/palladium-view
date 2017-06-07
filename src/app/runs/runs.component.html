@@ -1,13 +1,31 @@
-<p>--------------------------------------------------------------------------</p>
-<li *ngFor="let run of runs; let index = index">
-  <span [routerLink]="['./run', run.id]">{{ run | json }}</span>
-  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
-       (click)="delete_run(run.id, index)"></div>
-  <div style="display: inline-block">
-    <form #f="ngForm" (ngSubmit)="edit_run(f, run.id, index)" novalidate>
-      <input name="run_name" ngModel required #plan_name="ngModel">
-      <button style="background-color: #42711d">Submit</button>
-    </form>
+<div class="run-space" routerLinkActive="to-reduce" >
+  <div class="run-block" routerLinkActive="active"  *ngFor="let run of runs; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div class="run-name">
+      <a id="run-name-{{index}}" [routerLink]="['./run', run.id]">{{run.name}}</a>
+      <div id="{{index}}" class="run-setting-button" (click)="settings(runsettingsModal, run, index, settingsform);">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
-</li>
+</div>
+<router-outlet></router-outlet>
+
+<modal #runsettingsModal>
+  <modal-header>
+    <h1>Run settings</h1>
+  </modal-header>
+  <modal-content>
+    Change run name
+    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_run(settingsform, runsettingsModal, settingsform.valid )">
+      <input type="text" class="run-name" name="run_name" ngModel required #run_name="ngModel" autofocus>
+      <small [hidden]="run_name.valid || (run_name.pristine && !settingsform.submitted)">
+        Run name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-danger plan-delete-button" (click)="delete_run(runsettingsModal)">Delete</button>
+    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>
 <router-outlet></router-outlet>
