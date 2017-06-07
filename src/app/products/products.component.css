@@ -1,9 +1,13 @@
+.product-space{
+  display: inline-block;
+  float:left;
+  width: 20em;
+}
 .product-block{
   border: solid #a9a7aa 1px;
   display: block;
-  width: 20em;
   max-height: 10em;
-  margin: 1em;
+  margin: 0.5em;
   padding: 0.5em;
 }
 .setting-button{
@@ -16,7 +20,6 @@ div.product-name{
   width: auto;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: pointer;
 }
 input.product-name{
   width: 100%;
@@ -24,4 +27,10 @@ input.product-name{
 }
 .product-delete-button{
  float: left;
+}
+.to-reduce{
+  width: 10em;
+}
+.active{
+  background-color: rgba(134, 255, 14, 0.33);
 }

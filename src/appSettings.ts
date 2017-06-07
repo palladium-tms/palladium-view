@@ -1,3 +1,3 @@
 export class AppSettings {
-  public static API_ENDPOINT = 'http://0.0.0.0:9292';
+  public static API_ENDPOINT = 'http://192.168.3.195:9292';
 }

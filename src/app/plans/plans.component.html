@@ -1,13 +1,29 @@
-<p>--------------------------------------------------------------------------</p>
-<li *ngFor="let plan of plans; let index = index">
-  <span [routerLink]="['./plan', plan.id]">  {{ plan | json }}</span>
-  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
-       (click)="delete_plan(plan.id, index)"></div>
-  <div style="display: inline-block">
-    <form #f="ngForm" (ngSubmit)="edit_plan(f, plan.id, index)" novalidate>
-      <input name="plan_name" ngModel required #plan_name="ngModel">
-      <button style="background-color: #42711d">Submit</button>
-    </form>
+<div class="plan-space" routerLinkActive="to-reduce" >
+  <div class="plan-block" routerLinkActive="active"  *ngFor="let plan of plans; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div id="{{index}}" class="plan-setting-button" (click)="settings(plansettingsModal, plan, index, settingsform);">
+      <i class="fa fa-cog" aria-hidden="true"></i>
+    </div>
+    <div class="plan-name">
+      <a id="plan-name-{{index}}" [routerLink]="['./plan', plan.id]"> {{plan.name}}</a>
+    </div>
   </div>
-</li>
+</div>
+<modal #plansettingsModal>
+  <modal-header>
+    <h1>Plan settings</h1>
+  </modal-header>
+  <modal-content>
+    Change plan name
+    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_plan(settingsform, plansettingsModal, settingsform.valid )">
+      <input type="text" class="plan-name" name="plan_name" ngModel required #plan_name="ngModel" autofocus>
+      <small [hidden]="plan_name.valid || (plan_name.pristine && !settingsform.submitted)">
+        Plan name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-danger plan-delete-button" (click)="delete_plan(plansettingsModal)">Delete</button>
+    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>
 <router-outlet></router-outlet>

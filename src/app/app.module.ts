@@ -33,10 +33,9 @@ const appRoutes: Routes = [
     ]
     }
   ]
-  }
-  // {path: 'product/:id', component: ProductsComponent, canActivate: [AuthGuard]},
-  // {path: 'product/:id', component: PlansComponent, canActivate: [AuthGuard], outlet: 'plans'},
-  // {path: '**', redirectTo: '', pathMatch: 'full'}
+  },
+  {path: '404', component: NotFoundComponent},
+  {path: '**', redirectTo: '/404'}
 ];
 
 @NgModule({

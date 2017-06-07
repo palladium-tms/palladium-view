@@ -4,6 +4,7 @@ import {Plan} from '../models/plan';
 import {PalladiumApiService} from '../../servises/palladium-api.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
+declare var $: any;
 
 @Component({
   selector: 'app-plans',
@@ -14,12 +15,12 @@ export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [];
   errorMessage;
+  plan_settings_data = {};
   constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.product_id = params.id;
-      // console.log(params.id);
       this.get_plans(this.product_id);
     });
   }
@@ -33,30 +34,47 @@ export class PlansComponent implements OnInit {
         error =>  this.errorMessage = <any>error);
   }
 
-  edit_plan(form: NgForm, id: number, index: number) {
-    const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  id;
+  edit_plan(form: NgForm, modal, valid: boolean) {
+    if ( !valid ) { return; }
+    const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  this.plan_settings_data['id'];
     this.httpService.postData('/api/plan_edit', params)
       .subscribe(
         plans => {
           if (Object.keys(plans.errors).length === 0) {
-            this.plans[index].name = plans.plan_data.name;
-            this.plans[index].updated_at = plans.plan_data.updated_at;
+            this.plans[this.plan_settings_data['index']].name = plans.plan_data.name;
+            this.plans[this.plan_settings_data['index']].updated_at = plans.plan_data.updated_at;
           } else {
             console.log(plans.errors);
           }
         },
         error =>  this.errorMessage = <any>error);
+    modal.close();
   }
 
-  delete_plan(plan_id, index) {
-    this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + plan_id)
+  delete_plan(modal) {
+    if (confirm('Your question')) {
+      this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
       .subscribe(
         plans => {
-          this.plans.splice(index, 1);
+          this.plans.splice(this.plan_settings_data['index'], 1);
           if ( this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {
             this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
           }
         },
         error =>  this.errorMessage = <any>error);
+      modal.close();
+    }
+  }
+
+  show_settings_button(index) {
+    $('#' + index + '.plan-setting-button').css('display', 'block');
+  };
+  hide_settings_button(index) {
+    $('#' + index + '.plan-setting-button').css('display', 'none');
+  };
+  settings(modal, plan, index, form) {
+    this.plan_settings_data = {id: plan.id, index: index};
+    modal.open();
+    form.controls['plan_name'].setValue(plan.name);
   }
 }
