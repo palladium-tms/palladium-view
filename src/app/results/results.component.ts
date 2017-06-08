@@ -3,7 +3,7 @@ import {NgForm} from '@angular/forms';
 import {Result} from '../models/result';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
-import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {HttpService} from '../../services/http-request.service';
 
 @Component({
   selector: 'app-results',
@@ -14,7 +14,7 @@ export class ResultsComponent implements OnInit {
   result_set_id = null;
   results: Result[] = [];
   errorMessage;
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService,  private router: Router ) { }
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {

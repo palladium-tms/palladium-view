@@ -1,6 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {HttpService} from '../../services/http-request.service';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
 declare var $: any;
@@ -9,14 +9,14 @@ declare var $: any;
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
-  providers: [PalladiumApiService]
+  providers: [HttpService]
 })
 
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   errorMessage;
   product_settings_data = {};
-  constructor(private httpService: PalladiumApiService, private router: Router) {}
+  constructor(private httpService: HttpService, private router: Router) {}
   ngOnInit() {
     this.get_products();
   }

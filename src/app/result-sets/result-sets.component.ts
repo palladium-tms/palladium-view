@@ -3,28 +3,38 @@ import {NgForm} from '@angular/forms';
 import {ResultSet} from '../models/result_set';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
-import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {PalladiumApiService} from '../../services/palladium-api.service';
+import {HttpService} from '../../services/http-request.service';
 declare var $: any;
 
 @Component({
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
-  styleUrls: ['./result-sets.component.css']
+  styleUrls: ['./result-sets.component.css'],
+  providers: [PalladiumApiService]
 })
 export class ResultSetsComponent implements OnInit {
   run_id = null;
   result_sets: ResultSet[] = [];
   errorMessage;
   result_set_settings_data = {};
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService,  private router: Router ) { }
+  statuses;
+
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
+              private ApiService: PalladiumApiService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
+      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
     });
   }
-
+  getStyles(id) {
+    if (this.statuses) {
+      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[id].color };
+    }
+  }
   get_result_sets(run_id) {
     this.httpService.postData('/api/result_sets', 'result_set_data[run_id]=' + this.run_id)
       .subscribe(

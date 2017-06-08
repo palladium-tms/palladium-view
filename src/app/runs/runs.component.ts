@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
-import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {Status} from '../models/status';
+import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 declare var $: any;
@@ -14,10 +15,11 @@ declare var $: any;
 export class RunsComponent implements OnInit {
   plan_id = null;
   runs: Run[] = [];
+  statuses: Status[] = [];
   errorMessage;
   run_settings_data = {};
 
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService, private router: Router ) { }
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
-import {PalladiumApiService} from '../../servises/palladium-api.service';
+import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 declare var $: any;
@@ -16,7 +16,7 @@ export class PlansComponent implements OnInit {
   plans: Plan[] = [];
   errorMessage;
   plan_settings_data = {};
-  constructor(private activatedRoute: ActivatedRoute, private httpService: PalladiumApiService,  private router: Router ) { }
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
