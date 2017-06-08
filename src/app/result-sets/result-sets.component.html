@@ -1,13 +1,30 @@
-<p>--------------------------------------------------------------------------</p>
-<li *ngFor="let result_set of result_sets; let index = index">
-  <span [routerLink]="['./result_set', result_set.id]">  {{ result_set | json }}</span>
-  <div style="width: 20px; height: 20px; background-color: #710003; display: inline-block"
-       (click)="delete_result_set(result_set.id, index)"></div>
-  <div style="display: inline-block">
-    <form #f="ngForm" (ngSubmit)="edit_result_set(f, result_set.id, index)" novalidate>
-      <input name="result_set_name" ngModel required #result_set_name="ngModel">
-      <button style="background-color: #42711d">Submit</button>
-    </form>
+<div class="result-set-space" routerLinkActive="to-reduce" >
+  <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set.status)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div class="result-set-name-and-status">
+      <a id="result_set-name-{{index}}" [routerLink]="['./result_set', result_set.id]">{{result_set.name}}</a>
+      <div class="status result-set-status" *ngIf="this.statuses">{{this.statuses[result_set.status].name}}</div>
+      <div id="{{index}}" class="result-set-setting-button" (click)="settings(result_setsettingsModal, result_set, index, settingsform);">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
-</li>
+</div>
+<modal #result_setsettingsModal>
+  <modal-header>
+    <h1>result_set settings</h1>
+  </modal-header>
+  <modal-content>
+    Change result_set name
+    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_result_set(settingsform, result_setsettingsModal, settingsform.valid )">
+      <input type="text" class="result-set-name" name="result_set_name" ngModel required #result_set_name="ngModel" autofocus>
+      <small [hidden]="result_set_name.valid || (result_set_name.pristine && !settingsform.submitted)">
+        result_set name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-danger result-set-delete-button" (click)="delete_result_set(result_setsettingsModal)">Delete</button>
+    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>
 <router-outlet></router-outlet>

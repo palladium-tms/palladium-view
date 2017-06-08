@@ -7,7 +7,7 @@ import {ProductsComponent} from './products/products.component';
 import {HttpModule} from '@angular/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
-import {AuthenticationService} from '../servises/authentication.service';
+import {AuthenticationService} from '../services/authentication.service';
 import {FormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
 import {PlansComponent} from './plans/plans.component';
