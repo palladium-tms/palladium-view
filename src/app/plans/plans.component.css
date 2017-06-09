@@ -1,13 +1,13 @@
 .plan-space{
   display: inline-block;
   float:left;
-  height: 100%;
   width: 20em;
+  overflow: auto;
+  height: 100%;
 }
 .plan-block{
   border: solid #a9a7aa 1px;
   display: block;
-  width: auto;
   max-height: 10em;
   margin: 0.5em;
   padding: 0.5em;
@@ -15,6 +15,11 @@
 input.plan-name{
   width: 100%;
   font-size: 18px;
+}
+div.plan-name{
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .plan-delete-button{
   float: left;
@@ -26,6 +31,7 @@ input.plan-name{
   background-color: rgba(134, 255, 14, 0.33);
 }
 .plan-setting-button{
+  opacity: 100;
   float: right;
   padding-right: 2px;
   display: none;

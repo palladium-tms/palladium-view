@@ -2,6 +2,8 @@
   display: inline-block;
   float:left;
   width: 20em;
+  overflow: auto;
+  height: 100%;
 }
 .run-block{
   border: solid #a9a7aa 1px;
@@ -9,12 +11,6 @@
   max-height: 10em;
   margin: 0.5em;
   padding: 0.5em;
-}
-.setting-button{
-  float: right;
-  padding-right: 2px;
-  display: none;
-  cursor: pointer;
 }
 div.run-name{
   width: auto;
@@ -28,6 +24,7 @@ div.run-name{
   background-color: rgba(134, 255, 14, 0.33);
 }
 .run-setting-button{
+  opacity: 100;
   float: right;
   padding-right: 2px;
   display: none;

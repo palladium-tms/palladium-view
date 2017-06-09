@@ -2,6 +2,8 @@
   display: inline-block;
   float:left;
   width: 20em;
+  overflow: auto;
+  height: 100%;
 }
 .product-block{
   border: solid #a9a7aa 1px;
@@ -10,7 +12,8 @@
   margin: 0.5em;
   padding: 0.5em;
 }
-.setting-button{
+.product-setting-button{
+  opacity: 100;
   float: right;
   padding-right: 2px;
   display: none;

@@ -2,6 +2,8 @@
   display: inline-block;
   float:left;
   width: 20em;
+  overflow: auto;
+  height: 100%;
 }
 .result-set-block{
   border: solid #a9a7aa 1px;

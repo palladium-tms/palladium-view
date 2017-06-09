@@ -3,6 +3,8 @@
   display: inline-block;
   float:left;
   width: auto;
+  overflow: auto;
+  height: 100%;
 }
 .result-block{
   border: solid #a9a7aa 1px;
