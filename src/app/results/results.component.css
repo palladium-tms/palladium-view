@@ -1,0 +1,39 @@
+.result-space{
+  position: relative;
+  display: inline-block;
+  float:left;
+  width: auto;
+}
+.result-block{
+  border: solid #a9a7aa 1px;
+  overflow: auto;
+  margin: 0.5em;
+  height: auto;
+  display: table;
+}
+.result-small-block{
+
+  background: #fafafa;
+  border-right: 1px solid #eaeaea;
+  width: 15em;
+  overflow: auto;
+  vertical-align: top;
+  height: 100%;
+  display: table-cell;
+  padding: 0.5em;
+}
+.result-big-block{
+  padding: 0.5em;
+  vertical-align: top;
+  display: table-cell;
+  width: 45em;
+  height: auto;
+}
+.result-date{
+  display: inline-block;
+}
+.status-color-block{
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+}

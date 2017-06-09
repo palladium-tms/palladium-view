@@ -1,4 +1,14 @@
-<p>--------------------------------------------------------------------------</p>
-<li *ngFor="let result of results">
-  <span>  {{ result | json }}</span>
-</li>
+<div class="result-space">
+  <div class="result-block" *ngFor="let result of results;"  [ngStyle]="getStylesShadow(result.status_id)">
+    <div class="result-small-block">
+      <div class="status-box">
+        <div class="status-color-block" [ngStyle]="getStylesBackround(result.status_id)"></div>
+        <span>{{this.statuses[result.status_id].name}}</span>
+      </div>
+      <span>{{result.created_at | date:'medium' }}</span>
+    </div>
+    <div class="result-big-block">
+      <span>{{result.message}}</span>
+    </div>
+  </div>
+</div>
