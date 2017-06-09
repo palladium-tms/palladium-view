@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForm} from '@angular/forms';
 import {Result} from '../models/result';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
 import {HttpService} from '../../services/http-request.service';
+import {PalladiumApiService} from '../../services/palladium-api.service';
 
 @Component({
   selector: 'app-results',
@@ -14,12 +14,15 @@ export class ResultsComponent implements OnInit {
   result_set_id = null;
   results: Result[] = [];
   errorMessage;
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,  private router: Router ) { }
+  statuses;
+  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+              private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_set_id = params.id;
       this.get_results(this.result_set_id);
+      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
     });
   }
 
@@ -31,5 +34,14 @@ export class ResultsComponent implements OnInit {
         },
         error =>  this.errorMessage = <any>error);
   }
-
+  getStylesShadow(id) {
+    if (this.statuses) {
+      return {'box-shadow': '0 0 10px ' + this.statuses[id].color };
+    }
+  }
+  getStylesBackround(id) {
+    if (this.statuses) {
+      return {'background': this.statuses[id].color };
+    }
+  }
 }
