@@ -1,30 +1,34 @@
-<div class="product-space" routerLinkActive="to-reduce" >
-<div class="product-block" routerLinkActive="active" *ngFor="let product of products; let index = index"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+<div class="product-space" routerLinkActive="to-reduce">
+  <div class="product-block" routerLinkActive="active" *ngFor="let product of products; let index = index"
+       (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div id="{{index}}" class="product-setting-button" (click)="settings(settingsModal, product, index, settingsform);">
+      <i class="fa fa-cog" aria-hidden="true"></i>
+    </div>
     <div class="product-name">
       <a id="product-name-{{index}}" [routerLink]="['/product', product.id]"> {{product.name}}</a>
-      <div id="{{index}}" class="setting-button" (click)="settings(settingsModal, product, index, settingsform);">
-        <i class="fa fa-cog" aria-hidden="true"></i>
-      </div>
     </div>
   </div>
-    <modal #settingsModal>
-      <modal-header>
-        <h1>Product settings</h1>
-      </modal-header>
-      <modal-content>
-        Change product name
-        <form autocomplete="off" #settingsform="ngForm" (ngSubmit)="edit_product(settingsform, settingsModal, settingsform.valid)">
-          <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel" autofocus>
-          <small [hidden]="product_name.valid || (product_name.pristine && !settingsform.submitted)">
-            Product name can't be empty.
-          </small>
-        </form>
-      </modal-content>
-      <modal-footer>
-        <button class="btn btn-danger product-delete-button" (click)="delete_product(settingsModal)">Delete</button>
-        <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
-      </modal-footer>
-    </modal>
-  </div>
-  <!--<div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id, index)"></div>-->
+  <modal #settingsModal>
+    <modal-header>
+      <h1>Product settings</h1>
+    </modal-header>
+    <modal-content>
+      Change product name
+      <form autocomplete="off" #settingsform="ngForm"
+            (ngSubmit)="edit_product(settingsform, settingsModal, settingsform.valid)">
+        <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel" autofocus>
+        <small [hidden]="product_name.valid || (product_name.pristine && !settingsform.submitted)">
+          Product name can't be empty.
+        </small>
+      </form>
+    </modal-content>
+    <modal-footer>
+      <button class="btn btn-danger product-delete-button" (click)="delete_product(settingsModal)">Delete</button>
+      <button class="btn btn-success" [disabled]="!settingsform.valid"
+              (click)="settingsform.ngSubmit.emit(settingsform)">Save
+      </button>
+    </modal-footer>
+  </modal>
+</div>
+<!--<div style="width: 20px; height: 20px; background-color: #710003; display: inline-block" (click)="delete_product(product.id, index)"></div>-->
 <router-outlet></router-outlet>
