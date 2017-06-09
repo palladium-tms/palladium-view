@@ -6,7 +6,7 @@ html {
 body {
   background: #fff;
   color: #333;
-  font-family: 'monospace', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-weight: normal;
   height: 100%;
   margin: 0;
@@ -20,4 +20,10 @@ div {
 }
 .status{
   float: right
+}
+.small-column{
+  width: 9em;
+}
+.big-column{
+  width: 20em;
 }

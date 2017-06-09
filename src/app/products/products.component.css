@@ -1,7 +1,6 @@
 .product-space{
   display: inline-block;
   float:left;
-  width: 20em;
   overflow: auto;
   height: 100%;
 }

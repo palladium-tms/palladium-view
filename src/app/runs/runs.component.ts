@@ -80,4 +80,16 @@ export class RunsComponent implements OnInit {
     modal.open();
     form.controls['run_name'].setValue(run.name);
   }
+
+  set_space_wight() {
+    const prod_space = $('.product-space');
+    prod_space.removeClass('big-column');
+    prod_space.addClass('small-column');
+    const plan_space = $('.plan-space');
+    plan_space .removeClass('small-column');
+    plan_space .addClass('big-column');
+    const run_space = $('.run-space');
+    run_space.removeClass('big-column');
+    run_space.addClass('small-column');
+  }
 }
