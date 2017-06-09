@@ -87,4 +87,13 @@ export class ResultSetsComponent implements OnInit {
     modal.open();
     form.controls['result_set_name'].setValue(result_set.name);
   }
+
+  set_space_wight() {
+    const result_set_space = $('.result_set-space');
+    result_set_space.removeClass('big-column');
+    result_set_space.addClass('small-column');
+    const plan_space = $('.plan-space');
+    plan_space.removeClass('big-column');
+    plan_space.addClass('small-column');
+  }
 }

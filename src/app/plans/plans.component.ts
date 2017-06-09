@@ -77,4 +77,12 @@ export class PlansComponent implements OnInit {
     modal.open();
     form.controls['plan_name'].setValue(plan.name);
   }
+  set_space_wight() {
+    const plan_space = $('.plan-space');
+    plan_space.removeClass('small-column');
+    plan_space.addClass('big-column');
+    const prod_space = $('.product-space');
+    prod_space.removeClass('small-column');
+    prod_space.addClass('big-column');
+  }
 }

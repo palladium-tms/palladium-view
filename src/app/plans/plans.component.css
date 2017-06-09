@@ -1,7 +1,6 @@
 .plan-space{
   display: inline-block;
   float:left;
-  width: 20em;
   overflow: auto;
   height: 100%;
 }
@@ -24,9 +23,6 @@ div.plan-name{
 .plan-delete-button{
   float: left;
 }
-.to-reduce{
-  width: 10em;
-}
 .active{
   background-color: rgba(134, 255, 14, 0.33);
 }
@@ -35,5 +31,4 @@ div.plan-name{
   float: right;
   padding-right: 2px;
   display: none;
-  cursor: pointer;
 }

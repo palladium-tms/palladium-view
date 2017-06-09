@@ -14,7 +14,6 @@
   display: table;
 }
 .result-small-block{
-
   background: #fafafa;
   border-right: 1px solid #eaeaea;
   width: 15em;
@@ -28,7 +27,7 @@
   padding: 0.5em;
   vertical-align: top;
   display: table-cell;
-  width: 45em;
+  width: 40em;
   height: auto;
 }
 .result-date{
