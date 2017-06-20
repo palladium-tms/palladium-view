@@ -26,6 +26,11 @@ export class RunsComponent implements OnInit {
       this.plan_id = params['id'];
       this.get_runs(this.plan_id);
     });
+    if ( this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
+      $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
+      $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
+      $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
+    }
   }
 
   get_runs(plan_id) {
@@ -51,6 +56,7 @@ export class RunsComponent implements OnInit {
     modal.close();
     }
   }
+
   edit_run(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
     const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  this.run_settings_data['id'];
