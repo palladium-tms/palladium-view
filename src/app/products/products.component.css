@@ -5,23 +5,18 @@
   height: 100%;
 }
 .product-block{
+  overflow: hidden;
   border: solid #a9a7aa 1px;
   display: block;
   max-height: 10em;
   margin: 0.5em;
-  padding: 0.5em;
-}
-.product-setting-button{
-  opacity: 100;
-  float: right;
-  padding-right: 2px;
-  display: none;
-  cursor: pointer;
+  position: relative;
 }
 div.product-name{
   width: auto;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0.5em;
 }
 input.product-name{
   width: 100%;

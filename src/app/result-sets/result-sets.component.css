@@ -11,6 +11,8 @@
   max-height: 10em;
   margin: 0.5em;
   padding: 0.5em;
+  position: relative;
+  overflow: hidden;
 }
 .setting-button{
   float: right;
@@ -27,12 +29,6 @@ div.result-set-name-and-status{
 }
 .active{
   background-color: rgba(134, 255, 14, 0.33);
-}
-.result-set-setting-button{
-  float: right;
-  padding-right: 2px;
-  display: none;
-  cursor: pointer;
 }
 input.result-set-name{
   width: 100%;

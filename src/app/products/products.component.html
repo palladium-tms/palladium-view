@@ -1,7 +1,7 @@
 <div class="product-space big-column">
   <div class="product-block" routerLinkActive="active" *ngFor="let product of products; let index = index"
        (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-    <div id="{{index}}" class="product-setting-button" (click)="settings(settingsModal, product, index, settingsform);">
+    <div id="{{index}}" class="setting product-setting-button" (click)="settings(settingsModal, product, index, settingsform);">
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="product-name" (click)="set_space_wight()">

@@ -59,10 +59,10 @@ export class ProductsComponent implements OnInit {
     modal.close();
   }
   show_settings_button(index) {
-      $('.product-setting-button' + '#' + index).css('display', 'block');
+      $('.product-setting-button' + '#' + index).addClass('setting-show').removeClass('setting-none');
   };
   hide_settings_button(index) {
-    $('#' + index + '.product-setting-button').css('display', 'none');
+    $('.product-setting-button' + '#' + index).addClass('setting-none').removeClass('setting-show');
   };
   set_space_wight() {
     const space = $('.product-space');
