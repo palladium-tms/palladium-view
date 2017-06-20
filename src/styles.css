@@ -21,13 +21,16 @@ div {
 .status{
   float: right
 }
-.small-column{
+.small-column {
   width: 9em;
 }
-.big-column{
+.big-column {
   width: 20em;
 }
-.setting{
+.very-big-column{
+  width: 38em;
+}
+.setting {
   opacity: 1;
   display: none;
   height: 50px;
@@ -43,11 +46,11 @@ div {
   cursor: pointer;
   border: solid #a9a7aa 1px;
 }
-.setting-show{
+.setting-show {
   opacity: 1;
   display: block;
 }
-.setting-hide{
+.setting-hide {
   opacity: 1;
   display: block;
 }

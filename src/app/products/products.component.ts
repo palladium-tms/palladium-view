@@ -64,14 +64,13 @@ export class ProductsComponent implements OnInit {
   hide_settings_button(index) {
     $('.product-setting-button' + '#' + index).addClass('setting-none').removeClass('setting-show');
   };
-  set_space_wight() {
-    const space = $('.product-space');
-    space.removeClass('small-column');
-    space.addClass('big-column');
-  }
   settings(modal, product, index, form) {
     this.product_settings_data = {id: product.id, index: index};
     modal.open();
     form.controls['product_name'].setValue(product.name);
+  }
+  set_space_wight() {
+    $('.product-space').removeClass('small-column big-column').addClass('very-big-column');
+    $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
   }
 }

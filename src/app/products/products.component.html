@@ -1,4 +1,4 @@
-<div class="product-space big-column">
+<div class="product-space very-big-column">
   <div class="product-block" routerLinkActive="active" *ngFor="let product of products; let index = index"
        (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div id="{{index}}" class="setting product-setting-button" (click)="settings(settingsModal, product, index, settingsform);">

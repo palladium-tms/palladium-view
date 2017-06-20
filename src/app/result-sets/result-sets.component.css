@@ -1,7 +1,6 @@
 .result-set-space{
   display: inline-block;
   float:left;
-  width: 20em;
   overflow: auto;
   height: 100%;
 }
@@ -24,8 +23,6 @@ div.result-set-name-and-status{
   width: auto;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.to-reduce{
 }
 .active{
   background-color: rgba(134, 255, 14, 0.33);

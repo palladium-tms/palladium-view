@@ -89,11 +89,9 @@ export class ResultSetsComponent implements OnInit {
   }
 
   set_space_wight() {
-    const result_set_space = $('.result_set-space');
-    result_set_space.removeClass('big-column');
-    result_set_space.addClass('small-column');
-    const plan_space = $('.plan-space');
-    plan_space.removeClass('big-column');
-    plan_space.addClass('small-column');
+    $('.product-space').removeClass('big-column').addClass('small-column');
+    $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
+    $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
+    $('.result_set-space').removeClass('big-column').addClass('small-column');
   }
 }
