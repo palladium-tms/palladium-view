@@ -1,7 +1,6 @@
 .run-space{
   display: inline-block;
   float:left;
-  width: 20em;
   overflow: auto;
   height: 100%;
 }
@@ -11,6 +10,8 @@
   max-height: 10em;
   margin: 0.5em;
   padding: 0.5em;
+  position: relative;
+  overflow: hidden;
 }
 div.run-name{
   width: auto;
@@ -19,13 +20,6 @@ div.run-name{
 }
 .active{
   background-color: rgba(134, 255, 14, 0.33);
-}
-.run-setting-button{
-  opacity: 100;
-  float: right;
-  padding-right: 2px;
-  display: none;
-  cursor: pointer;
 }
 input.run-name{
   width: 100%;

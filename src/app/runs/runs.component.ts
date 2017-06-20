@@ -69,10 +69,10 @@ export class RunsComponent implements OnInit {
     modal.close();
   }
   show_settings_button(index) {
-    $('#' + index + '.run-setting-button').css('display', 'block');
+    $('#' + index + '.run-setting-button').show();
   };
   hide_settings_button(index) {
-    $('#' + index + '.run-setting-button').css('display', 'none');
+    $('#' + index + '.run-setting-button').hide();
   };
 
   settings(modal, run, index, form) {
@@ -82,14 +82,8 @@ export class RunsComponent implements OnInit {
   }
 
   set_space_wight() {
-    const prod_space = $('.product-space');
-    prod_space.removeClass('big-column');
-    prod_space.addClass('small-column');
-    const plan_space = $('.plan-space');
-    plan_space .removeClass('small-column');
-    plan_space .addClass('big-column');
-    const run_space = $('.run-space');
-    run_space.removeClass('big-column');
-    run_space.addClass('small-column');
+    $('.product-space').removeClass('very-big-column').addClass('big-column');
+    $('.plan-space').removeClass('very-big-column small-column').addClass('big-column');
+    $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
 }

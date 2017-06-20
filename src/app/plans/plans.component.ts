@@ -67,10 +67,10 @@ export class PlansComponent implements OnInit {
   }
 
   show_settings_button(index) {
-    $('#' + index + '.plan-setting-button').css('display', 'block');
+    $('#' + index + '.plan-setting-button').show();
   };
   hide_settings_button(index) {
-    $('#' + index + '.plan-setting-button').css('display', 'none');
+    $('#' + index + '.plan-setting-button').hide();
   };
   settings(modal, plan, index, form) {
     this.plan_settings_data = {id: plan.id, index: index};
@@ -78,11 +78,8 @@ export class PlansComponent implements OnInit {
     form.controls['plan_name'].setValue(plan.name);
   }
   set_space_wight() {
-    const plan_space = $('.plan-space');
-    plan_space.removeClass('small-column');
-    plan_space.addClass('big-column');
-    const prod_space = $('.product-space');
-    prod_space.removeClass('small-column');
-    prod_space.addClass('big-column');
+    $('.product-space').removeClass('big-column small-column').addClass('very-big-column');
+    $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
+    $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
 }
