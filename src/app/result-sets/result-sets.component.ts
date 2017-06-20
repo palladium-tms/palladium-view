@@ -29,6 +29,11 @@ export class ResultSetsComponent implements OnInit {
       this.get_result_sets(this.run_id);
       this.ApiService.get_statuses().subscribe(res => this.statuses = res);
     });
+    if ( this.router.url.indexOf('/result_set/') >= 0) {
+      $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
+      $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
+      $('.run-space').removeClass('very-big-column small-column').addClass('big-column');
+    }
   }
   getStyles(id) {
     if (this.statuses) {
@@ -88,7 +93,7 @@ export class ResultSetsComponent implements OnInit {
     form.controls['result_set_name'].setValue(result_set.name);
   }
   set_space_wight() {
-    $('.product-space').removeClass('big-column').addClass('small-column');
+    $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
     $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
     $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
     $('.result_set-space').removeClass('big-column').addClass('small-column');
