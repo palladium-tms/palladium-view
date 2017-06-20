@@ -93,4 +93,9 @@ export class ResultSetsComponent implements OnInit {
     $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
     $('.result_set-space').removeClass('big-column').addClass('small-column');
   }
+  getStylesBackround(id) {
+    if (this.statuses) {
+      return {'background': this.statuses[id].color };
+    }
+  }
 }
