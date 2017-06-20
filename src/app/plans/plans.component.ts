@@ -67,10 +67,10 @@ export class PlansComponent implements OnInit {
   }
 
   show_settings_button(index) {
-    $('#' + index + '.plan-setting-button').css('display', 'block');
+    $('#' + index + '.plan-setting-button').show();
   };
   hide_settings_button(index) {
-    $('#' + index + '.plan-setting-button').css('display', 'none');
+    $('#' + index + '.plan-setting-button').hide();
   };
   settings(modal, plan, index, form) {
     this.plan_settings_data = {id: plan.id, index: index};

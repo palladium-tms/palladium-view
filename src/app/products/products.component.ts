@@ -59,10 +59,10 @@ export class ProductsComponent implements OnInit {
     modal.close();
   }
   show_settings_button(index) {
-      $('.product-setting-button' + '#' + index).addClass('setting-show').removeClass('setting-none');
+      $('.product-setting-button' + '#' + index).show();
   };
   hide_settings_button(index) {
-    $('.product-setting-button' + '#' + index).addClass('setting-none').removeClass('setting-show');
+    $('.product-setting-button' + '#' + index).hide();
   };
   settings(modal, product, index, form) {
     this.product_settings_data = {id: product.id, index: index};

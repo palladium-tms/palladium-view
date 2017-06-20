@@ -69,10 +69,10 @@ export class RunsComponent implements OnInit {
     modal.close();
   }
   show_settings_button(index) {
-    $('#' + index + '.run-setting-button').css('display', 'block');
+    $('#' + index + '.run-setting-button').show();
   };
   hide_settings_button(index) {
-    $('#' + index + '.run-setting-button').css('display', 'none');
+    $('#' + index + '.run-setting-button').hide();
   };
 
   settings(modal, run, index, form) {

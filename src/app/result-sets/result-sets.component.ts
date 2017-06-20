@@ -77,10 +77,10 @@ export class ResultSetsComponent implements OnInit {
     modal.close();
   }
   show_settings_button(index) {
-    $('#' + index + '.result-set-setting-button').css('display', 'block');
+    $('#' + index + '.result-set-setting-button').show();
   };
   hide_settings_button(index) {
-    $('#' + index + '.result-set-setting-button').css('display', 'none');
+    $('#' + index + '.result-set-setting-button').hide();
   };
   settings(modal, result_set, index, form) {
     this.result_set_settings_data = {id: result_set.id, index: index};
