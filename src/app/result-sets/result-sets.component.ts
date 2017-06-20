@@ -87,7 +87,6 @@ export class ResultSetsComponent implements OnInit {
     modal.open();
     form.controls['result_set_name'].setValue(result_set.name);
   }
-
   set_space_wight() {
     $('.product-space').removeClass('big-column').addClass('small-column');
     $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
