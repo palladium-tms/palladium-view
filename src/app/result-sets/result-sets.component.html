@@ -1,13 +1,12 @@
 <div class="result-set-space very-big-column">
   <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set.status)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div class="result-set-name-and-status">
-      <a id="result_set-name-{{index}}" (click)="set_space_wight()" [routerLink]="['./result_set', result_set.id]">{{result_set.name}}</a>
-      <div class="status result-set-status" *ngIf="this.statuses">
-        <div class="status-color-block" [ngStyle]="getStylesBackround(this.statuses[result_set.status].id)"></div>
+      <div class="status result-set-status status-name" *ngIf="this.statuses">
         {{this.statuses[result_set.status].name}}
+        <div class="status-color-block" [ngStyle]="getStylesBackround(this.statuses[result_set.status].id)"></div>
       </div>
+      <a id="result_set-name-{{index}}" (click)="set_space_wight()" [routerLink]="['./result_set', result_set.id]">{{result_set.name}}</a>
       <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, result_set, index, settingsform);">
-        <i class="fa fa-cog" aria-hidden="true"></i>
       </div>
     </div>
   </div>

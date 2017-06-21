@@ -1,7 +1,7 @@
 html {
   height: 100%;
   width: 100%;
-  min-width: 1600px;
+  min-width: 1900px;
 }
 body {
   background: #fff;
@@ -19,7 +19,7 @@ div {
   padding: 0;
 }
 .status{
-  float: right
+  float: right;
 }
 .small-column {
   width: 9em;
@@ -59,4 +59,10 @@ div {
   width: 1em;
   height: 1em;
 }
-
+.status-name{
+  display: inline-block;
+  max-width: 12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

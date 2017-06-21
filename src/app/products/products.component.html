@@ -4,8 +4,8 @@
     <div id="{{index}}" class="setting product-setting-button" (click)="settings(settingsModal, product, index, settingsform);">
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
-    <div class="product-name" (click)="set_space_wight()">
-      <a id="product-name-{{index}}" [routerLink]="['/product', product.id]"> {{product.name}}</a>
+    <div class="product-name">
+      <a id="product-name-{{index}}" (click)="set_space_wight()" [routerLink]="['/product', product.id]"> {{product.name}}</a>
     </div>
   </div>
   <modal #settingsModal>

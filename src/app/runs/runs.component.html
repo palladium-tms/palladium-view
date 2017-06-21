@@ -1,15 +1,11 @@
-<div class="run-space">
+<div class="run-space very-big-column">
   <div class="run-block" routerLinkActive="active"  *ngFor="let run of runs; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-
     <div id="{{index}}" class="setting run-setting-button" (click)="settings(runsettingsModal, run, index, settingsform);">
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
-
-    <div class="run-name" (click)="set_space_wight()">
-      <a id="run-name-{{index}}" [routerLink]="['./run', run.id]">{{run.name}}</a>
+    <div class="run-name">
+      <a id="run-name-{{index}}" (click)="set_space_wight()" [routerLink]="['./run', run.id]">{{run.name}}</a>
     </div>
-
-
   </div>
 </div>
 
