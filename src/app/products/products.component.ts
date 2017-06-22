@@ -69,7 +69,8 @@ export class ProductsComponent implements OnInit {
     modal.open();
     form.controls['product_name'].setValue(product.name);
   }
-  set_space_wight() {
+  set_space_width() {
+    $('.lost-result').show();
     $('.product-space').removeClass('small-column big-column').addClass('very-big-column');
     $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
   }

@@ -92,11 +92,12 @@ export class ResultSetsComponent implements OnInit {
     modal.open();
     form.controls['result_set_name'].setValue(result_set.name);
   }
-  set_space_wight() {
+  set_space_width() {
     $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
     $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
     $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
     $('.result_set-space').removeClass('big-column').addClass('small-column');
+    $('.lost-result').hide();
   }
   getStylesBackround(id) {
     if (this.statuses) {

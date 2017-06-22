@@ -87,7 +87,8 @@ export class RunsComponent implements OnInit {
     form.controls['run_name'].setValue(run.name);
   }
 
-  set_space_wight() {
+  set_space_width() {
+    $('.lost-result').show();
     $('.product-space').removeClass('very-big-column').addClass('big-column');
     $('.plan-space').removeClass('very-big-column small-column').addClass('big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');

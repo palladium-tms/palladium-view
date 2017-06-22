@@ -66,3 +66,20 @@ div {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.statistic{
+  float: right;
+  border: solid #aa1300 1px;
+  display: inline-block;
+  height: 1.2em;
+  width: 7em;
+  position: relative;
+  overflow: hidden;
+}
+.status-position, .lost-result{
+  position: relative;
+  height: 100%;
+  display: inline-block;
+}
+.lost-result {
+  float: right;
+}

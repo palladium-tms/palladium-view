@@ -3,25 +3,33 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
+import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 declare var $: any;
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.component.html',
-  styleUrls: ['./plans.component.css']
+  styleUrls: ['./plans.component.css'],
+  providers: [PalladiumApiService]
 })
 export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [];
   errorMessage;
   plan_settings_data = {};
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,  private router: Router ) { }
+  statuses;
+  all_result = {};
+  lost_result = {};
+
+  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+              private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.product_id = params.id;
       this.get_plans(this.product_id);
+      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
     });
   }
 
@@ -29,6 +37,15 @@ export class PlansComponent implements OnInit {
     this.httpService.postData('/api/plans', 'plan_data[product_id]=' + this.product_id)
       .subscribe(
         responce => {
+          for (const current_plan of responce['plans'] ) {
+            this.all_result[current_plan['id']] = {'all': 0, 'lost': 0};
+            for (const statistic of current_plan['statistic']) {
+              this.all_result[statistic['plan_id']]['all'] += statistic['count'];
+              if (statistic['id'] === 0) {
+                this.all_result[statistic['plan_id']]['lost'] = statistic['count'];
+              }
+            }
+          }
           return(this.plans = responce['plans']);
         },
         error =>  this.errorMessage = <any>error);
@@ -77,7 +94,7 @@ export class PlansComponent implements OnInit {
     modal.open();
     form.controls['plan_name'].setValue(plan.name);
   }
-  set_space_wight() {
+  set_space_width() {
     $('.product-space').removeClass('big-column small-column').addClass('very-big-column');
     $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
