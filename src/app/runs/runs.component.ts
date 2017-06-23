@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
-import {Status} from '../models/status';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
+import {PalladiumApiService} from '../../services/palladium-api.service';
 declare var $: any;
 
 @Component({
@@ -15,16 +15,18 @@ declare var $: any;
 export class RunsComponent implements OnInit {
   plan_id = null;
   runs: Run[] = [];
-  statuses: Status[] = [];
+  statuses;
   errorMessage;
   run_settings_data = {};
-
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, private router: Router ) { }
-
+  all_result = {};
+  lost_result = {};
+  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+              private httpService: HttpService, private router: Router ) { }
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
       this.get_runs(this.plan_id);
+      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
     });
     if ( this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
@@ -37,6 +39,16 @@ export class RunsComponent implements OnInit {
     this.httpService.postData('/api/runs', 'run_data[plan_id]=' + this.plan_id)
       .subscribe(
         responce => {
+          console.log(responce['runs']);
+          for (const current_run of responce['runs'] ) {
+            this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
+            for (const statistic of current_run['statistic']) {
+              this.all_result[statistic['run_id']]['all'] += statistic['count'];
+              if (statistic['id'] === 0) {
+                this.all_result[statistic['run_id']]['lost'] = statistic['count'];
+              }
+            }
+          }
           return(this.runs = responce['runs']);
         },
         error =>  this.errorMessage = <any>error);
