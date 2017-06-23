@@ -4,6 +4,16 @@
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="run-name">
+      <span class="lost-result">{{ 1-(this.all_result[run['id']]['lost']/this.all_result[run['id']]['all']) || 0 | percent}}</span>
+
+      <div class="statistic status-name">
+        <ng-container *ngIf="this.statuses">
+        <span *ngFor="let status of run['statistic']" class="status-position"
+              [ngStyle]="{ 'width': (status['count'] / this.all_result[run['id']]['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}">
+        </span>
+        </ng-container>
+      </div>
+
       <a id="run-name-{{index}}" (click)="set_space_width()" [routerLink]="['./run', run.id]">{{run.name}}</a>
     </div>
   </div>
