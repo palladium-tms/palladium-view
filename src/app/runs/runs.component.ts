@@ -19,11 +19,11 @@ export class RunsComponent implements OnInit {
   errorMessage;
   run_settings_data = {};
   all_result = {};
-  lost_result = {};
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private httpService: HttpService, private router: Router ) { }
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.runs = [];
       this.plan_id = params['id'];
       this.get_runs(this.plan_id);
       this.ApiService.get_statuses().subscribe(res => this.statuses = res);

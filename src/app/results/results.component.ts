@@ -19,6 +19,7 @@ export class ResultsComponent implements OnInit {
               private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
+    this.results = [];
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_set_id = params.id;
       this.get_results(this.result_set_id);

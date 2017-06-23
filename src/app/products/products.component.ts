@@ -18,6 +18,7 @@ export class ProductsComponent implements OnInit {
   product_settings_data = {};
   constructor(private httpService: HttpService, private router: Router) {}
   ngOnInit() {
+    this.products = [];
     this.get_products();
   }
   get_products() {
