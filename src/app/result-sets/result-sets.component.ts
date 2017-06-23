@@ -25,6 +25,7 @@ export class ResultSetsComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.result_sets = [];
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
       this.ApiService.get_statuses().subscribe(res => this.statuses = res);

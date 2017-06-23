@@ -20,13 +20,13 @@ export class PlansComponent implements OnInit {
   plan_settings_data = {};
   statuses;
   all_result = {};
-  lost_result = {};
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private httpService: HttpService,  private router: Router ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.plans = [];
       this.product_id = params.id;
       this.get_plans(this.product_id);
       this.ApiService.get_statuses().subscribe(res => this.statuses = res);
