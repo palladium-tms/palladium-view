@@ -14,9 +14,15 @@
   overflow: hidden;
 }
 div.run-name{
+  word-wrap: break-word;
   width: auto;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.run-name-link{
+  max-height: 6em;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .active{
   background-color: rgba(134, 255, 14, 0.33);

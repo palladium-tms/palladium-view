@@ -84,3 +84,6 @@ div {
 .lost-result {
   float: right;
 }
+.status-legend-small-block{
+  font-size: 12px;
+}
