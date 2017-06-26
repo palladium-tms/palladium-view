@@ -87,3 +87,7 @@ div {
 .status-legend-small-block{
   font-size: 12px;
 }
+.one-status{
+  display: inline-block;
+  margin-right: 1em;
+}

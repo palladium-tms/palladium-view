@@ -19,6 +19,7 @@ export class ResultSetsComponent implements OnInit {
   errorMessage;
   result_set_settings_data = {};
   statuses;
+  statistic = {};
 
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
               private ApiService: PalladiumApiService,  private router: Router ) { }
@@ -45,6 +46,7 @@ export class ResultSetsComponent implements OnInit {
     this.httpService.postData('/api/result_sets', 'result_set_data[run_id]=' + this.run_id)
       .subscribe(
         responce => {
+          this.calculate_statistic_of_run(responce['result_sets']);
           return(this.result_sets = responce['result_sets']);
         },
         error =>  this.errorMessage = <any>error);
@@ -105,4 +107,15 @@ export class ResultSetsComponent implements OnInit {
       return {'background': this.statuses[id].color };
     }
   }
+
+  calculate_statistic_of_run(data): void { // FIXME: it must be sended from run component, buti dont know how
+    for (const result_set of data ) {
+      if (result_set['status'] in this.statistic) {
+        this.statistic[result_set['status']] += 1;
+      } else {
+        this.statistic[result_set['status']] = 1;
+      }
+    }
+    this.statistic['all'] = Object.keys(this.statistic);
+}
 }

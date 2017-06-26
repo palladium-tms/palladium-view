@@ -39,7 +39,6 @@ export class RunsComponent implements OnInit {
     this.httpService.postData('/api/runs', 'run_data[plan_id]=' + this.plan_id)
       .subscribe(
         responce => {
-          console.log(responce['runs']);
           for (const current_run of responce['runs'] ) {
             this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
             for (const statistic of current_run['statistic']) {
@@ -76,11 +75,8 @@ export class RunsComponent implements OnInit {
       .subscribe(
         runs => {
           if (Object.keys(runs.errors).length === 0) {
-            console.log(runs);
             this.runs[this.run_settings_data['index']].name = runs.run_data.name;
             this.runs[this.run_settings_data['index']].updated_at = runs.run_data.updated_at;
-          } else {
-            console.log(runs.errors);
           }
         },
         error =>  this.errorMessage = <any>error);
