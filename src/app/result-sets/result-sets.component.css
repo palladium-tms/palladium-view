@@ -34,4 +34,12 @@ input.result-set-name{
 .result-set-delete-button{
   float: left;
 }
-
+.statistic-block{
+  border: solid #a9a7aa 1px;
+  display: block;
+  max-height: 10em;
+  margin: 0.5em;
+  padding: 0.5em;
+  position: relative;
+  overflow: hidden;
+}

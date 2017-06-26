@@ -13,7 +13,7 @@
         </span>
         </ng-container>
       </div>
-     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width()" [routerLink]="['./run', run.id]">{{run.name}}</a></div>
+     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width(index)" [routerLink]="['./run', run.id]">{{run.name}}</a></div>
       <div *ngIf="this.statuses" class="status-legend-small-block">
         <span *ngFor="let status of run['statistic']" class="status-legend-small">
           {{ status['count'] }} {{ this.statuses[status['status']]['name'] }},
