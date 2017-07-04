@@ -1,8 +1,8 @@
 <div class="result-set-space very-big-column">
   <div class="statistic-block" *ngIf="this.statuses">
     <div  *ngFor="let current_statistic of  this.statistic['all']" class="one-status">
-      <div class="status-color-block" [ngStyle]="{'background': this.statuses[current_statistic].color }"></div>
-      <span class="status-name">{{   this.statistic[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
+      <div class="status-color-block" [ngStyle]="{'background': this.statuses[current_statistic].color }" *ngIf="this.statuses[current_statistic]"></div>
+      <span class="status-name" *ngIf="this.statuses[current_statistic]">{{   this.statistic[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
     </div>
   </div>
   <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set.status)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
