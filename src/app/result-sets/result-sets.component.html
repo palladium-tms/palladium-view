@@ -5,8 +5,12 @@
       <span class="status-name" *ngIf="this.statuses[current_statistic]">{{   this.statistic[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
     </div>
   </div>
+  <div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">
+    <span>Add result </span><span class="badge">{{this.selected_counter.length}}</span>
+  </div>
   <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set.status)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div class="result-set-name-and-status">
+      <input type="checkbox" name="result_option" (change)="selectCounter(result_set)" [value]="result_set.id">
       <div class="status result-set-status status-name" *ngIf="this.statuses">
         {{this.statuses[result_set.status].name}}
         <div class="status-color-block" [ngStyle]="getStylesBackround(this.statuses[result_set.status].id)"></div>
@@ -33,6 +37,31 @@
   <modal-footer>
     <button class="btn btn-danger result-set-delete-button" (click)="delete_result_set(result_setsettingsModal)">Delete</button>
     <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>
+
+<modal #result_setadd_resultModal>
+  <modal-header>
+    <h1>Add Result</h1>
+  </modal-header>
+  <modal-content>
+    Add result for <b>{{this.selected_counter.length}}</b> result_sets
+    <form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">
+      <div class="status_color" [ngStyle]="{'background': this.statuses[this.statuses_array[0]].color }" *ngIf="this.statuses"></div>
+      <div>
+        <label>Status</label>
+        <select id="status" (change)="changer_header_color()" name="result_status" ngModel required #result_status="ngModel">
+          <!--FIXME: need to set correct varible convert method-->
+          <option *ngFor="let status of  this.statuses_array" [value]="status" [selected]="status === (this.selected_color + '')" >
+            {{this.statuses[status].name}}
+          </option>
+        </select>
+      </div>
+      <input type="text" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-success" (click)="addresultform.ngSubmit.emit(addresultform)">Add result</button>
   </modal-footer>
 </modal>
 <router-outlet></router-outlet>
