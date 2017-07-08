@@ -161,6 +161,10 @@ export class ResultSetsComponent implements OnInit {
     this.header_background_change(this.statuses[this.statuses_array[0]]['color']);
   }
   add_results(form: NgForm, modal) {
+    if (form.value['result_status'] === '') {
+      form.value['result_status'] = this.selected_color;
+    }
+    // this.statuses[this.statuses_array[form.value['result_status'] - 1]]
     const params = this.set_params_for_add_result({description: form.value['result_description'],
       status: this.statuses[this.statuses_array[form.value['result_status'] - 1]], result_sets: this.selected_counter});
     this.httpService.postData('/api/result_new', params)

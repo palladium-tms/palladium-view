@@ -63,3 +63,7 @@ input.result-set-name{
   height: 2em;
   width: 100%;
 }
+.result-description{
+  width: 100%;
+  height: 5em;
+}

@@ -50,14 +50,14 @@
       <div class="status_color" [ngStyle]="{'background': this.statuses[this.statuses_array[0]].color }" *ngIf="this.statuses"></div>
       <div>
         <label>Status</label>
-        <select id="status" (change)="changer_header_color()" name="result_status" ngModel required #result_status="ngModel">
+        <select id="status" name="result_status" ngModel required #result_status="ngModel" (click)="changer_header_color()">
           <!--FIXME: need to set correct varible convert method-->
-          <option *ngFor="let status of  this.statuses_array" [value]="status" [selected]="status === (this.selected_color + '')" >
+          <option *ngFor="let status of  this.statuses_array" [value]="status" [selected]="status == (this.selected_color + '')" >
             {{this.statuses[status].name}}
           </option>
         </select>
       </div>
-      <input type="text" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
+      <input type="text" placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
     </form>
   </modal-content>
   <modal-footer>
