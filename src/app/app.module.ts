@@ -48,7 +48,7 @@ const appRoutes: Routes = [
     ResultSetsComponent,
     ResultsComponent
   ],
-  imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes), FormsModule,
+  imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, { useHash: true }), FormsModule,
     Angular2FontawesomeModule],
   providers: [AuthGuard, AuthenticationService],
   bootstrap: [MainComponent]
