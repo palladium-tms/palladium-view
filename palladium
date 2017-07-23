@@ -2,7 +2,7 @@ server {
   listen 80;
    root //var/www/palladium/;
    index index.html index.htm;
-   server_name localhost 0.0.0.0;
+   server_name  palladium;
   location / {
     try_files $uri $uri/ =404;
   }

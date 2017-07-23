@@ -44,6 +44,21 @@ export class AuthenticationService {
       });
   }
 
+  registration(username: string, password: string): Observable<boolean>  {
+    const headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'});
+    // headers.append('Authorization', 'Bearer');
+    const options = new RequestOptions({ headers: headers });
+    return this.http.post(AppSettings.API_ENDPOINT + '/registration',
+      'user_data[email]=' + username + '&user_data[password]=' + password, options)
+      .map((response: Response) => {
+        return true;
+      }).catch((error: any) => {
+        if (error.status === 401) {
+          return Observable.of(false);
+        }
+      });
+  }
+
   logout(): void {
     // clear token remove user from local storage to log user out
     this.token = null;
