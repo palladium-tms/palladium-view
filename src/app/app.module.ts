@@ -15,10 +15,13 @@ import {ResultSetsComponent} from './result-sets/result-sets.component';
 import { ResultsComponent } from './results/results.component';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 import {ModalModule} from 'ngx-modal';
+import { RegistrationComponent } from './registration/registration.component';
+import { EqualValidator } from './directives/equal-validator.directive';  // import validator
 
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
+  {path: 'registration', component: RegistrationComponent},
   {
     path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
     {
@@ -46,7 +49,9 @@ const appRoutes: Routes = [
     RunsComponent,
     LoginComponent,
     ResultSetsComponent,
-    ResultsComponent
+    ResultsComponent,
+    RegistrationComponent,
+    EqualValidator
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, { useHash: true }), FormsModule,
     Angular2FontawesomeModule],
