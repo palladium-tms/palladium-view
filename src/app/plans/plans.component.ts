@@ -5,6 +5,7 @@ import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
+import {StatusticService} from '../../services/statistic.service';
 declare var $: any;
 
 @Component({
@@ -20,22 +21,24 @@ export class PlansComponent implements OnInit {
   plan_settings_data = {};
   statuses;
   all_result = {};
-
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService,  private router: Router ) { }
+              private httpService: HttpService,  private router: Router, private statistic: StatusticService ) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plans = [];
       this.product_id = params.id;
       this.get_plans(this.product_id);
-      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
+      this.ApiService.get_statuses().then(res => this.statuses = res);
+      console.log( this.statistic);
+      // this.statistic.next(Object.assign({}, this.dataStore).todos);
+
     });
   }
 
   get_plans(product_id) {
-    this.httpService.postData('/api/plans', 'plan_data[product_id]=' + this.product_id)
-      .subscribe(
+    this.httpService.postData('/plans', 'plan_data[product_id]=' + this.product_id)
+      .then(
         responce => {
           for (const current_plan of responce['plans'] ) {
             this.all_result[current_plan['id']] = {'all': 0, 'lost': 0};
@@ -54,8 +57,8 @@ export class PlansComponent implements OnInit {
   edit_plan(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
     const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  this.plan_settings_data['id'];
-    this.httpService.postData('/api/plan_edit', params)
-      .subscribe(
+    this.httpService.postData('/plan_edit', params)
+      .then(
         plans => {
           if (Object.keys(plans.errors).length === 0) {
             this.plans[this.plan_settings_data['index']].name = plans.plan_data.name;
@@ -70,8 +73,8 @@ export class PlansComponent implements OnInit {
 
   delete_plan(modal) {
     if (confirm('A u shuare?')) {
-      this.httpService.postData('/api/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
-      .subscribe(
+      this.httpService.postData('/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
+      .then(
         plans => {
           this.plans.splice(this.plan_settings_data['index'], 1);
           if ( this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {

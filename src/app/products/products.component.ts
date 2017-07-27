@@ -1,6 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {HttpService} from '../../services/http-request.service';
+import {StatusticService} from '../../services/statistic.service';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
 declare var $: any;
@@ -16,14 +17,15 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   errorMessage;
   product_settings_data = {};
-  constructor(private httpService: HttpService, private router: Router) {}
+  constructor(private httpService: HttpService, private router: Router, private statistic: StatusticService) {}
   ngOnInit() {
     this.products = [];
     this.get_products();
+    console.log(this.statistic);
   }
   get_products() {
-    this.httpService.getData('/api/products')
-      .subscribe(
+    this.httpService.getData('/products')
+      .then(
         (products) => {
           this.products = products['products'];
         },
@@ -31,8 +33,8 @@ export class ProductsComponent implements OnInit {
   }
   delete_product(modal) {
     if (confirm('A u shuare?')) {
-    this.httpService.postData('/api/product_delete', 'product_data[id]=' + this.product_settings_data['id'])
-      .subscribe(
+    this.httpService.postData('/product_delete', 'product_data[id]=' + this.product_settings_data['id'])
+      .then(
         products => {
           this.products.splice(this.product_settings_data['index'], 1);
           if ( this.router.url.indexOf('/product/' + products['product']) >= 0) {
@@ -46,8 +48,8 @@ export class ProductsComponent implements OnInit {
   edit_product(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
     const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  this.product_settings_data['id'];
-    this.httpService.postData('/api/product_edit', params)
-      .subscribe(
+    this.httpService.postData('/product_edit', params)
+      .then(
         products => {
           if (Object.keys(products.errors).length === 0) {
             this.products[this.product_settings_data['index']].name = products.product_data.name;

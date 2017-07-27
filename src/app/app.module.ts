@@ -7,6 +7,7 @@ import {HttpModule} from '@angular/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../services/authentication.service';
+import {StatusticService} from '../services/statistic.service';
 import {FormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
 import {PlansComponent} from './plans/plans.component';
@@ -17,6 +18,7 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
 import {ModalModule} from 'ngx-modal';
 import { RegistrationComponent } from './registration/registration.component';
 import { EqualValidator } from './directives/equal-validator.directive';  // import validator
+import { AppSettings } from '../services/settings.service';  // import validator
 
 
 const appRoutes: Routes = [
@@ -51,11 +53,11 @@ const appRoutes: Routes = [
     ResultSetsComponent,
     ResultsComponent,
     RegistrationComponent,
-    EqualValidator
+    EqualValidator,
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, { useHash: true }), FormsModule,
     Angular2FontawesomeModule],
-  providers: [AuthGuard, AuthenticationService],
+  providers: [AuthGuard, AuthenticationService, AppSettings, StatusticService],
   bootstrap: [MainComponent]
 })
 export class AppModule {

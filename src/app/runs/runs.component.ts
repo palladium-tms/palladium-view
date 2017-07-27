@@ -26,7 +26,7 @@ export class RunsComponent implements OnInit {
       this.runs = [];
       this.plan_id = params['id'];
       this.get_runs(this.plan_id);
-      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
+      this.ApiService.get_statuses().then(res => this.statuses = res);
     });
     if ( this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
@@ -36,8 +36,8 @@ export class RunsComponent implements OnInit {
   }
 
   get_runs(plan_id) {
-    this.httpService.postData('/api/runs', 'run_data[plan_id]=' + this.plan_id)
-      .subscribe(
+    this.httpService.postData('/runs', 'run_data[plan_id]=' + this.plan_id)
+      .then(
         responce => {
           for (const current_run of responce['runs'] ) {
             this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
@@ -55,8 +55,8 @@ export class RunsComponent implements OnInit {
 
   delete_run(modal) {
     if (confirm('A u shuare?')) {
-      this.httpService.postData('/api/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
-      .subscribe(
+      this.httpService.postData('/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
+      .then(
         runs => {
           this.runs.splice(this.run_settings_data['index'], 1);
           if ( this.router.url.indexOf('/run/' + runs['run']) >= 0) {
@@ -71,8 +71,8 @@ export class RunsComponent implements OnInit {
   edit_run(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
     const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  this.run_settings_data['id'];
-    this.httpService.postData('/api/run_edit', params)
-      .subscribe(
+    this.httpService.postData('/run_edit', params)
+      .then(
         runs => {
           if (Object.keys(runs.errors).length === 0) {
             this.runs[this.run_settings_data['index']].name = runs.run_data.name;

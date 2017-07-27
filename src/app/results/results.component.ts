@@ -23,13 +23,13 @@ export class ResultsComponent implements OnInit {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_set_id = params.id;
       this.get_results(this.result_set_id);
-      this.ApiService.get_statuses().subscribe(res => this.statuses = res);
+      this.ApiService.get_statuses().then(res => this.statuses = res);
     });
   }
 
   get_results(result_set_id) {
-    this.httpService.postData('/api/results', 'result_data[result_set_id]=' + this.result_set_id)
-      .subscribe(
+    this.httpService.postData('/results', 'result_data[result_set_id]=' + this.result_set_id)
+      .then(
         responce => {
           return(this.results = responce['results']);
         },

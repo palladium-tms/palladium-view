@@ -31,9 +31,10 @@ export class ResultSetsComponent implements OnInit {
       this.result_sets = [];
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
-      this.ApiService.get_statuses().subscribe(res => {
+      this.ApiService.get_statuses().then(res => {
         this.statuses = res;
         this.statuses_array = Object.keys(this.statuses);
+        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
       });
     });
     if ( this.router.url.indexOf('/result_set/') >= 0) {
@@ -48,8 +49,8 @@ export class ResultSetsComponent implements OnInit {
     }
   }
   get_result_sets(run_id) {
-    this.httpService.postData('/api/result_sets', 'result_set_data[run_id]=' + this.run_id)
-      .subscribe(
+    this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + this.run_id)
+      .then(
         responce => {
           this.calculate_statistic_of_run(responce['result_sets']);
           return(this.result_sets = responce['result_sets']);
@@ -58,8 +59,8 @@ export class ResultSetsComponent implements OnInit {
   }
   delete_result_set(modal) {
     if (confirm('A u shuare?')) {
-      this.httpService.postData('/api/result_set_delete', 'result_set_data[id]=' + this.result_set_settings_data['id'])
-      .subscribe(
+      this.httpService.postData('/result_set_delete', 'result_set_data[id]=' + this.result_set_settings_data['id'])
+      .then(
         result_sets => {
           this.result_sets.splice(this.result_set_settings_data['index'], 1);
           if ( this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
@@ -73,9 +74,9 @@ export class ResultSetsComponent implements OnInit {
   edit_result_set(form: NgForm, modal, valid: boolean) {
     if ( !valid ) { return; }
     const params = 'result_set_data[result_set_name]=' + form.value['result_set_name']
-      + '&result_set_data[id]=' +  this.result_set_settings_data['id'];
-    this.httpService.postData('/api/result_set_edit', params)
-      .subscribe(
+      + '&result_set_data[id]=' +  (this.result_set_settings_data['id'] - 2);
+    this.httpService.postData('/result_set_edit', params)
+      .then(
         result_sets => {
           if (Object.keys(result_sets.errors).length === 0) {
             this.result_sets[this.result_set_settings_data['index']].name = result_sets.result_set_data.name;
@@ -164,11 +165,10 @@ export class ResultSetsComponent implements OnInit {
     if (form.value['result_status'] === '') {
       form.value['result_status'] = this.selected_color;
     }
-    // this.statuses[this.statuses_array[form.value['result_status'] - 1]]
     const params = this.set_params_for_add_result({description: form.value['result_description'],
       status: this.statuses[this.statuses_array[form.value['result_status'] - 1]], result_sets: this.selected_counter});
-    this.httpService.postData('/api/result_new', params)
-      .subscribe(
+    this.httpService.postData('/result_new', params)
+      .then(
         result_sets => {
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {

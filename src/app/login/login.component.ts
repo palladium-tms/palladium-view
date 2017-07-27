@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { AppSettings } from '../../services/settings.service';
 import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
@@ -15,7 +15,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private settings: AppSettings
   ) { }
 
   ngOnInit() {
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.loading = true;
+    // console.log(this.authenticationService.login(this.model.username, this.model.password));
     this.authenticationService.login(this.model.username, this.model.password)
       .subscribe(result => {
         if (result === true) {

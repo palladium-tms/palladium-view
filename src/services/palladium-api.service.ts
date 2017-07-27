@@ -6,11 +6,10 @@ import { Response } from '@angular/http';
 export class PalladiumApiService {
   constructor( private httpService: HttpService) { }
   // Status reqion
-  get_statuses(): Observable<JSON> {
-    return this.httpService.getData('/api/statuses').map((resp: Response) => {
+  get_statuses(): Promise<JSON> {
+    return this.httpService.getData('/statuses').then((resp: Response) => {
       return resp['statuses'];
     });
   }
   // endregion
-
 }
