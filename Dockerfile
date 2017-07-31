@@ -1,6 +1,5 @@
 FROM node:8.1.4
 EXPOSE 80
-RUN echo $API_ENDPOINT
 RUN mkdir /palladium-view
 WORKDIR /palladium-view
 ADD . /palladium-view

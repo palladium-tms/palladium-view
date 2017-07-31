@@ -29,7 +29,10 @@ export class PlansComponent implements OnInit {
       this.plans = [];
       this.product_id = params.id;
       this.get_plans(this.product_id);
-      this.ApiService.get_statuses().then(res => this.statuses = res);
+      this.ApiService.get_statuses().then(res => {
+        this.statuses = res;
+        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
+      });
       console.log( this.statistic);
       // this.statistic.next(Object.assign({}, this.dataStore).todos);
 

@@ -26,7 +26,10 @@ export class RunsComponent implements OnInit {
       this.runs = [];
       this.plan_id = params['id'];
       this.get_runs(this.plan_id);
-      this.ApiService.get_statuses().then(res => this.statuses = res);
+      this.ApiService.get_statuses().then(res => {
+        this.statuses = res;
+        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
+      });
     });
     if ( this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');

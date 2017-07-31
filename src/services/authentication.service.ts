@@ -19,31 +19,23 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-    // console.log('----------------');
-    // console.log(username);
-    // console.log(password);
-    // console.log(JSON.stringify({ username: username, password: password }));
-    // console.log('----------------');
     const headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'});
-    // headers.append('Authorization', 'Bearer');
     const options = new RequestOptions({ headers: headers });
-      return this.http.post(this.apiurl + '/login',
-        'user_data[email]=' + username + '&user_data[password]=' + password, options)
-        .map((response: Response) => {
-          // login successful if there's a jwt token in the response
-          console.log(response.json().token);
-          const token = response.json() && response.json().token;
-          // set token property
-          this.token = token;
-          // store username and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('auth_data', JSON.stringify({ username: username, token: token }));
-          return true;
-        }).catch((error: any) => {
-        if (error.status === 401) {
-          return Observable.of(false);
-        }
-        // do any other checking for statuses here
-      });
+
+    return this.settings.api_url().toPromise().then(url => {
+      return this.http.post(url + '/login',
+        'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise();
+    }).then(response => {
+      console.log(response);
+      console.log(response.json().token);
+      const token = response.json() && response.json().token;
+      this.token = token;
+      localStorage.setItem('auth_data', JSON.stringify({ username: username, token: token }));
+      return Promise.resolve(true);
+    }, response => {
+      console.log(response);
+      return Promise.reject(false);
+    });
   };
 
   registration(username: string, password: string): Observable<boolean>  {

@@ -6,7 +6,16 @@ server {
   location / {
     try_files $uri $uri/ =404;
   }
+
   location /api {
-  proxy_pass http://unix:///tmp/puma/puma.sock:;
+    proxy_pass http://unix:///tmp/puma/puma.sock:;
   }
+
+  location /login {
+    proxy_pass http://unix:///tmp/puma/puma.sock:;
+  }
+
+  location /registration {
+    proxy_pass http://unix:///tmp/puma/puma.sock:;
+   }
 }

@@ -24,7 +24,7 @@ export class ProductsComponent implements OnInit {
     console.log(this.statistic);
   }
   get_products() {
-    this.httpService.getData('/products')
+    this.httpService.postData('/products', '')
       .then(
         (products) => {
           this.products = products['products'];
