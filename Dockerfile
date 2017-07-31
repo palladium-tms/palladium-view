@@ -8,6 +8,5 @@ RUN apt-get update && apt-get install -y nginx
 RUN ng build --prod --aot false
 RUN ln -s //palladium-view/dist //var/www/palladium \
     && ln -s //palladium-view/palladium //etc/nginx/sites-enabled/palladium \
-    && rm //etc/nginx/sites-enabled/default \
-    && ln -s //palladium-view/config.json //palladium-view/dist/config.json
+    && rm //etc/nginx/sites-enabled/default
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
