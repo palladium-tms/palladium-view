@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http-request.service';
-import { Response } from '@angular/http';
 @Injectable()
 export class PalladiumApiService {
   constructor( private httpService: HttpService) { }
