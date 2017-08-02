@@ -49,4 +49,7 @@ a.logout-link{
   font-size: 18px;
   color: #ffffff;
 }
+.status-name{
+  max-width: 24em;
+}
 /*hard class edit*/

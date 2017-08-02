@@ -59,6 +59,9 @@ div {
   width: 1em;
   height: 1em;
 }
+.border-gray{
+  border: 1px #a0a0a0 solid;
+}
 .status-name{
   display: inline-block;
   max-width: 12em;
