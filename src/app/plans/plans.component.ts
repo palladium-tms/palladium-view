@@ -33,7 +33,7 @@ export class PlansComponent implements OnInit {
         this.statuses = res;
         this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
       });
-      console.log( this.statistic);
+      // console.log( this.statistic);
       // this.statistic.next(Object.assign({}, this.dataStore).todos);
 
     });

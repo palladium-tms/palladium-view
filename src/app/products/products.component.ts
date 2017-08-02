@@ -21,7 +21,7 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.products = [];
     this.get_products();
-    console.log(this.statistic);
+    // console.log(this.statistic);
   }
   get_products() {
     this.httpService.postData('/products', '')
