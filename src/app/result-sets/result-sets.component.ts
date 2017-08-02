@@ -32,9 +32,9 @@ export class ResultSetsComponent implements OnInit {
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
       this.ApiService.get_statuses().then(res => {
-        this.statuses = res;
+        this.statuses = JSON.parse(JSON.stringify(res));
         this.statuses_array = Object.keys(this.statuses);
-        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
+        this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
       });
     });
     if ( this.router.url.indexOf('/result_set/') >= 0) {
@@ -45,7 +45,7 @@ export class ResultSetsComponent implements OnInit {
   }
   getStyles(id) {
     if (this.statuses) {
-      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[id].color };
+      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[id['status']].color };
     }
   }
   get_result_sets(run_id) {
@@ -166,13 +166,14 @@ export class ResultSetsComponent implements OnInit {
       form.value['result_status'] = this.selected_color;
     }
     const params = this.set_params_for_add_result({description: form.value['result_description'],
-      status: this.statuses[this.statuses_array[form.value['result_status'] - 1]], result_sets: this.selected_counter});
+      status: this.statuses[form.value['result_status'].toString()], result_sets: this.selected_counter});
     this.httpService.postData('/result_new', params)
       .then(
         result_sets => {
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {
-              this.result_sets[index]['status'] = this.statuses_array[form.value['result_status'] - 1];
+              this.result_sets[index]['status'] = form.value['result_status'].toString();
+              console.log(this.result_sets[index]);
               this.calculate_statistic_of_run(this.result_sets);
             }
           });

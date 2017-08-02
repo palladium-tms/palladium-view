@@ -8,7 +8,7 @@
   <div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">
     <span>Add result </span><span class="badge">{{this.selected_counter.length}}</span>
   </div>
-  <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set.status)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+  <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div class="result-set-name-and-status">
       <input type="checkbox" name="result_option" (change)="selectCounter(result_set)" [value]="result_set.id">
       <div class="status result-set-status status-name" *ngIf="this.statuses">
