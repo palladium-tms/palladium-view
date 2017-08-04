@@ -9,5 +9,22 @@ export class PalladiumApiService {
       return resp['statuses'];
     });
   }
+  get_not_blocked_statuses(): Promise<JSON> {
+    return this.httpService.postData('/not_blocked_statuses', '').then((resp: Response) => {
+      return resp['statuses'];
+    });
+  }
+  block_status(id): Promise<JSON> {
+    return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[block]=true'
+      ).then((resp: Response) => {
+      return resp;
+    });
+  }
+  color_status(id, color): Promise<JSON> {
+    return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[color]=' + color
+      ).then((resp: Response) => {
+      return resp;
+    });
+  }
   // endregion
 }

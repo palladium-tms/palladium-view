@@ -173,7 +173,6 @@ export class ResultSetsComponent implements OnInit {
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {
               this.result_sets[index]['status'] = this.statuses_array[form.value['result_status'].toString()];
-              console.log(this.result_sets[index]);
               this.calculate_statistic_of_run(this.result_sets);
             }
           });
