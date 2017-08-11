@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {ResultSet} from '../models/result_set';
 import {Router} from '@angular/router';
@@ -13,7 +13,7 @@ declare var $: any;
   styleUrls: ['./result-sets.component.css'],
   providers: [PalladiumApiService]
 })
-export class ResultSetsComponent implements OnInit {
+export class ResultSetsComponent implements OnInit, AfterViewInit {
   run_id = null;
   result_sets: ResultSet[] = [];
   errorMessage;
@@ -42,6 +42,9 @@ export class ResultSetsComponent implements OnInit {
       $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
       $('.run-space').removeClass('very-big-column small-column').addClass('big-column');
     }
+  }
+  ngAfterViewInit() {
+    $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
   getStyles(id) {
     if (this.statuses) {
@@ -172,7 +175,7 @@ export class ResultSetsComponent implements OnInit {
         result_sets => {
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {
-              this.result_sets[index]['status'] = this.statuses_array[form.value['result_status'].toString()];
+              this.result_sets[index]['status'] = form.value['result_status'].toString();
               this.calculate_statistic_of_run(this.result_sets);
             }
           });

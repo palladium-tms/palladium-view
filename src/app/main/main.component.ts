@@ -19,5 +19,6 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
   onResize(event) {
     this.container.css('height', event.target.innerHeight - 65);
+    $('.result_sets_list').css('height', this.container.innerHeight() - 120);
   }
 }
