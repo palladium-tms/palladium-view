@@ -1,7 +1,6 @@
 .result-set-space{
   display: inline-block;
   float:left;
-  overflow: auto;
   height: 100%;
 }
 .result-set-block{
@@ -54,6 +53,13 @@ input.result-set-name{
   padding: 0.5em;
   position: relative;
   overflow: hidden;
+}
+.result_sets_list{
+  overflow: auto;
+  display: inline-block;
+  float: left;
+  height: 100%;
+  width: 100%;
 }
 .disabled{
   background-color: rgba(215, 230, 255, 0.4);
