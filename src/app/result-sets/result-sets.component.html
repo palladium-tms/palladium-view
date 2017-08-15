@@ -1,6 +1,6 @@
 <div class="result-set-space very-big-column">
   <div class="statistic-block" *ngIf="this.statuses">
-    <div  *ngFor="let current_statistic of  this.statistic['all']" class="one-status">
+    <div #self *ngFor="let current_statistic of this.statistic['all']" class="one-status" (click)="addfilter(this.statuses[current_statistic].id, self)">
       <div class="status-color-block" [ngStyle]="{'background': this.statuses[current_statistic].color }" *ngIf="this.statuses[current_statistic]"></div>
       <span class="status-name" *ngIf="this.statuses[current_statistic]">{{   this.statistic[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
     </div>
@@ -9,8 +9,7 @@
     <span>Add result </span><span class="badge">{{this.selected_counter.length}}</span>
   </div>
   <div class="result_sets_list">
-    <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets; let index = index"  [ngStyle]="getStyles(result_set)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-
+    <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets | statusFilter:filter; let index = index"  [ngStyle]="getStyles(result_set)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
       <div class="result-set-name-and-status">
         <input type="checkbox" name="result_option" (change)="selectCounter(result_set)" [value]="result_set.id">
         <div class="status result-set-status status-name" *ngIf="this.statuses">

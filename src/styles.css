@@ -93,4 +93,10 @@ div {
 .one-status{
   display: inline-block;
   margin-right: 1em;
+  cursor: pointer;
+  border: solid #ffffff 1px;
+}
+.selected {
+  border: solid #a9a7aa 1px;
+  background-color: #fff9e0;
 }
