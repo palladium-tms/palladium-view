@@ -21,6 +21,7 @@ import {ModalModule} from 'ngx-modal';
 import { RegistrationComponent } from './registration/registration.component';
 import { EqualValidator } from './directives/equal-validator.directive';  // import validator
 import { AppSettings } from '../services/settings.service';
+import { StatusFilterPipe } from './pipes/status_filter_pipe/status-filter.pipe';
 
 
 const appRoutes: Routes = [
@@ -43,7 +44,6 @@ const appRoutes: Routes = [
   },
   {path: '**', redirectTo: '/404'},
 ];
-
 @NgModule({
   declarations: [
     MainComponent,
@@ -56,6 +56,7 @@ const appRoutes: Routes = [
     ResultsComponent,
     RegistrationComponent,
     EqualValidator,
+    StatusFilterPipe,
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, { useHash: true }), FormsModule,
     Angular2FontawesomeModule],
