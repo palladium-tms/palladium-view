@@ -178,13 +178,11 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     const result_set = this.result_sets.find(set => set['id'] + '' === $('input[type=checkbox]:checked').val());
     this.selected_status_id = +result_set['status'];
     this.selected_status_color = this.statuses[result_set['status']]['color'];
-    console.log(result_set['status']);
   }
 
   set_first_status_as_default() {
     this.selected_status_color = this.statuses[this.statuses_array[0]]['color'];
     this.selected_status_id = +this.statuses[this.statuses_array[0]]['id'];
-    console.log(this.selected_status_id);
   }
 
   add_results(form: NgForm, modal) {
