@@ -25,6 +25,8 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   statistic = {};
   selected_counter = [];
   selected_color;
+  selected_status_id;
+  selected_status_color;
   filter: any[] = [];
 
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
@@ -173,19 +175,16 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   set_sets_status_as_default() {
-    // $('input[type=checkbox]:checked').val();
-    console.log($('input[type=checkbox]:checked').val());
-    this.result_sets.forEach((current_result_set) => { // FIXME: need to get result_sets like a hash. Need server side changes
-      if (+$('input[type=checkbox]:checked').val() === current_result_set['id']) {
-        this.selected_color = +this.statuses[current_result_set['status']]['id'];
-        this.header_background_change(this.statuses[current_result_set['status']]['color']);
-      }
-    });
+    const result_set = this.result_sets.find(set => set['id'] + '' === $('input[type=checkbox]:checked').val());
+    this.selected_status_id = +result_set['status'];
+    this.selected_status_color = this.statuses[result_set['status']]['color'];
+    console.log(result_set['status']);
   }
 
   set_first_status_as_default() {
-    this.selected_color = +this.statuses[this.statuses_array[0]]['id'];
-    this.header_background_change(this.statuses[this.statuses_array[0]]['color']);
+    this.selected_status_color = this.statuses[this.statuses_array[0]]['color'];
+    this.selected_status_id = +this.statuses[this.statuses_array[0]]['id'];
+    console.log(this.selected_status_id);
   }
 
   add_results(form: NgForm, modal) {
