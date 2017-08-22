@@ -1,0 +1,13 @@
+<div style="width: 300px; margin-bottom: 20px; display: inline-block;">
+  <!--FIXME: change style to  design-->
+  <ng-select [allowClear]="true"
+             [items]="items"
+             [disabled]="disabled"
+             (data)="refreshValue($event)"
+             (selected)="selected($event)"
+             (removed)="removed($event)"
+             (typed)="typed($event)"
+             [active]="active_element"
+             placeholder="No status selected">
+  </ng-select>
+</div>

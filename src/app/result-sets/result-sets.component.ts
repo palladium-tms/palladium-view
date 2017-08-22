@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {ResultSet} from '../models/result_set';
 import {Router} from '@angular/router';
@@ -6,6 +6,7 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
+import {StatusSelectorComponent} from '../page-component/status-selector/status-selector/status-selector.component';
 
 declare var $: any;
 
@@ -15,7 +16,10 @@ declare var $: any;
   styleUrls: ['./result-sets.component.css'],
   providers: [PalladiumApiService, StatusFilterPipe]
 })
+
 export class ResultSetsComponent implements OnInit, AfterViewInit {
+  @ViewChild('Selector')
+  private Selector: StatusSelectorComponent;
   run_id = null;
   result_sets: ResultSet[] = [];
   errorMessage;
@@ -24,15 +28,13 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   statuses_array = [];
   statistic = {};
   selected_counter = [];
-  selected_color;
-  selected_status_id;
-  selected_status_color;
+  selected_status_id = null;
   filter: any[] = [];
 
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
-              private ApiService: PalladiumApiService, private router: Router) {
+              private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) {
   }
-
+ // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_sets = [];
@@ -60,7 +62,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       return {'box-shadow': 'inset 0 0 10px ' + this.statuses[id['status']].color};
     }
   }
-
   get_result_sets(run_id) {
     this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + this.run_id)
       .then(
@@ -175,36 +176,39 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   set_sets_status_as_default() {
-    const result_set = this.result_sets.find(set => set['id'] + '' === $('input[type=checkbox]:checked').val());
-    this.selected_status_id = +result_set['status'];
-    this.selected_status_color = this.statuses[result_set['status']]['color'];
+    this.select_default_status(this.result_sets.find(set => set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
   }
 
   set_first_status_as_default() {
-    this.selected_status_color = this.statuses[this.statuses_array[0]]['color'];
-    this.selected_status_id = +this.statuses[this.statuses_array[0]]['id'];
+    this.Selector.clear_selected();
+    this.selected_status_id = null;
   }
 
   add_results(form: NgForm, modal) {
-    if (form.value['result_status'] === '') {
-      form.value['result_status'] = this.selected_color;
-    }
+    console.log(this.selected_status_id);
+    if (this.selected_status_id !== null) {
+      console.log(this.selected_status_id);
     const params = this.set_params_for_add_result({
       description: form.value['result_description'],
-      status: this.statuses[form.value['result_status'].toString()], result_sets: this.selected_counter
+      status: this.statuses[this.selected_status_id], result_sets: this.selected_counter
     });
-    this.httpService.postData('/result_new', params)
+      this.httpService.postData('/result_new', params)
       .then(
         result_sets => {
+          console.log(form.controls);
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {
-              this.result_sets[index]['status'] = form.value['result_status'].toString();
+              this.result_sets[index]['status'] = this.selected_status_id.toString();
               this.calculate_statistic_of_run(this.result_sets);
             }
           });
+          this.Selector.clear_selected();
+          this.selected_status_id = null;
+          form.controls['result_description'].setValue(null);
         },
         error => this.errorMessage = <any>error);
     modal.close();
+    }
   }
 
   set_params_for_add_result(data) {
@@ -217,13 +221,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     return (params);
   }
 
-  changer_header_color() {
-    this.header_background_change(this.statuses[$('option:selected').val()]['color']);
-  }
-
-  header_background_change(color) {
-    $('.status_color').css('background-color', color);
-  }
 
   addfilter(value, self) {
     this.filer_selector(self);
@@ -241,5 +238,14 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     } else {
       $(element).addClass('selected');
     }
+  }
+
+  selected_status_get(selected_id) {
+    this.selected_status_id = selected_id;
+  }
+
+  select_default_status(id) {
+    this.Selector.set_status(id);
+    this.selected_status_id = id;
   }
 }

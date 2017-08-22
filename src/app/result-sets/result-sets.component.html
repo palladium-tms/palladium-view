@@ -49,17 +49,11 @@
   <modal-content>
     Add result for <b>{{this.selected_counter.length}}</b> result_sets
     <form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">
-      <div class="status_color" [ngStyle]="{'background': this.selected_status_color }" *ngIf="this.statuses"></div>
-      <div>
-        <label>Status</label>
-        <select id="status" name="result_status" ngModel required #result_status="ngModel" (click)="changer_header_color()">
-          <!--FIXME: need to set correct varible convert method-->
-          <option *ngFor="let status of  this.statuses_array" [value]="status" [selected]="status == (this.selected_status_id + '')" >
-            {{this.statuses[status].name}}
-          </option>
-        </select>
-      </div>
-      <input type="text" placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
+      <app-status-selector #Selector [statuses] = "this.statuses" (selected_status)="selected_status_get($event)" *ngIf="this.statuses" ></app-status-selector>
+      <small [hidden]="(this.selected_status_id !== null) && !addresultform.submitted">
+        Need to change status
+      </small>
+      <input placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
     </form>
   </modal-content>
   <modal-footer>
