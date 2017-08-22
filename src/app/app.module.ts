@@ -24,6 +24,7 @@ import {AppSettings} from '../services/settings.service';
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
 import { StatusSelectorComponent } from './page-component/status-selector/status-selector/status-selector.component';
+import { SortByCreatedAtPipe } from './pipes/sort-by-created-at./sort-by-created-at.pipe';
 
 
 const appRoutes: Routes = [
@@ -63,6 +64,7 @@ const appRoutes: Routes = [
     EqualValidator,
     StatusFilterPipe,
     StatusSelectorComponent,
+    SortByCreatedAtPipe,
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],

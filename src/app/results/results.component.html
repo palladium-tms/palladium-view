@@ -1,5 +1,5 @@
 <div class="result-space">
-  <div class="result-block" *ngFor="let result of results;"  [ngStyle]="getStylesShadow(result.status_id)">
+  <div class="result-block" *ngFor="let result of results | sortByCreatedAt:'desc';"  [ngStyle]="getStylesShadow(result.status_id)">
     <div class="result-small-block">
       <div class="status-box">
         <div class="status-color-block" [ngStyle]="getStylesBackround(result.status_id)"></div>
