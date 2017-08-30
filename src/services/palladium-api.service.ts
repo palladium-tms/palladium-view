@@ -16,13 +16,26 @@ export class PalladiumApiService {
   }
   block_status(id): Promise<JSON> {
     return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[block]=true'
-      ).then((resp: Response) => {
+    ).then((resp: Response) => {
       return resp;
     });
   }
   color_status(id, color): Promise<JSON> {
     return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[color]=' + color
-      ).then((resp: Response) => {
+    ).then((resp: Response) => {
+      return resp;
+    });
+  }
+  // Token region
+  get_tokens(): Promise<JSON> {
+    return this.httpService.postData('/tokens', '').then((resp: Response) => {
+      return resp['tokens'];
+    });
+  }
+
+  // endregion
+  create_token(name: string): Promise<JSON> {
+    return this.httpService.postData('/token_new', 'token_data[name]=' + name).then((resp: Response) => {
       return resp;
     });
   }

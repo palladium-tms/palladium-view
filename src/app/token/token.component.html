@@ -1,0 +1,12 @@
+<form autocomplete="off" #tokenform="ngForm" (ngSubmit)="create_token(token_name)">
+  <input  class="status-color" name="token_name" ngModel required #token_name="ngModel" autofocus>
+  <button class="btn btn-success" (click)="tokenform.ngSubmit" [disabled]="!token_name.valid">Create</button>
+  <small [hidden]="token_name.valid || (token_name.pristine && !tokenform.submitted)">
+    token name can't be empty
+  </small>
+</form>
+
+<div *ngFor="let current_token of tokens">
+  <div class="token_name">{{current_token['name']}}</div>
+  <pre class="token_value">{{current_token['token']}}</pre>
+</div>
