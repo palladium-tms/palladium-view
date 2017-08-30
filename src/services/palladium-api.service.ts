@@ -26,5 +26,18 @@ export class PalladiumApiService {
       return resp;
     });
   }
+  // Token region
+  get_tokens(): Promise<JSON> {
+    return this.httpService.postData('/tokens', '').then((resp: Response) => {
+      return resp['tokens'];
+    });
+  }
+
+  // endregion
+  create_token(name: string): Promise<JSON> {
+    return this.httpService.postData('/token_new', 'token_data[name]=' + name).then((resp: Response) => {
+      return resp;
+    });
+  }
   // endregion
 }
