@@ -32,7 +32,6 @@ export class PalladiumApiService {
       return resp['tokens'];
     });
   }
-
   // endregion
   create_token(name: string): Promise<JSON> {
     return this.httpService.postData('/token_new', 'token_data[name]=' + name).then((resp: Response) => {
