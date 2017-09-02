@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http-request.service';
+import {AuthenticationService} from './authentication.service';
+import { Router } from '@angular/router';
+
 @Injectable()
 export class PalladiumApiService {
-  constructor( private httpService: HttpService) { }
+  constructor(  private router: Router, private httpService: HttpService, private authenticationService: AuthenticationService ) { }
   // Status reqion
   get_statuses(): Promise<JSON> {
     return this.httpService.postData('/statuses', '').then((resp: Response) => {
@@ -30,6 +33,9 @@ export class PalladiumApiService {
   get_tokens(): Promise<JSON> {
     return this.httpService.postData('/tokens', '').then((resp: Response) => {
       return resp['tokens'];
+    }, (errors: Response) => {
+      this.authenticationService.logout();
+      this.router.navigate(['/login']);
     });
   }
   // endregion
