@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, RequestOptions, Headers } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
+import { Http, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import {AppSettings} from './settings.service';
 import 'rxjs/add/observable/of';
+import {environment} from '../environments/environment';
 
 @Injectable()
 export class AuthenticationService {
   apiurl;
   public token: string;
 
-  constructor(private http: Http,
-              private settings: AppSettings) {
+  constructor(private http: Http) {
     // set token if saved in local storage
-    this.settings.api_url().toPromise().then(data => {this.apiurl = data; });
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
   }
@@ -22,11 +19,8 @@ export class AuthenticationService {
     const headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'});
     const options = new RequestOptions({ headers: headers });
 
-    return this.settings.api_url().toPromise().then(url => {
-      return this.http.post(url + '/login',
-        'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise();
-    }).then(response => {
-      console.log(response);
+      return this.http.post(environment.host + '/login',
+        'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise().then(response => {
       console.log(response.json().token);
       const token = response.json() && response.json().token;
       this.token = token;
@@ -38,17 +32,20 @@ export class AuthenticationService {
     });
   };
 
-  registration(username: string, password: string): Observable<boolean>  {
+  registration(username: string, password: string): Promise<any>  {
     const headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'});
     // headers.append('Authorization', 'Bearer');
+    console.log(environment.host + '/registration');
     const options = new RequestOptions({ headers: headers });
-    return this.http.post(this.apiurl + '/registration',
-      'user_data[email]=' + username + '&user_data[password]=' + password, options)
-      .map((response: Response) => {
-        return true;
-      }).catch((error: any) => {
+    return this.http.post(environment.host + '/registration',
+      'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise()
+      .then(result => {
+        return Promise.resolve({message: ''});
+      }, (error: any) => {
         if (error.status === 401) {
-          return Observable.of(false);
+          return Promise.reject({status: false, message: 'Email or password is incorrect'});
+        } else {
+          return Promise.reject({status: false, message: error});
         }
       });
   }

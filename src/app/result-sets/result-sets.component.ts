@@ -95,7 +95,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       + '&result_set_data[id]=' + (this.result_set_settings_data['id'] - 2);
     this.httpService.postData('/result_set_edit', params)
       .then(
-        result_sets => {
+        (result_sets: any) => {
           if (Object.keys(result_sets.errors).length === 0) {
             this.result_sets[this.result_set_settings_data['index']].name = result_sets.result_set_data.name;
             this.result_sets[this.result_set_settings_data['index']].updated_at = result_sets.result_set_data.updated_at;

@@ -25,15 +25,14 @@ export class RegistrationComponent implements OnInit {
   registration() {
     this.loading = true;
     this.authenticationService.registration(this.model.username, this.model.password)
-      .subscribe(result => {
+      .then(result => {
         if (result === true) {
           // login successful
           this.router.navigate(['/login']);
-        } else {
-          // login failed
-          this.error = 'Email or password is incorrect';
-          this.loading = false;
         }
+      }, errors => {
+          this.error = errors.message;
+          this.loading = false;
       });
   }
 }

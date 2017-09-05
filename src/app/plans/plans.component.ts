@@ -62,7 +62,7 @@ export class PlansComponent implements OnInit {
     const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  this.plan_settings_data['id'];
     this.httpService.postData('/plan_edit', params)
       .then(
-        plans => {
+        (plans: any) => {
           if (Object.keys(plans.errors).length === 0) {
             this.plans[this.plan_settings_data['index']].name = plans.plan_data.name;
             this.plans[this.plan_settings_data['index']].updated_at = plans.plan_data.updated_at;
@@ -78,7 +78,7 @@ export class PlansComponent implements OnInit {
     if (confirm('A u shuare?')) {
       this.httpService.postData('/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
       .then(
-        plans => {
+        (plans: any) => {
           this.plans.splice(this.plan_settings_data['index'], 1);
           if ( this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {
             this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
