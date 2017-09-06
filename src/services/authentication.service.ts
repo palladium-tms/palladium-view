@@ -42,11 +42,8 @@ export class AuthenticationService {
       .then(result => {
         return Promise.resolve({message: ''});
       }, (error: any) => {
-        if (error.status === 401) {
-          return Promise.reject({status: false, message: 'Email or password is incorrect'});
-        } else {
-          return Promise.reject({status: false, message: error});
-        }
+        console.log(error);
+        return Promise.reject({status: false, message: error._body});
       });
   }
 
