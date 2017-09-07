@@ -6,7 +6,6 @@ import {environment} from '../environments/environment';
 
 @Injectable()
 export class AuthenticationService {
-  apiurl;
   public token: string;
 
   constructor(private http: Http) {
@@ -42,7 +41,6 @@ export class AuthenticationService {
       .then(result => {
         return Promise.resolve({message: ''});
       }, (error: any) => {
-        console.log(error);
         return Promise.reject({status: false, message: error._body});
       });
   }
