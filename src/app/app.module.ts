@@ -20,7 +20,6 @@ import {Angular2FontawesomeModule} from 'angular2-fontawesome/angular2-fontaweso
 import {ModalModule} from 'ngx-modal';
 import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive';  // import validator
-import {AppSettings} from '../services/settings.service';
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
 import { StatusSelectorComponent } from './page-component/status-selector/status-selector/status-selector.component';
@@ -70,7 +69,7 @@ const appRoutes: Routes = [
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],
-  providers: [AuthGuard, AuthenticationService, AppSettings, StatusticService, PalladiumApiService, HttpService],
+  providers: [AuthGuard, AuthenticationService, StatusticService, PalladiumApiService, HttpService],
   bootstrap: [MainComponent]
 })
 export class AppModule {

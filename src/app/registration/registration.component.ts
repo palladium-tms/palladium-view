@@ -25,15 +25,28 @@ export class RegistrationComponent implements OnInit {
   registration() {
     this.loading = true;
     this.authenticationService.registration(this.model.username, this.model.password)
-      .subscribe(result => {
-        if (result === true) {
-          // login successful
-          this.router.navigate(['/login']);
+      .then(result => {
+        this.router.navigate(['/login']);
+        this.loading = false;
+      }, errors => {
+        if (errors.message.constructor.name === 'ProgressEvent') {
+          this.error = 'Api server is not work';
         } else {
-          // login failed
-          this.error = 'Email or password is incorrect';
-          this.loading = false;
+          this.error = this.get_error_from_message(errors.message);
         }
+        this.loading = false;
       });
+  }
+
+  get_error_from_message(error: string): string {
+    console.log('get_error_from_message');
+    const errors = JSON.parse(error).errors;
+    let message = '';
+    if (errors.email !== undefined) {
+      for (const current_error of errors.email) {
+        message += current_error;
+      }
+    }
+    return message;
   }
 }

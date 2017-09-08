@@ -76,7 +76,7 @@ export class RunsComponent implements OnInit {
     const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  this.run_settings_data['id'];
     this.httpService.postData('/run_edit', params)
       .then(
-        runs => {
+        (runs: any) => {
           if (Object.keys(runs.errors).length === 0) {
             this.runs[this.run_settings_data['index']].name = runs.run_data.name;
             this.runs[this.run_settings_data['index']].updated_at = runs.run_data.updated_at;

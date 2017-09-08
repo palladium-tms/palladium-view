@@ -50,7 +50,7 @@ export class ProductsComponent implements OnInit {
     const params = 'product_data[name]=' + form.value['product_name'] + '&product_data[id]=' +  this.product_settings_data['id'];
     this.httpService.postData('/product_edit', params)
       .then(
-        products => {
+        (products: any) => {
           if (Object.keys(products.errors).length === 0) {
             this.products[this.product_settings_data['index']].name = products.product_data.name;
             this.products[this.product_settings_data['index']].updated_at = products.product_data.updated_at;

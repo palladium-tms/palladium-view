@@ -3,6 +3,8 @@ sudo apt-get install npm
 npm update
 Нужен nodejs 7!!
 ng serve --host 0.0.0.0
+ npm outdated
+npm i uglify-js@2 -D
 
 -вывести в одно место логи для db, api-server и client-server
 -добавить возможность добавлять/удалять/изменять статусы
