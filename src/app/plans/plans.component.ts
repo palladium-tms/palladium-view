@@ -6,13 +6,14 @@ import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 import {StatusticService} from '../../services/statistic.service';
+import {LocalSettingsService} from '../../services/local-settings.service';
 declare var $: any;
 
 @Component({
   selector: 'app-plans',
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.css'],
-  providers: [PalladiumApiService]
+  providers: [PalladiumApiService, LocalSettingsService]
 })
 export class PlansComponent implements OnInit {
   product_id = null;
@@ -22,9 +23,12 @@ export class PlansComponent implements OnInit {
   statuses;
   all_result = {};
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService,  private router: Router, private statistic: StatusticService ) { }
+              private httpService: HttpService,  private router: Router,
+              private statistic: StatusticService, private localsettings: LocalSettingsService ) { }
 
   ngOnInit() {
+    // this.localsettings.set_suites_visibility(12);
+    // this.localsettings.remove_suites_visibility(12);
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plans = [];
       this.product_id = params.id;
@@ -54,7 +58,17 @@ export class PlansComponent implements OnInit {
           }
           return(this.plans = responce['plans']);
         },
-        error =>  this.errorMessage = <any>error);
+        error =>  this.errorMessage = <any>error).then(res => {
+          console.log('------');
+      this.get_suites(product_id);
+    });
+  }
+
+  get_suites(product_id) {
+    this.ApiService.get_suites(product_id).then(res => {
+      // console.log(res);
+      // console.log('123123123123');
+    });
   }
 
   edit_plan(form: NgForm, modal, valid: boolean) {
