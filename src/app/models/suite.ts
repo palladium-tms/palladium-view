@@ -4,12 +4,20 @@ export class Suite {
   product_id: number;
   created_at: string;
   updated_at: string;
-
-  constructor (id: number, name: string, product_id: number, created_at: string, updated_at: string) {
-    this.id = id;
-    this.name = name;
-    this.product_id = product_id;
-    this.created_at = created_at;
-    this.updated_at = updated_at;
+  statistic: any;
+  constructor (suite) {
+    if (suite == null) {
+      suite = this.create_default_suite();
+    }
+    this.id = suite['id'];
+    this.name = suite['name'];
+    this.product_id = suite['product_id'];
+    this.created_at = suite['created_at'];
+    this.updated_at = suite['updated_at'];
+    this.statistic = suite['statistic'];
+  }
+  create_default_suite() {
+    return {'id': 'id_loading', 'name': 'name_loading',
+      'product_id': 'product_id_loading', 'created_at': 'created_at_loading', 'updated_at': 'updated_at_loading'};
   }
 }

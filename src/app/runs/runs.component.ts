@@ -4,8 +4,8 @@ import {Run} from '../models/run';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
-import {Suite} from '../models/suite';
 import {PalladiumApiService} from '../../services/palladium-api.service';
+import {Suite} from '../models/suite';
 
 declare var $: any;
 
@@ -16,7 +16,7 @@ declare var $: any;
 })
 export class RunsComponent implements OnInit {
   plan_id = null;
-  runs: Run[] = [];
+  runs: Run[] = [new Run(null)];
   statuses;
   errorMessage;
   run_settings_data = {};
@@ -28,13 +28,11 @@ export class RunsComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      console.log(this.ApiService.suites);
-      this.runs = [];
-      this.plan_id = params['id'];
-      this.get_runs(this.plan_id);
       this.ApiService.get_statuses().then(res => {
         this.statuses = res;
         this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
+      }).then(res => {
+        this.get_runs(params['id']);
       });
     });
     if (this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
@@ -45,24 +43,18 @@ export class RunsComponent implements OnInit {
   }
 
   get_runs(plan_id) {
-    this.ApiService.get_runs(plan_id);
-
-    // this.httpService.postData('/runs', 'run_data[plan_id]=' + this.plan_id)
-    //   .then(
-    //     responce => {
-    //       for (const current_run of responce['runs']) {
-    //         this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
-    //         for (const statistic of current_run['statistic']) {
-    //           this.all_result[statistic['run_id']]['all'] += statistic['count'];
-    //           if (statistic['id'] === 0) {
-    //             this.all_result[statistic['run_id']]['lost'] = statistic['count'];
-    //           }
-    //         }
-    //       }
-    //       this.runs = responce['runs'];
-    //       return (Promise.resolve());
-    //     },
-    //     error => this.errorMessage = <any>error);
+    this.runs = [];
+    this.ApiService.get_runs(plan_id).then(runs => {
+      return(runs);
+    }).then(runs => {
+      // console.log(runs);
+      this.runs = runs;
+      this.activatedRoute.parent.params.subscribe(params => {
+        return this.get_suites(params['id']);
+      });
+    }).then(res => {
+      // console.log(res);
+    });
   }
 
   delete_run(modal) {
@@ -118,8 +110,13 @@ export class RunsComponent implements OnInit {
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
 
-  get_suites(product_id) {
-    this.ApiService.get_suites(product_id).then(res => {
+  get_suites(id) {
+    return this.ApiService.get_suites(id).then(suites => {
+      Object(suites).forEach(suite => {
+        if (this.runs.filter(run => run.name === suite.name).length === 0) {
+          this.runs.push(new Run(suite));
+        }
+      });
     });
   }
 }

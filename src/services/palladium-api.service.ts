@@ -63,9 +63,9 @@ export class PalladiumApiService {
     this.suites = [];
     return this.httpService.postData('/suites', 'suite_data[product_id]=' + product_id).then((resp: any) => {
       Object(resp['suites']).forEach(suite => {
-        this.suites.push(new Suite(suite['id'], suite['name'], suite['product_id'], suite['created_at'], suite['updated_at']));
+        this.suites.push(new Suite(suite));
       });
-      console.log(this.suites);
+      // console.log(this.suites);
       return this.suites;
     }, (errors: any) => {
       console.log(errors);
@@ -78,23 +78,9 @@ export class PalladiumApiService {
     return this.httpService.postData('/runs', 'run_data[plan_id]=' + plan_id)
       .then(
         (resp: any) => {
-          console.log(resp);
-          // for (const current_run of responce['runs']) {
-          //   this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
-          //   for (const statistic of current_run['statistic']) {
-          //     this.all_result[statistic['run_id']]['all'] += statistic['count'];
-          //     if (statistic['id'] === 0) {
-          //       this.all_result[statistic['run_id']]['lost'] = statistic['count'];
-          //     }
-          //   }
-          // }
-
           Object(resp['runs']).forEach(run => {
-            this.runs.push(new Run(run['id'], run['name'], run['plan_id'], run['created_at'], run['updated_at']));
+            this.runs.push(new Run(run));
           });
-
-
-          console.log(this.runs);
           return this.runs;
         }, (errors: any) => {
           console.log(errors);

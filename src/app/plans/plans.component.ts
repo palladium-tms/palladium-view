@@ -59,7 +59,6 @@ export class PlansComponent implements OnInit {
           return(this.plans = responce['plans']);
         },
         error =>  this.errorMessage = <any>error).then(res => {
-          console.log('------');
       this.get_suites(product_id);
     });
   }
