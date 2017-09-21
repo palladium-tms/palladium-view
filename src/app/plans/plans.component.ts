@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
+import {Suite} from '../models/suite';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 import {StatusticService} from '../../services/statistic.service';
 import {LocalSettingsService} from '../../services/local-settings.service';
+
 declare var $: any;
 
 @Component({
@@ -17,62 +19,53 @@ declare var $: any;
 })
 export class PlansComponent implements OnInit {
   product_id = null;
-  plans: Plan[] = [];
+  plans: Plan[] = [new Plan(null)];
+  suites: Suite[] = [new Suite(null)];
+  cases_count: number = 0;
   errorMessage;
   plan_settings_data = {};
   statuses;
-  all_result = {};
+
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService,  private router: Router,
-              private statistic: StatusticService, private localsettings: LocalSettingsService ) { }
+              private httpService: HttpService, private router: Router,
+              private statistic: StatusticService, private localsettings: LocalSettingsService) {
+  }
 
   ngOnInit() {
-    // this.localsettings.set_suites_visibility(12);
-    // this.localsettings.remove_suites_visibility(12);
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.plans = [];
       this.product_id = params.id;
       this.get_plans(this.product_id);
       this.ApiService.get_statuses().then(res => {
         this.statuses = res;
-        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
+        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
-      // console.log( this.statistic);
-      // this.statistic.next(Object.assign({}, this.dataStore).todos);
-
     });
   }
 
   get_plans(product_id) {
-    this.httpService.postData('/plans', 'plan_data[product_id]=' + this.product_id)
-      .then(
-        responce => {
-          for (const current_plan of responce['plans'] ) {
-            this.all_result[current_plan['id']] = {'all': 0, 'lost': 0};
-            for (const statistic of current_plan['statistic']) {
-              this.all_result[statistic['plan_id']]['all'] += statistic['count'];
-              if (statistic['id'] === 0) {
-                this.all_result[statistic['plan_id']]['lost'] = statistic['count'];
-              }
-            }
-          }
-          return(this.plans = responce['plans']);
-        },
-        error =>  this.errorMessage = <any>error).then(res => {
-      this.get_suites(product_id);
-    });
-  }
-
-  get_suites(product_id) {
-    this.ApiService.get_suites(product_id).then(res => {
-      // console.log(res);
-      // console.log('123123123123');
+    this.ApiService.get_plans(product_id).then(plans => {
+      this.plans = plans;
+    }).then(res => {
+      return this.ApiService.get_suites(product_id).then(suites => {
+        Object(suites).forEach(suite => {
+          this.cases_count = this.cases_count + suite.statistic['count'];
+        });
+      });
+    }).then(res => {
+      Object(this.plans).forEach(plan => {
+        plan = this.update_statistic(plan);
+      });
+      console.log(this.suites);
+      console.log(this.plans);
+      // merge_and_update_statistic()
     });
   }
 
   edit_plan(form: NgForm, modal, valid: boolean) {
-    if ( !valid ) { return; }
-    const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' +  this.plan_settings_data['id'];
+    if (!valid) {
+      return;
+    }
+    const params = 'plan_data[plan_name]=' + form.value['plan_name'] + '&plan_data[id]=' + this.plan_settings_data['id'];
     this.httpService.postData('/plan_edit', params)
       .then(
         (plans: any) => {
@@ -83,21 +76,21 @@ export class PlansComponent implements OnInit {
             console.log(plans.errors);
           }
         },
-        error =>  this.errorMessage = <any>error);
+        error => this.errorMessage = <any>error);
     modal.close();
   }
 
   delete_plan(modal) {
     if (confirm('A u shuare?')) {
       this.httpService.postData('/plan_delete', 'plan_data[id]=' + this.plan_settings_data['id'])
-      .then(
-        (plans: any) => {
-          this.plans.splice(this.plan_settings_data['index'], 1);
-          if ( this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {
-            this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
-          }
-        },
-        error =>  this.errorMessage = <any>error);
+        .then(
+          (plans: any) => {
+            this.plans.splice(this.plan_settings_data['index'], 1);
+            if (this.router.url.indexOf('/plan/' + plans['plan']) >= 0) {
+              this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
+            }
+          },
+          error => this.errorMessage = <any>error);
       modal.close();
     }
   }
@@ -105,17 +98,49 @@ export class PlansComponent implements OnInit {
   show_settings_button(index) {
     $('#' + index + '.plan-setting-button').show();
   };
+
   hide_settings_button(index) {
     $('#' + index + '.plan-setting-button').hide();
   };
+
   settings(modal, plan, index, form) {
     this.plan_settings_data = {id: plan.id, index: index};
     modal.open();
     form.controls['plan_name'].setValue(plan.name);
   }
+
   set_space_width() {
     $('.product-space').removeClass('big-column small-column').addClass('very-big-column');
     $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
+
+  log(val) {
+    console.log(val);
+  }
+  update_statistic(plan) {
+    console.log(plan.all_statistic['all']);
+    const lost_count = this.cases_count - plan.all_statistic['all'];
+    // plan.all_statistic['all'] = plan.all_statistic['all'] + lost_count;
+    plan.statistic.push({plan_id: plan.id, status: 0, count: lost_count});
+    // console.log('=========');
+    // console.log(plan);
+    plan.get_statistic();
+    // console.log(plan);
+    // console.log(plan.all_statistic['lost']);
+    // console.log('=========');
+    console.log(plan.all_statistic['all']);
+
+    return(plan);
+  }
+
+  // get_suites(id) {
+  //   return this.ApiService.get_suites(id).then(suites => {
+  //     Object(suites).forEach(suite => {
+  //       if (this.runs.filter(run => run.name === suite.name).length === 0) {
+  //         this.runs.push(new Run(suite));
+  //       }
+  //     });
+  //   });
+  // }
 }

@@ -20,7 +20,6 @@ export class RunsComponent implements OnInit {
   statuses;
   errorMessage;
   run_settings_data = {};
-  all_result = {};
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private httpService: HttpService, private router: Router) {

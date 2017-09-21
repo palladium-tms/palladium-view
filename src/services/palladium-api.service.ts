@@ -4,10 +4,12 @@ import {AuthenticationService} from './authentication.service';
 import {Router} from '@angular/router';
 import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
+import {Plan} from '../app/models/plan';
 
 @Injectable()
 export class PalladiumApiService {
   suites: Suite[] = [];
+  plans: Plan[] = [];
   runs: Run[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
@@ -72,6 +74,7 @@ export class PalladiumApiService {
     });
   }
   //#endregion
+
   //#region Run
   get_runs(plan_id): Promise<Run[]> {
     this.runs = [];
@@ -82,6 +85,22 @@ export class PalladiumApiService {
             this.runs.push(new Run(run));
           });
           return this.runs;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+  //#endregion
+
+  //#region Plans
+  get_plans(product_id): Promise<Plan[]> {
+    this.plans = [];
+    return this.httpService.postData('/plans', 'plan_data[product_id]=' + product_id)
+      .then(
+        (resp: any) => {
+          Object(resp['plans']).forEach(plan => {
+            this.plans.push(new Plan(plan));
+          });
+          return this.plans;
         }, (errors: any) => {
           console.log(errors);
         });

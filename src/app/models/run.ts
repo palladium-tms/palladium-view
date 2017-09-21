@@ -4,7 +4,7 @@ export class Run {
   plan_id: number;
   created_at: number;
   updated_at: number;
-  statistic: any;
+  statistic: any = [];
   all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
   constructor (run) {
     if (run === null) {
