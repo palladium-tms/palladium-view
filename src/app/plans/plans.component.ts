@@ -48,7 +48,7 @@ export class PlansComponent implements OnInit {
     }).then(res => {
       return this.ApiService.get_suites(product_id).then(suites => {
         Object(suites).forEach(suite => {
-          this.cases_count = this.cases_count + suite.statistic['count'];
+          this.cases_count += suite.statistic['count'];
         });
       });
     }).then(res => {
@@ -119,28 +119,10 @@ export class PlansComponent implements OnInit {
     console.log(val);
   }
   update_statistic(plan) {
-    console.log(plan.all_statistic['all']);
-    const lost_count = this.cases_count - plan.all_statistic['all'];
-    // plan.all_statistic['all'] = plan.all_statistic['all'] + lost_count;
-    plan.statistic.push({plan_id: plan.id, status: 0, count: lost_count});
-    // console.log('=========');
-    // console.log(plan);
+    const untested = this.cases_count - plan.all_statistic['all'];
+    console.log(untested);
+    plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
     plan.get_statistic();
-    // console.log(plan);
-    // console.log(plan.all_statistic['lost']);
-    // console.log('=========');
-    console.log(plan.all_statistic['all']);
-
     return(plan);
   }
-
-  // get_suites(id) {
-  //   return this.ApiService.get_suites(id).then(suites => {
-  //     Object(suites).forEach(suite => {
-  //       if (this.runs.filter(run => run.name === suite.name).length === 0) {
-  //         this.runs.push(new Run(suite));
-  //       }
-  //     });
-  //   });
-  // }
 }
