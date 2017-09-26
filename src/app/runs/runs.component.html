@@ -1,21 +1,22 @@
 <div class="run-space very-big-column">
-  <div class="run-block" routerLinkActive="active" *ngFor="let run of runs; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+  <div class="run-block" routerLinkActive="active" *ngFor="let object of runs_and_suites; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div id="{{index}}" class="setting run-setting-button" (click)="settings(runsettingsModal, run, index, settingsform);">
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="run-name">
-      <span class="lost-result">{{run.all_statistic['attitude'] || 0 | percent}}</span>
+      <span class="lost-result">{{object.all_statistic['attitude'] || 0 | percent}}</span>
       <div class="run-name-link">
       <div class="statistic status-name">
         <ng-container *ngIf="this.statuses">
-        <span *ngFor="let status of run.statistic" class="status-position"
-              [ngStyle]="{ 'width': (status.count / run.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status.status]['color']}">
+        <span *ngFor="let status of object.statistic" class="status-position"
+              [ngStyle]="{ 'width': (status.count / object.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status.status]['color']}">
         </span>
         </ng-container>
       </div>
-     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width(index)" [routerLink]="['./run', run.id]">{{run.name}}</a></div>
+     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width(index)" [routerLink]="['./' + object.constructor.name.toLowerCase(), object.id]">{{object.name}}</a>
+      </div>
       <div *ngIf="this.statuses" class="status-legend-small-block">
-        <span *ngFor="let status of run.statistic" class="status-legend-small">
+        <span *ngFor="let status of object.statistic" class="status-legend-small">
           {{ status['count'] }} {{ this.statuses[status['status']]['name'] }},
         </span>
       </div>

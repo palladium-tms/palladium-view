@@ -23,10 +23,10 @@ import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive';  // import validator
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
-import { StatusSelectorComponent } from './page-component/status-selector/status-selector/status-selector.component';
-import { SortByCreatedAtPipe } from './pipes/sort-by-created-at./sort-by-created-at.pipe';
-import { TokenComponent } from './token/token.component';
-
+import {StatusSelectorComponent} from './page-component/status-selector/status-selector/status-selector.component';
+import {SortByCreatedAtPipe} from './pipes/sort-by-created-at./sort-by-created-at.pipe';
+import {TokenComponent} from './token/token.component';
+import {CasesComponent} from './cases/cases.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -37,11 +37,11 @@ const appRoutes: Routes = [
       path: 'product/:id', component: PlansComponent, children: [
       {
         path: 'plan/:id', component: RunsComponent, children: [
-        {
-          path: 'run/:id', component: ResultSetsComponent, children: [
+        {path: 'run/:id', component: ResultSetsComponent, children: [
           {path: 'result_set/:id', component: ResultsComponent}
         ]
-        }
+        },
+        {path: 'suite/:id', component: CasesComponent}
       ]
       }
     ]
@@ -67,6 +67,7 @@ const appRoutes: Routes = [
     StatusSelectorComponent,
     SortByCreatedAtPipe,
     TokenComponent,
+    CasesComponent
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],

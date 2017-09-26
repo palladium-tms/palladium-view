@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
+import {Suite} from '../models/suite';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {Suite} from '../models/suite';
 
 declare var $: any;
 
@@ -15,8 +15,9 @@ declare var $: any;
   styleUrls: ['./runs.component.css']
 })
 export class RunsComponent implements OnInit {
-  plan_id = null;
-  runs: Run[] = [new Run(null)];
+  runs = [];
+  suites = [];
+  runs_and_suites = [];
   statuses;
   errorMessage;
   run_settings_data = {};
@@ -34,7 +35,7 @@ export class RunsComponent implements OnInit {
         this.get_runs(params['id']);
       });
     });
-    if (this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
+    if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
       $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
@@ -42,17 +43,18 @@ export class RunsComponent implements OnInit {
   }
 
   get_runs(plan_id) {
+    this.runs_and_suites = [];
     this.runs = [];
+    this.suites = [];
     this.ApiService.get_runs(plan_id).then(runs => {
-      return(runs);
-    }).then(runs => {
-      // console.log(runs);
-      this.runs = runs;
-      this.activatedRoute.parent.params.subscribe(params => {
-        return this.get_suites(params['id']);
+      Object(runs).forEach(run => {
+        this.runs.push(new Run(run));
       });
-    }).then(res => {
-      // console.log(res);
+      return (runs);
+    }).then(runs => {
+      return this.activatedRoute.parent.params.subscribe(params => {
+        return this.get_runs_and_suites(params['id']);
+      });
     });
   }
 
@@ -109,13 +111,18 @@ export class RunsComponent implements OnInit {
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
 
-  get_suites(id) {
-    return this.ApiService.get_suites(id).then(suites => {
+  log(val) {
+    console.log(val);
+  }
+
+  get_runs_and_suites(id) {
+    this.ApiService.get_suites(id).then(suites => {
       Object(suites).forEach(suite => {
         if (this.runs.filter(run => run.name === suite.name).length === 0) {
-          this.runs.push(new Run(suite));
+          this.suites.push(new Suite(suite));
         }
       });
+      this.runs_and_suites = this.runs.concat(this.suites);
     });
   }
 }

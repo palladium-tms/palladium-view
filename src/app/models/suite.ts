@@ -4,7 +4,9 @@ export class Suite {
   product_id: number;
   created_at: string;
   updated_at: string;
-  statistic: any;
+  statistic = [{'suite_id': 0, 'status': 0, 'count': 0}];
+  all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
+
   constructor (suite) {
     if (suite == null) {
       suite = this.create_default_suite();
@@ -18,6 +20,8 @@ export class Suite {
   }
   create_default_suite() {
     return {'id': 'id_loading', 'name': 'name_loading',
-      'product_id': 'product_id_loading', 'created_at': 'created_at_loading', 'updated_at': 'updated_at_loading'};
+      'product_id': 'product_id_loading',
+      'created_at': 'created_at_loading', 'updated_at': 'updated_at_loading',
+      'statistic': [{'suite_id': 0, 'status': 0, 'count': 0}]};
   }
 }

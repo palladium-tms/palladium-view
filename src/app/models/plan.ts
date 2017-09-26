@@ -9,7 +9,6 @@ export class Plan {
   constructor (plan) {
     if (plan === null) {
       this.create_default_plan();
-    } else if (plan.constructor.name === 'Suite') {
     } else {
       this.id = plan['id'];
       this.name = plan['name'];
@@ -43,7 +42,6 @@ export class Plan {
   }
   sort_statistic() {
     this.statistic.sort(function (s1, s2) {
-      console.log(s1);
       return(s1['status'] < s2['status']);
     });
   }

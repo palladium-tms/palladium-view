@@ -48,16 +48,14 @@ export class PlansComponent implements OnInit {
     }).then(res => {
       return this.ApiService.get_suites(product_id).then(suites => {
         Object(suites).forEach(suite => {
-          this.cases_count += suite.statistic['count'];
+          // console.log(suite);
+          this.cases_count += suite.statistic[0]['count'];
         });
       });
     }).then(res => {
       Object(this.plans).forEach(plan => {
-        plan = this.update_statistic(plan);
+        this.update_statistic(plan);
       });
-      console.log(this.suites);
-      console.log(this.plans);
-      // merge_and_update_statistic()
     });
   }
 
@@ -120,7 +118,6 @@ export class PlansComponent implements OnInit {
   }
   update_statistic(plan) {
     const untested = this.cases_count - plan.all_statistic['all'];
-    console.log(untested);
     plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
     plan.get_statistic();
     return(plan);

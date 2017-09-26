@@ -5,12 +5,14 @@ import {Router} from '@angular/router';
 import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Plan} from '../app/models/plan';
+import {Case} from '../app/models/case';
 
 @Injectable()
 export class PalladiumApiService {
   suites: Suite[] = [];
   plans: Plan[] = [];
   runs: Run[] = [];
+  cases: Case[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -62,15 +64,25 @@ export class PalladiumApiService {
 
   //#region Suite
   get_suites(product_id): Promise<Suite[]> {
-    this.suites = [];
     return this.httpService.postData('/suites', 'suite_data[product_id]=' + product_id).then((resp: any) => {
+      this.suites = [];
       Object(resp['suites']).forEach(suite => {
         this.suites.push(new Suite(suite));
       });
-      // console.log(this.suites);
       return this.suites;
     }, (errors: any) => {
-      console.log(errors);
+    });
+  }
+  //#endregion
+  //#region Cases
+  get_cases(id): Promise<Case[]> {
+    return this.httpService.postData('/cases', 'case_data[suite_id]=' + id).then((resp: any) => {
+      this.cases = [];
+      Object(resp['cases']).forEach(current_case => {
+        this.cases.push(new Case(current_case));
+      });
+      return this.cases;
+    }, (errors: any) => {
     });
   }
   //#endregion

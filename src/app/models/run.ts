@@ -5,6 +5,7 @@ export class Run {
   created_at: number;
   updated_at: number;
   statistic: any = [];
+  suite_constructor = false;
   all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
   constructor (run) {
     if (run === null) {
@@ -30,11 +31,12 @@ export class Run {
     this.statistic = [];
   }
   create_run_by_suite(suite) {
-    this.id = 0;
+    this.id = suite.id;
     this.name = suite.name;
     this.plan_id = 0;
     this.created_at = 0;
     this.updated_at = 0;
+    this.suite_constructor = true;
     this.statistic = [suite.statistic];
   }
   get_statistic() {
