@@ -1,0 +1,34 @@
+<div class="case-space very-big-column">
+  <div class="cases_list">
+    <!--<div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">-->
+      <!--<span>Add result</span><span class="badge">{{this.selected_counter.length}}</span>-->
+    <!--</div>-->
+    <div class="case-block" routerLinkActive="active" *ngFor="let case of cases">
+      <div class="case-name">
+        <!--<input type="checkbox" name="result_option" (change)="selectCounter(case)" [value]="case.id">-->
+        <span id="result_set-name-{{index}}">{{case.name}}</span>
+        <div id="{{index}}" class="setting result-set-setting-button">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<modal #result_setadd_resultModal>-->
+  <!--<modal-header>-->
+    <!--<h1>Add Result</h1>-->
+  <!--</modal-header>-->
+  <!--<modal-content>-->
+    <!--Add result for <b>{{this.selected_counter.length}}</b> result_sets-->
+    <!--<form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">-->
+      <!--<app-status-selector #Selector [statuses] = "this.statuses" (selected_status)="selected_status_get($event)" *ngIf="this.statuses" ></app-status-selector>-->
+      <!--<small [hidden]="(this.selected_status_id !== null) && !addresultform.submitted">-->
+        <!--Need to change status-->
+      <!--</small>-->
+      <!--<input placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>-->
+    <!--</form>-->
+  <!--</modal-content>-->
+  <!--<modal-footer>-->
+    <!--<button class="btn btn-success" (click)="addresultform.ngSubmit.emit(addresultform)">Add result</button>-->
+  <!--</modal-footer>-->
+<!--</modal>-->
