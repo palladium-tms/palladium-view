@@ -1,7 +1,7 @@
 export class Case {
   id: number;
   name: string;
-  status: string;
+  status = 0;
   suite_id: string;
   created_at: number;
   updated_at: number;

@@ -108,6 +108,7 @@ export class PlansComponent implements OnInit {
   }
 
   set_space_width() {
+    $('.lost-result').show();
     $('.product-space').removeClass('big-column small-column').addClass('very-big-column');
     $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
@@ -116,10 +117,13 @@ export class PlansComponent implements OnInit {
   log(val) {
     console.log(val);
   }
+
   update_statistic(plan) {
-    const untested = this.cases_count - plan.all_statistic['all'];
-    plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
-    plan.get_statistic();
-    return(plan);
+    if (plan.all_statistic['all'] < this.cases_count) {
+      const untested = this.cases_count - plan.all_statistic['all'];
+      plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
+      plan.get_statistic();
+    }
+    return (plan);
   }
 }

@@ -1,6 +1,7 @@
 import {Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {ResultSet} from '../models/result_set';
+import {Case} from '../models/case';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -26,6 +27,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   result_set_settings_data = {};
   statuses;
   statuses_array = [];
+  result_sets_and_cases = [];
   statistic = {};
   selected_counter = [];
   selected_status_id = null;
@@ -38,6 +40,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_sets = [];
+      this.result_sets_and_cases = [];
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
       this.ApiService.get_statuses().then(res => {
@@ -57,19 +60,22 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
 
-  getStyles(id) {
-    if (this.statuses) {
-      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[id['status']].color};
+  getStyles(object) {
+    if (this.statuses && object['status']) {
+      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[object['status']].color};
     }
   }
   get_result_sets(run_id) {
-    this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + this.run_id)
-      .then(
-        responce => {
-          this.calculate_statistic_of_run(responce['result_sets']);
-          return (this.result_sets = responce['result_sets']);
-        },
-        error => this.errorMessage = <any>error);
+    this.ApiService.get_result_sets(run_id).then(result_sets => {
+      this.result_sets = result_sets;
+      console.log(this.result_sets);
+      this.calculate_statistic(result_sets);
+      return result_sets;
+    }).then(result_sets => {
+      return this.activatedRoute.parent.parent.params.subscribe(params => {
+        this.get_result_sets_and_cases(run_id, params['id']);
+      });
+    });
   }
 
   delete_result_set(modal) {
@@ -128,13 +134,13 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('.lost-result').hide();
   }
 
-  getStylesBackround(id) {
-    if (this.statuses) {
-      return {'background': this.statuses[id].color};
+  getStylesBackround(object) {
+    if (this.statuses && object['status']) {
+      return {'background': this.statuses[object['status']].color};
     }
   }
 
-  calculate_statistic_of_run(data): void { // FIXME: it must be sended from run component, buti dont know how
+  calculate_statistic(data): void {
     this.statistic = {};
     for (const result_set of data) {
       if (result_set['status'] in this.statistic) {
@@ -199,7 +205,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
           this.result_sets.forEach((current_result_set, index) => {
             if (result_sets['result_set_id'].includes(current_result_set['id'])) {
               this.result_sets[index]['status'] = this.selected_status_id.toString();
-              this.calculate_statistic_of_run(this.result_sets);
+              this.calculate_statistic(this.result_sets);
             }
           });
           this.Selector.clear_selected();
@@ -220,7 +226,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     params += 'result_data[status]=' + data['status']['name'];
     return (params);
   }
-
 
   addfilter(value, self) {
     this.filer_selector(self);
@@ -247,5 +252,18 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   select_default_status(id) {
     this.Selector.set_status(id);
     this.selected_status_id = id;
+  }
+
+  get_result_sets_and_cases(run_id, product_id) {
+    const cases = [];
+    this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
+      Object(all_cases ).forEach(current_case => {
+        if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
+          cases.push(new Case(current_case));
+        }
+      });
+      this.result_sets_and_cases = this.result_sets.concat(cases);
+      this.calculate_statistic(this.result_sets_and_cases);
+    });
   }
 }

@@ -21,7 +21,6 @@ export class CasesComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      console.log(params);
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
         this.statuses_array = Object.keys(this.statuses);

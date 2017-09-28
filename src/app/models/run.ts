@@ -40,9 +40,10 @@ export class Run {
     this.statistic = [suite.statistic];
   }
   get_statistic() {
-      for (const one_status_data of this.statistic) {
+    this.all_statistic = {'all': 0, 'lost': 0, 'attitude': 0};
+    for (const one_status_data of this.statistic) {
         this.all_statistic['all'] += one_status_data['count'];
-        if (one_status_data['id'] === 0) {
+        if (one_status_data.status === 0) {
           this.all_statistic['lost'] = one_status_data['count'];
         }
       }

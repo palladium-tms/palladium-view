@@ -6,6 +6,7 @@ import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
+import {ResultSet} from '../app/models/result_set';
 
 @Injectable()
 export class PalladiumApiService {
@@ -13,6 +14,7 @@ export class PalladiumApiService {
   plans: Plan[] = [];
   runs: Run[] = [];
   cases: Case[] = [];
+  result_sets: ResultSet[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -83,8 +85,22 @@ export class PalladiumApiService {
       });
       return this.cases;
     }, (errors: any) => {
+      console.log(errors);
     });
   }
+
+  get_cases_by_run_id(run_id, product_id): Promise<Case[]> {
+    return this.httpService.postData('/cases', 'case_data[run_id]=' + run_id + '&case_data[product_id]=' + product_id).then((resp: any) => {
+      this.cases = [];
+      Object(resp['cases']).forEach(current_case => {
+        this.cases.push(new Case(current_case));
+      });
+      return this.cases;
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
   //#endregion
 
   //#region Run
@@ -113,6 +129,22 @@ export class PalladiumApiService {
             this.plans.push(new Plan(plan));
           });
           return this.plans;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+  //#endregion
+
+  //#region Result Set
+  get_result_sets(run_id): Promise<ResultSet[]> {
+    this.result_sets = [];
+    return this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + run_id)
+      .then(
+        resp => {
+          Object(resp['result_sets']).forEach(result_set => {
+            this.result_sets.push(new ResultSet(result_set));
+          });
+          return this.result_sets;
         }, (errors: any) => {
           console.log(errors);
         });

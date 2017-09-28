@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
@@ -21,10 +21,8 @@ export class RunsComponent implements OnInit {
   statuses;
   errorMessage;
   run_settings_data = {};
-
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService, private router: Router) {
-  }
+              private httpService: HttpService, private router: Router) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -118,8 +116,13 @@ export class RunsComponent implements OnInit {
   get_runs_and_suites(id) {
     this.ApiService.get_suites(id).then(suites => {
       Object(suites).forEach(suite => {
-        if (this.runs.filter(run => run.name === suite.name).length === 0) {
+        const same = this.runs.filter(run => run.name === suite.name);
+        if (same.length === 0) {
           this.suites.push(new Suite(suite));
+        } else if (same[0].all_statistic['all'] !== same[0].all_statistic['all']) {
+          const untested = suite.all_statistic['all'] - same[0].all_statistic['all'];
+          same[0].statistic.push({plan_id:  same[0].id, status: 0, count: untested});
+          same[0].get_statistic();
         }
       });
       this.runs_and_suites = this.runs.concat(this.suites);
