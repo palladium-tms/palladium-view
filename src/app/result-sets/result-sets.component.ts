@@ -26,6 +26,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   errorMessage;
   result_set_settings_data = {};
   statuses;
+  all_statuses;
   statuses_array = [];
   result_sets_and_cases = [];
   statistic = {};
@@ -45,6 +46,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       this.get_result_sets(this.run_id);
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
+        this.all_statuses = JSON.parse(JSON.stringify(res));
         this.statuses_array = Object.keys(this.statuses);
         this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });

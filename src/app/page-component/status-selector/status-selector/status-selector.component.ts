@@ -7,7 +7,7 @@ import {Status} from '../../../models/status';
   encapsulation: ViewEncapsulation.None  // Enable dynamic HTML styles
 })
 export class StatusSelectorComponent implements OnInit, OnChanges {
-  @Input() statuses: Status[];
+  @Input() all_statuses: Status[];
   @Output() selected_status = new EventEmitter<string>();
 
   private value: any = {};
@@ -17,10 +17,10 @@ export class StatusSelectorComponent implements OnInit, OnChanges {
   private items: Array<any> = [];
 
   public ngOnInit(): any {
-    Object.keys(this.statuses).forEach(status => {
+    Object.keys(this.all_statuses).forEach(status => {
       this.items.push({
         id: status,
-        text: `<colorbox style='background-color:${this.statuses[status]['color']};'></colorbox>${this.statuses[status]['name']}`
+        text: `<colorbox style='background-color:${this.all_statuses[status]['color']};'></colorbox>${this.all_statuses[status]['name']}`
       });
     });
   }
@@ -65,7 +65,7 @@ export class StatusSelectorComponent implements OnInit, OnChanges {
   public set_status(id) {
     this.active_element = [{
       id: id,
-      text: `<colorbox style='background-color:${this.statuses[id]['color']};'></colorbox>${this.statuses[id]['name']}`
+      text: `<colorbox style='background-color:${this.all_statuses[id]['color']};'></colorbox>${this.all_statuses[id]['name']}`
     }];
   }
 }
