@@ -56,18 +56,32 @@ export class RunsComponent implements OnInit {
     });
   }
 
-  delete_run(modal) {
-    if (confirm('A u shuare?')) {
-      this.httpService.postData('/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
-        .then(
-          runs => {
-            this.runs.splice(this.run_settings_data['index'], 1);
-            if (this.router.url.indexOf('/run/' + runs['run']) >= 0) {
-              this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
-            }
-          },
-          error => this.errorMessage = <any>error);
-      modal.close();
+  delete_object(modal) {
+    // if (this.run_settings_data.constructor.name)
+    console.log(this.run_settings_data['object'].constructor.name === 'Suite');
+    if (this.run_settings_data['object'].constructor.name === 'Suite') {
+      if (confirm('A u shuare?')) {
+        this.ApiService.delete_suite(this.run_settings_data['id']).then(suite => {
+          this.runs_and_suites.splice(this.run_settings_data['index'], 1);
+          if (this.router.url.indexOf('/suite/' + suite['id']) >= 0) {
+            this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+          }
+        });
+        modal.close();
+      }
+    } else {
+      if (confirm('A u shuare?')) {
+        this.httpService.postData('/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
+          .then(
+            runs => {
+              this.runs_and_suites[this.run_settings_data['index']] = new Suite(this.runs_and_suites[this.run_settings_data['index']]);
+              if (this.router.url.indexOf('/run/' + runs['run']) >= 0) {
+                this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
+              }
+            },
+            error => this.errorMessage = <any>error);
+        modal.close();
+      }
     }
   }
 
@@ -97,7 +111,7 @@ export class RunsComponent implements OnInit {
   };
 
   settings(modal, run, index, form) {
-    this.run_settings_data = {id: run.id, index: index};
+    this.run_settings_data = {object: run, id: run.id, index: index};
     modal.open();
     form.controls['run_name'].setValue(run.name);
   }

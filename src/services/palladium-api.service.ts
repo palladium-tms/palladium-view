@@ -75,6 +75,17 @@ export class PalladiumApiService {
     }, (errors: any) => {
     });
   }
+
+  delete_suite(suite_id): Promise<any> {
+    return this.httpService.postData('/suite_delete', 'suite_data[id]=' + suite_id).then((resp: any) => {
+      console.log(resp);
+
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+
+  }
   //#endregion
   //#region Cases
   get_cases(id): Promise<Case[]> {
