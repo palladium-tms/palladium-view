@@ -78,8 +78,6 @@ export class PalladiumApiService {
 
   delete_suite(suite_id): Promise<any> {
     return this.httpService.postData('/suite_delete', 'suite_data[id]=' + suite_id).then((resp: any) => {
-      console.log(resp);
-
       return new Suite(resp['suite']);
     }, (errors: any) => {
       console.log(errors);
@@ -111,7 +109,14 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
-
+  delete_case(case_id): Promise<any> {
+    return this.httpService.postData('/case_delete', 'case_data[id]=' + case_id).then((resp: any) => {
+      console.log(resp);
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
   //#endregion
 
   //#region Run

@@ -16,6 +16,7 @@ export class CasesComponent implements OnInit {
   statuses;
   statuses_array;
   selected_status_id: number;
+  case_settings_data = {};
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
               private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) { }
 
@@ -52,14 +53,32 @@ export class CasesComponent implements OnInit {
     }
   }
 
-  selected_status_get(selected_id) {
-    this.selected_status_id = selected_id;
-  }
+  // selected_status_get(selected_id) {
+  //   this.selected_status_id = selected_id;
+  // }
+  //
+  // add_result_modal(modal) {
+  //   if (this.selected_counter.length !== 0) {
+  //     modal.open();
+  //   }
+  // }
+  show_settings_button(index) {
+    $('#' + index + '.case-setting-button').show();
+  };
 
-  add_result_modal(modal) {
-    if (this.selected_counter.length !== 0) {
-      modal.open();
-    }
+  hide_settings_button(index) {
+    $('#' + index + '.case-setting-button').hide();
+  };
+  edit_case() {}
+  delete_case(casesettingsModal) {
+    this.ApiService.delete_case(this.case_settings_data['id']).then(res => {
+      this.cases.splice(this.case_settings_data['index'], 1);
+    });
+    casesettingsModal.close();
   }
-
+  settings(modal, this_case, index, form) {
+    this.case_settings_data = {id: this_case.id, index: index};
+    modal.open();
+    form.controls['case_name'].setValue(this_case.name);
+  }
 }

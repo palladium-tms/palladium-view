@@ -3,32 +3,35 @@
     <!--<div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">-->
       <!--<span>Add result</span><span class="badge">{{this.selected_counter.length}}</span>-->
     <!--</div>-->
-    <div class="case-block" routerLinkActive="active" *ngFor="let case of cases">
+
+    <div class="case-block" routerLinkActive="active" *ngFor="let case of cases; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+      <div id="{{index}}" class="setting case-setting-button" (click)="settings(casesettingsModal, case, index, settingsform);">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </div>
       <div class="case-name">
         <!--<input type="checkbox" name="result_option" (change)="selectCounter(case)" [value]="case.id">-->
         <span id="result_set-name-{{index}}">{{case.name}}</span>
-        <div id="{{index}}" class="setting result-set-setting-button">
-        </div>
+
       </div>
     </div>
   </div>
-</div>
+  </div>
 
-<!--<modal #result_setadd_resultModal>-->
-  <!--<modal-header>-->
-    <!--<h1>Add Result</h1>-->
-  <!--</modal-header>-->
-  <!--<modal-content>-->
-    <!--Add result for <b>{{this.selected_counter.length}}</b> result_sets-->
-    <!--<form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">-->
-      <!--<app-status-selector #Selector [statuses] = "this.statuses" (selected_status)="selected_status_get($event)" *ngIf="this.statuses" ></app-status-selector>-->
-      <!--<small [hidden]="(this.selected_status_id !== null) && !addresultform.submitted">-->
-        <!--Need to change status-->
-      <!--</small>-->
-      <!--<input placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>-->
-    <!--</form>-->
-  <!--</modal-content>-->
-  <!--<modal-footer>-->
-    <!--<button class="btn btn-success" (click)="addresultform.ngSubmit.emit(addresultform)">Add result</button>-->
-  <!--</modal-footer>-->
-<!--</modal>-->
+<modal #casesettingsModal>
+  <modal-header>
+    <h1>Case settings</h1>
+  </modal-header>
+  <modal-content>
+    Change case name
+    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_case(settingsform, casesettingsModal, settingsform.valid )">
+      <input type="text" class="case-name" name="case_name" ngModel required #case_name="ngModel" autofocus>
+      <small [hidden]="case_name.valid || (case_name.pristine && !settingsform.submitted)">
+        case_name name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-danger result-set-delete-button" (click)="delete_case(casesettingsModal)">Delete</button>
+    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>
