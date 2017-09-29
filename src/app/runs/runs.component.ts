@@ -133,7 +133,7 @@ export class RunsComponent implements OnInit {
         const same = this.runs.filter(run => run.name === suite.name);
         if (same.length === 0) {
           this.suites.push(new Suite(suite));
-        } else if (same[0].all_statistic['all'] !== same[0].all_statistic['all']) {
+        } else if (same[0].all_statistic['all'] !== suite.all_statistic['all']) {
           const untested = suite.all_statistic['all'] - same[0].all_statistic['all'];
           same[0].statistic.push({plan_id:  same[0].id, status: 0, count: untested});
           same[0].get_statistic();

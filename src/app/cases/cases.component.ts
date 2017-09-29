@@ -71,10 +71,12 @@ export class CasesComponent implements OnInit {
   };
   edit_case() {}
   delete_case(casesettingsModal) {
-    this.ApiService.delete_case(this.case_settings_data['id']).then(res => {
-      this.cases.splice(this.case_settings_data['index'], 1);
-    });
-    casesettingsModal.close();
+    if (confirm('A u shuare?')) {
+      this.ApiService.delete_case(this.case_settings_data['id']).then(res => {
+        this.cases.splice(this.case_settings_data['index'], 1);
+      });
+      casesettingsModal.close();
+    }
   }
   settings(modal, this_case, index, form) {
     this.case_settings_data = {id: this_case.id, index: index};

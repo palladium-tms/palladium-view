@@ -79,17 +79,26 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   delete_result_set(modal) {
-    if (confirm('A u shuare?')) {
-      this.httpService.postData('/result_set_delete', 'result_set_data[id]=' + this.result_set_settings_data['id'])
-        .then(
-          result_sets => {
-            this.result_sets.splice(this.result_set_settings_data['index'], 1);
-            if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
-              this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
-            }
-          },
-          error => this.errorMessage = <any>error);
-      modal.close();
+    if (this.result_set_settings_data['object'].constructor.name === 'ResultSet') {
+      if (confirm('A u shuare?')) {
+        this.httpService.postData('/result_set_delete', 'result_set_data[id]=' + this.result_set_settings_data['id'])
+          .then(
+            result_sets => {
+              this.result_sets_and_cases[this.result_set_settings_data['index']] = new Case(this.result_set_settings_data['object']);
+              if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
+                this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
+              }
+            },
+            error => this.errorMessage = <any>error);
+        modal.close();
+      }
+    } else {
+      if (confirm('A u shuare?')) {
+        this.ApiService.delete_case(this.result_set_settings_data['id']).then(res => {
+          this.result_sets_and_cases.splice(this.result_set_settings_data['index'], 1);
+        });
+        modal.close();
+      }
     }
   }
 
@@ -120,10 +129,10 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('#' + index + '.result-set-setting-button').hide();
   };
 
-  settings(modal, result_set, index, form) {
-    this.result_set_settings_data = {id: result_set.id, index: index};
+  settings(modal, object, index, form) {
+    this.result_set_settings_data = {object: object, id: object.id, index: index};
     modal.open();
-    form.controls['result_set_name'].setValue(result_set.name);
+    form.controls['result_set_name'].setValue(object.name);
   }
 
   set_space_width() {
