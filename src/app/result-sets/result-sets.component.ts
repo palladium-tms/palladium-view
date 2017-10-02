@@ -108,18 +108,11 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     if (!valid) {
       return;
     }
-    const params = 'result_set_data[result_set_name]=' + form.value['result_set_name']
-      + '&result_set_data[id]=' + (this.result_set_settings_data['id'] - 2);
-    this.httpService.postData('/result_set_edit', params)
-      .then(
-        (result_sets: any) => {
-          if (Object.keys(result_sets.errors).length === 0) {
-            this.result_sets[this.result_set_settings_data['index']].name = result_sets.result_set_data.name;
-            this.result_sets[this.result_set_settings_data['index']].updated_at = result_sets.result_set_data.updated_at;
-          } else {
-          }
-        },
-        error => this.errorMessage = <any>error);
+    this.ApiService.edit_case_by_result_set_id(this.result_set_settings_data['id'], form.value['result_set_name']).then(this_case => {
+      const result_set_for_change = this.result_sets.filter(result_set => result_set.id === this.result_set_settings_data['id'])[0];
+      result_set_for_change.name = this_case.name;
+      result_set_for_change.updated_at = this_case.updated_at;
+    });
     modal.close();
   }
 

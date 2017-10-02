@@ -7,6 +7,7 @@ import {Run} from '../app/models/run';
 import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
+import {URLSearchParams} from '@angular/http';
 
 @Injectable()
 export class PalladiumApiService {
@@ -46,6 +47,7 @@ export class PalladiumApiService {
       return resp;
     });
   }
+
   //#endregion
 
   //#region Token
@@ -57,11 +59,13 @@ export class PalladiumApiService {
       this.router.navigate(['/login']);
     });
   }
+
   create_token(name: string): Promise<JSON> {
     return this.httpService.postData('/token_new', 'token_data[name]=' + name).then((resp: any) => {
       return resp;
     });
   }
+
   //#endregion
 
   //#region Suite
@@ -84,6 +88,7 @@ export class PalladiumApiService {
     });
 
   }
+
   //#endregion
   //#region Cases
   get_cases(id): Promise<Case[]> {
@@ -109,6 +114,29 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
+
+  edit_case_by_result_set_id(result_set_id, name): Promise<Case> {
+    const params = new URLSearchParams();
+    params.append('case_data[result_set_id]', result_set_id);
+    params.append('case_data[name]', name);
+    return this.httpService.postData('/case_edit', params.toString()).then((resp: any) => {
+      console.log(resp);
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+  edit_case(case_id, name): Promise<Case> {
+    const params = new URLSearchParams();
+    params.append('case_data[id]', case_id);
+    params.append('case_data[name]', name);
+    return this.httpService.postData('/case_edit', params.toString()).then((resp: any) => {
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
   delete_case(case_id): Promise<any> {
     return this.httpService.postData('/case_delete', 'case_data[id]=' + case_id).then((resp: any) => {
       console.log(resp);
@@ -117,6 +145,7 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
+
   //#endregion
 
   //#region Run
@@ -133,6 +162,7 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   //#endregion
 
   //#region Plans
@@ -149,6 +179,7 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   //#endregion
 
   //#region Result Set
@@ -165,5 +196,6 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   //#endregion
 }
