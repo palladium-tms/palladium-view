@@ -89,16 +89,20 @@ export class RunsComponent implements OnInit {
     if (!valid) {
       return;
     }
-    const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' + this.run_settings_data['id'];
-    this.httpService.postData('/run_edit', params)
-      .then(
-        (runs: any) => {
-          if (Object.keys(runs.errors).length === 0) {
-            this.runs[this.run_settings_data['index']].name = runs.run_data.name;
-            this.runs[this.run_settings_data['index']].updated_at = runs.run_data.updated_at;
-          }
-        },
-        error => this.errorMessage = <any>error);
+    console.log(this.run_settings_data['object'].constructor.name === 'Run');
+    if (this.run_settings_data['object'].constructor.name === 'Run') {
+      this.ApiService.edit_suite_by_run_id( this.run_settings_data['id'], form.value['run_name']).then(suite => {
+        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
+        object_for_change.name = suite.name;
+        object_for_change.updated_at = suite.updated_at;
+      });
+    } else {
+      this.ApiService.edit_suite( this.run_settings_data['id'], form.value['run_name']).then(suite => {
+        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
+        object_for_change.name = suite.name;
+        object_for_change.updated_at = suite.updated_at;
+      });
+    }
     modal.close();
   }
 
