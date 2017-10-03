@@ -1,8 +1,7 @@
-import {Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
-import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -19,10 +18,11 @@ export class RunsComponent implements OnInit {
   suites = [];
   runs_and_suites = [];
   statuses;
-  errorMessage;
   run_settings_data = {};
+
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService, private router: Router) {}
+              private router: Router) {
+  }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -57,10 +57,8 @@ export class RunsComponent implements OnInit {
   }
 
   delete_object(modal) {
-    // if (this.run_settings_data.constructor.name)
-    console.log(this.run_settings_data['object'].constructor.name === 'Suite');
-    if (this.run_settings_data['object'].constructor.name === 'Suite') {
-      if (confirm('A u shuare?')) {
+    if (confirm('A u shuare?')) {
+      if (this.run_settings_data['object'].constructor.name === 'Suite') {
         this.ApiService.delete_suite(this.run_settings_data['id']).then(suite => {
           this.runs_and_suites.splice(this.run_settings_data['index'], 1);
           if (this.router.url.indexOf('/suite/' + suite['id']) >= 0) {
@@ -68,20 +66,16 @@ export class RunsComponent implements OnInit {
           }
         });
         modal.close();
+      } else {
+        this.ApiService.delete_run(this.run_settings_data['id']).then(run => {
+          this.runs_and_suites[this.run_settings_data['index']] = this.suites.filter(
+            suite => suite.name === this.runs_and_suites[this.run_settings_data['index']].name)[0];
+          if (this.router.url.indexOf('/run/' + run['run']) >= 0) {
+            this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
+          }
+        });
       }
-    } else {
-      if (confirm('A u shuare?')) {
-        this.httpService.postData('/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
-          .then(
-            runs => {
-              this.runs_and_suites[this.run_settings_data['index']] = new Suite(this.runs_and_suites[this.run_settings_data['index']]);
-              if (this.router.url.indexOf('/run/' + runs['run']) >= 0) {
-                this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
-              }
-            },
-            error => this.errorMessage = <any>error);
-        modal.close();
-      }
+      modal.close();
     }
   }
 
@@ -89,15 +83,14 @@ export class RunsComponent implements OnInit {
     if (!valid) {
       return;
     }
-    console.log(this.run_settings_data['object'].constructor.name === 'Run');
     if (this.run_settings_data['object'].constructor.name === 'Run') {
-      this.ApiService.edit_suite_by_run_id( this.run_settings_data['id'], form.value['run_name']).then(suite => {
+      this.ApiService.edit_suite_by_run_id(this.run_settings_data['id'], form.value['run_name']).then(suite => {
         const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
         object_for_change.name = suite.name;
         object_for_change.updated_at = suite.updated_at;
       });
     } else {
-      this.ApiService.edit_suite( this.run_settings_data['id'], form.value['run_name']).then(suite => {
+      this.ApiService.edit_suite(this.run_settings_data['id'], form.value['run_name']).then(suite => {
         const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
         object_for_change.name = suite.name;
         object_for_change.updated_at = suite.updated_at;
@@ -132,18 +125,20 @@ export class RunsComponent implements OnInit {
   }
 
   get_runs_and_suites(id) {
+    const suite_for_add = [];
     this.ApiService.get_suites(id).then(suites => {
       Object(suites).forEach(suite => {
+        this.suites.push(new Suite(suite));
         const same = this.runs.filter(run => run.name === suite.name);
         if (same.length === 0) {
-          this.suites.push(new Suite(suite));
+          suite_for_add.push(new Suite(suite));
         } else if (same[0].all_statistic['all'] !== suite.all_statistic['all']) {
           const untested = suite.all_statistic['all'] - same[0].all_statistic['all'];
-          same[0].statistic.push({plan_id:  same[0].id, status: 0, count: untested});
+          same[0].statistic.push({plan_id: same[0].id, status: 0, count: untested});
           same[0].get_statistic();
         }
       });
-      this.runs_and_suites = this.runs.concat(this.suites);
+      this.runs_and_suites = this.runs.concat(suite_for_add);
     });
   }
 }

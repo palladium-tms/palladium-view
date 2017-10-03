@@ -101,6 +101,28 @@ export class PalladiumApiService {
     });
   }
 
+  edit_suite_by_run_id(run_id, name): Promise<Suite> {
+    const params = new URLSearchParams();
+    params.append('suite_data[run_id]', run_id);
+    params.append('suite_data[name]', name);
+    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  edit_suite(id, name): Promise<Suite> {
+    const params = new URLSearchParams();
+    params.append('suite_data[id]', id);
+    params.append('suite_data[name]', name);
+    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
   delete_suite(suite_id): Promise<any> {
     return this.httpService.postData('/suite_delete', 'suite_data[id]=' + suite_id).then((resp: any) => {
       return new Suite(resp['suite']);
@@ -146,6 +168,7 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
+
   edit_case(case_id, name): Promise<Case> {
     const params = new URLSearchParams();
     params.append('case_data[id]', case_id);
@@ -159,7 +182,6 @@ export class PalladiumApiService {
 
   delete_case(case_id): Promise<any> {
     return this.httpService.postData('/case_delete', 'case_data[id]=' + case_id).then((resp: any) => {
-      console.log(resp);
       return new Case(resp['case']);
     }, (errors: any) => {
       console.log(errors);
@@ -179,6 +201,17 @@ export class PalladiumApiService {
           });
           return this.runs;
         }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  delete_run(run_id): Promise<any> {
+    return this.httpService.postData('/run_delete', 'run_data[id]=' + run_id)
+      .then(
+        run => {
+          return run;
+        },
+        (errors: any) => {
           console.log(errors);
         });
   }
