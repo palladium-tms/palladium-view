@@ -101,28 +101,6 @@ export class PalladiumApiService {
     });
   }
 
-  edit_suite_by_run_id(run_id, name): Promise<Suite> {
-    const params = new URLSearchParams();
-    params.append('suite_data[run_id]', run_id);
-    params.append('suite_data[name]', name);
-    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
-  }
-
-  edit_suite(id, name): Promise<Suite> {
-    const params = new URLSearchParams();
-    params.append('suite_data[id]', id);
-    params.append('suite_data[name]', name);
-    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
-  }
-
   delete_suite(suite_id): Promise<any> {
     return this.httpService.postData('/suite_delete', 'suite_data[id]=' + suite_id).then((resp: any) => {
       return new Suite(resp['suite']);
