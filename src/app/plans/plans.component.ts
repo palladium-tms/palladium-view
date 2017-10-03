@@ -43,12 +43,12 @@ export class PlansComponent implements OnInit {
   }
 
   get_plans(product_id) {
+    this.cases_count = 0;
     this.ApiService.get_plans(product_id).then(plans => {
       this.plans = plans;
     }).then(res => {
       return this.ApiService.get_suites(product_id).then(suites => {
         Object(suites).forEach(suite => {
-          // console.log(suite);
           this.cases_count += suite.statistic[0]['count'];
         });
       });
