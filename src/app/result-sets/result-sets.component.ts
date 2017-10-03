@@ -2,12 +2,14 @@ import {Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/
 import {NgForm} from '@angular/forms';
 import {ResultSet} from '../models/result_set';
 import {Case} from '../models/case';
+import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatusSelectorComponent} from '../page-component/status-selector/status-selector/status-selector.component';
+import {StatusticService} from '../../services/statistic.service';
 
 declare var $: any;
 
@@ -29,12 +31,11 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   all_statuses;
   statuses_array = [];
   result_sets_and_cases = [];
-  statistic = {};
+  statistic: Statistic;
   selected_counter = [];
   selected_status_id = null;
   filter: any[] = [];
-
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService,
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatusticService,
               private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) {
   }
  // FIXME: https://github.com/valor-software/ng2-select/pull/712
@@ -61,7 +62,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
-
+  test() {
+    this.stat.delete_object(new ResultSet(null));
+  }
   getStyles(object) {
     if (this.statuses && object['status']) {
       return {'box-shadow': 'inset 0 0 10px ' + this.statuses[object['status']].color};
@@ -70,8 +73,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   get_result_sets(run_id) {
     this.ApiService.get_result_sets(run_id).then(result_sets => {
       this.result_sets = result_sets;
-      console.log(this.result_sets);
-      this.calculate_statistic(result_sets);
       return result_sets;
     }).then(result_sets => {
       return this.activatedRoute.parent.parent.params.subscribe(params => {
@@ -90,6 +91,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
               if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
                 this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
               }
+              // this.stat.delete_object(new ResultSet(null));
+              this.statistic = new Statistic(this.result_sets_and_cases);
+              console.log(this.statistic);
             },
             error => this.errorMessage = <any>error);
         modal.close();
@@ -98,6 +102,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       if (confirm('A u shuare?')) {
         this.ApiService.delete_case(this.result_set_settings_data['id']).then(res => {
           this.result_sets_and_cases.splice(this.result_set_settings_data['index'], 1);
+          this.statistic = new Statistic(this.result_sets_and_cases);
         });
         modal.close();
       }
@@ -144,18 +149,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  calculate_statistic(data): void {
-    this.statistic = {};
-    for (const result_set of data) {
-      if (result_set['status'] in this.statistic) {
-        this.statistic[result_set['status']] += 1;
-      } else {
-        this.statistic[result_set['status']] = 1;
-      }
-    }
-    this.statistic['all'] = Object.keys(this.statistic);
-  }
-
   selectCounter(result_set) {
     if (this.selected_counter.indexOf(result_set.id) === -1) {
       this.selected_counter.push(result_set.id);
@@ -195,40 +188,20 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_results(form: NgForm, modal) {
-    console.log(this.selected_status_id);
     if (this.selected_status_id !== null) {
-      console.log(this.selected_status_id);
-    const params = this.set_params_for_add_result({
-      description: form.value['result_description'],
-      status: this.statuses[this.selected_status_id], result_sets: this.selected_counter
-    });
-      this.httpService.postData('/result_new', params)
-      .then(
-        result_sets => {
-          console.log(form.controls);
-          this.result_sets.forEach((current_result_set, index) => {
-            if (result_sets['result_set_id'].includes(current_result_set['id'])) {
-              this.result_sets[index]['status'] = this.selected_status_id.toString();
-              this.calculate_statistic(this.result_sets);
-            }
+    this.ApiService.result_new(this.selected_counter, form.value['result_description'],
+      this.statuses[this.selected_status_id]['name']).then(res => {
+          this.result_sets_and_cases.filter(current_object => this.selected_counter.includes(current_object.id))
+            .forEach((current_result_set, index) => {
+              current_result_set.status = +this.selected_status_id;
           });
+          this.statistic = new Statistic(this.result_sets_and_cases);
           this.Selector.clear_selected();
           this.selected_status_id = null;
           form.controls['result_description'].setValue(null);
-        },
-        error => this.errorMessage = <any>error);
+    });
     modal.close();
     }
-  }
-
-  set_params_for_add_result(data) {
-    var params = '';
-    for (const result_set of data['result_sets']) {
-      params += 'result_data[result_set_id][]=' + result_set + '&';
-    }
-    params += 'result_data[message]=' + data['description'] + '&';
-    params += 'result_data[status]=' + data['status']['name'];
-    return (params);
   }
 
   addfilter(value, self) {
@@ -267,7 +240,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         }
       });
       this.result_sets_and_cases = this.result_sets.concat(cases);
-      this.calculate_statistic(this.result_sets_and_cases);
+      this.statistic = new Statistic(this.result_sets_and_cases);
     });
   }
 }

@@ -6,6 +6,7 @@ import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
+import {Statistic} from '../app/models/statistic';
 import {ResultSet} from '../app/models/result_set';
 import {URLSearchParams} from '@angular/http';
 
@@ -79,6 +80,7 @@ export class PalladiumApiService {
     }, (errors: any) => {
     });
   }
+
   edit_suite_by_run_id(run_id, name): Promise<Suite> {
     const params = new URLSearchParams();
     params.append('suite_data[run_id]', run_id);
@@ -226,6 +228,23 @@ export class PalladiumApiService {
         }, (errors: any) => {
           console.log(errors);
         });
+  }
+
+  //#endregion
+  //#region Result
+  result_new(result_sets, description, status): Promise<any> {
+    const params = new URLSearchParams();
+    for (const result_set of result_sets) {
+      params.append('result_data[result_set_id][]', result_set);
+    }
+    params.append('result_data[message]', description);
+    params.append('result_data[status]', status);
+    console.log(status);
+    console.log(params);
+    return this.httpService.postData('/result_new', params).then(result_sets => {
+      console.log(result_sets);
+      return result_sets;
+    }, error => console.log(error));
   }
 
   //#endregion

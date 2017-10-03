@@ -1,3 +1,5 @@
+import {Statistic} from './statistic';
+
 export class Run {
   id: number;
   name: string;
@@ -7,6 +9,7 @@ export class Run {
   statistic: any = [];
   suite_constructor = false;
   all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
+  fstatistic: Statistic;
   constructor (run) {
     if (run === null) {
       this.create_default_run();
@@ -19,6 +22,7 @@ export class Run {
       this.created_at = run['created_at'];
       this.updated_at = run['updated_at'];
       this.statistic = run['statistic'];
+      // this.fstatistic = new Statistic(run['statistic']);
       this.get_statistic();
     }
   }

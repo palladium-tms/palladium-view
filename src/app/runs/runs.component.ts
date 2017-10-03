@@ -5,13 +5,16 @@ import {Suite} from '../models/suite';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
+import {StatusticService} from '../../services/statistic.service';
+import {Subscription} from 'rxjs';
 
 declare var $: any;
 
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
-  styleUrls: ['./runs.component.css']
+  styleUrls: ['./runs.component.css'],
+  providers: [StatusticService]
 })
 export class RunsComponent implements OnInit {
   runs = [];
@@ -19,9 +22,11 @@ export class RunsComponent implements OnInit {
   runs_and_suites = [];
   statuses;
   run_settings_data = {};
+  userAge = 'asdasdasdasd';
+  subscription: Subscription;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router) {
+              private router: Router, public stat: StatusticService) {
   }
 
   ngOnInit() {
@@ -38,6 +43,11 @@ export class RunsComponent implements OnInit {
       $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
     }
+    this.subscription = this.stat.getMessage().subscribe(message => {
+      // console.log(message);
+      // console.log(this.runs_and_suites);
+      this.userAge = message;
+    });
   }
 
   get_runs(plan_id) {
