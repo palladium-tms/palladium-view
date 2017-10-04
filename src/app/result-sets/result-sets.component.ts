@@ -32,13 +32,15 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   statuses_array = [];
   result_sets_and_cases = [];
   statistic: Statistic;
-  selected_counter = [];
+  selected_objects = [];
   selected_status_id = null;
   filter: any[] = [];
+
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatusticService,
               private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) {
   }
- // FIXME: https://github.com/valor-software/ng2-select/pull/712
+
+  // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.result_sets = [];
@@ -62,14 +64,17 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
+
   test() {
-    this.stat.delete_object(new ResultSet(null));
+    this.stat.update_run_statistic(this.statistic);
   }
+
   getStyles(object) {
     if (this.statuses && object['status']) {
       return {'box-shadow': 'inset 0 0 10px ' + this.statuses[object['status']].color};
     }
   }
+
   get_result_sets(run_id) {
     this.ApiService.get_result_sets(run_id).then(result_sets => {
       this.result_sets = result_sets;
@@ -91,9 +96,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
               if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
                 this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
               }
-              // this.stat.delete_object(new ResultSet(null));
               this.statistic = new Statistic(this.result_sets_and_cases);
-              console.log(this.statistic);
             },
             error => this.errorMessage = <any>error);
         modal.close();
@@ -149,14 +152,13 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  selectCounter(result_set) {
-    if (this.selected_counter.indexOf(result_set.id) === -1) {
-      this.selected_counter.push(result_set.id);
+  selectCounter(event, object) {
+    if (event.target.checked) {
+      this.selected_objects.push(object);
     } else {
-      const index = this.selected_counter.indexOf(result_set.id);
-      this.selected_counter.splice(index, 1);
+      this.selected_objects = this.selected_objects.filter(obj => obj.id !== object.id);
     }
-    this.add_result_button(this.selected_counter.length === 0);
+    this.add_result_button(this.selected_objects.length === 0);
   }
 
   add_result_button(disable: boolean) {
@@ -168,9 +170,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_result_modal(modal) {
-    if (this.selected_counter.length !== 0) {
+    if (this.selected_objects.length !== 0) {
       modal.open();
-      if (this.selected_counter.length === 1) {
+      if (this.selected_objects.length === 1) {
         this.set_sets_status_as_default();
       } else {
         this.set_first_status_as_default();
@@ -179,7 +181,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   set_sets_status_as_default() {
-    this.select_default_status(this.result_sets.find(set => set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
+    console.log(this.result_sets_and_cases.find(set => set.id + '' === $('input[type=checkbox]:checked').val())['status'])
+    this.select_default_status(this.result_sets_and_cases.find(set =>
+      set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
   }
 
   set_first_status_as_default() {
@@ -188,20 +192,50 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_results(form: NgForm, modal) {
-    if (this.selected_status_id !== null) {
-    this.ApiService.result_new(this.selected_counter, form.value['result_description'],
-      this.statuses[this.selected_status_id]['name']).then(res => {
-          this.result_sets_and_cases.filter(current_object => this.selected_counter.includes(current_object.id))
-            .forEach((current_result_set, index) => {
-              current_result_set.status = +this.selected_status_id;
-          });
-          this.statistic = new Statistic(this.result_sets_and_cases);
-          this.Selector.clear_selected();
-          this.selected_status_id = null;
-          form.controls['result_description'].setValue(null);
+    const description = form.value['result_description'];
+    const status_name = this.statuses[this.selected_status_id]['name'];
+    Promise.all([this.add_result_for_result_set(description, status_name), this.add_result_for_case(description,
+      this.statuses[this.selected_status_id])]).then(res => {
+      this.result_sets_and_cases.filter(current_object => this.selected_objects.includes(current_object))
+        .forEach((current_result_set) => {
+          current_result_set.status = +this.selected_status_id;
+        });
+      this.statistic = new Statistic(this.result_sets_and_cases);
+      this.clear_inputs(form.controls['result_description']);
     });
     modal.close();
+  }
+
+  add_result_for_result_set(message, status) {
+    const result_sets = this.selected_objects.filter(obj => obj.constructor.name === 'ResultSet');
+    if (result_sets.length === 0) {
+      return Promise.resolve([]);
     }
+    return this.ApiService.result_new(result_sets, message, status).then(res => {
+      return res;
+    });
+  }
+
+  add_result_for_case(message, status) {
+    const cases = this.selected_objects.filter(obj => obj.constructor.name === 'Case');
+    if (cases.length === 0) {
+      return Promise.resolve([]);
+    }
+    return this.ApiService.result_new_by_case(cases, message, status, this.run_id).then(res => {
+      res.forEach(responce_result_set => {
+        let index;
+        index = this.result_sets_and_cases.findIndex(current_object =>
+          responce_result_set.name === current_object.name);
+        this.result_sets_and_cases[index] = responce_result_set;
+      });
+    });
+  }
+
+  clear_inputs(form) {
+    this.Selector.clear_selected();
+    this.selected_status_id = null;
+    form.setValue(null);
+    this.statistic = new Statistic(this.result_sets_and_cases);
   }
 
   addfilter(value, self) {
@@ -227,14 +261,16 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   select_default_status(id) {
-    this.Selector.set_status(id);
-    this.selected_status_id = id;
+    if (id !== 0) {
+      this.Selector.set_status(id);
+      this.selected_status_id = id;
+    }
   }
 
   get_result_sets_and_cases(run_id, product_id) {
     const cases = [];
     this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
-      Object(all_cases ).forEach(current_case => {
+      Object(all_cases).forEach(current_case => {
         if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
           cases.push(new Case(current_case));
         }

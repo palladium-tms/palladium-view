@@ -1,5 +1,5 @@
-{{userAge}}
 <div class="run-space very-big-column">
+  {{statistic | json}}
   <div class="run-block" routerLinkActive="active" *ngFor="let object of runs_and_suites; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
     <div id="{{index}}" class="setting run-setting-button" (click)="settings(runsettingsModal, object, index, settingsform);">
       <i class="fa fa-cog" aria-hidden="true"></i>

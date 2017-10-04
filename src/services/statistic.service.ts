@@ -8,7 +8,7 @@ import { Subject } from 'rxjs/Subject';
 export class StatusticService {
   private subject = new Subject<any>();
 
-  delete_object(Object) {
+  update_run_statistic(Object) {
     this.subject.next(Object);
   }
 

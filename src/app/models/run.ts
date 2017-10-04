@@ -21,7 +21,9 @@ export class Run {
       this.plan_id = run['plan_id'];
       this.created_at = run['created_at'];
       this.updated_at = run['updated_at'];
-      this.statistic = run['statistic'];
+      this.statistic = new Statistic(run['statistic']);
+      // this.statistic = run['statistic'];
+      // console.log(run['statistic']);
       // this.fstatistic = new Statistic(run['statistic']);
       this.get_statistic();
     }

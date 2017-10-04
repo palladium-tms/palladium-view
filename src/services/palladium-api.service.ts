@@ -232,20 +232,36 @@ export class PalladiumApiService {
 
   //#endregion
   //#region Result
-  result_new(result_sets, description, status): Promise<any> {
+  result_new(result_sets, description, status_id): Promise<any> {
     const params = new URLSearchParams();
     for (const result_set of result_sets) {
-      params.append('result_data[result_set_id][]', result_set);
+      params.append('result_data[result_set_id][]', result_set.id);
     }
     params.append('result_data[message]', description);
-    params.append('result_data[status]', status);
-    console.log(status);
-    console.log(params);
-    return this.httpService.postData('/result_new', params).then(result_sets => {
-      console.log(result_sets);
-      return result_sets;
+    params.append('result_data[status]', status_id);
+    return this.httpService.postData('/result_new', params).then(res => {
+      return res;
     }, error => console.log(error));
   }
 
+  result_new_by_case(cases, description, status, run_id): Promise<any> {
+    const params = new URLSearchParams();
+    for (const this_case of cases) {
+      params.append('result_set_data[name][]', this_case.name);
+    }    params.append('result_set_data[run_id]', run_id);
+    params.append('result_data[message]', description);
+    params.append('result_data[status]', status['name']);
+    return this.httpService.postData('/result_new', params).then(res => {
+      const result_sets = [];
+      res['other_data']['result_set_id'].forEach((result_set_id, index) => {
+        const new_result_set = new ResultSet(cases[index]);
+        new_result_set.run_id = run_id;
+        new_result_set.status = status['id'];
+        new_result_set.id = result_set_id;
+        result_sets.push(new_result_set);
+      });
+      return result_sets;
+    }, error => console.log(error));
+  }
   //#endregion
 }
