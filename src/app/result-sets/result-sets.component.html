@@ -1,24 +1,25 @@
 <div class="result-set-space very-big-column">
-  <div class="statistic-block" *ngIf="this.statuses">
-    <div #self *ngFor="let current_statistic of this.statistic['all']" class="one-status" (click)="addfilter(this.statuses[current_statistic].id, self)">
-      <div class="status-color-block" [ngStyle]="{'background': this.statuses[current_statistic].color }" *ngIf="this.statuses[current_statistic]"></div>
-      <span class="status-name" *ngIf="this.statuses[current_statistic]">{{   this.statistic[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
+  <ng-container *ngIf="statistic && statuses">
+    <div class="statistic-block">
+      <div #self *ngFor="let current_statistic of this.statistic.existed_statuses" class="one-status" (click)="addfilter(this.statuses[current_statistic].id, self)">
+        <div class="status-color-block" [ngStyle]="{'background': this.statuses[current_statistic].color }" *ngIf="this.statuses[current_statistic]"></div>
+        <span class="status-name">{{ statistic.extended[current_statistic] }} {{  this.statuses[current_statistic].name}}</span>
+      </div>
     </div>
-  </div>
+  </ng-container>
   <div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">
-    <span>Add result </span><span class="badge">{{this.selected_counter.length}}</span>
+    <span>Add result </span><span class="badge">{{this.selected_objects.length}}</span>
   </div>
   <div class="result_sets_list">
-    <div class="result-set-block" routerLinkActive="active" *ngFor="let result_set of result_sets | statusFilter:filter | sortByCreatedAt:'asc'; let index = index"  [ngStyle]="getStyles(result_set)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+    <div class="result-set-block" routerLinkActive="active" *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'; let index = index"  [ngStyle]="getStyles(object)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
       <div class="result-set-name-and-status">
-        <input type="checkbox" name="result_option" (change)="selectCounter(result_set)" [value]="result_set.id">
+        <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
         <div class="status result-set-status status-name" *ngIf="this.statuses">
-          {{this.statuses[result_set.status].name}}
-          <div class="status-color-block" [ngStyle]="getStylesBackround(this.statuses[result_set.status].id)"></div>
+          {{this.statuses[object.status].name}}
+          <div class="status-color-block" [ngStyle]="getStylesBackround(object)"></div>
         </div>
-        <a id="result_set-name-{{index}}" (click)="set_space_width()" [routerLink]="['./result_set', result_set.id]">{{result_set.name}}</a>
-        <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, result_set, index, settingsform);">
-        </div>
+        <a id="result_set-name-{{index}}" (click)="set_space_width()" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+        <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, object, index, settingsform);"></div>
       </div>
     </div>
   </div>
@@ -41,15 +42,14 @@
     <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
   </modal-footer>
 </modal>
-
 <modal #result_setadd_resultModal>
   <modal-header>
     <h1>Add Result</h1>
   </modal-header>
   <modal-content>
-    Add result for <b>{{this.selected_counter.length}}</b> result_sets
+    Add result for <b>{{this.selected_objects}}</b> result_sets
     <form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">
-      <app-status-selector #Selector [statuses] = "this.statuses" (selected_status)="selected_status_get($event)" *ngIf="this.statuses" ></app-status-selector>
+      <app-status-selector #Selector [all_statuses] = "this.all_statuses" (selected_status)="selected_status_get($event)" *ngIf="this.all_statuses" ></app-status-selector>
       <small [hidden]="(this.selected_status_id !== null) && !addresultform.submitted">
         Need to change status
       </small>

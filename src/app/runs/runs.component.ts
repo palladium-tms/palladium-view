@@ -1,99 +1,129 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
-import {HttpService} from '../../services/http-request.service';
+import {Suite} from '../models/suite';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
+import {StatusticService} from '../../services/statistic.service';
+import {Subscription} from 'rxjs/Subscription';
+import {Statistic} from '../models/statistic';
+
 declare var $: any;
 
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
-  styleUrls: ['./runs.component.css']
+  styleUrls: ['./runs.component.css'],
+  providers: [StatusticService]
 })
 export class RunsComponent implements OnInit {
-  plan_id = null;
-  runs: Run[] = [];
+  runs = [];
+  suites = [];
+  runs_and_suites = [];
   statuses;
-  errorMessage;
   run_settings_data = {};
-  all_result = {};
+  statistic: Statistic;
+  subscription: Subscription;
+
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService, private router: Router ) { }
+              private router: Router, public stat: StatusticService) {
+  }
+
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.runs = [];
-      this.plan_id = params['id'];
-      this.get_runs(this.plan_id);
       this.ApiService.get_statuses().then(res => {
         this.statuses = res;
-        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0 }; // add untested status. FIXME: need to added automaticly
+        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
+      }).then(res => {
+        this.get_runs(params['id']);
       });
     });
-    if ( this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
+    if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
       $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
     }
+    this.subscription = this.stat.getMessage().subscribe(statistic => {
+      const id = this.router.url.match(/run\/(\d+)/i)[1];
+      if (id !== null) {
+        Object(this.runs_and_suites).forEach(obj => {
+        if (obj.constructor.name === 'Run' && obj.id === +id) {
+          obj.statistic = statistic;
+        }
+      });
+        this.statistic = statistic;
+      }
+    });
   }
 
   get_runs(plan_id) {
-    this.httpService.postData('/runs', 'run_data[plan_id]=' + this.plan_id)
-      .then(
-        responce => {
-          for (const current_run of responce['runs'] ) {
-            this.all_result[current_run['id']] = {'all': 0, 'lost': 0};
-            for (const statistic of current_run['statistic']) {
-              this.all_result[statistic['run_id']]['all'] += statistic['count'];
-              if (statistic['id'] === 0) {
-                this.all_result[statistic['run_id']]['lost'] = statistic['count'];
-              }
-            }
-          }
-          return(this.runs = responce['runs']);
-        },
-        error =>  this.errorMessage = <any>error);
+    this.runs_and_suites = [];
+    this.runs = [];
+    this.suites = [];
+    this.ApiService.get_runs(plan_id).then(runs => {
+      this.runs = runs;
+      return (runs);
+    }).then(runs => {
+      return this.activatedRoute.parent.params.subscribe(params => {
+        return this.get_runs_and_suites(params['id']);
+      });
+    });
   }
 
-  delete_run(modal) {
+  delete_object(modal) {
     if (confirm('A u shuare?')) {
-      this.httpService.postData('/run_delete', 'run_data[id]=' + this.run_settings_data['id'])
-      .then(
-        runs => {
-          this.runs.splice(this.run_settings_data['index'], 1);
-          if ( this.router.url.indexOf('/run/' + runs['run']) >= 0) {
+      if (this.run_settings_data['object'].constructor.name === 'Suite') {
+        this.ApiService.delete_suite(this.run_settings_data['id']).then(suite => {
+          this.runs_and_suites.splice(this.run_settings_data['index'], 1);
+          if (this.router.url.indexOf('/suite/' + suite['id']) >= 0) {
+            this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+          }
+        });
+        modal.close();
+      } else {
+        this.ApiService.delete_run(this.run_settings_data['id']).then(run => {
+          this.runs_and_suites[this.run_settings_data['index']] = this.suites.filter(
+            suite => suite.name === this.runs_and_suites[this.run_settings_data['index']].name)[0];
+          if (this.router.url.indexOf('/run/' + run['run']) >= 0) {
             this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
           }
-        },
-        error =>  this.errorMessage = <any>error);
-    modal.close();
+        });
+      }
+      modal.close();
     }
   }
 
   edit_run(form: NgForm, modal, valid: boolean) {
-    if ( !valid ) { return; }
-    const params = 'run_data[run_name]=' + form.value['run_name'] + '&run_data[id]=' +  this.run_settings_data['id'];
-    this.httpService.postData('/run_edit', params)
-      .then(
-        (runs: any) => {
-          if (Object.keys(runs.errors).length === 0) {
-            this.runs[this.run_settings_data['index']].name = runs.run_data.name;
-            this.runs[this.run_settings_data['index']].updated_at = runs.run_data.updated_at;
-          }
-        },
-        error =>  this.errorMessage = <any>error);
+    if (!valid) {
+      return;
+    }
+    if (this.run_settings_data['object'].constructor.name === 'Run') {
+      this.ApiService.edit_suite_by_run_id(this.run_settings_data['id'], form.value['run_name']).then(suite => {
+        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
+        object_for_change.name = suite.name;
+        object_for_change.updated_at = suite.updated_at;
+      });
+    } else {
+      this.ApiService.edit_suite(this.run_settings_data['id'], form.value['run_name']).then(suite => {
+        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
+        object_for_change.name = suite.name;
+        object_for_change.updated_at = suite.updated_at;
+      });
+    }
     modal.close();
   }
+
   show_settings_button(index) {
     $('#' + index + '.run-setting-button').show();
   };
+
   hide_settings_button(index) {
     $('#' + index + '.run-setting-button').hide();
   };
 
   settings(modal, run, index, form) {
-    this.run_settings_data = {id: run.id, index: index};
+    this.run_settings_data = {object: run, id: run.id, index: index};
     modal.open();
     form.controls['run_name'].setValue(run.name);
   }
@@ -103,5 +133,26 @@ export class RunsComponent implements OnInit {
     $('.product-space').removeClass('very-big-column').addClass('big-column');
     $('.plan-space').removeClass('very-big-column small-column').addClass('big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
+  }
+
+  log(val) {
+    console.log(val);
+  }
+
+  get_runs_and_suites(id) {
+    const suite_for_add = [];
+    this.ApiService.get_suites(id).then(suites => {
+      Object(suites).forEach(suite => {
+        this.suites.push(suite);
+        const same = this.runs.filter(run => run.name === suite.name);
+        if (same.length === 0) {
+          suite_for_add.push(suite);
+        } else if (same[0].statistic.all !== suite.statistic.all) {
+          const untested = suite.statistic.all - same[0].statistic.all;
+          same[0].statistic.add_status('0', untested);
+        }
+      });
+      this.runs_and_suites = this.runs.concat(suite_for_add);
+    });
   }
 }

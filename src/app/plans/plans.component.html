@@ -5,12 +5,12 @@
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="plan-name">
-      <span class="lost-result">{{ 1-(this.all_result[plan['id']]['lost']/this.all_result[plan['id']]['all']) || 0 | percent}}</span>
+      <span class="lost-result">{{plan.all_statistic['attitude'] || 0 | percent}}</span>
 
       <div class="statistic status-name" *ngIf="this.statuses">
         <ng-container *ngIf="this.statuses">
-        <span *ngFor="let status of plan['statistic']" class="status-position"
-              [ngStyle]="{ 'width': (status['count'] / this.all_result[plan['id']]['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
+        <span *ngFor="let status of plan.statistic" class="status-position"
+              [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
         </span>
         </ng-container>
       </div>

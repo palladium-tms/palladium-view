@@ -1,0 +1,37 @@
+<div class="case-space very-big-column">
+  <div class="cases_list">
+    <!--<div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">-->
+      <!--<span>Add result</span><span class="badge">{{this.selected_counter.length}}</span>-->
+    <!--</div>-->
+
+    <div class="case-block" routerLinkActive="active" *ngFor="let case of cases; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
+      <div id="{{index}}" class="setting case-setting-button" (click)="settings(casesettingsModal, case, index, settingsform);">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+      </div>
+      <div class="case-name">
+        <!--<input type="checkbox" name="result_option" (change)="selectCounter(case)" [value]="case.id">-->
+        <span id="result_set-name-{{index}}">{{case.name}}</span>
+
+      </div>
+    </div>
+  </div>
+  </div>
+
+<modal #casesettingsModal>
+  <modal-header>
+    <h1>Case settings</h1>
+  </modal-header>
+  <modal-content>
+    Change case name
+    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_case(settingsform, casesettingsModal, settingsform.valid )">
+      <input type="text" class="case-name" name="case_name" ngModel required #case_name="ngModel" autofocus>
+      <small [hidden]="case_name.valid || (case_name.pristine && !settingsform.submitted)">
+        case_name name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-danger result-set-delete-button" (click)="delete_case(casesettingsModal)">Delete</button>
+    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+  </modal-footer>
+</modal>

@@ -1,35 +1,57 @@
-import { Injectable } from '@angular/core';
-import { HttpService } from './http-request.service';
+import {Injectable} from '@angular/core';
+import {HttpService} from './http-request.service';
 import {AuthenticationService} from './authentication.service';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
+import {Suite} from '../app/models/suite';
+import {Run} from '../app/models/run';
+import {Plan} from '../app/models/plan';
+import {Case} from '../app/models/case';
+import {Statistic} from '../app/models/statistic';
+import {ResultSet} from '../app/models/result_set';
+import {URLSearchParams} from '@angular/http';
 
 @Injectable()
 export class PalladiumApiService {
-  constructor(  private router: Router, private httpService: HttpService, private authenticationService: AuthenticationService ) { }
-  // Status reqion
+  suites: Suite[] = [];
+  plans: Plan[] = [];
+  runs: Run[] = [];
+  cases: Case[] = [];
+  result_sets: ResultSet[] = [];
+
+  constructor(private router: Router, private httpService: HttpService,
+              private authenticationService: AuthenticationService) {
+  }
+
+  //#region Status
   get_statuses(): Promise<JSON> {
     return this.httpService.postData('/statuses', '').then((resp: any) => {
       return resp['statuses'];
     });
   }
+
   get_not_blocked_statuses(): Promise<JSON> {
     return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
       return resp['statuses'];
     });
   }
+
   block_status(id): Promise<JSON> {
     return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[block]=true'
     ).then((resp: any) => {
       return resp;
     });
   }
+
   color_status(id, color): Promise<JSON> {
     return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[color]=' + color
     ).then((resp: any) => {
       return resp;
     });
   }
-  // Token region
+
+  //#endregion
+
+  //#region Token
   get_tokens(): Promise<JSON> {
     return this.httpService.postData('/tokens', '').then((resp: any) => {
       return resp['tokens'];
@@ -38,11 +60,208 @@ export class PalladiumApiService {
       this.router.navigate(['/login']);
     });
   }
-  // endregion
+
   create_token(name: string): Promise<JSON> {
     return this.httpService.postData('/token_new', 'token_data[name]=' + name).then((resp: any) => {
       return resp;
     });
   }
-  // endregion
+
+  //#endregion
+
+  //#region Suite
+  get_suites(product_id): Promise<Suite[]> {
+    return this.httpService.postData('/suites', 'suite_data[product_id]=' + product_id).then((resp: any) => {
+      this.suites = [];
+      Object(resp['suites']).forEach(suite => {
+        this.suites.push(new Suite(suite));
+      });
+      return this.suites;
+    }, (errors: any) => {
+    });
+  }
+
+  edit_suite_by_run_id(run_id, name): Promise<Suite> {
+    const params = new URLSearchParams();
+    params.append('suite_data[run_id]', run_id);
+    params.append('suite_data[name]', name);
+    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  edit_suite(id, name): Promise<Suite> {
+    const params = new URLSearchParams();
+    params.append('suite_data[id]', id);
+    params.append('suite_data[name]', name);
+    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  delete_suite(suite_id): Promise<any> {
+    return this.httpService.postData('/suite_delete', 'suite_data[id]=' + suite_id).then((resp: any) => {
+      return new Suite(resp['suite']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  //#endregion
+  //#region Cases
+  get_cases(id): Promise<Case[]> {
+    return this.httpService.postData('/cases', 'case_data[suite_id]=' + id).then((resp: any) => {
+      this.cases = [];
+      Object(resp['cases']).forEach(current_case => {
+        this.cases.push(new Case(current_case));
+      });
+      return this.cases;
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  get_cases_by_run_id(run_id, product_id): Promise<Case[]> {
+    return this.httpService.postData('/cases', 'case_data[run_id]=' + run_id + '&case_data[product_id]=' + product_id).then((resp: any) => {
+      this.cases = [];
+      Object(resp['cases']).forEach(current_case => {
+        this.cases.push(new Case(current_case));
+      });
+      return this.cases;
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  edit_case_by_result_set_id(result_set_id, name): Promise<Case> {
+    const params = new URLSearchParams();
+    params.append('case_data[result_set_id]', result_set_id);
+    params.append('case_data[name]', name);
+    return this.httpService.postData('/case_edit', params.toString()).then((resp: any) => {
+      console.log(resp);
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  edit_case(case_id, name): Promise<Case> {
+    const params = new URLSearchParams();
+    params.append('case_data[id]', case_id);
+    params.append('case_data[name]', name);
+    return this.httpService.postData('/case_edit', params.toString()).then((resp: any) => {
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  delete_case(case_id): Promise<any> {
+    return this.httpService.postData('/case_delete', 'case_data[id]=' + case_id).then((resp: any) => {
+      return new Case(resp['case']);
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
+
+  //#endregion
+
+  //#region Run
+  get_runs(plan_id): Promise<Run[]> {
+    this.runs = [];
+    return this.httpService.postData('/runs', 'run_data[plan_id]=' + plan_id)
+      .then(
+        (resp: any) => {
+          Object(resp['runs']).forEach(run => {
+            this.runs.push(new Run(run));
+          });
+          return this.runs;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  delete_run(run_id): Promise<any> {
+    return this.httpService.postData('/run_delete', 'run_data[id]=' + run_id)
+      .then(
+        run => {
+          return run;
+        },
+        (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  //#endregion
+
+  //#region Plans
+  get_plans(product_id): Promise<Plan[]> {
+    this.plans = [];
+    return this.httpService.postData('/plans', 'plan_data[product_id]=' + product_id)
+      .then(
+        (resp: any) => {
+          Object(resp['plans']).forEach(plan => {
+            this.plans.push(new Plan(plan));
+          });
+          return this.plans;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  //#endregion
+
+  //#region Result Set
+  get_result_sets(run_id): Promise<ResultSet[]> {
+    this.result_sets = [];
+    return this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + run_id)
+      .then(
+        resp => {
+          Object(resp['result_sets']).forEach(result_set => {
+            this.result_sets.push(new ResultSet(result_set));
+          });
+          return this.result_sets;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  //#endregion
+  //#region Result
+  result_new(result_sets, description, status_id): Promise<any> {
+    const params = new URLSearchParams();
+    for (const result_set of result_sets) {
+      params.append('result_data[result_set_id][]', result_set.id);
+    }
+    params.append('result_data[message]', description);
+    params.append('result_data[status]', status_id);
+    return this.httpService.postData('/result_new', params).then(res => {
+      return res;
+    }, error => console.log(error));
+  }
+
+  result_new_by_case(cases, description, status, run_id): Promise<any> {
+    const params = new URLSearchParams();
+    for (const this_case of cases) {
+      params.append('result_set_data[name][]', this_case.name);
+    }    params.append('result_set_data[run_id]', run_id);
+    params.append('result_data[message]', description);
+    params.append('result_data[status]', status['name']);
+    return this.httpService.postData('/result_new', params).then(res => {
+      const result_sets = [];
+      res['other_data']['result_set_id'].forEach((result_set_id, index) => {
+        const new_result_set = new ResultSet(cases[index]);
+        new_result_set.run_id = run_id;
+        new_result_set.status = status['id'];
+        new_result_set.id = result_set_id;
+        result_sets.push(new_result_set);
+      });
+      return result_sets;
+    }, error => console.log(error));
+  }
+  //#endregion
 }

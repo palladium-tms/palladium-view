@@ -1,7 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {HttpService} from '../../services/http-request.service';
-import {StatusticService} from '../../services/statistic.service';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
 declare var $: any;
@@ -17,11 +16,10 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   errorMessage;
   product_settings_data = {};
-  constructor(private httpService: HttpService, private router: Router, private statistic: StatusticService) {}
+  constructor(private httpService: HttpService, private router: Router) {}
   ngOnInit() {
     this.products = [];
     this.get_products();
-    // console.log(this.statistic);
   }
   get_products() {
     this.httpService.postData('/products', '')

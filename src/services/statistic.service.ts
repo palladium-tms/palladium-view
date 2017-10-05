@@ -2,15 +2,21 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { Subject } from 'rxjs/Subject';
+
 @Injectable()
 export class StatusticService {
-  _statusic: Observable<any>;
+  private subject = new Subject<any>();
 
-  get statusic(): Observable<any> {
-    return this._statusic;
+  update_run_statistic(Object) {
+    this.subject.next(Object);
   }
-  set statusic(value: Observable<any>) {
-    this._statusic = value;
+
+  clearMessage() {
+    this.subject.next();
   }
-  constructor() {}
+
+  getMessage(): Observable<any> {
+    return this.subject.asObservable();
+  }
 }
