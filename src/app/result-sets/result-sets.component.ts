@@ -65,10 +65,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
 
-  test() {
-    this.stat.update_run_statistic(this.statistic);
-  }
-
   getStyles(object) {
     if (this.statuses && object['status']) {
       return {'box-shadow': 'inset 0 0 10px ' + this.statuses[object['status']].color};
@@ -80,9 +76,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       this.result_sets = result_sets;
       return result_sets;
     }).then(result_sets => {
-      return this.activatedRoute.parent.parent.params.subscribe(params => {
-        this.get_result_sets_and_cases(run_id, params['id']);
-      });
+        this.get_result_sets_and_cases(run_id, this.router.url.match(/product\/(\d+)/i)[1]);
     });
   }
 
@@ -96,7 +90,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
               if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
                 this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
               }
-              this.statistic = new Statistic(this.result_sets_and_cases);
+              this.update_statistic();
             },
             error => this.errorMessage = <any>error);
         modal.close();
@@ -105,7 +99,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       if (confirm('A u shuare?')) {
         this.ApiService.delete_case(this.result_set_settings_data['id']).then(res => {
           this.result_sets_and_cases.splice(this.result_set_settings_data['index'], 1);
-          this.statistic = new Statistic(this.result_sets_and_cases);
+          this.update_statistic();
         });
         modal.close();
       }
@@ -200,7 +194,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         .forEach((current_result_set) => {
           current_result_set.status = +this.selected_status_id;
         });
-      this.statistic = new Statistic(this.result_sets_and_cases);
+      this.update_statistic();
       this.clear_inputs(form.controls['result_description']);
     });
     modal.close();
@@ -235,7 +229,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     this.Selector.clear_selected();
     this.selected_status_id = null;
     form.setValue(null);
-    this.statistic = new Statistic(this.result_sets_and_cases);
+    this.update_statistic();
   }
 
   addfilter(value, self) {
@@ -272,11 +266,24 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
       Object(all_cases).forEach(current_case => {
         if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
-          cases.push(new Case(current_case));
+          cases.push(current_case);
         }
       });
       this.result_sets_and_cases = this.result_sets.concat(cases);
-      this.statistic = new Statistic(this.result_sets_and_cases);
+      this.update_statistic();
     });
+  }
+
+  update_statistic() {
+    const stat_data = {};
+    this.result_sets_and_cases.forEach(object => {
+      if (object['status'] in stat_data) {
+        stat_data[object['status']] += 1;
+      } else {
+        stat_data[object['status']] = 1;
+      }
+    });
+    this.statistic = new Statistic(stat_data);
+    this.stat.update_run_statistic(this.statistic);
   }
 }

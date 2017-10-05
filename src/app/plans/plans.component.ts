@@ -1,13 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Plan} from '../models/plan';
-import {Suite} from '../models/suite';
 import {HttpService} from '../../services/http-request.service';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
-import {StatusticService} from '../../services/statistic.service';
-import {LocalSettingsService} from '../../services/local-settings.service';
 
 declare var $: any;
 
@@ -15,20 +12,18 @@ declare var $: any;
   selector: 'app-plans',
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.css'],
-  providers: [PalladiumApiService, LocalSettingsService]
+  providers: [PalladiumApiService]
 })
 export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [new Plan(null)];
-  suites: Suite[] = [new Suite(null)];
-  cases_count: number = 0;
+  cases_count = 0;
   errorMessage;
   plan_settings_data = {};
   statuses;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService, private router: Router,
-              private statistic: StatusticService, private localsettings: LocalSettingsService) {
+              private httpService: HttpService, private router: Router) {
   }
 
   ngOnInit() {
@@ -49,7 +44,7 @@ export class PlansComponent implements OnInit {
     }).then(res => {
       return this.ApiService.get_suites(product_id).then(suites => {
         Object(suites).forEach(suite => {
-          this.cases_count += suite.statistic[0]['count'];
+          this.cases_count += suite.statistic.all;
         });
       });
     }).then(res => {

@@ -45,7 +45,15 @@ export class RunsComponent implements OnInit {
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
     }
     this.subscription = this.stat.getMessage().subscribe(statistic => {
-      this.statistic = statistic;
+      const id = this.router.url.match(/run\/(\d+)/i)[1];
+      if (id !== null) {
+        Object(this.runs_and_suites).forEach(obj => {
+        if (obj.constructor.name === 'Run' && obj.id === +id) {
+          obj.statistic = statistic;
+        }
+      });
+        this.statistic = statistic;
+      }
     });
   }
 
@@ -54,9 +62,7 @@ export class RunsComponent implements OnInit {
     this.runs = [];
     this.suites = [];
     this.ApiService.get_runs(plan_id).then(runs => {
-      Object(runs).forEach(run => {
-        this.runs.push(new Run(run));
-      });
+      this.runs = runs;
       return (runs);
     }).then(runs => {
       return this.activatedRoute.parent.params.subscribe(params => {
@@ -137,18 +143,16 @@ export class RunsComponent implements OnInit {
     const suite_for_add = [];
     this.ApiService.get_suites(id).then(suites => {
       Object(suites).forEach(suite => {
-        this.suites.push(new Suite(suite));
+        this.suites.push(suite);
         const same = this.runs.filter(run => run.name === suite.name);
         if (same.length === 0) {
-          suite_for_add.push(new Suite(suite));
-        } else if (same[0].all_statistic['all'] !== suite.all_statistic['all']) {
-          const untested = suite.all_statistic['all'] - same[0].all_statistic['all'];
-          same[0].statistic.push({plan_id: same[0].id, status: 0, count: untested});
-          same[0].get_statistic();
+          suite_for_add.push(suite);
+        } else if (same[0].statistic.all !== suite.statistic.all) {
+          const untested = suite.statistic.all - same[0].statistic.all;
+          same[0].statistic.add_status('0', untested);
         }
       });
       this.runs_and_suites = this.runs.concat(suite_for_add);
-      console.log( this.runs_and_suites)
     });
   }
 }
