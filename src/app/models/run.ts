@@ -7,6 +7,7 @@ export class Run {
   created_at: number;
   updated_at: number;
   statistic: Statistic;
+  path = './run';
   constructor (run) {
     if (run === null) {
       this.create_default_run();

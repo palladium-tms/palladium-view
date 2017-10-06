@@ -7,7 +7,7 @@ export class Suite {
   created_at: string;
   updated_at: string;
   statistic: Statistic;
-
+  path = './suite';
   constructor (suite) {
     if (suite == null) {
       suite = this.create_default_suite();

@@ -15,7 +15,7 @@
               [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': statuses[status]['color']}">
         </span>
       </div>
-     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width(index)" [routerLink]="['./' + object.constructor.name.toLowerCase(), object.id]">{{object.name}}</a>
+     <a id="run-name-{{index}}" class="run-name" (click)="set_space_width(index)" [routerLink]="[object.path, object.id]">{{object.name}}</a>
       </div>
       <div class="status-legend-small-block">
         <span *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
