@@ -32,12 +32,7 @@ export class RunsComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.ApiService.get_statuses().then(res => {
-        this.statuses = res;
-        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
-      }).then(res => {
-        this.get_runs(params['id']);
-      });
+      this.get_runs_and_suites(params['id']);
     });
     if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
       $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
@@ -48,26 +43,46 @@ export class RunsComponent implements OnInit {
       const id = this.router.url.match(/run\/(\d+)/i)[1];
       if (id !== null) {
         Object(this.runs_and_suites).forEach(obj => {
-        if (obj.constructor.name === 'Run' && obj.id === +id) {
-          obj.statistic = statistic;
-        }
-      });
+          if (obj.constructor.name === 'Run' && obj.id === +id) {
+            obj.statistic = statistic;
+          }
+        });
         this.statistic = statistic;
       }
     });
   }
 
+  get_statuses() {
+    return this.ApiService.get_statuses().then(res => {
+      res[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
+      return res;
+    });
+  }
+
   get_runs(plan_id) {
-    this.runs_and_suites = [];
-    this.runs = [];
-    this.suites = [];
-    this.ApiService.get_runs(plan_id).then(runs => {
-      this.runs = runs;
-      return (runs);
-    }).then(runs => {
-      return this.activatedRoute.parent.params.subscribe(params => {
-        return this.get_runs_and_suites(params['id']);
+    return this.ApiService.get_runs(plan_id).then(runs => { return runs; });
+  }
+
+  get_suites(plan_id) {
+    return this.ApiService.get_suites(plan_id).then(suites => { return suites; });
+  }
+
+  get_runs_and_suites(plan_id) {
+    Promise.all([this.get_runs(plan_id), this.get_suites(plan_id), this.get_statuses()]).then(res => {
+      console.log(res);
+      this.statuses = res[2];
+      const suite_for_add = [];
+      res[1].forEach(suite => {
+        this.suites.push(suite);
+        const same = res[0].filter(run => run.name === suite.name);
+        if (same.length === 0) {
+          suite_for_add.push(suite);
+        } else if (same[0].statistic.all !== suite.statistic.all) {
+          const untested = suite.statistic.all - same[0].statistic.all;
+          same[0].statistic.add_status('0', untested);
+        }
       });
+      this.runs_and_suites = res[0].concat(suite_for_add);
     });
   }
 
@@ -137,22 +152,5 @@ export class RunsComponent implements OnInit {
 
   log(val) {
     console.log(val);
-  }
-
-  get_runs_and_suites(id) {
-    const suite_for_add = [];
-    this.ApiService.get_suites(id).then(suites => {
-      Object(suites).forEach(suite => {
-        this.suites.push(suite);
-        const same = this.runs.filter(run => run.name === suite.name);
-        if (same.length === 0) {
-          suite_for_add.push(suite);
-        } else if (same[0].statistic.all !== suite.statistic.all) {
-          const untested = suite.statistic.all - same[0].statistic.all;
-          same[0].statistic.add_status('0', untested);
-        }
-      });
-      this.runs_and_suites = this.runs.concat(suite_for_add);
-    });
   }
 }
