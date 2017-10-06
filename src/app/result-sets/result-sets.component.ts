@@ -29,6 +29,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   result_set_settings_data = {};
   statuses;
   all_statuses;
+  not_blocked_status = {};
   statuses_array = [];
   result_sets_and_cases = [];
   statistic: Statistic;
@@ -47,9 +48,14 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       this.result_sets_and_cases = [];
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
-      this.ApiService.get_not_blocked_statuses().then(res => {
+      this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
         this.all_statuses = JSON.parse(JSON.stringify(res));
+        Object.keys(this.statuses).forEach(status => {
+          if (!this.all_statuses[status].block) {
+            this.not_blocked_status[status] = this.all_statuses[status];
+          }
+        });
         this.statuses_array = Object.keys(this.statuses);
         this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
