@@ -175,7 +175,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   set_sets_status_as_default() {
-    console.log(this.result_sets_and_cases.find(set => set.id + '' === $('input[type=checkbox]:checked').val())['status'])
+    console.log(this.result_sets_and_cases.find(set => set.id + '' === $('input[type=checkbox]:checked').val())['status']);
     this.select_default_status(this.result_sets_and_cases.find(set =>
       set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
   }
@@ -233,13 +233,20 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   addfilter(value, self) {
+    this.selected_objects = [];
+    this.add_result_button(true);
+    this.uncheck_all_checkboxes();
     this.filer_selector(self);
-    var index = this.filter.indexOf(value, 0);
+    const index = this.filter.indexOf(value, 0);
     if (index === -1) {
       this.filter.push(value);
     } else {
       this.filter.splice(index, 1);
     }
+  }
+
+  uncheck_all_checkboxes() {
+    $('input:checkbox').prop('checked', false);
   }
 
   filer_selector(element) {
