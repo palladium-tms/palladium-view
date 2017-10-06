@@ -47,7 +47,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       this.result_sets_and_cases = [];
       this.run_id = params.id;
       this.get_result_sets(this.run_id);
-      this.ApiService.get_statuses().then(res => {
+      this.ApiService.get_not_blocked_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
         this.all_statuses = JSON.parse(JSON.stringify(res));
         this.statuses_array = Object.keys(this.statuses);

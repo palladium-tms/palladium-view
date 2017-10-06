@@ -69,7 +69,6 @@ export class RunsComponent implements OnInit {
 
   get_runs_and_suites(plan_id) {
     Promise.all([this.get_runs(plan_id), this.get_suites(plan_id), this.get_statuses()]).then(res => {
-      console.log(res);
       this.statuses = res[2];
       const suite_for_add = [];
       res[1].forEach(suite => {
