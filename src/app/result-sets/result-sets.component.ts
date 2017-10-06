@@ -43,11 +43,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
 
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
       this.result_sets = [];
       this.result_sets_and_cases = [];
-      this.run_id = params.id;
-      this.get_result_sets(this.run_id);
+      this.get_result_sets_and_cases();
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
         this.all_statuses = JSON.parse(JSON.stringify(res));
@@ -59,7 +57,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         this.statuses_array = Object.keys(this.statuses);
         this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
-    });
     if (this.router.url.indexOf('/result_set/') >= 0) {
       $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
       $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
@@ -77,12 +74,29 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  get_result_sets(run_id) {
-    this.ApiService.get_result_sets(run_id).then(result_sets => {
-      this.result_sets = result_sets;
-      return result_sets;
-    }).then(result_sets => {
-        this.get_result_sets_and_cases(run_id, this.router.url.match(/product\/(\d+)/i)[1]);
+
+  get_result_sets() {
+    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
+    return this.ApiService.get_result_sets(run_id).then(result_sets => {return result_sets; });
+  }
+
+  get_cases() {
+    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
+    const product_id = this.router.url.match(/product\/(\d+)/i)[1];
+    return this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => { return all_cases; });
+  }
+
+  get_result_sets_and_cases() {
+    Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
+      this.result_sets = res[0];
+      const cases = [];
+      Object(res[1]).forEach(current_case => {
+        if (res[0].filter(result_set => result_set.name === current_case.name).length === 0) {
+          cases.push(current_case);
+        }
+      });
+      this.result_sets_and_cases = res[0].concat(cases);
+      this.update_statistic();
     });
   }
 
@@ -271,19 +285,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       this.Selector.set_status(id);
       this.selected_status_id = id;
     }
-  }
-
-  get_result_sets_and_cases(run_id, product_id) {
-    const cases = [];
-    this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
-      Object(all_cases).forEach(current_case => {
-        if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
-          cases.push(current_case);
-        }
-      });
-      this.result_sets_and_cases = this.result_sets.concat(cases);
-      this.update_statistic();
-    });
   }
 
   update_statistic() {
