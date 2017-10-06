@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, ViewEncapsulation } from '@angular/core';
+import {Component, Input, Output, EventEmitter, OnInit, OnChanges, ViewEncapsulation} from '@angular/core';
 import {Status} from '../../../models/status';
 @Component({
   selector: 'app-status-selector',
@@ -26,7 +26,6 @@ export class StatusSelectorComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges() {
-    // console.log('show_attention');
   }
 
   private get disabledV(): string {
@@ -59,13 +58,17 @@ export class StatusSelectorComponent implements OnInit, OnChanges {
   }
 
   public show_attention() {
-    return(this.active_element !== undefined);
+    return (this.active_element !== undefined);
   }
 
   public set_status(id) {
-    this.active_element = [{
-      id: id,
-      text: `<colorbox style='background-color:${this.all_statuses[id]['color']};'></colorbox>${this.all_statuses[id]['name']}`
-    }];
+    console.log(this.all_statuses);
+    console.log(id);
+    if (this.all_statuses[id]) {
+      this.active_element = [{
+        id: id,
+        text: `<colorbox style='background-color:${this.all_statuses[id]['color']};'></colorbox>${this.all_statuses[id]['name']}`
+      }];
+    }
   }
 }
