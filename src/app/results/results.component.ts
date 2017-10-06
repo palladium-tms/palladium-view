@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Result} from '../models/result';
 import {Router} from '@angular/router';
-import {ActivatedRoute, Params} from '@angular/router';
-import {HttpService} from '../../services/http-request.service';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 
 @Component({
@@ -11,38 +9,39 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
   styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit {
-  result_set_id = null;
   results: Result[] = [];
-  errorMessage;
   statuses;
-  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private httpService: HttpService,  private router: Router ) { }
+
+  constructor(private ApiService: PalladiumApiService, private router: Router) {}
 
   ngOnInit() {
     this.results = [];
-    this.activatedRoute.params.subscribe((params: Params) => {
-      this.result_set_id = params.id;
-      this.get_results(this.result_set_id);
-      this.ApiService.get_statuses().then(res => this.statuses = res);
+    Promise.all([this.get_statuses(), this.get_results()]).then(res => {
+      this.results = res[1];
+      this.statuses = res[0];
     });
   }
 
-  get_results(result_set_id) {
-    this.httpService.postData('/results', 'result_data[result_set_id]=' + this.result_set_id)
-      .then(
-        responce => {
-          return(this.results = responce['results']);
-        },
-        error =>  this.errorMessage = <any>error);
+  get_statuses() {
+    return this.ApiService.get_statuses().then(res => { return res; });
   }
+
+  get_results() {
+    const result_set_id = this.router.url.match(/result_set\/(\d+)/i)[1];
+    return this.ApiService.get_results(result_set_id).then(res => {
+      return res;
+    });
+  }
+
   getStylesShadow(id) {
     if (this.statuses) {
-      return {'box-shadow': '0 0 10px ' + this.statuses[id].color };
+      return {'box-shadow': '0 0 10px ' + this.statuses[id].color};
     }
   }
+
   getStylesBackround(id) {
     if (this.statuses) {
-      return {'background': this.statuses[id].color };
+      return {'background': this.statuses[id].color};
     }
   }
 }

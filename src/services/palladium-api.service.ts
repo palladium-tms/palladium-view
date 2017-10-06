@@ -6,8 +6,8 @@ import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
-import {Statistic} from '../app/models/statistic';
 import {ResultSet} from '../app/models/result_set';
+import {Result} from '../app/models/result';
 import {URLSearchParams} from '@angular/http';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class PalladiumApiService {
   runs: Run[] = [];
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
+  results: Result[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -232,6 +233,17 @@ export class PalladiumApiService {
 
   //#endregion
   //#region Result
+  get_results(result_set_id): Promise<Result[]> {
+    return this.httpService.postData('/results', 'result_data[result_set_id]=' + result_set_id)
+      .then(
+        resp => {
+          Object(resp['results']).forEach(result => {
+            this.results.push(new Result(result));
+          });
+          return this.results;
+        }, error => console.log(error));
+  }
+
   result_new(result_sets, description, status_id): Promise<any> {
     const params = new URLSearchParams();
     for (const result_set of result_sets) {
@@ -248,7 +260,8 @@ export class PalladiumApiService {
     const params = new URLSearchParams();
     for (const this_case of cases) {
       params.append('result_set_data[name][]', this_case.name);
-    }    params.append('result_set_data[run_id]', run_id);
+    }
+    params.append('result_set_data[run_id]', run_id);
     params.append('result_data[message]', description);
     params.append('result_data[status]', status['name']);
     return this.httpService.postData('/result_new', params).then(res => {
@@ -263,5 +276,6 @@ export class PalladiumApiService {
       return result_sets;
     }, error => console.log(error));
   }
+
   //#endregion
 }
