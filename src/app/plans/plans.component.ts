@@ -17,7 +17,6 @@ declare var $: any;
 export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [new Plan(null)];
-  cases_count = 0;
   errorMessage;
   plan_settings_data = {};
   statuses;
@@ -29,7 +28,7 @@ export class PlansComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.product_id = params.id;
-      this.get_plans(this.product_id);
+      this.get_plans_and_suites(this.product_id);
       this.ApiService.get_statuses().then(res => {
         this.statuses = res;
         this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
@@ -38,18 +37,24 @@ export class PlansComponent implements OnInit {
   }
 
   get_plans(product_id) {
-    this.cases_count = 0;
-    this.ApiService.get_plans(product_id).then(plans => {
-      this.plans = plans;
-    }).then(res => {
-      return this.ApiService.get_suites(product_id).then(suites => {
-        Object(suites).forEach(suite => {
-          this.cases_count += suite.statistic.all;
-        });
-      });
-    }).then(res => {
-      Object(this.plans).forEach(plan => {
-        this.update_statistic(plan);
+    return this.ApiService.get_plans(product_id).then(plans => { return plans; });
+  }
+  get_suites(product_id) {
+    return this.ApiService.get_suites(product_id).then(suites => { return suites; });
+  }
+  count_of_cases(suites) {
+    let cases_count = 0;
+    suites.forEach(suite => {
+      cases_count += suite.statistic.all;
+    });
+    return cases_count;
+  }
+
+  get_plans_and_suites(product_id) {
+    Promise.all([this.get_plans(product_id), this.get_suites(product_id)]).then(res => {
+      this.plans = res[0];
+      this.plans.forEach(plan => {
+        this.update_statistic(plan, this.count_of_cases(res[1]));
       });
     });
   }
@@ -113,9 +118,9 @@ export class PlansComponent implements OnInit {
     console.log(val);
   }
 
-  update_statistic(plan) {
-    if (plan.all_statistic['all'] < this.cases_count) {
-      const untested = this.cases_count - plan.all_statistic['all'];
+  update_statistic(plan, count_of_cases) {
+    if (plan.all_statistic['all'] < count_of_cases) {
+      const untested = count_of_cases - plan.all_statistic['all'];
       plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
       plan.get_statistic();
     }
