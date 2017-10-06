@@ -181,7 +181,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   set_sets_status_as_default() {
-    console.log(this.result_sets_and_cases.find(set => set.id + '' === $('input[type=checkbox]:checked').val())['status']);
     this.select_default_status(this.result_sets_and_cases.find(set =>
       set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
   }

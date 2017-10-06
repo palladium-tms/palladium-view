@@ -62,8 +62,6 @@ export class StatusSelectorComponent implements OnInit, OnChanges {
   }
 
   public set_status(id) {
-    console.log(this.all_statuses);
-    console.log(id);
     if (this.all_statuses[id]) {
       this.active_element = [{
         id: id,
