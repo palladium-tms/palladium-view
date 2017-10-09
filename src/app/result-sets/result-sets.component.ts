@@ -43,6 +43,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
 
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
+    this.activatedRoute.params.subscribe((params: Params) => {
       this.result_sets = [];
       this.result_sets_and_cases = [];
       this.get_result_sets_and_cases();
@@ -57,6 +58,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         this.statuses_array = Object.keys(this.statuses);
         this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
+    });
     if (this.router.url.indexOf('/result_set/') >= 0) {
       $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
       $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
