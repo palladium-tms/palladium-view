@@ -8,7 +8,7 @@ import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
-import {StatusSelectorComponent} from '../page-component/status-selector/status-selector/status-selector.component';
+import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
 import {StatusticService} from '../../services/statistic.service';
 
 declare var $: any;

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
@@ -8,7 +8,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusticService} from '../../services/statistic.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Statistic} from '../models/statistic';
-
+import {FiltersComponent} from '../page-component/filters/filters.component';
 declare var $: any;
 
 @Component({
@@ -18,7 +18,8 @@ declare var $: any;
   providers: [StatusticService]
 })
 export class RunsComponent implements OnInit {
-  runs = [];
+  @ViewChild('Filters')
+  private Filters: FiltersComponent;
   suites = [];
   runs_and_suites = [];
   statuses;

@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnChanges, ViewEncapsulation} from '@angular/core';
-import {Status} from '../../../models/status';
+import {Status} from '../../models/status';
 @Component({
   selector: 'app-status-selector',
   templateUrl: './status-selector.component.html',
