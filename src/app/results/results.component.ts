@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Result} from '../models/result';
-import {Router} from '@angular/router';
+import {Params, Router, ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 
 @Component({
@@ -12,13 +12,14 @@ export class ResultsComponent implements OnInit {
   results: Result[] = [];
   statuses;
 
-  constructor(private ApiService: PalladiumApiService, private router: Router) {}
+  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
-    this.results = [];
-    Promise.all([this.get_statuses(), this.get_results()]).then(res => {
-      this.results = res[1];
-      this.statuses = res[0];
+    this.activatedRoute.params.subscribe((params: Params) => {
+      Promise.all([this.get_statuses(), this.get_results()]).then(res => {
+        this.results = res[1];
+        this.statuses = res[0];
+      });
     });
   }
 

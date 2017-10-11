@@ -234,6 +234,7 @@ export class PalladiumApiService {
   //#endregion
   //#region Result
   get_results(result_set_id): Promise<Result[]> {
+    this.results = [];
     return this.httpService.postData('/results', 'result_data[result_set_id]=' + result_set_id)
       .then(
         resp => {
