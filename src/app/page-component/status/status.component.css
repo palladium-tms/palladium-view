@@ -1,8 +1,7 @@
-.status {
+.status-component {
+  cursor: pointer;
   display: inline-block;
   margin-right: 1em;
-  cursor: pointer;
-  border: solid #ffffff 1px;
 }
 .status-color{
   display: inline-block;

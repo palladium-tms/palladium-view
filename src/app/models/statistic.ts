@@ -35,4 +35,17 @@ export class Statistic {
     this.existed_statuses = Object.keys(this.extended);
     this.attitude = (1 - this.lost / this.all);
   }
+
+  has_statuses(status_array) {
+    let status_exist = false;
+    if (status_array.length === 0) {
+      return true;
+    }
+    this.existed_statuses.forEach(status => {
+      if (status_array.indexOf(+status) > -1) {
+        status_exist = true;
+      }
+    });
+    return status_exist;
+  }
 }

@@ -1,33 +1,47 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {
+  Component, Input, Output, EventEmitter, OnChanges} from '@angular/core';
 
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
   styleUrls: ['./filters.component.css']
 })
-export class FiltersComponent implements OnInit {
+export class FiltersComponent implements OnChanges {
+
   @Input() all_data = [];
   @Input() statuses;
+  @Output() selected_statuses_emmit = new EventEmitter();
   all_statistic = {};
-
+  existed_statuses = [];
+  selected_statuses = [];
   constructor() { }
 
-  ngOnInit() {
-    console.log(this.all_data);
-    console.log(this.statuses);
-    this.calculate_statistis();
-  }
-  calculate_statistis() {
-    this.all_data.forEach(object => {
-      object.statistic.existed_statuses.forEach( status_id => {
-        console.log(Object.keys(this.all_statistic).filter(stat => stat === status_id).length === 0);
-        if (Object.keys(this.all_statistic).filter(stat => stat === status_id).length === 0) {
-          this.all_statistic[status_id] = 1;
-        }
-        console.log(object.statistic.existed_statuses);
-      });
-      console.log(this.all_statistic);
-    });
+  ngOnChanges() {
+      this.all_statistic = {};
+      this.calculate_statistis();
   }
 
+  public calculate_statistis() {
+    this.all_statistic = {};
+    this.selected_statuses = [];
+    this.all_data.forEach(object => {
+      object.statistic.existed_statuses.forEach( status_id => {
+        if (this.all_statistic[status_id]) {
+          this.all_statistic[status_id] += object.statistic.extended[status_id];
+        } else {
+          this.all_statistic[status_id] = object.statistic.extended[status_id];
+        }
+      });
+    });
+    this.existed_statuses = Object.keys(this.all_statistic);
+  }
+
+  selected_statuses_counter(status_data) {
+    if (status_data['is_selected?']) {
+      this.selected_statuses.push(status_data['status_id']);
+    } else {
+      this.selected_statuses = this.selected_statuses.filter(id => id !== status_data['status_id']);
+    }
+    this.selected_statuses_emmit.emit( this.selected_statuses);
+  }
 }

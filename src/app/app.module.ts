@@ -29,6 +29,7 @@ import {TokenComponent} from './token/token.component';
 import {CasesComponent} from './cases/cases.component';
 import { FiltersComponent } from './page-component/filters/filters.component';
 import { StatusComponent } from './page-component/status/status.component';
+import { StatisticFilterPipe } from './pipes/statistic-filter/statistic-filter.pipe';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -71,7 +72,8 @@ const appRoutes: Routes = [
     TokenComponent,
     CasesComponent,
     FiltersComponent,
-    StatusComponent
+    StatusComponent,
+    StatisticFilterPipe
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],
