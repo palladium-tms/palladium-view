@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
@@ -8,23 +8,24 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusticService} from '../../services/statistic.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Statistic} from '../models/statistic';
-
+import {FiltersComponent} from '../page-component/filters/filters.component';
 declare var $: any;
-
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
   styleUrls: ['./runs.component.css'],
-  providers: [StatusticService]
+  providers: [StatusticService, StatusticService]
 })
 export class RunsComponent implements OnInit {
-  runs = [];
+  @ViewChild('Filter')
+  Filter: FiltersComponent;
   suites = [];
   runs_and_suites = [];
   statuses;
   run_settings_data = {};
   statistic: Statistic;
   subscription: Subscription;
+  filter = [];
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, public stat: StatusticService) {
@@ -48,6 +49,7 @@ export class RunsComponent implements OnInit {
           }
         });
         this.statistic = statistic;
+        this.Filter.calculate_statistis();
       }
     });
   }
@@ -60,12 +62,16 @@ export class RunsComponent implements OnInit {
   }
 
   get_runs(plan_id) {
-    return this.ApiService.get_runs(plan_id).then(runs => { return runs; });
+    return this.ApiService.get_runs(plan_id).then(runs => {
+      return runs;
+    });
   }
 
   get_suites() {
     const product_id = this.router.url.match(/product\/(\d+)/i)[1];
-    return this.ApiService.get_suites(product_id).then(suites => { return suites; });
+    return this.ApiService.get_suites(product_id).then(suites => {
+      return suites;
+    });
   }
 
   get_runs_and_suites(plan_id) {
@@ -148,6 +154,35 @@ export class RunsComponent implements OnInit {
     $('.product-space').removeClass('very-big-column').addClass('big-column');
     $('.plan-space').removeClass('very-big-column small-column').addClass('big-column');
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
+  }
+
+  get_filters(e) {
+    this.filter = e;
+    this.check_selected_is_hidden(e);
+  }
+
+  check_selected_is_hidden(filters) {
+    if (this.router.url.indexOf('/suite/') >= 0) {
+      this.suite_selected(filters);
+    } else if (this.router.url.indexOf('/run/') >= 0) {
+      this.run_selected(filters);
+    }
+  }
+
+  suite_selected(filters) {
+    const id = this.router.url.match(/suite\/(\d+)/i)[1];
+    const object = this.runs_and_suites.filter(obj => obj.constructor.name === 'Suite' && obj.id === +id)[0];
+    if (!object.statistic.has_statuses(filters)) {
+      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+    }
+  }
+
+  run_selected(filters) {
+    const id = this.router.url.match(/run\/(\d+)/i)[1];
+    const object = this.runs_and_suites.filter(obj => obj.constructor.name === 'Run' && obj.id === +id)[0];
+    if (!object.statistic.has_statuses(filters)) {
+      this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
+    }
   }
 
   log(val) {

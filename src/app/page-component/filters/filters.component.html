@@ -1,0 +1,7 @@
+<div class="filter_block">
+  <app-status *ngFor="let status of existed_statuses"
+              #Status [status_name] = "statuses[status].name"
+              [status_color] = "statuses[status].color"
+              [status_id] = "statuses[status].id"
+              [status_count] = "all_statistic[status]" (selected_status)="selected_statuses_counter($event)"></app-status>
+</div>

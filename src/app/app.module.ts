@@ -23,10 +23,13 @@ import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive';  // import validator
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
-import {StatusSelectorComponent} from './page-component/status-selector/status-selector/status-selector.component';
+import {StatusSelectorComponent} from './page-component/status-selector/status-selector.component';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at./sort-by-created-at.pipe';
 import {TokenComponent} from './token/token.component';
 import {CasesComponent} from './cases/cases.component';
+import { FiltersComponent } from './page-component/filters/filters.component';
+import { StatusComponent } from './page-component/status/status.component';
+import { StatisticFilterPipe } from './pipes/statistic-filter/statistic-filter.pipe';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -67,7 +70,10 @@ const appRoutes: Routes = [
     StatusSelectorComponent,
     SortByCreatedAtPipe,
     TokenComponent,
-    CasesComponent
+    CasesComponent,
+    FiltersComponent,
+    StatusComponent,
+    StatisticFilterPipe
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],

@@ -97,6 +97,6 @@ div {
   border: solid #ffffff 1px;
 }
 .selected {
-  border: solid #a9a7aa 1px;
+  outline: solid #a9a7aa 1px;
   background-color: #fff9e0;
 }

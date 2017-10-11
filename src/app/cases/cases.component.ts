@@ -57,15 +57,6 @@ export class CasesComponent implements OnInit {
     }
   }
 
-  // selected_status_get(selected_id) {
-  //   this.selected_status_id = selected_id;
-  // }
-  //
-  // add_result_modal(modal) {
-  //   if (this.selected_counter.length !== 0) {
-  //     modal.open();
-  //   }
-  // }
   show_settings_button(index) {
     $('#' + index + '.case-setting-button').show();
   };
