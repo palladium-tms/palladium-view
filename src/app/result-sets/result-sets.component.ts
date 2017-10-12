@@ -44,7 +44,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      console.log('ajfsadfjasdfasdf')
       this.get_result_sets_and_cases();
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
@@ -234,7 +233,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_result_for_result_set(message, status) {
-    const result_sets = this.selected_objects.filter(obj => obj.constructor.name === 'ResultSet');
+    const result_sets = this.selected_objects.filter(obj => obj.path === 'result_set');
     if (result_sets.length === 0) {
       return Promise.resolve([]);
     }
@@ -244,7 +243,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_result_for_case(message, status) {
-    const cases = this.selected_objects.filter(obj => obj.constructor.name === 'Case');
+    const cases = this.selected_objects.filter(obj => obj.path === 'case');
     if (cases.length === 0) {
       return Promise.resolve([]);
     }

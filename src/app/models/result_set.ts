@@ -5,6 +5,7 @@ export class ResultSet {
   run_id: string;
   created_at: number;
   updated_at: number;
+  path = 'result_set';
 
   constructor(result_set) {
     if (result_set === null) {

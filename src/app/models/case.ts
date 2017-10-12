@@ -5,6 +5,7 @@ export class Case {
   suite_id: string;
   created_at: number;
   updated_at: number;
+  path = 'case';
   constructor (current_case) {
     if (current_case.constructor.name === 'ResultSet') {
       current_case = this.create_case_by_result_set(current_case);
