@@ -13,12 +13,20 @@
   <div class="result_sets_list">
     <div class="result-set-block" routerLinkActive="active" *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'; let index = index"  [ngStyle]="getStyles(object)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
       <div class="result-set-name-and-status">
-        <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
-        <div class="status result-set-status status-name" *ngIf="this.statuses">
-          {{this.statuses[object.status].name}}
-          <div class="status-color-block" [ngStyle]="getStylesBackround(object)"></div>
-        </div>
-        <a id="result_set-name-{{index}}" (click)="open_results(object.id)" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+        <table>
+          <tr>
+            <td class="name_column">
+              <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
+              <a id="result_set-name-{{index}}" (click)="open_results(object.id)" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+            </td>
+            <td>
+              <div class="status result-set-status status-name" *ngIf="this.statuses">
+                {{this.statuses[object.status].name}}
+                <div class="status-color-block" [ngStyle]="getStylesBackround(object)"></div>
+              </div>
+            </td>
+          </tr>
+        </table>
         <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, object, index, settingsform);"></div>
       </div>
     </div>

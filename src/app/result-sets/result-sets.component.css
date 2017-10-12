@@ -73,3 +73,6 @@ input.result-set-name{
   width: 100%;
   height: 5em;
 }
+td.name_column{
+  width: 100%;
+}
