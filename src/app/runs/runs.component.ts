@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
@@ -16,7 +16,7 @@ declare var $: any;
   styleUrls: ['./runs.component.css'],
   providers: [StatusticService, StatusticService]
 })
-export class RunsComponent implements OnInit {
+export class RunsComponent implements OnInit, AfterViewInit {
   @ViewChild('Filter')
   Filter: FiltersComponent;
   suites = [];
@@ -52,6 +52,10 @@ export class RunsComponent implements OnInit {
         this.Filter.calculate_statistis();
       }
     });
+  }
+
+  ngAfterViewInit() {
+    $('.runs-list').css('height', $('#main-container').innerHeight() - ($('.filter_block').outerHeight(true) * 2 + 11));
   }
 
   get_statuses() {

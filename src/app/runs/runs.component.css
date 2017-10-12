@@ -1,8 +1,14 @@
 .run-space{
   display: inline-block;
   float:left;
-  overflow: auto;
   height: 100%;
+}
+.runs-list {
+  overflow: auto;
+  display: inline-block;
+  float: left;
+  height: 100%;
+  width: 100%;
 }
 .run-block{
   border: solid #a9a7aa 1px;
