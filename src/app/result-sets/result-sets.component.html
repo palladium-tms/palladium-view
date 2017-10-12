@@ -18,7 +18,7 @@
           {{this.statuses[object.status].name}}
           <div class="status-color-block" [ngStyle]="getStylesBackround(object)"></div>
         </div>
-        <a id="result_set-name-{{index}}" (click)="set_space_width()" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+        <a id="result_set-name-{{index}}" (click)="open_results(object.id)" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
         <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, object, index, settingsform);"></div>
       </div>
     </div>

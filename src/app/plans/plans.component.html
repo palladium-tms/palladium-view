@@ -14,7 +14,7 @@
         </span>
         </ng-container>
       </div>
-      <a id="plan-name-{{index}}" (click)="set_space_width()"  [routerLink]="['./plan', plan.id]"> {{plan.name}}</a>
+      <a id="plan-name-{{index}}" (click)="open_runs(plan.id)"  [routerLink]="['./plan', plan.id]"> {{plan.name}}</a>
     </div>
   </div>
 </div>

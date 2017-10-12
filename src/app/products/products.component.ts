@@ -75,4 +75,10 @@ export class ProductsComponent implements OnInit {
     $('.product-space').removeClass('small-column big-column').addClass('very-big-column');
     $('.plan-space').removeClass('small-column big-column').addClass('very-big-column');
   }
+  open_plans(id) {
+    this.set_space_width();
+    if (this.router.url.indexOf('/product/' + id) === 0 ) {
+      this.router.navigate([/(.*?)(?=product|$)/.exec(this.router.url)[0]], true);
+    }
+  }
 }

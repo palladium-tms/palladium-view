@@ -44,8 +44,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.result_sets = [];
-      this.result_sets_and_cases = [];
+      console.log('ajfsadfjasdfasdf')
       this.get_result_sets_and_cases();
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
@@ -79,16 +78,22 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
 
   get_result_sets() {
     const run_id = this.router.url.match(/run\/(\d+)/i)[1];
-    return this.ApiService.get_result_sets(run_id).then(result_sets => {return result_sets; });
+    return this.ApiService.get_result_sets(run_id).then(result_sets => {
+      return result_sets;
+    });
   }
 
   get_cases() {
     const run_id = this.router.url.match(/run\/(\d+)/i)[1];
     const product_id = this.router.url.match(/product\/(\d+)/i)[1];
-    return this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => { return all_cases; });
+    return this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
+      return all_cases;
+    });
   }
 
   get_result_sets_and_cases() {
+    this.result_sets = [];
+    this.result_sets_and_cases = [];
     Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
       this.result_sets = res[0];
       const cases = [];
@@ -160,6 +165,13 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
     $('.result_set-space').removeClass('big-column').addClass('small-column');
     $('.lost-result').hide();
+  }
+
+  open_results(id) {
+    this.set_space_width();
+    if (this.router.url.indexOf('/result_set/' + id) > 0 ) {
+      this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]], true);
+    }
   }
 
   getStylesBackround(object) {

@@ -114,6 +114,13 @@ export class PlansComponent implements OnInit {
     $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
   }
 
+  open_runs(id) {
+    this.set_space_width();
+    if (this.router.url.indexOf('/plan/' + id) > 0 ) {
+      this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]], true);
+    }
+  }
+
   log(val) {
     console.log(val);
   }

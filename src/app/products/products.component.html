@@ -5,7 +5,7 @@
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="product-name">
-      <a id="product-name-{{index}}" (click)="set_space_width()" [routerLink]="['/product', product.id]"> {{product.name}}</a>
+      <a id="product-name-{{index}}" (click)="open_plans(product.id)" [routerLink]="['/product', product.id]"> {{product.name}}</a>
     </div>
   </div>
   <modal #settingsModal>

@@ -165,6 +165,16 @@ export class RunsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  open_result_sets(id) {
+    this.set_space_width();
+    if (this.router.url.indexOf('/run/' + id) > 0 ) {
+      this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]], true);
+    }
+    if (this.router.url.indexOf('/suite/' + id) > 0 ) {
+      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]], true);
+    }
+  }
+
   get_filters(e) {
     this.filter = e;
     this.check_selected_is_hidden(e);
