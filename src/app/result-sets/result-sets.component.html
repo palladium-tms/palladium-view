@@ -15,8 +15,10 @@
       <div class="result-set-name-and-status">
         <table>
           <tr>
-            <td class="name_column">
+            <td class="checkbox_column">
               <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
+            </td>
+            <td class="name_column">
               <a id="result_set-name-{{index}}" (click)="open_results(object.id)" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
             </td>
             <td>

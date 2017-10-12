@@ -76,3 +76,7 @@ input.result-set-name{
 td.name_column{
   width: 100%;
 }
+
+td.checkbox_column {
+  padding-right: 0.2em;
+}
