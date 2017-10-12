@@ -154,10 +154,15 @@ export class RunsComponent implements OnInit, AfterViewInit {
   }
 
   set_space_width() {
-    $('.lost-result').show();
-    $('.product-space').removeClass('very-big-column').addClass('big-column');
-    $('.plan-space').removeClass('very-big-column small-column').addClass('big-column');
-    $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
+    if (this.router.url.indexOf('/result_set/') === -1 && !$('.run-space').hasClass( 'big-column')) {
+      $('.product-space').removeClass('very-big-column').addClass('big-column');
+      $('.plan-space').removeClass('very-big-column').addClass('big-column');
+      $('.run-space').removeClass('big-column').addClass('very-big-column');
+    } else {
+      $('.product-space').removeClass('very-big-column').addClass('small-column');
+      $('.run-space').removeClass('very-big-column').addClass('big-column');
+      $('.plan-space').removeClass('very-big-column').addClass('small-column ');
+    }
   }
 
   get_filters(e) {
