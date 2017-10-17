@@ -207,4 +207,8 @@ export class RunsComponent implements OnInit, AfterViewInit {
   log(val) {
     console.log(val);
   }
+
+  force_floor(data) {
+    return (Math.floor(data * 10) / 10);
+  }
 }

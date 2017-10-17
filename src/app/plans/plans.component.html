@@ -5,7 +5,7 @@
       <i class="fa fa-cog" aria-hidden="true"></i>
     </div>
     <div class="plan-name">
-      <span class="lost-result" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}">{{plan.all_statistic['attitude'] || 0 | percent:'1.0-0'}}</span>
+      <span class="lost-result" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}">{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</span>
 
       <div class="statistic status-name" *ngIf="this.statuses">
         <ng-container *ngIf="this.statuses">
