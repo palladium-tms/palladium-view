@@ -5,6 +5,7 @@
   <div *ngIf="authorize" class="logout-block">
     <a class="link status-link" (click)="tokensModal.open()">Tokens</a>
     <a class="link status-link" (click)="status_settings(statusModal)">Statuses</a>
+    <app-about></app-about>
     <a class="link logout-link" (click)="logout()">Logout</a>
     <modal #statusModal>
       <modal-header>
