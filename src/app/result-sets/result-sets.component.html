@@ -19,7 +19,8 @@
               <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
             </td>
             <td class="name_column">
-              <a id="result_set-name-{{index}}" (click)="open_results(object.id)" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+              <a id="result_set-name-{{index}}" (click)="open_results(object)" *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
+              <span *ngIf="object.path === 'case'" >{{object.name}}</span>
             </td>
             <td>
               <div class="status result-set-status status-name" *ngIf="this.statuses">
