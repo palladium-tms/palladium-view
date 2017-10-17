@@ -135,6 +135,6 @@ export class PlansComponent implements OnInit {
   }
 
   force_floor(data) {
-    return (Math.floor(data * 10) / 10);
+    return (Math.floor(data * 100) / 100);
   }
 }
