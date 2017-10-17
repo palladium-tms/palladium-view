@@ -75,7 +75,7 @@ div {
   background-color: #f2f2f2;
   display: inline-block;
   height: 1.2em;
-  width: 7em;
+  width: 6.8em;
   position: relative;
   overflow: hidden;
 }
@@ -85,6 +85,7 @@ div {
   display: inline-block;
 }
 .lost-result {
+  min-width: 2.5em;
   float: right;
 }
 .status-legend-small-block{
