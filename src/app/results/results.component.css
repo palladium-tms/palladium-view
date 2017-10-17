@@ -1,8 +1,6 @@
 .result-space{
-  position: relative;
   display: inline-block;
   float:left;
-  width: auto;
   overflow: auto;
   height: 100%;
 }
@@ -12,6 +10,7 @@
   margin: 0.5em;
   height: auto;
   display: table;
+  word-break: break-all;
 }
 .result-small-block{
   background: #fafafa;
