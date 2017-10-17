@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck } from '@angular/core';
+import {Component, OnInit, DoCheck} from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { Router } from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -9,7 +9,6 @@ declare var $: any;
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.css'],
   providers: [PalladiumApiService]
-
 })
 export class TopToolbarComponent implements OnInit, DoCheck {
   public authorize;

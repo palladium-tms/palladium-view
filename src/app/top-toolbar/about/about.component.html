@@ -1,0 +1,13 @@
+<a class="about-link" (click)="Modal.open()">About</a>
+
+<modal #Modal>
+  <modal-header>
+    <h1>About</h1>
+  </modal-header>
+  <modal-content>
+    <span>ClientSide version:</span><br>{{ appVersion }}
+  </modal-content>
+  <modal-footer>
+    <button class="btn">Close</button>
+  </modal-footer>
+</modal>

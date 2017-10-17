@@ -30,6 +30,7 @@ import {CasesComponent} from './cases/cases.component';
 import { FiltersComponent } from './page-component/filters/filters.component';
 import { StatusComponent } from './page-component/status/status.component';
 import { StatisticFilterPipe } from './pipes/statistic-filter/statistic-filter.pipe';
+import { AboutComponent } from './top-toolbar/about/about.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -73,7 +74,8 @@ const appRoutes: Routes = [
     CasesComponent,
     FiltersComponent,
     StatusComponent,
-    StatisticFilterPipe
+    StatisticFilterPipe,
+    AboutComponent
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],
