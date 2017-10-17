@@ -3,7 +3,7 @@
     <a class="link palladium-link" href="/">Palladium</a>
   </div>
   <div *ngIf="authorize" class="logout-block">
-    <a class="link status-link" (click)="tokensModal.open()">Tokens</a>
+    <app-token></app-token>
     <a class="link status-link" (click)="status_settings(statusModal)">Statuses</a>
     <app-about></app-about>
     <a class="link logout-link" (click)="logout()">Logout</a>
@@ -28,18 +28,6 @@
       </modal-content>
       <modal-footer>
         <button class="btn" (click)="statusModal.close()">Close</button>
-      </modal-footer>
-    </modal>
-    <modal #tokensModal>
-      <modal-header>
-        <h1>Tokens settings</h1>
-      </modal-header>
-      <modal-content>
-        Tokens list:
-        <app-token></app-token>
-      </modal-content>
-      <modal-footer>
-        <button class="btn" (click)="tokensModal.close()">Close</button>
       </modal-footer>
     </modal>
   </div>
