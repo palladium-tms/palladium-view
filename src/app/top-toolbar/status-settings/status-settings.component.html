@@ -1,0 +1,23 @@
+<a class="link status-settings-link" (click)="status_settings(Modal)">Statuses</a>
+<modal #Modal>
+  <modal-header>
+    <h1>Status settings</h1>
+  </modal-header>
+  <modal-content>
+    Status list:
+    <div *ngFor="let status_id of statuses_array; let index = index">
+      <div *ngIf="this.statuses" class="status-element" id={{status_id}}>
+        <div class="status-color-block border-gray" [ngStyle]="getStylesBackround(status_id)"></div>
+        <div class="status-name" *ngIf="this.statuses">{{this.statuses[status_id].name}}</div>
+        <a class="status-block" *ngIf="this.statuses" (click)="block_status(status_id)" >Block</a>
+        <form autocomplete="off" #statusform="ngForm" (ngSubmit)="change_color(status_id, statusform.value.status_color)">
+          <input  class="status-color" name="status_color" ngModel required #status_color="ngModel" autofocus>
+          <button class="btn btn-success" (click)="statusform.ngSubmit.emit(statusform)">Save</button>
+        </form>
+      </div>
+    </div>
+  </modal-content>
+  <modal-footer>
+    <button class="btn" (click)="Modal.close()">Close</button>
+  </modal-footer>
+</modal>

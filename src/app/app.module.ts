@@ -24,13 +24,14 @@ import {EqualValidator} from './directives/equal-validator.directive';  // impor
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
 import {StatusSelectorComponent} from './page-component/status-selector/status-selector.component';
-import {SortByCreatedAtPipe} from './pipes/sort-by-created-at./sort-by-created-at.pipe';
+import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
 import {TokenComponent} from './top-toolbar/token/token.component';
 import {CasesComponent} from './cases/cases.component';
-import { FiltersComponent } from './page-component/filters/filters.component';
-import { StatusComponent } from './page-component/status/status.component';
-import { StatisticFilterPipe } from './pipes/statistic-filter/statistic-filter.pipe';
-import { AboutComponent } from './top-toolbar/about/about.component';
+import {FiltersComponent} from './page-component/filters/filters.component';
+import {StatusComponent} from './page-component/status/status.component';
+import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
+import {AboutComponent} from './top-toolbar/about/about.component';
+import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -41,7 +42,8 @@ const appRoutes: Routes = [
       path: 'product/:id', component: PlansComponent, children: [
       {
         path: 'plan/:id', component: RunsComponent, children: [
-        {path: 'run/:id', component: ResultSetsComponent, children: [
+        {
+          path: 'run/:id', component: ResultSetsComponent, children: [
           {path: 'result_set/:id', component: ResultsComponent}
         ]
         },
@@ -75,7 +77,8 @@ const appRoutes: Routes = [
     FiltersComponent,
     StatusComponent,
     StatisticFilterPipe,
-    AboutComponent
+    AboutComponent,
+    StatusSettingsComponent
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],
