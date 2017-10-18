@@ -1,5 +1,5 @@
 <div class="run-space very-big-column">
-  <app-filters #Filter [all_data]="runs_and_suites" [statuses] = statuses (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  <app-filters #Filter [all_data]="runs_and_suites" [statuses] = statuses [statistic]="statistic" (selected_statuses_emmit)="get_filters($event)"></app-filters>
   <div class="runs-list">
     <ng-container *ngIf="runs_and_suites && statuses">
       <div class="run-block" routerLinkActive="active" *ngFor="let object of runs_and_suites| statisticFilter:filter ; let index = index" (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">

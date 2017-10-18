@@ -8,7 +8,7 @@ import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../services/authentication.service';
 import {LocalSettingsService} from '../services/local-settings.service';
-import {StatusticService} from '../services/statistic.service';
+import {StatisticService} from '../services/statistic.service';
 import {PalladiumApiService} from '../services/palladium-api.service';
 import {HttpService} from '../services/http-request.service';
 import {FormsModule} from '@angular/forms';
@@ -82,7 +82,7 @@ const appRoutes: Routes = [
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],
-  providers: [AuthGuard, AuthenticationService, StatusticService, PalladiumApiService, HttpService, LocalSettingsService],
+  providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })
 export class AppModule {

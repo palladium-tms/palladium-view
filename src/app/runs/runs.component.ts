@@ -5,8 +5,7 @@ import {Suite} from '../models/suite';
 import {NgForm} from '@angular/forms';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {StatusticService} from '../../services/statistic.service';
-import {Subscription} from 'rxjs/Subscription';
+import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
 import {FiltersComponent} from '../page-component/filters/filters.component';
 declare var $: any;
@@ -14,7 +13,7 @@ declare var $: any;
   selector: 'app-runs',
   templateUrl: './runs.component.html',
   styleUrls: ['./runs.component.css'],
-  providers: [StatusticService, StatusticService]
+  providers: [StatisticService]
 })
 export class RunsComponent implements OnInit, AfterViewInit {
   @ViewChild('Filter')
@@ -24,11 +23,10 @@ export class RunsComponent implements OnInit, AfterViewInit {
   statuses;
   run_settings_data = {};
   statistic: Statistic;
-  subscription: Subscription;
   filter = [];
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, public stat: StatusticService) {
+              private router: Router, public StatisticService: StatisticService) {
   }
 
   ngOnInit() {
@@ -40,7 +38,7 @@ export class RunsComponent implements OnInit, AfterViewInit {
       $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
     }
-    this.subscription = this.stat.getMessage().subscribe(statistic => {
+    this.StatisticService.getMessage().subscribe(statistic => {
       const id = this.router.url.match(/run\/(\d+)/i)[1];
       if (id !== null) {
         Object(this.runs_and_suites).forEach(obj => {
@@ -49,7 +47,7 @@ export class RunsComponent implements OnInit, AfterViewInit {
           }
         });
         this.statistic = statistic;
-        this.Filter.calculate_statistis();
+        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
       }
     });
   }
@@ -93,6 +91,7 @@ export class RunsComponent implements OnInit, AfterViewInit {
         }
       });
       this.runs_and_suites = res[0].concat(suite_for_add);
+      this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     });
   }
 
