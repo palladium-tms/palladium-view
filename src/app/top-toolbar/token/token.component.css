@@ -1,0 +1,8 @@
+a.token-link{
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 18px;
+  color: #e2e2e2;
+  padding-right: 2em;
+}
