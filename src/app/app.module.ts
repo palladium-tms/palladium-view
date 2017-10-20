@@ -32,6 +32,8 @@ import {StatusComponent} from './page-component/status/status.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
 import {AboutComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
+import { RunComponent } from './runs/run/run.component';
+import { SuiteComponent } from './runs/suite/suite.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -78,7 +80,9 @@ const appRoutes: Routes = [
     StatusComponent,
     StatisticFilterPipe,
     AboutComponent,
-    StatusSettingsComponent
+    StatusSettingsComponent,
+    RunComponent,
+    SuiteComponent
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, SelectModule],

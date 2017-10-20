@@ -2,8 +2,7 @@ import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
-import {NgForm} from '@angular/forms';
-import {Router} from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
@@ -30,6 +29,7 @@ export class RunsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.set_default_filter();
     this.activatedRoute.params.subscribe((params: Params) => {
       this.get_runs_and_suites(params['id']);
     });
@@ -38,6 +38,14 @@ export class RunsComponent implements OnInit, AfterViewInit {
       $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
       $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
     }
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0
+          && this.router.url.indexOf('/result_set/') <= 0) {
+          this.set_space_width();
+        }
+      }
+    });
     this.StatisticService.getMessage().subscribe(statistic => {
       const id = this.router.url.match(/run\/(\d+)/i)[1];
       if (id !== null) {
@@ -54,6 +62,21 @@ export class RunsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     $('.runs-list').css('height', $('#main-container').innerHeight() - ($('.filter_block').outerHeight(true) * 2 + 11));
+  }
+
+  set_default_filter() {
+    this.activatedRoute.queryParams.subscribe(params => {
+      let filter;
+      filter = params['filter'];
+      if (!(filter instanceof Array)) {
+        filter = [filter];
+      }
+      if (filter[0]) {
+        filter.forEach( f => {
+          this.filter.push(+f);
+        });
+      }
+    });
   }
 
   get_statuses() {
@@ -95,85 +118,6 @@ export class RunsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  delete_object(modal) {
-    if (confirm('A u shuare?')) {
-      if (this.run_settings_data['object'].constructor.name === 'Suite') {
-        this.ApiService.delete_suite(this.run_settings_data['id']).then(suite => {
-          this.runs_and_suites.splice(this.run_settings_data['index'], 1);
-          if (this.router.url.indexOf('/suite/' + suite['id']) >= 0) {
-            this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
-          }
-        });
-        modal.close();
-      } else {
-        this.ApiService.delete_run(this.run_settings_data['id']).then(run => {
-          this.runs_and_suites[this.run_settings_data['index']] = this.suites.filter(
-            suite => suite.name === this.runs_and_suites[this.run_settings_data['index']].name)[0];
-          if (this.router.url.indexOf('/run/' + run['run']) >= 0) {
-            this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
-          }
-        });
-      }
-      modal.close();
-    }
-  }
-
-  edit_run(form: NgForm, modal, valid: boolean) {
-    if (!valid) {
-      return;
-    }
-    if (this.run_settings_data['object'].constructor.name === 'Run') {
-      this.ApiService.edit_suite_by_run_id(this.run_settings_data['id'], form.value['run_name']).then(suite => {
-        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
-        object_for_change.name = suite.name;
-        object_for_change.updated_at = suite.updated_at;
-      });
-    } else {
-      this.ApiService.edit_suite(this.run_settings_data['id'], form.value['run_name']).then(suite => {
-        const object_for_change = this.runs_and_suites.filter(object => object.id === this.run_settings_data['id'])[0];
-        object_for_change.name = suite.name;
-        object_for_change.updated_at = suite.updated_at;
-      });
-    }
-    modal.close();
-  }
-
-  show_settings_button(index) {
-    $('#' + index + '.run-setting-button').show();
-  };
-
-  hide_settings_button(index) {
-    $('#' + index + '.run-setting-button').hide();
-  };
-
-  settings(modal, run, index, form) {
-    this.run_settings_data = {object: run, id: run.id, index: index};
-    modal.open();
-    form.controls['run_name'].setValue(run.name);
-  }
-
-  set_space_width() {
-    if (this.router.url.indexOf('/result_set/') === -1 && !$('.run-space').hasClass( 'big-column')) {
-      $('.product-space').removeClass('very-big-column').addClass('big-column');
-      $('.plan-space').removeClass('very-big-column').addClass('big-column');
-      $('.run-space').removeClass('big-column').addClass('very-big-column');
-    } else {
-      $('.product-space').removeClass('very-big-column').addClass('small-column');
-      $('.run-space').removeClass('very-big-column').addClass('big-column');
-      $('.plan-space').removeClass('very-big-column').addClass('small-column ');
-    }
-  }
-
-  open_result_sets(id) {
-    this.set_space_width();
-    if (this.router.url.indexOf('/run/' + id) > 0 ) {
-      this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]], true);
-    }
-    if (this.router.url.indexOf('/suite/' + id) > 0 ) {
-      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]], true);
-    }
-  }
-
   get_filters(e) {
     this.filter = e;
     this.check_selected_is_hidden(e);
@@ -207,7 +151,25 @@ export class RunsComponent implements OnInit, AfterViewInit {
     console.log(val);
   }
 
-  force_floor(data) {
-    return (Math.floor(data * 100) / 100);
+  set_space_width() {
+    if (this.router.url.indexOf('/result_set/') === -1 && !$('.run-space').hasClass( 'big-column')) {
+      $('.product-space').removeClass('very-big-column').addClass('big-column');
+      $('.plan-space').removeClass('very-big-column').addClass('big-column');
+      $('.run-space').removeClass('big-column').addClass('very-big-column');
+    } else {
+      $('.product-space').removeClass('very-big-column').addClass('small-column');
+      $('.run-space').removeClass('very-big-column').addClass('big-column');
+      $('.plan-space').removeClass('very-big-column').addClass('small-column ');
+    }
+  }
+
+  result_object(event) {
+    if (event.status === 'run_deleted') {
+      this.runs_and_suites[event.index] = this.suites.filter(
+        suite => suite.name === event.object.name)[0];
+    } else if (event.status === 'suite_deleted') {
+      this.runs_and_suites.splice(this.run_settings_data[event.index], 1);
+    }
+    this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
   }
 }
