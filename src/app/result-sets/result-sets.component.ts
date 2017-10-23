@@ -23,7 +23,6 @@ declare var $: any;
 export class ResultSetsComponent implements OnInit, AfterViewInit {
   @ViewChild('Selector')
   private Selector: StatusSelectorComponent;
-  run_id = null;
   result_sets: ResultSet[] = [];
   errorMessage;
   result_set_settings_data = {};
@@ -265,11 +264,12 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   add_result_for_case(message, status) {
+    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
     const cases = this.selected_objects.filter(obj => obj.path === 'case');
     if (cases.length === 0) {
       return Promise.resolve([]);
     }
-    return this.ApiService.result_new_by_case(cases, message, status, this.run_id).then(res => {
+    return this.ApiService.result_new_by_case(cases, message, status, run_id).then(res => {
       res.forEach(responce_result_set => {
         let index;
         index = this.result_sets_and_cases.findIndex(current_object =>
