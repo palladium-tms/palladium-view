@@ -10,6 +10,7 @@ import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
 import {StatisticService} from '../../services/statistic.service';
+import {ResultService} from '../../services/result.service';
 
 declare var $: any;
 
@@ -17,7 +18,7 @@ declare var $: any;
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
   styleUrls: ['./result-sets.component.css'],
-  providers: [PalladiumApiService, StatusFilterPipe]
+  providers: [PalladiumApiService, StatusFilterPipe, ResultService]
 })
 
 export class ResultSetsComponent implements OnInit, AfterViewInit {
@@ -37,7 +38,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   filter: any[] = [];
 
   constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatisticService,
-              private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) {
+              private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
 
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
@@ -251,6 +252,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         });
       this.update_statistic();
       this.clear_inputs(form.controls['result_description']);
+      this.resultservice.update_results();
     });
     modal.close();
   }
