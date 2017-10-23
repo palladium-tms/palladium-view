@@ -43,6 +43,8 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.selected_objects = [];
+      this.add_result_button(true);
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
