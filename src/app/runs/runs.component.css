@@ -10,33 +10,6 @@
   height: 100%;
   width: 100%;
 }
-.run-block{
-  border: solid #a9a7aa 1px;
-  display: block;
-  max-height: 10em;
-  margin: 0.5em;
-  padding: 0.5em;
-  position: relative;
-  overflow: hidden;
-}
-div.run-name{
-  word-wrap: break-word;
-  width: auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.run-name-link{
-  max-height: 6em;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
 .active{
   background-color: rgba(134, 255, 14, 0.33);
-}
-input.run-name{
-  width: 100%;
-  font-size: 18px;
-}
-.plan-delete-button{
-  float: left;
 }

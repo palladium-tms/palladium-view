@@ -1,4 +1,5 @@
 import {Component, Input, Output, OnInit, EventEmitter, HostListener} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-status',
@@ -12,9 +13,24 @@ export class StatusComponent implements OnInit {
   @Input() status_count: number;
   @Input() status_id: number;
   selected = false;
-  constructor() { }
+  constructor(private  activatedRoute: ActivatedRoute) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.activatedRoute.queryParams.subscribe(params => {
+      let filter;
+      filter = params['filter'];
+      if (!(filter instanceof Array)) {
+        filter = [filter];
+      }
+        if (filter) {
+        if (filter.filter(id => +id === this.status_id).length !== 0) {
+          this.selected = true;
+        } else {
+          this.selected = false;
+        }
+      }
+    });
+  }
   @HostListener('click', ['$event'])
   click() {
     this.selected = !this.selected;

@@ -9,7 +9,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
-import {StatusticService} from '../../services/statistic.service';
+import {StatisticService} from '../../services/statistic.service';
 
 declare var $: any;
 
@@ -37,7 +37,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   selected_status_id = null;
   filter: any[] = [];
 
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatusticService,
+  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private _eref: ElementRef) {
   }
 
@@ -45,6 +45,7 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.get_result_sets_and_cases();
+      this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
         this.statuses = JSON.parse(JSON.stringify(res));
         this.all_statuses = JSON.parse(JSON.stringify(res));
@@ -62,10 +63,31 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
       $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
       $('.run-space').removeClass('very-big-column small-column').addClass('big-column');
     }
+
   }
 
   ngAfterViewInit() {
     $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
+  }
+
+  set_default_filter() {
+    const params = this.get_query_filters();
+      params.forEach(f => {
+        this.filter.push(+f);
+      });
+  }
+
+  get_query_filters() {
+    let filters = [];
+    const params = this.activatedRoute.snapshot.queryParams;
+    if (Object.keys(params).indexOf('filter') !== -1) {
+      if (!(params['filter'] instanceof Array)) {
+        filters = [params['filter']];
+      } else {
+        filters = params['filter'];
+      }
+    }
+    return filters;
   }
 
   getStyles(object) {
@@ -163,12 +185,12 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
     $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
     $('.result_set-space').removeClass('big-column').addClass('small-column');
-    $('.lost-result').hide();
+    // $('.lost-result').hide();
   }
 
   open_results(id) {
     this.set_space_width();
-    if (this.router.url.indexOf('/result_set/' + id) > 0 ) {
+    if (this.router.url.indexOf('/result_set/' + id) > 0) {
       this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]], true);
     }
   }
@@ -264,16 +286,28 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     this.update_statistic();
   }
 
-  addfilter(value, self) {
+  get_filters(e) {
+    this.filter = e;
+    this.uncheck_all_checkboxes();
     this.selected_objects = [];
     this.add_result_button(true);
-    this.uncheck_all_checkboxes();
-    this.filer_selector(self);
-    const index = this.filter.indexOf(value, 0);
-    if (index === -1) {
-      this.filter.push(value);
-    } else {
-      this.filter.splice(index, 1);
+    this.check_selected_is_hidden(e);
+  }
+
+  check_selected_is_hidden(filters) {
+    if (this.router.url.indexOf('/result_set/') >= 0) {
+      this.result_set_selected(filters);
+    }
+  }
+
+  result_set_selected(filters) {
+    const id = this.router.url.match(/result_set\/(\d+)/i)[1];
+    const object = this.result_sets_and_cases.filter(obj => obj.id === +id)[0];
+    if (filters.length === 0) {
+      return;
+    }
+    if (filters.indexOf(object.status) === -1) {
+      this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
     }
   }
 

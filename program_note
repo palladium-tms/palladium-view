@@ -7,6 +7,12 @@ ng serve --host 0.0.0.0
 npm i uglify-js@2 -D
 docker-compose up -d --no-deps --build clientside-build
 
+
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+ ~/.npm-global/bin/ng serve
+
 -вывести в одно место логи для db, api-server и client-server
 -добавить возможность добавлять/удалять/изменять статусы
 -добавить страницу регистрации
@@ -18,3 +24,4 @@ docker-compose up -d --no-deps --build clientside-build
 -добавить инструменты для бекапа db и обновления всего через web интерфейс
 -добавить ожидание отклика db перед тем, как начать запуск второго контейнера через docker compose
 -добавить документацию, описание методов
+alias ng="/home/flamine/.npm-global/lib/node_modules/@angular/cli/bin"

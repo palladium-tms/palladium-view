@@ -13,4 +13,7 @@ export class LocalSettingsService {
     suites_visibility.splice(suites_visibility.indexOf(id), 1);
     localStorage.setItem('suites_visibility', suites_visibility);
   }
+  save_filters(filters) {
+    localStorage.setItem('run_filters', filters);
+  }
 }
