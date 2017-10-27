@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  overflow: hidden;
+  flex: 5;
+}
+.status-history{
+  height: 1em;
+  width: 3em;
+  background-color: #428bca;
+}

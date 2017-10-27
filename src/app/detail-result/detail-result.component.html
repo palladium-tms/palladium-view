@@ -1,0 +1,19 @@
+<div class="result-space" *ngIf="this.result">
+  <div class="toolbar"></div>
+  <div class="item-list">
+  <div class="bipolar-item result-details">
+      <div class="small-block">
+        <div class="sub-blocks-holder" [ngStyle]="getStyles(result.status_id)">
+          <div class="sub-block"><b>{{this.statuses[result.status_id].name}}</b></div>
+          <div class="sub-block">{{result.created_at | date:'medium' }}</div>
+          <div class="sub-block">ver. 5.0.3 (build:18)</div>
+        </div>
+      </div>
+      <div class="big-block">
+        <pre>
+          {{result.message}}
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>

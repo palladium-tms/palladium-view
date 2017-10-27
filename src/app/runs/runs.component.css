@@ -1,15 +1,5 @@
-.run-space{
-  display: inline-block;
-  float:left;
-  height: 100%;
-}
-.runs-list {
-  overflow: auto;
-  display: inline-block;
-  float: left;
-  height: 100%;
-  width: 100%;
-}
-.active{
-  background-color: rgba(134, 255, 14, 0.33);
+:host{
+  display: flex;
+  overflow: hidden;
+  flex: 12;
 }

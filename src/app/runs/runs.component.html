@@ -1,14 +1,35 @@
-<div class="run-space very-big-column">
-  <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
-               (selected_statuses_emmit)="get_filters($event)"></app-filters>
-  <div class="runs-list">
-    <ng-container *ngIf="runs_and_suites && statuses">
-      <div *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index">
-        <app-run [filter]=filter [object]=object [index] = index [statuses]=statuses (result_object) = result_object($event) *ngIf="object.path === './run'"></app-run>
-        <app-suite [object]=object [index] = index [statuses] = statuses (result_object) = result_object($event)  *ngIf="object.path === './suite'"></app-suite>
-      </div>
-    </ng-container>
+<div class="run-space">
+  <div class="toolbar filter">
+    <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
+                 (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  </div>
+
+  <div class="item-list">
+    <div class="item" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index"
+         [sh-context]="menuItems" [sh-data-context]="object">
+      <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses
+               *ngIf="object.path === './run'"></app-run>
+      <app-suite [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
+    </div>
   </div>
 </div>
+<modal #Modal>
+  <modal-header>
+    <h1>Change object name</h1>
+  </modal-header>
+  <modal-content>
+    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_object_modal(form, Modal, form.valid )">
+      <input type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
+      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
+        Object name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">
+      Save
+    </button>
+  </modal-footer>
+</modal>
 
 <router-outlet></router-outlet>

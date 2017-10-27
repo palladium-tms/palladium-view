@@ -1,7 +1,5 @@
-import {Component, OnInit, AfterViewInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {ResultSet} from '../models/result_set';
-import {Case} from '../models/case';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
@@ -12,8 +10,6 @@ import {StatusSelectorComponent} from '../page-component/status-selector/status-
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 
-declare var $: any;
-
 @Component({
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
@@ -21,15 +17,19 @@ declare var $: any;
   providers: [PalladiumApiService, StatusFilterPipe, ResultService]
 })
 
-export class ResultSetsComponent implements OnInit, AfterViewInit {
+export class ResultSetsComponent implements OnInit {
   @ViewChild('Selector')
+  @ViewChild('Modal') Modal;
+  @ViewChild('AddResultModal') AddResultModal;
+  @ViewChild('form') form;
   private Selector: StatusSelectorComponent;
-  result_sets: ResultSet[] = [];
+  result_sets = [];
+  cases;
   errorMessage;
-  result_set_settings_data = {};
+  object;
   statuses;
   all_statuses;
-  not_blocked_status = {};
+  not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
   statistic: Statistic;
@@ -45,7 +45,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.selected_objects = [];
-      this.add_result_button(true);
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
@@ -53,30 +52,20 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
         this.all_statuses = JSON.parse(JSON.stringify(res));
         Object.keys(this.statuses).forEach(status => {
           if (!this.all_statuses[status].block) {
-            this.not_blocked_status[status] = this.all_statuses[status];
+            this.not_blocked_status.push(status);
           }
         });
         this.statuses_array = Object.keys(this.statuses);
         this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
     });
-    if (this.router.url.indexOf('/result_set/') >= 0) {
-      $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
-      $('.plan-space').removeClass('very-big-column big-column').addClass('small-column ');
-      $('.run-space').removeClass('very-big-column small-column').addClass('big-column');
-    }
-
-  }
-
-  ngAfterViewInit() {
-    $('.result_sets_list').css('height', $('#main-container').innerHeight() - 120);
   }
 
   set_default_filter() {
     const params = this.get_query_filters();
-      params.forEach(f => {
-        this.filter.push(+f);
-      });
+    params.forEach(f => {
+      this.filter.push(+f);
+    });
   }
 
   get_query_filters() {
@@ -94,10 +83,9 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
 
   getStyles(object) {
     if (this.statuses && object['status']) {
-      return {'box-shadow': 'inset 0 0 10px ' + this.statuses[object['status']].color};
+      return {'border-right': '7px solid ' + this.statuses[object['status']].color};
     }
   }
-
 
   get_result_sets() {
     const run_id = this.router.url.match(/run\/(\d+)/i)[1];
@@ -115,10 +103,12 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
   }
 
   get_result_sets_and_cases() {
+    this.selected_objects = [];
     this.result_sets = [];
     this.result_sets_and_cases = [];
     Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
       this.result_sets = res[0];
+      this.cases = res[1];
       const cases = [];
       Object(res[1]).forEach(current_case => {
         if (res[0].filter(result_set => result_set.name === current_case.name).length === 0) {
@@ -130,146 +120,95 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  delete_result_set(modal) {
-    if (this.result_set_settings_data['object'].constructor.name === 'ResultSet') {
-      if (confirm('A u shuare?')) {
-        this.httpService.postData('/result_set_delete', 'result_set_data[id]=' + this.result_set_settings_data['id'])
+  delete_object(object) {
+    if (confirm('A u shuare?')) {
+      if (object.dataContext.path === 'result_set') {
+        this.httpService.postData('/result_set_delete',
+          'result_set_data[id]=' + object.dataContext.id) // FIXME: move to palladium api service
           .then(
             result_sets => {
-              this.result_sets_and_cases[this.result_set_settings_data['index']] = new Case(this.result_set_settings_data['object']);
-              if (this.router.url.indexOf('/result_set/' + result_sets['result_set']) === -1) {
-                this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
-              }
+              this.result_sets = this.result_sets.filter(obj => (obj.id !== +result_sets['result_set']['id']));
+              this.merge_result_sets_and_cases();
               this.update_statistic();
             },
             error => this.errorMessage = <any>error);
-        modal.close();
-      }
-    } else {
-      if (confirm('A u shuare?')) {
-        this.ApiService.delete_case(this.result_set_settings_data['id']).then(res => {
-          this.result_sets_and_cases.splice(this.result_set_settings_data['index'], 1);
+      } else {
+        this.ApiService.delete_case(object.dataContext.id).then(res => {
+          this.cases = this.cases.filter(obj => (obj.id !== res.id));
+          this.merge_result_sets_and_cases();
           this.update_statistic();
         });
-        modal.close();
       }
     }
   }
 
-  edit_result_set(form: NgForm, modal, valid: boolean) {
+  merge_result_sets_and_cases() {
+    this.result_sets_and_cases = [];
+    this.cases.forEach(current_case => {
+      if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
+        this.result_sets_and_cases.push(current_case);
+      }
+    });
+    this.result_sets_and_cases = this.result_sets.concat(this.result_sets_and_cases);
+  }
+
+  edit_object(form: NgForm, modal, valid: boolean) {
     if (!valid) {
       return;
     }
-    this.ApiService.edit_case_by_result_set_id(this.result_set_settings_data['id'], form.value['result_set_name']).then(this_case => {
-      const result_set_for_change = this.result_sets.filter(result_set => result_set.id === this.result_set_settings_data['id'])[0];
-      result_set_for_change.name = this_case.name;
-      result_set_for_change.updated_at = this_case.updated_at;
-    });
+    if (this.object.path === 'result_set') {
+      this.ApiService.edit_case_by_result_set_id(this.object.id, form.value['name']).then(this_case => {
+        const result_set_for_change = this.result_sets.filter(result_set => result_set.id === this.object.id)[0];
+        result_set_for_change.name = this_case.name;
+        result_set_for_change.updated_at = this_case.updated_at;
+      });
+    } else {
+      this.ApiService.edit_case(this.object.id, form.value['name']).then(this_case => {
+        const result_set_for_change = this.cases.filter(result_set => result_set.id === this.object.id)[0];
+        result_set_for_change.name = this_case.name;
+        result_set_for_change.updated_at = this_case.updated_at;
+      });
+    }
     modal.close();
   }
 
-  show_settings_button(index) {
-    $('#' + index + '.result-set-setting-button').show();
-  };
-
-  hide_settings_button(index) {
-    $('#' + index + '.result-set-setting-button').hide();
-  };
-
-  settings(modal, object, index, form) {
-    this.result_set_settings_data = {object: object, id: object.id, index: index};
-    modal.open();
-    form.controls['result_set_name'].setValue(object.name);
-  }
-
-  set_space_width() {
-    $('.product-space').removeClass('very-big-column big-column').addClass('small-column');
-    $('.plan-space').removeClass('very-big-column big-column').addClass('small-column');
-    $('.run-space').removeClass('very-big-column big-column').addClass('big-column');
-    $('.result_set-space').removeClass('big-column').addClass('small-column');
-    // $('.lost-result').hide();
-  }
-
-  open_results(id) {
-    this.set_space_width();
-    if (this.router.url.indexOf('/result_set/' + id) > 0) {
-      this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]], true);
-    }
-  }
-
-  getStylesBackround(object) {
-    if (this.statuses && object['status']) {
-      return {'background': this.statuses[object['status']].color};
-    }
-  }
-
-  selectCounter(event, object) {
-    if (event.target.checked) {
-      this.selected_objects.push(object);
-    } else {
-      this.selected_objects = this.selected_objects.filter(obj => obj.id !== object.id);
-    }
-    this.add_result_button(this.selected_objects.length === 0);
-  }
-
-  add_result_button(disable: boolean) {
-    if (disable) {
-      $('.add-result-block').addClass('disabled');
-    } else {
-      $('.add-result-block').removeClass('disabled');
-    }
-  }
-
-  add_result_modal(modal) {
-    if (this.selected_objects.length !== 0) {
-      modal.open();
-      if (this.selected_objects.length === 1) {
-        this.set_sets_status_as_default();
-      } else {
-        this.set_first_status_as_default();
-      }
-    }
-  }
-
-  set_sets_status_as_default() {
-    this.select_default_status(this.result_sets_and_cases.find(set =>
-      set['id'] + '' === $('input[type=checkbox]:checked').val())['status']);
-  }
-
-  set_first_status_as_default() {
-    this.Selector.clear_selected();
-    this.selected_status_id = null;
+  add_result_modal() {
+    this.AddResultModal.open();
   }
 
   add_results(form: NgForm, modal) {
     const description = form.value['result_description'];
-    const status_name = this.statuses[this.selected_status_id]['name'];
-    Promise.all([this.add_result_for_result_set(description, status_name), this.add_result_for_case(description,
-      this.statuses[this.selected_status_id])]).then(res => {
+    const status = this.statuses[form.value['result_status']];
+    Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
+      status)]).then(res => {
       this.result_sets_and_cases.filter(current_object => this.selected_objects.includes(current_object))
         .forEach((current_result_set) => {
           current_result_set.status = +this.selected_status_id;
         });
       this.update_statistic();
-      this.clear_inputs(form.controls['result_description']);
       this.resultservice.update_results();
     });
     modal.close();
   }
 
   add_result_for_result_set(message, status) {
-    const result_sets = this.selected_objects.filter(obj => obj.path === 'result_set');
+    const result_sets = this.result_sets_and_cases.filter(obj => obj.path === 'result_set' && obj.selected);
     if (result_sets.length === 0) {
       return Promise.resolve([]);
     }
     return this.ApiService.result_new(result_sets, message, status).then(res => {
+      this.result_sets_and_cases.filter(obj => obj.path === 'result_set').forEach(obj => {
+        if (res['other_data']['result_set_id'].includes(obj.id)) {
+          obj.status = res['result']['status_id'];
+        }
+      });
       return res;
     });
   }
 
   add_result_for_case(message, status) {
     const run_id = this.router.url.match(/run\/(\d+)/i)[1];
-    const cases = this.selected_objects.filter(obj => obj.path === 'case');
+    const cases = this.result_sets_and_cases.filter(obj => obj.path === 'case' && obj.selected);
     if (cases.length === 0) {
       return Promise.resolve([]);
     }
@@ -283,19 +222,52 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  clear_inputs(form) {
-    this.Selector.clear_selected();
-    this.selected_status_id = null;
-    form.setValue(null);
-    this.update_statistic();
+  get_filters(e) {
+    this.unselect_all();
+    this.selected_objects = [];
+    this.filter = e;
+    this.check_selected_is_hidden(e);
   }
 
-  get_filters(e) {
-    this.filter = e;
-    this.uncheck_all_checkboxes();
-    this.selected_objects = [];
-    this.add_result_button(true);
-    this.check_selected_is_hidden(e);
+  unselect_all() {
+    this.result_sets_and_cases.forEach(obj => {
+      obj.selected = false;
+    });
+  }
+
+  select_all() { // FIXME: need optimize
+    if (this.filter.length === 0) {
+      this.result_sets_and_cases.forEach(obj => {
+        obj.selected = true;
+      });
+    } else {
+      this.result_sets_and_cases.filter(item => this.filter.indexOf(item.status) > -1).forEach(obj => {
+        obj.selected = true;
+      });
+    }
+  }
+
+  open_history_page(data) {
+    const path = this.get_path();
+    if (data['dataContext']['path'] === 'case') {
+      this.router.navigate([path + '/case_history/',  data['dataContext']['id']]);
+    } else {
+      this.router.navigate([path + 'case_history/', this.get_case_id(data['dataContext']['name'])]);
+    }
+  }
+
+  get_case_id(data) {
+    return this.cases.filter(this_case => this_case.name === data)[0].id;
+  }
+
+  get_path() {
+    if (this.router.url.match(/case_history\/(\d+)/i) !== null) {
+      return /(.*?)(?=case_history|$)/.exec(this.router.url)[0];
+    } else if (this.router.url.match(/result_set\/(\d+)/i) !== null) {
+      return /(.*?)(?=result_set|$)/.exec(this.router.url)[0];
+    } else {
+      return this.router.url + '/';
+    }
   }
 
   check_selected_is_hidden(filters) {
@@ -315,29 +287,6 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  uncheck_all_checkboxes() {
-    $('input:checkbox').prop('checked', false);
-  }
-
-  filer_selector(element) {
-    if ($(element).hasClass('selected')) {
-      $(element).removeClass('selected');
-    } else {
-      $(element).addClass('selected');
-    }
-  }
-
-  selected_status_get(selected_id) {
-    this.selected_status_id = selected_id;
-  }
-
-  select_default_status(id) {
-    if (id !== 0) {
-      this.Selector.set_status(id);
-      this.selected_status_id = id;
-    }
-  }
-
   update_statistic() {
     const stat_data = {};
     this.result_sets_and_cases.forEach(object => {
@@ -349,5 +298,45 @@ export class ResultSetsComponent implements OnInit, AfterViewInit {
     });
     this.statistic = new Statistic(stat_data);
     this.stat.update_run_statistic(this.statistic);
+  }
+
+  open_modal(object) {
+    this.object = this.result_sets_and_cases.filter(obj => obj.id === object.dataContext.id && obj.path === object.dataContext.path)[0];
+    this.form.controls['name'].setValue(this.object.name);
+    this.Modal.open();
+  };
+
+  context_menu(event, object) {
+    this.select_object(object);
+    if (this.get_selected_count() !== 0) {
+      event.open([
+        {
+          label: '<span class="menu-icon">Add result (' + this.get_selected_count() + ')</span>',
+          onClick: this.add_result_modal.bind(this)
+        },
+        {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_result_sets_and_cases.bind(this)},
+        {label: '<span class="menu-icon">Select all</span>', onClick: this.select_all.bind(this)},
+        {label: '<span class="menu-icon">History</span>', onClick: this.open_history_page.bind(this)},
+        {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
+        {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object.bind(this)}]);
+    } else {
+      event.open([
+        {label: '<span class="menu-icon">Add result</span>', onClick: this.add_result_modal.bind(this)},
+        {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_result_sets_and_cases.bind(this)},
+        {label: '<span class="menu-icon">History</span>', onClick: this.open_history_page.bind(this)},
+        {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
+        {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object.bind(this)}]);
+    }
+  }
+
+  select_object(object) {
+    if (!object.selected) {
+      this.unselect_all();
+      object.selected = true;
+    }
+  }
+
+  get_selected_count() {
+    return this.result_sets_and_cases.filter(obj => obj.selected).length;
   }
 }

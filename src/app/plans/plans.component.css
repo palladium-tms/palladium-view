@@ -1,30 +1,5 @@
-.plan-space{
-  display: inline-block;
-  float:left;
-  overflow: auto;
-  height: 100%;
-}
-.plan-block{
-  border: solid #a9a7aa 1px;
-  display: block;
-  max-height: 10em;
-  margin: 0.5em;
-  padding: 0.5em;
-  position: relative;
+:host {
+  display: flex;
   overflow: hidden;
-}
-input.plan-name{
-  width: 100%;
-  font-size: 18px;
-}
-div.plan-name{
-  width: auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.plan-delete-button{
-  float: left;
-}
-.active{
-  background-color: rgba(134, 255, 14, 0.33);
+  flex: 14;
 }

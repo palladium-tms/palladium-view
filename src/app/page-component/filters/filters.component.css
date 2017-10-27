@@ -1,9 +1,6 @@
-.filter_block{
-  border: solid #a9a7aa 1px;
-  display: block;
-  max-height: 10em;
-  margin: 0.5em;
-  padding: 0.5em;
-  position: relative;
-  overflow: hidden;
+:host {
+  align-items: center;
+  flex-wrap: wrap;
+  display: inline-flex;
+  flex-direction: row;
 }

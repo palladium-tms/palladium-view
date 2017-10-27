@@ -1,27 +1,38 @@
-import {Component, OnInit, AfterViewInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
-import {NavigationEnd, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
 import {FiltersComponent} from '../page-component/filters/filters.component';
+import {NgForm} from '@angular/forms';
+
 declare var $: any;
+
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
   styleUrls: ['./runs.component.css'],
+  encapsulation: ViewEncapsulation.Emulated,
   providers: [StatisticService]
 })
-export class RunsComponent implements OnInit, AfterViewInit {
+export class RunsComponent implements OnInit {
   @ViewChild('Filter')
+  @ViewChild('Modal') Modal;
+  @ViewChild('form') form;
   Filter: FiltersComponent;
   suites = [];
   runs_and_suites = [];
+  plan_id;
   statuses;
-  run_settings_data = {};
+  object;
   statistic: Statistic;
+  menuItems = [
+    {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_runs_and_suites.bind(this)},
+    {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
+    {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object_modal.bind(this)}];
   filter = [];
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
@@ -31,20 +42,8 @@ export class RunsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.set_default_filter();
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.get_runs_and_suites(params['id']);
-    });
-    if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0 && this.router.url.indexOf('/result_set/') <= 0) {
-      $('.product-space').removeClass('very-big-column small-column').addClass('big-column');
-      $('.plan-space').removeClass('small-column very-big-column').addClass('big-column');
-      $('.run-space').removeClass('big-column small-column').addClass('very-big-column');
-    }
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        if (this.router.url.indexOf('/suite/') >= 0 || this.router.url.indexOf('/run/') >= 0
-          && this.router.url.indexOf('/result_set/') <= 0) {
-          this.set_space_width();
-        }
-      }
+      this.plan_id = params['id'];
+      this.get_runs_and_suites();
     });
     this.StatisticService.getMessage().subscribe(statistic => {
       const id = this.router.url.match(/run\/(\d+)/i)[1];
@@ -60,10 +59,6 @@ export class RunsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    $('.runs-list').css('height', $('#main-container').innerHeight() - ($('.filter_block').outerHeight(true) * 2 + 11));
-  }
-
   set_default_filter() {
     this.activatedRoute.queryParams.subscribe(params => {
       let filter;
@@ -72,7 +67,7 @@ export class RunsComponent implements OnInit, AfterViewInit {
         filter = [filter];
       }
       if (filter[0]) {
-        filter.forEach( f => {
+        filter.forEach(f => {
           this.filter.push(+f);
         });
       }
@@ -99,8 +94,8 @@ export class RunsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  get_runs_and_suites(plan_id) {
-    Promise.all([this.get_runs(plan_id), this.get_suites(), this.get_statuses()]).then(res => {
+  get_runs_and_suites() {
+    Promise.all([this.get_runs(this.plan_id), this.get_suites(), this.get_statuses()]).then(res => {
       this.statuses = res[2];
       const suite_for_add = [];
       res[1].forEach(suite => {
@@ -147,29 +142,53 @@ export class RunsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  log(val) {
-    console.log(val);
-  }
-
-  set_space_width() {
-    if (this.router.url.indexOf('/result_set/') === -1 && !$('.run-space').hasClass( 'big-column')) {
-      $('.product-space').removeClass('very-big-column').addClass('big-column');
-      $('.plan-space').removeClass('very-big-column').addClass('big-column');
-      $('.run-space').removeClass('big-column').addClass('very-big-column');
+  edit_object_modal(form: NgForm, modal) {
+    if (this.object.path === './run') {
+      this.ApiService.edit_suite_by_run_id(this.object.id, form.value['name']).then(suite => {
+        this.runs_and_suites.forEach(object => {
+          if (object.id === this.object.id && object.path === './run') {
+            object.name = suite.name;
+            object.updated_at = suite.updated_at;
+          }
+        }); // FIXME: need optimize
+      });
     } else {
-      $('.product-space').removeClass('very-big-column').addClass('small-column');
-      $('.run-space').removeClass('very-big-column').addClass('big-column');
-      $('.plan-space').removeClass('very-big-column').addClass('small-column ');
+      this.ApiService.edit_suite(this.object.id, form.value['name']).then(suite => {
+        this.runs_and_suites.forEach(object => {
+          if (object.id === this.object.id && object.path === './suite') {
+            object.name = suite.name;
+            object.updated_at = suite.updated_at;
+          }
+        }); // FIXME: need optimize
+      });
+    }
+    modal.close();
+  }
+  delete_object_modal(object) {
+    if (confirm('A u shuare?')) {
+      if (object.dataContext.path === './run') {
+        this.ApiService.delete_run(object.dataContext.id).then(run => {
+          const deleted_obj = this.runs_and_suites.filter(obj => (obj.id === +run && obj.path === './run'))[0];
+          this.runs_and_suites[this.runs_and_suites.indexOf(deleted_obj)] = new Suite(deleted_obj);
+          if (this.router.url.indexOf('/run/' + object.dataContext.id) >= 0) {
+            this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
+          }
+        });
+      } else {
+        this.ApiService.delete_suite(object.dataContext.id).then(suite => {
+          const deleted_obj = this.runs_and_suites.filter(obj => (obj.id === suite.id && obj.path === './suite'))[0];
+          this.runs_and_suites.splice(this.runs_and_suites.indexOf(deleted_obj), 1);
+          if (this.router.url.indexOf('/suite/' + object.dataContext.id) >= 0) {
+            this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+          }
+        });
+      }
     }
   }
-
-  result_object(event) {
-    if (event.status === 'run_deleted') {
-      this.runs_and_suites[event.index] = this.suites.filter(
-        suite => suite.name === event.object.name)[0];
-    } else if (event.status === 'suite_deleted') {
-      this.runs_and_suites.splice(this.run_settings_data[event.index], 1);
-    }
-    this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
-  }
+  open_modal(object) {
+    this.object = this.runs_and_suites.filter(current_object => current_object.id === object.dataContext.id &&
+      current_object.path === object.dataContext.path)[0];
+    this.form.controls['name'].setValue(this.object.name);
+    this.Modal.open();
+  };
 }

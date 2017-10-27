@@ -13,10 +13,6 @@ export class StatisticService {
     this.subject.next(Object);
   }
 
-  clearMessage() {
-    this.subject.next();
-  }
-
   getMessage(): Observable<any> {
     return this.subject.asObservable();
   }

@@ -32,8 +32,11 @@ import {StatusComponent} from './page-component/status/status.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
 import {AboutComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
-import { RunComponent } from './runs/run/run.component';
-import { SuiteComponent } from './runs/suite/suite.component';
+import {RunComponent} from './runs/run/run.component';
+import {SuiteComponent} from './runs/suite/suite.component';
+import {ShContextMenuModule} from 'ng2-right-click-menu';
+import {DetailResultComponent} from './detail-result/detail-result.component';
+import {CaseHistoryComponent} from './case-history/case-history.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -46,7 +49,8 @@ const appRoutes: Routes = [
         path: 'plan/:id', component: RunsComponent, children: [
         {
           path: 'run/:id', component: ResultSetsComponent, children: [
-          {path: 'result_set/:id', component: ResultsComponent}
+          {path: 'result_set/:id', component: ResultsComponent},
+          {path: 'case_history/:id', component: CaseHistoryComponent}
         ]
         },
         {path: 'suite/:id', component: CasesComponent}
@@ -56,6 +60,7 @@ const appRoutes: Routes = [
     }
   ]
   },
+  {path: 'result/:id', component: DetailResultComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: '/404'},
 ];
 
@@ -82,10 +87,12 @@ const appRoutes: Routes = [
     AboutComponent,
     StatusSettingsComponent,
     RunComponent,
-    SuiteComponent
+    SuiteComponent,
+    DetailResultComponent,
+    CaseHistoryComponent
   ],
   imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
-    Angular2FontawesomeModule, SelectModule],
+    Angular2FontawesomeModule, SelectModule, ShContextMenuModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })

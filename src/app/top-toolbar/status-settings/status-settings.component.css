@@ -1,16 +1,7 @@
-a.status-settings-link{
-  text-decoration: none;
+.status-settings-link{
   font-weight: bold;
   cursor: pointer;
   font-size: 18px;
   color: #e2e2e2;
   padding-right: 2em;
-}
-.status-name{
-  max-width: 24em;
-}
-.status-block{
-  display: inline-block;
-  color: red;
-  cursor: pointer;
 }
