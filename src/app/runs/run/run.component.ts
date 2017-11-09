@@ -1,6 +1,5 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
 
 @Component({
   selector: 'app-run',
@@ -13,7 +12,7 @@ export class RunComponent implements OnInit {
   @Input() index;
   @Input() statuses;
   isSelected = false;
-  constructor(private router: Router, private ApiService: PalladiumApiService) {
+  constructor(private router: Router) {
   }
 
   ngOnInit() {
@@ -31,10 +30,6 @@ export class RunComponent implements OnInit {
     } else {
       return false;
     }
-  }
-
-  force_floor(data) {
-    return (Math.floor(data * 100) / 100);
   }
 
   get_query() {

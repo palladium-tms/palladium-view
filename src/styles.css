@@ -8,8 +8,10 @@ html, body {
   font-size: 14px;
   line-height: 1;
 }
-
-a, a:hover{
+a:hover{
+  color: #4c00e3;
+}
+a {
   color: #412C84;
   text-decoration: none !important;
 }
@@ -36,7 +38,7 @@ input[type=checkbox] {
 }
 /* === flex update ====*/
 
-.product-space, .plan-space, .run-space, .result-set-space, .result-space {
+.product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space {
   display: flex;
   flex-direction: column;
   overflow: hidden;

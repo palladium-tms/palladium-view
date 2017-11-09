@@ -10,6 +10,7 @@ import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
 import {URLSearchParams} from '@angular/http';
+import {Statistic} from "../app/models/statistic";
 
 @Injectable()
 export class PalladiumApiService {
@@ -171,7 +172,16 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
-
+  get_history(case_id): Promise<any> {
+    return this.httpService.postData('/case_history', 'case_data[id]=' + case_id).then((resp: any) => {
+      resp['history_data'].forEach(plan => {
+        plan['run']['result_set']['statistic'] = new Statistic(plan['run']['result_set']['statistic']);
+      });
+      return resp['history_data'];
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
   //#endregion
 
   //#region Run
