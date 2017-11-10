@@ -186,7 +186,11 @@ export class ResultSetsComponent implements OnInit {
           current_result_set.status = +this.selected_status_id;
         });
       this.update_statistic();
-      this.resultservice.update_results();
+      if (this.router.url.indexOf('/result_set/') >= 0) {
+        this.resultservice.update_results();
+      } else if (this.router.url.indexOf('/case_history/') >= 0) {
+        // Fixme: Add history updating
+      }
     });
     modal.close();
   }

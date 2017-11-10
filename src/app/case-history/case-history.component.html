@@ -1,8 +1,10 @@
 <div class="history-space">
-  <div class="toolbar"></div>
+  <div class="toolbar"><h1>History</h1></div>
   <div class="item-list">
+    <ng-container *ngIf="history && statuses">
+
     <!--| sortByCreatedAt:'desc'-->
-    <div class="item bipolar-item big-item" *ngFor="let plan of history">
+    <div class="item bipolar-item big-item" *ngFor="let plan of history | SortByUpdatedAt:'desc'">
       <div class="small-block" [ngStyle]="getStyles(plan['run']['result_set']['status'])">
         <div class="sub-blocks-holder">
           <div class="sub-block"><a class="detail_link" href="{{plan_url(plan['plan_id'])}}" target="_blank"><b>{{plan['plan_name']}}</b></a></div>
@@ -13,10 +15,16 @@
       </div>
       <div class="big-block">
         <div class="status-history">
-
+          <div class="item-statistic">
+            <div *ngFor="let status of plan['run']['result_set']['statistic'].existed_statuses"
+                 [ngStyle]="{ 'width': (plan['run']['result_set']['statistic'].extended[status] / plan['run']['result_set']['statistic'].all * 100) + '%', 'background-color': statuses[status]['color']}">
+            </div>
+            <!--{{ plan['run']['result_set']['statistic'] | json}}-->
+          </div>
         </div>
       </div>
     </div>
+    </ng-container>
   </div>
 </div>
 

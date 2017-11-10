@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import { Location } from '@angular/common';
-import {Statistic} from '../models/statistic';
 import {StatisticService} from '../../services/statistic.service';
 
 @Component({
@@ -11,7 +10,7 @@ import {StatisticService} from '../../services/statistic.service';
   styleUrls: ['./case-history.component.css']
 })
 export class CaseHistoryComponent implements OnInit {
-  history = [];
+  history;
   statuses;
   constructor( private activatedRoute: ActivatedRoute, private location: Location,
                private ApiService: PalladiumApiService, public StatisticService: StatisticService) { }
@@ -52,7 +51,7 @@ export class CaseHistoryComponent implements OnInit {
 
   get_case_history(id) {
     this.ApiService.get_history(id).then(res => {
-      this.history = res['history_data'];
+      this.history = res;
     });
   }
 

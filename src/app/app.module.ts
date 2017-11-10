@@ -25,6 +25,7 @@ import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SelectModule} from 'ng2-select';
 import {StatusSelectorComponent} from './page-component/status-selector/status-selector.component';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
+import {SortByUpdatedAtPipe} from './pipes/sort-by-created-at/sort-by-updated-at.pipe';
 import {TokenComponent} from './top-toolbar/token/token.component';
 import {CasesComponent} from './cases/cases.component';
 import {FiltersComponent} from './page-component/filters/filters.component';
@@ -79,6 +80,7 @@ const appRoutes: Routes = [
     StatusFilterPipe,
     StatusSelectorComponent,
     SortByCreatedAtPipe,
+    SortByUpdatedAtPipe,
     TokenComponent,
     CasesComponent,
     FiltersComponent,

@@ -1,6 +1,5 @@
 <div class="result-space">
-  <div class="toolbar">
-  </div>
+  <div class="toolbar"><h1>Results</h1></div>
   <div class="item-list">
     <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
       <div class="small-block" [ngStyle]="getStyles(result.status_id)">
