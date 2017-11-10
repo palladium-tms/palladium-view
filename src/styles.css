@@ -59,6 +59,7 @@ input[type=checkbox] {
 }
 
 .plan-space {
+  max-width: 70em;
   flex: 2;
 }
 
@@ -68,6 +69,7 @@ input[type=checkbox] {
 }
 
 .result-set-space, .case-space {
+  max-width: 60em;
   flex: 4;
 }
 
