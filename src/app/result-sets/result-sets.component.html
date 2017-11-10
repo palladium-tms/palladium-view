@@ -2,6 +2,7 @@
   <div class="toolbar filter">
     <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
   </div>
+
   <div class="item-list">
     <div class="item hoverer bipolar-item" routerLinkActive="active"
          *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'"
@@ -21,6 +22,7 @@
     </div>
   </div>
 </div>
+
 <modal #Modal>
   <modal-header>
     <h1>Change object name</h1>

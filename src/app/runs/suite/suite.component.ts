@@ -10,7 +10,6 @@ export class SuiteComponent implements OnInit {
   @Input() object;
   @Input() index;
   @Input() statuses;
-  settings_visibility = false;
   settings_data;
   isSelected = false;
 
@@ -36,11 +35,5 @@ export class SuiteComponent implements OnInit {
     this.settings_data = {object: this.object, id: this.object};
     modal.open();
     form.controls['suite_name'].setValue(this.object.name);
-  }
-  select_suite() {
-    if (this.router.url.indexOf('/suite/' + this.object.id) > 0 ) {
-      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]], true);
-    }
-    this.isSelected = true;
   }
 }

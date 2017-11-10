@@ -1,9 +1,13 @@
-<div class="run-space">
+<div class="case-space">
   <div class="toolbar">
     <div class="filter"></div>
   </div>
   <div class="item-list">
-    <div class="item" routerLinkActive="active" *ngFor="let case of cases; let index = index">
+    <div class="item hoverer bipolar-item" routerLinkActive="active" *ngFor="let case of cases">
+      <div class="result-set-discriber centered-data">
+      <div class="centered-data checkbox-item">
+        <input type="checkbox">
+      </div>
       <div class="item-name">
         <span>{{case.name}}</span>
       </div>
