@@ -46,4 +46,7 @@ export class ResultsComponent implements OnInit {
     }
   }
 
+  context_menu(event) {
+    event.open([{label: '<span class="menu-icon">Refresh</span>', onClick: this.init_results.bind(this)}]);
+  }
 }

@@ -9,8 +9,6 @@ import {Statistic} from '../models/statistic';
 import {FiltersComponent} from '../page-component/filters/filters.component';
 import {NgForm} from '@angular/forms';
 
-declare var $: any;
-
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
