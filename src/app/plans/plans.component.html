@@ -1,7 +1,7 @@
 <div class="plan-space">
   <div class="toolbar"></div>
   <div class="item-list">
-    <div class="item" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'" [sh-context]="menuItems" [sh-data-context]="plan">
+    <div class="item hoverer" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'" [sh-context]="menuItems" [sh-data-context]="plan">
       <div class="item-name">
         <a [routerLink]="['./plan', plan.id]">{{plan.name}}</a>
         <span class="count" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}"><b>/ {{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</b></span>

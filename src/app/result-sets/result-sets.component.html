@@ -3,7 +3,7 @@
     <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
   </div>
   <div class="item-list">
-    <div class="item bipolar-item" routerLinkActive="active"
+    <div class="item hoverer bipolar-item" routerLinkActive="active"
          *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'"
          (onBeforeMenuOpen)="context_menu($event, object)" [sh-context]="menuItems" [sh-data-context]="object"  [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">

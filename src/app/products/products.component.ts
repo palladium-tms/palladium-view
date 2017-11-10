@@ -3,6 +3,7 @@ import {NgForm} from '@angular/forms';
 import {Product} from '../models/product';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
+import {ActivatedRoute} from '@angular/router';
 declare var $: any;
 
 @Component({
@@ -23,8 +24,7 @@ export class ProductsComponent implements OnInit {
     {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
     {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_product.bind(this)}];
 
-  constructor(private ApiService: PalladiumApiService, private router: Router) {
-  }
+  constructor(private ApiService: PalladiumApiService, private router: Router, private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.get_products();

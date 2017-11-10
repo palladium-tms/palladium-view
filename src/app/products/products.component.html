@@ -3,7 +3,7 @@
     <div class="filter"></div>
   </div>
   <div class="item-list">
-    <div class="item" routerLinkActive="active" *ngFor="let product of products; let index = index"
+    <div class="item hoverer" routerLinkActive="active" *ngFor="let product of products; let index = index"
          [sh-context]="menuItems" [sh-data-context]="product">
       <div class="item-name"><a [routerLink]="['/product', product.id]"
                                 routerLinkActive="low-priority">{{product.name}}</a></div>

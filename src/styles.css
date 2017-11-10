@@ -37,6 +37,9 @@ input[type=checkbox] {
   transform: scale(1.2);
 }
 /* === flex update ====*/
+.active {
+  background-color: #e6e6e6;
+}
 
 .product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space {
   display: flex;
@@ -51,6 +54,7 @@ input[type=checkbox] {
 }
 
 .item-list {
+  overflow: auto;
   flex: 1;
 }
 
@@ -71,10 +75,6 @@ input[type=checkbox] {
   flex: 5;
 }
 
-.item-list {
-  overflow: auto;
-}
-
 .toolbar {
   background-color: #eefeff;
   width: 100%;
@@ -89,8 +89,7 @@ input[type=checkbox] {
   max-height: 6em;
   max-width: 100%;
 }
-
-.item:hover {
+.hoverer:hover{
   background-color: #e6e6e6;
 }
 
@@ -114,6 +113,10 @@ input[type=checkbox] {
   height: 0.3em;
 }
 
+.item-wrapper {
+  max-height: 6em;
+  max-width: 100%;
+}
 .bipolar-item {
   display: flex;
   overflow: hidden;
