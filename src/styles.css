@@ -41,7 +41,7 @@ input[type=checkbox] {
   background-color: #e6e6e6;
 }
 
-.product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space {
+.product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space, .case_space {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -68,7 +68,7 @@ input[type=checkbox] {
   max-width: 50em;
 }
 
-.result-set-space, .case-space {
+.result-set-space, .case_space {
   max-width: 60em;
   flex: 4;
 }

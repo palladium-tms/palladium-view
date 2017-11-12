@@ -1,34 +1,34 @@
-<div class="case-space">
+<div class="case_space">
   <div class="toolbar">
     <div class="filter"></div>
   </div>
   <div class="item-list">
     <div class="item hoverer bipolar-item" routerLinkActive="active" *ngFor="let case of cases">
-      <div class="result-set-discriber centered-data">
-      <div class="centered-data checkbox-item">
-        <input type="checkbox">
-      </div>
-      <div class="item-name">
-        <span>{{case.name}}</span>
+      <div class="result-set-discriber centered-data" [sh-context]="menuItems" [sh-data-context]="case">
+        <div class="centered-data checkbox-item">
+          <input type="checkbox">
+        </div>
+        <div class="item-name">
+          <span>{{case.name}}</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<!--<modal #casesettingsModal>-->
-  <!--<modal-header>-->
-    <!--<h1>Case settings</h1>-->
-  <!--</modal-header>-->
-  <!--<modal-content>-->
-    <!--Change case name-->
-    <!--<form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_case(settingsform, casesettingsModal, settingsform.valid )">-->
-      <!--<input type="text" class="case-name" name="case_name" ngModel required #case_name="ngModel" autofocus>-->
-      <!--<small [hidden]="case_name.valid || (case_name.pristine && !settingsform.submitted)">-->
-        <!--case_name name can't be empty.-->
-      <!--</small>-->
-    <!--</form>-->
-  <!--</modal-content>-->
-  <!--<modal-footer>-->
-    <!--<button class="btn btn-danger result-set-delete-button" (click)="delete_case(casesettingsModal)">Delete</button>-->
-    <!--<button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>-->
-  <!--</modal-footer>-->
-<!--</modal>-->
+
+<modal #Modal>
+  <modal-header>
+    <h1>Change case name</h1>
+  </modal-header>
+  <modal-content>
+    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_case(form, Modal, form.valid )">
+      <input type="text" class="case-name" name="name" ngModel required #name="ngModel" autofocus>
+      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
+        name can't be empty.
+      </small>
+    </form>
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
+  </modal-footer>
+</modal>
