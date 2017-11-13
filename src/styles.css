@@ -35,6 +35,7 @@ pre {
 
 input[type=checkbox] {
   transform: scale(1.2);
+  margin: 2px 0 0;
 }
 /* === flex update ====*/
 .active {

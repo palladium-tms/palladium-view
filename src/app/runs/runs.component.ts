@@ -22,6 +22,7 @@ export class RunsComponent implements OnInit {
   @ViewChild('form') form;
   Filter: FiltersComponent;
   suites = [];
+  runs = [];
   runs_and_suites = [];
   plan_id;
   statuses;
@@ -95,20 +96,25 @@ export class RunsComponent implements OnInit {
   get_runs_and_suites() {
     Promise.all([this.get_runs(this.plan_id), this.get_suites(), this.get_statuses()]).then(res => {
       this.statuses = res[2];
-      const suite_for_add = [];
-      res[1].forEach(suite => {
-        this.suites.push(suite);
-        const same = res[0].filter(run => run.name === suite.name);
-        if (same.length === 0) {
-          suite_for_add.push(suite);
-        } else if (same[0].statistic.all !== suite.statistic.all) {
-          const untested = suite.statistic.all - same[0].statistic.all;
-          same[0].statistic.add_status('0', untested);
-        }
-      });
-      this.runs_and_suites = res[0].concat(suite_for_add);
+      this.suites = res[1];
+      this.runs = res[0];
+      this.merge_suites_and_runs();
       this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     });
+  }
+  merge_suites_and_runs() {
+    const suite_for_add = [];
+    this.suites.forEach(suite => {
+      const same = this.runs.filter(run => run.name === suite.name);
+      if (same.length === 0) {
+        suite_for_add.push(suite);
+      } else if (same[0].statistic.all !== suite.statistic.all) {
+        const untested = suite.statistic.all - same[0].statistic.all;
+        same[0].statistic.add_status('0', untested);
+      }
+    });
+    this.runs_and_suites = this.runs.concat(suite_for_add);
+    console.log(this.runs_and_suites);
   }
 
   get_filters(e) {
@@ -166,8 +172,11 @@ export class RunsComponent implements OnInit {
     if (confirm('A u shuare?')) {
       if (object.dataContext.path === './run') {
         this.ApiService.delete_run(object.dataContext.id).then(run => {
-          const deleted_obj = this.runs_and_suites.filter(obj => (obj.id === +run && obj.path === './run'))[0];
-          this.runs_and_suites[this.runs_and_suites.indexOf(deleted_obj)] = new Suite(deleted_obj);
+          this.runs = this.runs.filter(current_run => current_run.id !== +run);
+          console.log(this.runs);
+          console.log(this.suites);
+          console.log('---------------------');
+          this.merge_suites_and_runs();
           if (this.router.url.indexOf('/run/' + object.dataContext.id) >= 0) {
             this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
           }

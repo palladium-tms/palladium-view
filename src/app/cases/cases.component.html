@@ -21,7 +21,7 @@
     <h1>Change case name</h1>
   </modal-header>
   <modal-content>
-    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_case(form, Modal, form.valid )">
+    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_case_modal()">
       <input type="text" class="case-name" name="name" ngModel required #name="ngModel" autofocus>
       <small [hidden]="name.valid || (name.pristine && !form.submitted)">
         name can't be empty.
