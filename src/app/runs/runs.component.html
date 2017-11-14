@@ -7,8 +7,7 @@
   <div class="item-list">
     <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index"
          [sh-context]="menuItems" [sh-data-context]="object">
-      <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses
-               *ngIf="object.path === './run'"></app-run>
+      <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './run'"></app-run>
       <app-suite [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
     </div>
   </div>

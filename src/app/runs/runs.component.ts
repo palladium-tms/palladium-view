@@ -173,10 +173,8 @@ export class RunsComponent implements OnInit {
       if (object.dataContext.path === './run') {
         this.ApiService.delete_run(object.dataContext.id).then(run => {
           this.runs = this.runs.filter(current_run => current_run.id !== +run);
-          console.log(this.runs);
-          console.log(this.suites);
-          console.log('---------------------');
           this.merge_suites_and_runs();
+          this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
           if (this.router.url.indexOf('/run/' + object.dataContext.id) >= 0) {
             this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
           }
@@ -185,6 +183,7 @@ export class RunsComponent implements OnInit {
         this.ApiService.delete_suite(object.dataContext.id).then(suite => {
           const deleted_obj = this.runs_and_suites.filter(obj => (obj.id === suite.id && obj.path === './suite'))[0];
           this.runs_and_suites.splice(this.runs_and_suites.indexOf(deleted_obj), 1);
+          this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
           if (this.router.url.indexOf('/suite/' + object.dataContext.id) >= 0) {
             this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
           }

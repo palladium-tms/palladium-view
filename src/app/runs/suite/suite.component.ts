@@ -10,7 +10,6 @@ export class SuiteComponent implements OnInit {
   @Input() object;
   @Input() index;
   @Input() statuses;
-  settings_data;
   isSelected = false;
 
   constructor(private router: Router) { }
@@ -30,10 +29,5 @@ export class SuiteComponent implements OnInit {
     } else {
       return false;
     }
-  }
-  settings(modal, form) {
-    this.settings_data = {object: this.object, id: this.object};
-    modal.open();
-    form.controls['suite_name'].setValue(this.object.name);
   }
 }
