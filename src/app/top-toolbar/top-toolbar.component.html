@@ -1,7 +1,4 @@
-<div class="navbar-app">
-  <div class="palladium-name-block">
-    <a class="link palladium-link" href="/">Palladium</a>
-  </div>
+<div class="header centered-data">
   <div *ngIf="authorize" class="logout-block">
     <app-token></app-token>
     <app-status-settings></app-status-settings>
@@ -9,4 +6,3 @@
     <a class="link logout-link" (click)="logout()">Logout</a>
   </div>
 </div>
-

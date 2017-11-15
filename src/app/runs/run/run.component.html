@@ -1,37 +1,14 @@
-<div class="run-block" [ngClass]="{'active': isSelected}" (mouseenter)="show_settings_button()" (mouseleave)="hide_settings_button()">
-  <div class="run_setting" *ngIf="settings_visibility" (click)="settings(Modal, settingsform)"></div>
-  <span class="lost-result" title="{{object.statistic.attitude || 0 | percent:'2.2-3'}}">{{force_floor(object.statistic.attitude) || 0 | percent}}</span>
-  <div class="run-name-link">
-    <a class="run-name" [routerLink]="[object.path, object.id]" [queryParams] = get_query() (click)="select_run()">{{object.name}}</a>
+<div class="item" [ngClass]="{'active': isSelected}">
+  <div class="item-name"><a [routerLink]="[object.path, object.id]" [queryParams]=get_query() (click)="select_run()">{{object.name}}</a>
   </div>
-  <div class="statistic">
-    <span *ngFor="let status of object.statistic.existed_statuses" class="status-position"
-          [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': statuses[status]['color']}">
-    </span>
+  <div class="run-statistic">
+    <div *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
+      {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
+    </div>
   </div>
-  <div class="status-legend-small-block">
-  <span *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
-  {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
-  </span>
+  <div class="item-statistic">
+    <div *ngFor="let status of object.statistic.existed_statuses"
+         [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': statuses[status]['color']}">
+    </div>
   </div>
 </div>
-<modal #Modal>
-  <modal-header>
-    <h1>Run settings</h1>
-  </modal-header>
-  <modal-content>
-    Change run name
-    <form autocomplete="off" #settingsform="ngForm" (ngSubmit)="edit_run(settingsform, Modal, settingsform.valid )">
-      <input type="text" class="run-name" name="run_name" ngModel required #run_name="ngModel" autofocus>
-      <small [hidden]="run_name.valid || (run_name.pristine && !settingsform.submitted)">
-        Run name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-danger plan-delete-button" (click)="delete_object(Modal)">Delete</button>
-    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">
-      Save
-    </button>
-  </modal-footer>
-</modal>

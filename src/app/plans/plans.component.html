@@ -1,39 +1,39 @@
-<div class="plan-space very-big-column" >
-  <div class="plan-block" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'; let index = index"
-       (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-    <div id="{{index}}" class="setting plan-setting-button" (click)="settings(plansettingsModal, plan, index, settingsform);">
-      <i class="fa fa-cog" aria-hidden="true"></i>
-    </div>
-    <div class="plan-name">
-      <span class="lost-result" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}">{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</span>
-
+<div class="plan-space">
+  <div class="toolbar"></div>
+  <div class="item-list">
+    <div class="item hoverer" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'" [sh-context]="menuItems" [sh-data-context]="plan">
+      <div class="item-name">
+        <a [routerLink]="['./plan', plan.id]">{{plan.name}}</a>
+        <span class="count" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}"><b>/ {{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</b></span>
+      </div>
       <div class="statistic status-name" *ngIf="this.statuses">
-        <ng-container *ngIf="this.statuses">
         <span *ngFor="let status of plan.statistic" class="status-position"
               [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
         </span>
+      </div>
+      <div class="item-statistic">
+        <ng-container *ngIf="plan.statistic && this.statuses">
+        <span *ngFor="let status of plan.statistic" [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
+        </span>
         </ng-container>
       </div>
-      <a id="plan-name-{{index}}" (click)="open_runs(plan.id)"  [routerLink]="['./plan', plan.id]"> {{plan.name}}</a>
     </div>
   </div>
 </div>
-<modal #plansettingsModal>
+<modal #Modal>
   <modal-header>
-    <h1>Plan settings</h1>
+    <h1>Plan edit</h1>
   </modal-header>
   <modal-content>
-    Change plan name
-    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_plan(settingsform, plansettingsModal, settingsform.valid )">
-      <input type="text" class="plan-name" name="plan_name" ngModel required #plan_name="ngModel" autofocus>
-      <small [hidden]="plan_name.valid || (plan_name.pristine && !settingsform.submitted)">
+    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_plan_modal(form, Modal, form.valid )">
+      <input type="text" class="plan-name" name="name" ngModel required #name="ngModel" autofocus>
+      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
         Plan name can't be empty.
       </small>
     </form>
   </modal-content>
   <modal-footer>
-    <button class="btn btn-danger plan-delete-button" (click)="delete_plan(plansettingsModal)">Delete</button>
-    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
   </modal-footer>
 </modal>
 <router-outlet></router-outlet>

@@ -1,14 +1,18 @@
 <div class="result-space">
-  <div class="result-block" *ngFor="let result of results | sortByCreatedAt:'desc';"  [ngStyle]="getStylesShadow(result.status_id)">
-    <div class="result-small-block">
-      <div class="status-box">
-        <div class="status-color-block" [ngStyle]="getStylesBackround(result.status_id)"></div>
-        <span *ngIf="this.statuses" class="status-name">{{this.statuses[result.status_id].name}}</span>
+  <div class="toolbar"><h1>Results</h1></div>
+  <div class="item-list">
+    <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';"  (onBeforeMenuOpen)="context_menu($event)" [sh-context]="menuItems">
+      <div class="small-block" [ngStyle]="getStyles(result.status_id)">
+        <div class="sub-blocks-holder">
+          <div class="sub-block"><b>{{this.statuses[result.status_id].name}}</b></div>
+          <div class="sub-block">{{result.created_at | date:'medium' }}</div>
+          <div class="sub-block">ver. 5.0.3 (build:18)</div>
+          <div class="sub-block"><a routerLink="/result/{{result.id}}" target="_blank">Details</a></div>
+        </div>
       </div>
-      <span>{{result.created_at | date:'medium' }}</span>
-    </div>
-    <div class="result-big-block">
-      <span>{{result.message}}</span>
+      <div class="big-block">
+        <pre>{{result.message}}</pre>
+      </div>
     </div>
   </div>
 </div>

@@ -1,67 +1,67 @@
-<div class="result-set-space very-big-column">
-  <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
-  <div class="add-result-block disabled" (click)="add_result_modal(result_setadd_resultModal)">
-    <span>Add result </span><span class="badge">{{this.selected_objects.length}}</span>
+<div class="result-set-space">
+  <div class="toolbar filter">
+    <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
   </div>
-  <div class="result_sets_list">
-    <div class="result-set-block" routerLinkActive="active" *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'; let index = index"  [ngStyle]="getStyles(object)"  (mouseenter)="show_settings_button(index)" (mouseleave)="hide_settings_button(index)">
-      <div class="result-set-name-and-status">
-        <table>
-          <tr>
-            <td class="checkbox_column">
-              <input type="checkbox" name="result_option" (change)="selectCounter($event, object)" [value]="object.id">
-            </td>
-            <td class="name_column">
-              <a id="result_set-name-{{index}}" (click)="open_results(object)" *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]">{{object.name}}</a>
-              <span *ngIf="object.path === 'case'" >{{object.name}}</span>
-            </td>
-            <td>
-              <div class="status result-set-status status-name" *ngIf="this.statuses">
-                {{this.statuses[object.status].name}}
-                <div class="status-color-block" [ngStyle]="getStylesBackround(object)"></div>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <div id="{{index}}" class="setting result-set-setting-button" (click)="settings(result_setsettingsModal, object, index, settingsform);"></div>
+
+  <div class="item-list">
+    <div class="item hoverer bipolar-item" routerLinkActive="active"
+         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'"
+         (onBeforeMenuOpen)="context_menu($event, object)" [sh-context]="menuItems" [sh-data-context]="object"  [ngStyle]="getStyles(object)">
+      <div class="result-set-discriber centered-data">
+        <div class="centered-data checkbox-item">
+          <input type="checkbox" [(ngModel)]="object.selected" >
+        </div>
+        <div class="item-name" *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]">
+          <a *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]" title={{object.name}}>{{object.name}}</a>
+        </div>
+        <div class="item-name" *ngIf="object.path === 'case'">
+          <span *ngIf="object.path === 'case'" title={{object.name}}>{{object.name}}</span>
+        </div>
+        <div *ngIf="this.statuses" class="status-name"><b>{{this.statuses[object['status']].name}}</b></div>
       </div>
     </div>
   </div>
 </div>
-<modal #result_setsettingsModal>
+
+<modal #Modal>
   <modal-header>
-    <h1>result_set settings</h1>
+    <h1>Change object name</h1>
   </modal-header>
   <modal-content>
-    Change result_set name
-    <form autocomplete="off" #settingsform="ngForm"  (ngSubmit)="edit_result_set(settingsform, result_setsettingsModal, settingsform.valid )">
-      <input type="text" class="result-set-name" name="result_set_name" ngModel required #result_set_name="ngModel" autofocus>
-      <small [hidden]="result_set_name.valid || (result_set_name.pristine && !settingsform.submitted)">
+    <form autocomplete="off" #form="ngForm"  (ngSubmit)="edit_object(form, Modal, form.valid )">
+      <input type="text" class="result-set-name" name="name" ngModel required #name="ngModel" autofocus>
+      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
         result_set name can't be empty.
       </small>
     </form>
   </modal-content>
   <modal-footer>
-    <button class="btn btn-danger result-set-delete-button" (click)="delete_result_set(result_setsettingsModal)">Delete</button>
-    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">Save</button>
+    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
   </modal-footer>
 </modal>
-<modal #result_setadd_resultModal>
+<modal #AddResultModal>
   <modal-header>
     <h1>Add Result</h1>
   </modal-header>
   <modal-content>
-    Add result for <b>{{this.selected_objects}}</b> result_sets
-    <form autocomplete="off" #addresultform="ngForm"  (ngSubmit)="add_results(addresultform, result_setadd_resultModal, addresultform.valid )">
-      <app-status-selector #Selector [all_statuses] = "this.not_blocked_status" (selected_status)="selected_status_get($event)" *ngIf="this.all_statuses"></app-status-selector>
-      <small [hidden]="(this.selected_status_id !== null) && !addresultform.submitted">
+    Add result for <b>{{get_selected_count()}}</b> result_sets
+    <form autocomplete="off" #addresultform="ngForm">
+
+      <select ngModel name="result_status" #result_status="ngModel">
+        <option *ngFor="let item of  not_blocked_status"
+                [ngValue]="item">
+          {{statuses[item].name}}
+        </option>
+      </select>
+      <small *ngIf="addresultform.controls['result_status']" [hidden]="(addresultform.controls['result_status'].value !== '') && !addresultform.submitted">
         Need to change status
       </small>
-      <input placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus>
+      <textarea placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus></textarea>
     </form>
   </modal-content>
   <modal-footer>
-    <button class="btn btn-success" (click)="addresultform.ngSubmit.emit(addresultform)">Add result</button>
+    <button class="btn btn-success" (click)="add_results(addresultform, AddResultModal, addresultform.valid )">Add result</button>
   </modal-footer>
 </modal>
+
 <router-outlet></router-outlet>

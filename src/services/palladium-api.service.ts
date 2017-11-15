@@ -4,20 +4,25 @@ import {AuthenticationService} from './authentication.service';
 import {Router} from '@angular/router';
 import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
+import {Product} from '../app/models/product';
 import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
 import {URLSearchParams} from '@angular/http';
+import {Statistic} from '../app/models/statistic';
+import {History} from '../app/models/history_object';
 
 @Injectable()
 export class PalladiumApiService {
   suites: Suite[] = [];
+  products: Product[] = [];
   plans: Plan[] = [];
   runs: Run[] = [];
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
   results: Result[] = [];
+  histories: History[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -86,6 +91,7 @@ export class PalladiumApiService {
     const params = new URLSearchParams();
     params.append('suite_data[run_id]', run_id);
     params.append('suite_data[name]', name);
+    console.log(params);
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
       return new Suite(resp['suite']);
     }, (errors: any) => {
@@ -168,7 +174,21 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
-
+  get_history(case_id): Promise<any> {
+    this.histories = [];
+    return this.httpService.postData('/case_history', 'case_data[id]=' + case_id).then((resp: any) => {
+      resp['history_data'].forEach(data => {
+        if (data['statistic']) {
+          data['statistic'] = new Statistic(data['statistic']);
+        }
+          this.histories.push(new History(data));
+      });
+      console.log(this.histories);
+      return this.histories;
+    }, (errors: any) => {
+      console.log(errors);
+    });
+  }
   //#endregion
 
   //#region Run
@@ -190,13 +210,48 @@ export class PalladiumApiService {
     return this.httpService.postData('/run_delete', 'run_data[id]=' + run_id)
       .then(
         run => {
-          return run;
+          return run['run'];
         },
         (errors: any) => {
           console.log(errors);
         });
   }
 
+  //#endregion
+
+  //#region Products
+  get_products(): Promise<Product[]> {
+    this.products = [];
+    return this.httpService.postData('/products', '')
+      .then(
+        (resp: any) => {
+          Object(resp['products']).forEach(product => {
+            this.products.push(new Product(product));
+          });
+          return this.products;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
+  delete_product(id): Promise<any> {
+    return this.httpService.postData('/product_delete', 'product_data[id]=' + id)
+      .then( products => {
+          return products;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+  edit_product(id, name): Promise<Product> {
+    const params = 'product_data[name]=' + name + '&product_data[id]=' +  id;
+     return this.httpService.postData('/product_edit', params)
+      .then(
+        (products: any) => {
+          return new Product(products['product_data']);
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
   //#endregion
 
   //#region Plans
@@ -212,6 +267,24 @@ export class PalladiumApiService {
         }, (errors: any) => {
           console.log(errors);
         });
+  }
+  edit_plan(id, name): Promise<Plan> {
+    const params = 'plan_data[plan_name]=' + name + '&plan_data[id]=' +  id;
+    return this.httpService.postData('/plan_edit', params)
+      .then(
+        (plan: any) => {
+          return new Plan(plan['plan_data']);
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+  delete_plan(id): Promise<any> {
+    return this.httpService.postData('/plan_delete', 'plan_data[id]=' + id)
+      .then( plan_data => {
+        return plan_data['plan'];
+      }, (errors: any) => {
+        console.log(errors);
+      });
   }
 
   //#endregion
@@ -244,14 +317,21 @@ export class PalladiumApiService {
           return this.results;
         }, error => console.log(error));
   }
+  get_result(result_id): Promise<Result> {
+    return this.httpService.postData('/result', 'result_data[id]=' + result_id)
+      .then(
+        result => {
+          return new Result(result['result']);
+        }, error => console.log(error));
+  }
 
-  result_new(result_sets, description, status_id): Promise<any> {
+  result_new(result_sets, description, status): Promise<any> {
     const params = new URLSearchParams();
     for (const result_set of result_sets) {
       params.append('result_data[result_set_id][]', result_set.id);
     }
     params.append('result_data[message]', description);
-    params.append('result_data[status]', status_id);
+    params.append('result_data[status]', status['name']);
     return this.httpService.postData('/result_new', params).then(res => {
       return res;
     }, error => console.log(error));

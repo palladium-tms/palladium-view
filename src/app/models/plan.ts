@@ -15,8 +15,10 @@ export class Plan {
       this.product_id = plan['product_id'];
       this.created_at = plan['created_at'];
       this.updated_at = plan['updated_at'];
-      this.statistic = plan['statistic'];
-      this.get_statistic();
+      if (plan['statistic']) {
+        this.statistic = plan['statistic'];
+        this.get_statistic();
+      }
     }
   }
   create_default_plan() {

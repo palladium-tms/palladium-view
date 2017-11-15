@@ -1,9 +1,10 @@
-import {Component, Input, Output, OnInit, EventEmitter, HostListener} from '@angular/core';
+import {Component, Input, Output, OnInit, EventEmitter, HostListener, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
+  encapsulation: ViewEncapsulation.Emulated,
   styleUrls: ['./status.component.css']
 })
 export class StatusComponent implements OnInit {

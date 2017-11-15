@@ -1,47 +1,13 @@
-.suite-block{
-  border: solid #a9a7aa 1px;
-  display: block;
-  max-height: 10em;
-  margin: 0.5em;
-  padding: 0.5em;
-  position: relative;
+.run-statistic {
+  display: flex;
+  padding-bottom: 0.2em;
+  font-size: 0.9em;
+}
+.status-legend-small {
+  max-width: 11em;
   overflow: hidden;
+  max-height: 1em;
 }
-.active{
-  background-color: rgba(134, 255, 14, 0.33);
+.suite-item{
+  background-color: #428bca;
 }
-.suite_setting {
-  opacity: 1;
-  display: block;
-  height: 50px;
-  width: 50px;
-  position: absolute;
-  -moz-transform: rotate(45deg);
-  -o-transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476);
-  top:-30px;
-  right:-30px;
-  background: #A00;
-  cursor: pointer;
-  border: solid #a9a7aa 1px;
-}
-.plan-delete-button{
-  float: left;
-}
-div.suite-name{
-  word-wrap: break-word;
-  width: auto;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.suite-name-link{
-  max-height: 6em;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-input.suite-name{
-  width: 100%;
-  font-size: 18px;
-}
-

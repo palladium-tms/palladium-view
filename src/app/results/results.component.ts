@@ -40,15 +40,13 @@ export class ResultsComponent implements OnInit {
     // Need only paint new result in list and wait respond 200 in result-set component
   }
 
-  getStylesShadow(id) {
+  getStyles(id) {
     if (this.statuses) {
-      return {'box-shadow': '0 0 10px ' + this.statuses[id].color};
+      return {'border-right': '7px solid ' + this.statuses[id].color};
     }
   }
 
-  getStylesBackround(id) {
-    if (this.statuses) {
-      return {'background': this.statuses[id].color};
-    }
+  context_menu(event) {
+    event.open([{label: '<span class="menu-icon">Refresh</span>', onClick: this.init_results.bind(this)}]);
   }
 }

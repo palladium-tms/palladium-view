@@ -1,5 +1,6 @@
-:host{
+:host {
   display: flex;
   overflow: hidden;
-  flex: 12;
+  flex: 5;
 }
+.status-history{}

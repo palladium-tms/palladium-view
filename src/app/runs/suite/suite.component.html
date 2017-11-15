@@ -1,31 +1,9 @@
-<div class="suite-block" [ngClass]="{'active': isSelected}" (mouseenter)="show_settings_button()" (mouseleave)="hide_settings_button()">
-  <div class="suite_setting" *ngIf="settings_visibility" (click)="settings(Modal, settingsform)"></div>
-  <div class="suite-name-link">
-    <a class="suite-name" (click)="select_suite()" [routerLink]="[object.path, object.id]">{{object.name}}</a>
+<div class="item" [ngClass]="{'active': isSelected}">
+  <div class="item-name"><a [routerLink]="[object.path, object.id]">{{object.name}}</a>
   </div>
-  <div class="status-legend-small-block">
-  <span *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
-  {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
-  </span>
+  <div class="run-statistic">
+    <div *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
+      {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
+    </div>
   </div>
 </div>
-<modal #Modal>
-  <modal-header>
-    <h1>Suite settings</h1>
-  </modal-header>
-  <modal-content>
-    Change suite name
-    <form autocomplete="off" #settingsform="ngForm" (ngSubmit)="edit_suite(settingsform, Modal, settingsform.valid )">
-      <input type="text" class="suite-name" name="suite_name" ngModel required #suite_name="ngModel" autofocus>
-      <small [hidden]="suite_name.valid || (suite_name.pristine && !settingsform.submitted)">
-        Suite name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-danger plan-delete-button" (click)="delete_suite(Modal)">Delete</button>
-    <button class="btn btn-success" [disabled]="!settingsform.valid" (click)="settingsform.ngSubmit.emit(settingsform)">
-      Save
-    </button>
-  </modal-footer>
-</modal>
