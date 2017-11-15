@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import { Location } from '@angular/common';
-import {StatisticService} from '../../services/statistic.service';
 
 @Component({
   selector: 'app-case-history',
@@ -13,7 +12,7 @@ export class CaseHistoryComponent implements OnInit {
   history;
   statuses;
   constructor( private activatedRoute: ActivatedRoute, private location: Location,
-               private ApiService: PalladiumApiService, public StatisticService: StatisticService) { }
+               private ApiService: PalladiumApiService) { }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -22,7 +21,7 @@ export class CaseHistoryComponent implements OnInit {
   }
 
   getStyles(status) {
-    return {'border-right': '7px solid ' + this.statuses[status]['color']};
+      return {'border-right': '7px solid ' + this.statuses[status['status']]['color']};
   }
 
   plan_url(id) {
@@ -46,6 +45,7 @@ export class CaseHistoryComponent implements OnInit {
   init_data(id) {
     Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
       this.statuses = res[0];
+      this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
     });
   }
 

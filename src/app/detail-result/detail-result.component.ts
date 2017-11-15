@@ -38,7 +38,6 @@ export class DetailResultComponent implements OnInit {
 
   get_result() {
     return this.ApiService.get_result(this.result_id).then(result => {
-      console.log(result);
       return result;
     });
   }

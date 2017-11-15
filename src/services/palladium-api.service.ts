@@ -10,7 +10,8 @@ import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
 import {URLSearchParams} from '@angular/http';
-import {Statistic} from "../app/models/statistic";
+import {Statistic} from '../app/models/statistic';
+import {History} from '../app/models/history_object';
 
 @Injectable()
 export class PalladiumApiService {
@@ -21,6 +22,7 @@ export class PalladiumApiService {
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
   results: Result[] = [];
+  histories: History[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -173,11 +175,16 @@ export class PalladiumApiService {
     });
   }
   get_history(case_id): Promise<any> {
+    this.histories = [];
     return this.httpService.postData('/case_history', 'case_data[id]=' + case_id).then((resp: any) => {
-      resp['history_data'].forEach(plan => {
-        plan['run']['result_set']['statistic'] = new Statistic(plan['run']['result_set']['statistic']);
+      resp['history_data'].forEach(data => {
+        if (data['statistic']) {
+          data['statistic'] = new Statistic(data['statistic']);
+        }
+          this.histories.push(new History(data));
       });
-      return resp['history_data'];
+      console.log(this.histories);
+      return this.histories;
     }, (errors: any) => {
       console.log(errors);
     });

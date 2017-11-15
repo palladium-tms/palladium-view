@@ -78,7 +78,6 @@ export class PlansComponent implements OnInit {
 
   edit_plan(id, name) {
     this.ApiService.edit_plan(id, name).then(plan => {
-      console.log(plan);
       this.plans.forEach(current_plan => {
         if (current_plan.id === plan.id) {
           current_plan.name = plan.name;

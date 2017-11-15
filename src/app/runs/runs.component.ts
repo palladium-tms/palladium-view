@@ -114,7 +114,6 @@ export class RunsComponent implements OnInit {
       }
     });
     this.runs_and_suites = this.runs.concat(suite_for_add);
-    console.log(this.runs_and_suites);
   }
 
   get_filters(e) {
