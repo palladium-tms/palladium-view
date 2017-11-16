@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
 import {ProductsComponent} from './products/products.component';
-import {HttpModule} from '@angular/http';
+import {HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../services/authentication.service';
@@ -38,6 +38,15 @@ import {SuiteComponent} from './runs/suite/suite.component';
 import {ShContextMenuModule} from 'ng2-right-click-menu';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {CaseHistoryComponent} from './case-history/case-history.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  MatButtonModule,
+  MatMenuModule,
+  MatToolbarModule,
+  MatIconModule,
+  MatCardModule,
+  MatListModule
+} from '@angular/material';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -91,10 +100,23 @@ const appRoutes: Routes = [
     RunComponent,
     SuiteComponent,
     DetailResultComponent,
-    CaseHistoryComponent
+    CaseHistoryComponent,
   ],
-  imports: [ModalModule, BrowserModule, HttpModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
-    Angular2FontawesomeModule, SelectModule, ShContextMenuModule],
+  imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
+    Angular2FontawesomeModule, SelectModule, ShContextMenuModule,     MatButtonModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatListModule,
+    MatIconModule,
+    MatCardModule, BrowserAnimationsModule],
+  exports: [
+    MatButtonModule,
+    MatListModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule
+  ],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })

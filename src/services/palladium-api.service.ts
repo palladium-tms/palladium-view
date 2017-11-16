@@ -58,7 +58,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Token
-  get_tokens(): Promise<JSON> {
+  get_tokens(): Promise<any> {
     return this.httpService.postData('/tokens', '').then((resp: any) => {
       return resp['tokens'];
     }, (errors: any) => {
@@ -76,7 +76,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Suite
-  get_suites(product_id): Promise<Suite[]> {
+  get_suites(product_id): Promise<any> {
     return this.httpService.postData('/suites', 'suite_data[product_id]=' + product_id).then((resp: any) => {
       this.suites = [];
       Object(resp['suites']).forEach(suite => {
@@ -87,7 +87,7 @@ export class PalladiumApiService {
     });
   }
 
-  edit_suite_by_run_id(run_id, name): Promise<Suite> {
+  edit_suite_by_run_id(run_id, name): Promise<any> {
     const params = new URLSearchParams();
     params.append('suite_data[run_id]', run_id);
     params.append('suite_data[name]', name);
@@ -99,7 +99,7 @@ export class PalladiumApiService {
     });
   }
 
-  edit_suite(id, name): Promise<Suite> {
+  edit_suite(id, name): Promise<any> {
     const params = new URLSearchParams();
     params.append('suite_data[id]', id);
     params.append('suite_data[name]', name);
@@ -120,7 +120,7 @@ export class PalladiumApiService {
 
   //#endregion
   //#region Cases
-  get_cases(id): Promise<Case[]> {
+  get_cases(id): Promise<any> {
     return this.httpService.postData('/cases', 'case_data[suite_id]=' + id).then((resp: any) => {
       this.cases = [];
       Object(resp['cases']).forEach(current_case => {
@@ -132,7 +132,7 @@ export class PalladiumApiService {
     });
   }
 
-  get_cases_by_run_id(run_id, product_id): Promise<Case[]> {
+  get_cases_by_run_id(run_id, product_id): Promise<any> {
     return this.httpService.postData('/cases', 'case_data[run_id]=' + run_id + '&case_data[product_id]=' + product_id).then((resp: any) => {
       this.cases = [];
       Object(resp['cases']).forEach(current_case => {
@@ -144,7 +144,7 @@ export class PalladiumApiService {
     });
   }
 
-  edit_case_by_result_set_id(result_set_id, name): Promise<Case> {
+  edit_case_by_result_set_id(result_set_id, name): Promise<any> {
     const params = new URLSearchParams();
     params.append('case_data[result_set_id]', result_set_id);
     params.append('case_data[name]', name);
@@ -156,7 +156,7 @@ export class PalladiumApiService {
     });
   }
 
-  edit_case(case_id, name): Promise<Case> {
+  edit_case(case_id, name): Promise<any> {
     const params = new URLSearchParams();
     params.append('case_data[id]', case_id);
     params.append('case_data[name]', name);
@@ -192,7 +192,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Run
-  get_runs(plan_id): Promise<Run[]> {
+  get_runs(plan_id): Promise<any> {
     this.runs = [];
     return this.httpService.postData('/runs', 'run_data[plan_id]=' + plan_id)
       .then(
@@ -220,11 +220,12 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Products
-  get_products(): Promise<Product[]> {
+  get_products(): Promise<any> {
     this.products = [];
     return this.httpService.postData('/products', '')
       .then(
         (resp: any) => {
+          console.log(resp);
           Object(resp['products']).forEach(product => {
             this.products.push(new Product(product));
           });
@@ -242,8 +243,9 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
-  edit_product(id, name): Promise<Product> {
-    const params = 'product_data[name]=' + name + '&product_data[id]=' +  id;
+  edit_product(id, name): Promise<any> {
+     const params = {};
+     params['product_data[name]'] = name + '&product_data[id]=' +  id;
      return this.httpService.postData('/product_edit', params)
       .then(
         (products: any) => {
@@ -255,7 +257,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  get_plans(product_id): Promise<Plan[]> {
+  get_plans(product_id): Promise<any> {
     this.plans = [];
     return this.httpService.postData('/plans', 'plan_data[product_id]=' + product_id)
       .then(
@@ -268,7 +270,7 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
-  edit_plan(id, name): Promise<Plan> {
+  edit_plan(id, name): Promise<any> {
     const params = 'plan_data[plan_name]=' + name + '&plan_data[id]=' +  id;
     return this.httpService.postData('/plan_edit', params)
       .then(
@@ -290,7 +292,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Result Set
-  get_result_sets(run_id): Promise<ResultSet[]> {
+  get_result_sets(run_id): Promise<any> {
     this.result_sets = [];
     return this.httpService.postData('/result_sets', 'result_set_data[run_id]=' + run_id)
       .then(
@@ -306,7 +308,7 @@ export class PalladiumApiService {
 
   //#endregion
   //#region Result
-  get_results(result_set_id): Promise<Result[]> {
+  get_results(result_set_id): Promise<any> {
     this.results = [];
     return this.httpService.postData('/results', 'result_data[result_set_id]=' + result_set_id)
       .then(
@@ -317,7 +319,7 @@ export class PalladiumApiService {
           return this.results;
         }, error => console.log(error));
   }
-  get_result(result_id): Promise<Result> {
+  get_result(result_id): Promise<any> {
     return this.httpService.postData('/result', 'result_data[id]=' + result_id)
       .then(
         result => {
@@ -338,13 +340,13 @@ export class PalladiumApiService {
   }
 
   result_new_by_case(cases, description, status, run_id): Promise<any> {
-    const params = new URLSearchParams();
+    const params = {};
     for (const this_case of cases) {
-      params.append('result_set_data[name][]', this_case.name);
+      params['result_set_data[name][]'] = this_case.name;
     }
-    params.append('result_set_data[run_id]', run_id);
-    params.append('result_data[message]', description);
-    params.append('result_data[status]', status['name']);
+    params['result_set_data[run_id]'] = run_id;
+    params['result_data[message]'] = description;
+    params['result_data[status]'] = status['name'];
     return this.httpService.postData('/result_new', params).then(res => {
       const result_sets = [];
       res['other_data']['result_set_id'].forEach((result_set_id, index) => {

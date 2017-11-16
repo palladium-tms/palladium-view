@@ -4,7 +4,6 @@ import {Product} from '../models/product';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {ActivatedRoute} from '@angular/router';
-declare var $: any;
 
 @Component({
   selector: 'app-products',
