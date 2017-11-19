@@ -1,17 +1,30 @@
 <div class="result-set-space">
-  <div class="toolbar filter">
-    <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  <div class="toolbar">
+    <div class="filter">
+      <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
+    </div>
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_result_sets_and_cases()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+      </div>
+
+      <div class="danger toolbar-element" (click)="delete_object()" *ngIf="toolbar_opened()">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
 
   <div class="item-list">
     <div class="item hoverer bipolar-item" routerLinkActive="active"
-         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'"
-         (onBeforeMenuOpen)="context_menu($event, object)" [sh-context]="menuItems" [sh-data-context]="object"  [ngStyle]="getStyles(object)">
+         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'" [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">
         <div class="centered-data checkbox-item">
-          <input type="checkbox" [(ngModel)]="object.selected" >
+          <input type="checkbox" [(ngModel)]="object.selected">
         </div>
-        <div class="item-name" *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]">
+        <div class="item-name" *ngIf="object.path === 'result_set'">
           <a *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]" title={{object.name}}>{{object.name}}</a>
         </div>
         <div class="item-name" *ngIf="object.path === 'case'">

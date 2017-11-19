@@ -9,6 +9,7 @@ import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
+import {Case} from "../models/case";
 
 @Component({
   selector: 'app-result-sets',
@@ -25,7 +26,6 @@ export class ResultSetsComponent implements OnInit {
   private Selector: StatusSelectorComponent;
   result_sets = [];
   cases;
-  errorMessage;
   object;
   statuses;
   all_statuses;
@@ -37,7 +37,7 @@ export class ResultSetsComponent implements OnInit {
   selected_status_id = null;
   filter: any[] = [];
 
-  constructor(private activatedRoute: ActivatedRoute, private httpService: HttpService, public stat: StatisticService,
+  constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
 
@@ -120,21 +120,18 @@ export class ResultSetsComponent implements OnInit {
     });
   }
 
-  delete_object(object) {
+  delete_object() {
     if (confirm('A u shuare?')) {
-      if (object.dataContext.path === 'result_set') {
-        this.httpService.postData('/result_set_delete',
-          'result_set_data[id]=' + object.dataContext.id) // FIXME: move to palladium api service
-          .then(
-            result_sets => {
-              this.result_sets = this.result_sets.filter(obj => (obj.id !== +result_sets['result_set']['id']));
-              this.merge_result_sets_and_cases();
-              this.update_statistic();
-            },
-            error => this.errorMessage = <any>error);
+      const id = this.get_result_set_id();
+      if (this.result_set_opened()) {
+        this.ApiService.delete_result_set(id).then(deleted_id => {
+          this.result_sets = this.result_sets.filter(obj => (obj.id !== +deleted_id));
+          this.merge_result_sets_and_cases();
+          this.update_statistic();
+        });
       } else {
-        this.ApiService.delete_case(object.dataContext.id).then(res => {
-          this.cases = this.cases.filter(obj => (obj.id !== res.id));
+        this.ApiService.delete_case(id).then((this_case: Case) => {
+          this.cases = this.cases.filter(obj => (obj.id !== this_case.id));
           this.merge_result_sets_and_cases();
           this.update_statistic();
         });
@@ -216,7 +213,7 @@ export class ResultSetsComponent implements OnInit {
     if (cases.length === 0) {
       return Promise.resolve([]);
     }
-    return this.ApiService.result_new_by_case(cases, message, status, run_id).then(res => {
+    return this.ApiService.result_new_by_case(cases, message, status, run_id).then((res: any) => {
       res.forEach(responce_result_set => {
         let index;
         index = this.result_sets_and_cases.findIndex(current_object =>
@@ -332,7 +329,15 @@ export class ResultSetsComponent implements OnInit {
         {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object.bind(this)}]);
     }
   }
-
+  toolbar_opened() {
+    return (this.result_set_opened());
+  }
+  result_set_opened() {
+    return this.router.url.indexOf('result_set') >= 0;
+  }
+  get_result_set_id() {
+    return ( +/result_set\/(\d+)/.exec(this.router.url)[1]);
+  }
   select_object(object) {
     if (!object.selected) {
       this.unselect_all();
