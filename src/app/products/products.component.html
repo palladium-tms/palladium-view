@@ -1,12 +1,24 @@
 <div class="product-space">
   <div class="toolbar">
-    <div class="filter"></div>
+    <div class="product-link"><a routerLink="/">Products</a></div>
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_products()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+      </div>
+      <div class="danger toolbar-element" (click)="delete_selected_product()" *ngIf="toolbar_opened()">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
   <div class="item-list">
-    <div class="item hoverer" routerLinkActive="active" *ngFor="let product of products; let index = index"
-         [sh-context]="menuItems" [sh-data-context]="product">
+    <div class="item hoverer" routerLinkActive="active" *ngFor="let product of products; let index = index">
       <div class="item-name"><a [routerLink]="['/product', product.id]"
-                                routerLinkActive="low-priority">{{product.name}}</a></div>
+                                routerLinkActive="low-priority">{{product.name}}</a>
+
+      </div>
     </div>
   </div>
 </div>
@@ -16,7 +28,7 @@
   </modal-header>
   <modal-content>
     <form autocomplete="off" #form="ngForm"
-           (ngSubmit)="edit_product_modal(form, Modal, form.valid)">
+          (ngSubmit)="edit_product_modal(form, Modal, form.valid)">
       <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel" autofocus>
       <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
         Product name can't be empty.

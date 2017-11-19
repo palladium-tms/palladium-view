@@ -12,6 +12,7 @@ import {Result} from '../app/models/result';
 import {URLSearchParams} from '@angular/http';
 import {Statistic} from '../app/models/statistic';
 import {History} from '../app/models/history_object';
+import {HttpParams} from '@angular/common/http';
 
 @Injectable()
 export class PalladiumApiService {
@@ -88,10 +89,9 @@ export class PalladiumApiService {
   }
 
   edit_suite_by_run_id(run_id, name): Promise<any> {
-    const params = new URLSearchParams();
-    params.append('suite_data[run_id]', run_id);
-    params.append('suite_data[name]', name);
-    console.log(params);
+    const params = new HttpParams()
+      .set(`suite_data[run_id]`, run_id)
+      .set(`suite_data[name]`, name);
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
       return new Suite(resp['suite']);
     }, (errors: any) => {
@@ -100,9 +100,9 @@ export class PalladiumApiService {
   }
 
   edit_suite(id, name): Promise<any> {
-    const params = new URLSearchParams();
-    params.append('suite_data[id]', id);
-    params.append('suite_data[name]', name);
+    const params = new HttpParams()
+      .set(`suite_data[id]`, id)
+      .set(`suite_data[name]`, name);
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
       return new Suite(resp['suite']);
     }, (errors: any) => {
@@ -225,7 +225,6 @@ export class PalladiumApiService {
     return this.httpService.postData('/products', '')
       .then(
         (resp: any) => {
-          console.log(resp);
           Object(resp['products']).forEach(product => {
             this.products.push(new Product(product));
           });
@@ -244,12 +243,12 @@ export class PalladiumApiService {
         });
   }
   edit_product(id, name): Promise<any> {
-     const params = {};
-     params['product_data[name]'] = name + '&product_data[id]=' +  id;
+    const params = new HttpParams()
+      .set(`product_data[name]`, name)
+      .set(`product_data[id]`, id);
      return this.httpService.postData('/product_edit', params)
-      .then(
-        (products: any) => {
-          return new Product(products['product_data']);
+      .then((products: any) => {
+          return(new Product(products['product_data']));
         }, (errors: any) => {
           console.log(errors);
         });
@@ -306,6 +305,16 @@ export class PalladiumApiService {
         });
   }
 
+  delete_result_set(id): Promise<any> {
+    return this.httpService.postData('/result_set_delete',
+      'result_set_data[id]=' + id) // FIXME: move to palladium api service
+      .then(result_set => {
+          return result_set['result_set']['id'];
+        },
+        (errors: any) => {
+          console.log(errors);
+        });
+  }
   //#endregion
   //#region Result
   get_results(result_set_id): Promise<any> {

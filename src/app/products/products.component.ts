@@ -1,9 +1,8 @@
 import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {Product} from '../models/product';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {ActivatedRoute} from '@angular/router';
+import {Product} from '../models/product';
 
 @Component({
   selector: 'app-products',
@@ -14,16 +13,13 @@ import {ActivatedRoute} from '@angular/router';
 })
 
 export class ProductsComponent implements OnInit {
-  products: Product[] = [];
+  products;
+  loading = false;
   product;
   @ViewChild('Modal') Modal;
   @ViewChild('form') form;
-  menuItems = [
-    {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_products.bind(this)},
-    {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-    {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_product.bind(this)}];
 
-  constructor(private ApiService: PalladiumApiService, private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(private ApiService: PalladiumApiService, private router: Router) {}
 
   ngOnInit() {
     this.get_products();
@@ -31,20 +27,26 @@ export class ProductsComponent implements OnInit {
 
   get_products() {
     this.products = [];
+    this.loading = true;
     this.ApiService.get_products().then(products => {
-      this.products =  products;
+      this.products = products;
+      this.loading = false;
     });
   }
 
-  delete_product(product) {
+  delete_product(product_id) {
     if (confirm('A u shuare?')) {
-      this.ApiService.delete_product(product.dataContext.id).then(products => {
-        this.products = this.products.filter(prod => prod.id !== product.dataContext.id);
+      this.ApiService.delete_product(product_id).then(products => {
+        this.products = this.products.filter(prod => prod.id !== product_id);
         if (this.router.url.indexOf('/product/' + products['product']) >= 0) {
           this.router.navigate(['/']);
         }
       });
     }
+  }
+
+  delete_selected_product() {
+    this.delete_product( +/product\/(\d+)/.exec(this.router.url)[1]);
   }
 
   edit_product_modal(form: NgForm, modal, valid: boolean) {
@@ -54,18 +56,16 @@ export class ProductsComponent implements OnInit {
   }
 
   edit_product(id, name) {
-    this.ApiService.edit_product(id, name).then(product => {
-      this.products.forEach(current_product => {
-        if (current_product.id === product.id) {
-          current_product.name = product.name;
-          current_product.updated_at = product.updated_at;
-        }
-      }); // FIXME: need optimize
+    this.ApiService.edit_product(id, name).then((product: Product) => {
+      this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
     });
   }
-  open_modal(product) {
-    this.product = this.products.filter(prod => prod.id === product.dataContext.id)[0];
+  open_modal() {
+    this.product = this.products.filter(prod => prod.id === +/product\/(\d+)/.exec(this.router.url)[1])[0];
     this.form.controls['product_name'].setValue(this.product.name);
     this.Modal.open();
   };
+  toolbar_opened() {
+    return this.router.url.indexOf('product') >= 0;
+  }
 }
