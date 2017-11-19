@@ -1,12 +1,25 @@
 <div class="run-space">
-  <div class="toolbar filter">
-    <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
-                 (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  <div class="toolbar">
+    <div class="filter">
+      <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
+                   (selected_statuses_emmit)="get_filters($event)"></app-filters>
+    </div>
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_runs_and_suites()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+      </div>
+
+      <div class="danger toolbar-element" (click)="delete_object()" *ngIf="toolbar_opened()">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
 
   <div class="item-list">
-    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index"
-         [sh-context]="menuItems" [sh-data-context]="object">
+    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index">
       <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './run'"></app-run>
       <app-suite [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
     </div>
