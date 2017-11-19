@@ -1,7 +1,20 @@
 <div class="plan-space">
-  <div class="toolbar"></div>
+  <div class="toolbar">
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_plans_and_suites()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+      </div>
+
+      <div class="danger toolbar-element" (click)="delete_selected_plan()" *ngIf="toolbar_opened()">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
   <div class="item-list">
-    <div class="item hoverer" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'" [sh-context]="menuItems" [sh-data-context]="plan">
+    <div class="item hoverer" routerLinkActive="active"  *ngFor="let plan of plans | sortByCreatedAt:'desc'">
       <div class="item-name">
         <a [routerLink]="['./plan', plan.id]">{{plan.name}}</a>
         <span class="count" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}"><b>/ {{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</b></span>

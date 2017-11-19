@@ -18,11 +18,6 @@ export class PlansComponent implements OnInit {
   plan;
   @ViewChild('Modal') Modal;
   @ViewChild('form') form;
-  plan_settings_data = {};
-  menuItems = [
-    {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_plans_and_suites.bind(this)},
-    {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-    {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_plan.bind(this)}];
   statuses;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute, private router: Router) {
@@ -60,6 +55,7 @@ export class PlansComponent implements OnInit {
   }
 
   get_plans_and_suites() {
+    this.plans = [];
     Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id)]).then(res => {
       this.plans = res[0];
       this.plans.forEach(plan => {
@@ -77,19 +73,14 @@ export class PlansComponent implements OnInit {
   }
 
   edit_plan(id, name) {
-    this.ApiService.edit_plan(id, name).then(plan => {
-      this.plans.forEach(current_plan => {
-        if (current_plan.id === plan.id) {
-          current_plan.name = plan.name;
-          current_plan.updated_at = plan.updated_at;
-        } // FIXME: need optimize
-      });
+    this.ApiService.edit_plan(id, name).then((plan: Plan) => {
+      this.plans[this.plans.indexOf(this.plans.filter(it => it.id === plan.id)[0])] = plan;
     });
   }
 
-  delete_plan(plan) {
+  delete_plan(id) {
     if (confirm('A u shuare?')) {
-      this.ApiService.delete_plan(plan.dataContext.id).then(plan_id => {
+      this.ApiService.delete_plan(id).then(plan_id => {
         this.plans = this.plans.filter(current_plan => current_plan.id !== +plan_id);
         if (this.router.url.indexOf('/plan/' + plan_id) >= 0) {
           this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
@@ -97,11 +88,8 @@ export class PlansComponent implements OnInit {
       });
     }
   }
-
-  settings(modal, plan, index, form) {
-    this.plan_settings_data = {id: plan.id, index: index};
-    modal.open();
-    form.controls['plan_name'].setValue(plan.name);
+  delete_selected_plan() {
+    this.delete_plan( +/plan\/(\d+)/.exec(this.router.url)[1]);
   }
 
   update_statistic(plan, count_of_cases) {
@@ -117,9 +105,13 @@ export class PlansComponent implements OnInit {
     return (Math.floor(data * 100) / 100);
   }
 
-  open_modal(plan) {
-    this.plan = this.plans.filter(current_plan => current_plan.id === plan.dataContext.id)[0];
+  open_modal() {
+    this.plan = this.plans.filter(current_plan => current_plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
     this.form.controls['name'].setValue(this.plan.name);
     this.Modal.open();
   };
+
+  toolbar_opened() {
+    return this.router.url.indexOf('plan') >= 0;
+  }
 }
