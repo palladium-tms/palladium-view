@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import {environment} from '../environments/environment';
@@ -17,14 +17,13 @@ export class AuthenticationService {
   login(username: string, password: string) {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
     const options = { headers: headers };
-
-      return this.http.post(environment.host + '/login',
-        'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise().then(response => {
-      console.log('--------------------------------');
-      console.log(response);
+    const params = new HttpParams()
+      .set(`user_data[email]`, username)
+      .set(`user_data[password]`, password);
+      return this.http.post(environment.host + '/login', params, options).toPromise().then((response: JSON) => {
       // const token = response.json() && response.json().token;
       // this.token = token;
-      // localStorage.setItem('auth_data', JSON.stringify({ username: username, token: token }));
+      localStorage.setItem('auth_data', JSON.stringify({ username: username, token: response['token'] }));
       return Promise.resolve(true);
     }, response => {
       console.log(response);
