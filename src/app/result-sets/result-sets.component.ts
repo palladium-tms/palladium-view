@@ -4,12 +4,11 @@ import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {HttpService} from '../../services/http-request.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
-import {Case} from "../models/case";
+import {Case} from '../models/case';
 
 @Component({
   selector: 'app-result-sets',
@@ -27,6 +26,7 @@ export class ResultSetsComponent implements OnInit {
   result_sets = [];
   cases;
   object;
+  selected_object;
   statuses;
   all_statuses;
   not_blocked_status = [];
@@ -36,6 +36,7 @@ export class ResultSetsComponent implements OnInit {
   selected_objects = [];
   selected_status_id = null;
   filter: any[] = [];
+  select_all_flag = false;
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
@@ -149,7 +150,7 @@ export class ResultSetsComponent implements OnInit {
     this.result_sets_and_cases = this.result_sets.concat(this.result_sets_and_cases);
   }
 
-  edit_object(form: NgForm, modal, valid: boolean) {
+  edit_object(form: NgForm, valid: boolean) {
     if (!valid) {
       return;
     }
@@ -166,7 +167,7 @@ export class ResultSetsComponent implements OnInit {
         result_set_for_change.updated_at = this_case.updated_at;
       });
     }
-    modal.close();
+    this.Modal.close();
   }
 
   add_result_modal() {
@@ -234,6 +235,7 @@ export class ResultSetsComponent implements OnInit {
     this.result_sets_and_cases.forEach(obj => {
       obj.selected = false;
     });
+    this.select_all_flag = false;
   }
 
   select_all() { // FIXME: need optimize
@@ -246,19 +248,18 @@ export class ResultSetsComponent implements OnInit {
         obj.selected = true;
       });
     }
+    this.select_all_flag = true;
   }
 
-  open_history_page(data) {
+  open_history_page() {
     const path = this.get_path();
-    if (data['dataContext']['path'] === 'case') {
-      this.router.navigate([path + '/case_history/',  data['dataContext']['id']]);
+    const data = this.get_item_data();
+    const case_id = this.get_case_id_by_result_set(data[1]);
+    if (data[0] === 'case') {
+      this.router.navigate([path + '/case_history/',  case_id]);
     } else {
-      this.router.navigate([path + 'case_history/', this.get_case_id(data['dataContext']['name'])]);
+      this.router.navigate([path + 'case_history/', case_id]);
     }
-  }
-
-  get_case_id(data) {
-    return this.cases.filter(this_case => this_case.name === data)[0].id;
   }
 
   get_path() {
@@ -301,42 +302,60 @@ export class ResultSetsComponent implements OnInit {
     this.stat.update_run_statistic(this.statistic);
   }
 
-  open_modal(object) {
-    this.object = this.result_sets_and_cases.filter(obj => obj.id === object.dataContext.id && obj.path === object.dataContext.path)[0];
+  open_modal() {
+    const object_data = this.get_item_data();
+    console.log(this.result_sets_and_cases[0]);
+    this.object = this.result_sets_and_cases.filter(obj => obj.id === object_data[1] && obj.path === object_data[0])[0];
     this.form.controls['name'].setValue(this.object.name);
     this.Modal.open();
   };
 
-  context_menu(event, object) {
-    this.select_object(object);
-    if (this.get_selected_count() !== 0) {
-      event.open([
-        {
-          label: '<span class="menu-icon">Add result (' + this.get_selected_count() + ')</span>',
-          onClick: this.add_result_modal.bind(this)
-        },
-        {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_result_sets_and_cases.bind(this)},
-        {label: '<span class="menu-icon">Select all</span>', onClick: this.select_all.bind(this)},
-        {label: '<span class="menu-icon">History</span>', onClick: this.open_history_page.bind(this)},
-        {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-        {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object.bind(this)}]);
-    } else {
-      event.open([
-        {label: '<span class="menu-icon">Add result</span>', onClick: this.add_result_modal.bind(this)},
-        {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_result_sets_and_cases.bind(this)},
-        {label: '<span class="menu-icon">History</span>', onClick: this.open_history_page.bind(this)},
-        {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-        {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_object.bind(this)}]);
-    }
-  }
+
   toolbar_opened() {
-    return (this.result_set_opened());
+    return (this.result_set_opened() || this.case_opened());
   }
+
   result_set_opened() {
     return this.router.url.indexOf('result_set') >= 0;
   }
+
+  case_opened() {
+    return this.router.url.indexOf('case') >= 0;
+  }
+
+  get_item_data() {
+    console.log(this.selected_object);
+    // Result_set or case is opened? and get it id]
+    if (this.selected_object) {
+      return (['case', this.selected_object]);
+    } else {
+      return(['result_set', this.get_result_set_id()]);
+    }
+  }
+  get_case_id_by_result_set(result_set_id) {
+    const set = this.result_sets.filter(obj => obj.id === result_set_id)[0];
+    return this.cases.filter(obj => obj.name === set.name)[0].id;
+  }
+
   get_result_set_id() {
     return ( +/result_set\/(\d+)/.exec(this.router.url)[1]);
+  }
+
+  open_results(object) {
+    this.reset_active();
+    object.active = true;
+    this.object = object;
+    console.log(object.id);
+    if (object.path === 'result_set') {
+      this.router.navigate(['result_set', object.id], {relativeTo: this.activatedRoute});
+    }
+  }
+
+  reset_active() {
+    const active_element = this.result_sets_and_cases.filter(obj => obj.active);
+    if (active_element.length !== 0 ) {
+      active_element[0].active = false;
+    }
   }
   select_object(object) {
     if (!object.selected) {

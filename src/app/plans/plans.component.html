@@ -1,15 +1,11 @@
 <div class="plan-space">
   <div class="toolbar">
     <div class="buttons">
-      <div class="toolbar-element" (click)="get_plans_and_suites()">
+      <div class="toolbar-element" (click)="init_data()">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
-        <i class="fa fa-pencil" aria-hidden="true"></i>
-      </div>
-
-      <div class="danger toolbar-element" (click)="delete_selected_plan()" *ngIf="toolbar_opened()">
-        <i class="fa fa-trash" aria-hidden="true"></i>
+      <div class="danger toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
   </div>
@@ -35,18 +31,32 @@
 </div>
 <modal #Modal>
   <modal-header>
-    <h1>Plan edit</h1>
+    <h2>Plan edit</h2>
   </modal-header>
   <modal-content>
-    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_plan_modal(form, Modal, form.valid )">
-      <input type="text" class="plan-name" name="name" ngModel required #name="ngModel" autofocus>
-      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-        Plan name can't be empty.
-      </small>
-    </form>
+    <div class="settings_content">
+      <div class="item-description">
+        <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_plan_modal(form, Modal, form.valid )">
+          <div class="item-option">
+            <input type="text" name="name" ngModel required #name="ngModel" autofocus>
+            <small [hidden]="name.valid || (name.pristine && !form.submitted)">
+              Plan name can't be empty.
+            </small>
+          </div>
+          <div class="item-option">
+            <label *ngIf="plan"> Created at: {{plan.created_at}}</label>
+          </div>
+          <div class="item-option">
+            <label *ngIf="plan"> Updated at: {{plan.updated_at}}</label>
+          </div>
+          <button class="btn btn-danger" (click)="delete_selected_plan()">Delete</button>
+          <button class="btn btn-success save_button" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
+        </form>
+      </div>
+    </div>
+
   </modal-content>
-  <modal-footer>
-    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
-  </modal-footer>
 </modal>
+
+
 <router-outlet></router-outlet>

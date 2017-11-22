@@ -29,6 +29,7 @@ export class RunsComponent implements OnInit {
   object;
   statistic: Statistic;
   filter = [];
+  loading = false;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, public StatisticService: StatisticService) {
@@ -91,12 +92,14 @@ export class RunsComponent implements OnInit {
 
   get_runs_and_suites() {
     this.runs_and_suites = [];
+    this.loading = true;
     Promise.all([this.get_runs(this.plan_id), this.get_suites(), this.get_statuses()]).then(res => {
       this.statuses = res[2];
       this.suites = res[1];
       this.runs = res[0];
       this.merge_suites_and_runs();
       this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+      this.loading = false;
     });
   }
   merge_suites_and_runs() {
@@ -181,6 +184,7 @@ export class RunsComponent implements OnInit {
         });
       }
     }
+    this.Modal.close();
   }
   open_modal() {
     this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&

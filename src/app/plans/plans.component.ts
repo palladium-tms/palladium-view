@@ -19,6 +19,7 @@ export class PlansComponent implements OnInit {
   @ViewChild('Modal') Modal;
   @ViewChild('form') form;
   statuses;
+  loading = false;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute, private router: Router) {
   }
@@ -26,11 +27,8 @@ export class PlansComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.product_id = params.id;
-      this.get_plans_and_suites();
-      this.ApiService.get_statuses().then(res => {
-        this.statuses = res;
-        this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
-      });
+      this.init_data();
+
     });
   }
 
@@ -46,6 +44,13 @@ export class PlansComponent implements OnInit {
     });
   }
 
+  get_statuses() {
+    this.ApiService.get_statuses().then(res => {
+      this.statuses = res;
+      this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
+    });
+  }
+
   count_of_cases(suites) {
     let cases_count = 0;
     suites.forEach(suite => {
@@ -54,13 +59,15 @@ export class PlansComponent implements OnInit {
     return cases_count;
   }
 
-  get_plans_and_suites() {
+  init_data() {
+    this.loading = true;
     this.plans = [];
-    Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id)]).then(res => {
+    Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id), this.get_statuses()]).then(res => {
       this.plans = res[0];
       this.plans.forEach(plan => {
         this.update_statistic(plan, this.count_of_cases(res[1]));
       });
+      this.loading = false;
     });
   }
 

@@ -47,6 +47,7 @@ import {
   MatCardModule,
   MatListModule
 } from '@angular/material';
+import { ProductSettingsComponent } from './product-settings/product-settings.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -60,6 +61,7 @@ const appRoutes: Routes = [
         {
           path: 'run/:id', component: ResultSetsComponent, children: [
           {path: 'result_set/:id', component: ResultsComponent},
+          {path: 'case/:id', component: CasesComponent},
           {path: 'case_history/:id', component: CaseHistoryComponent}
         ]
         },
@@ -101,9 +103,10 @@ const appRoutes: Routes = [
     SuiteComponent,
     DetailResultComponent,
     CaseHistoryComponent,
+    ProductSettingsComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
-    Angular2FontawesomeModule, SelectModule, ShContextMenuModule,     MatButtonModule,
+    Angular2FontawesomeModule, SelectModule, ShContextMenuModule, MatButtonModule,
     MatMenuModule,
     MatToolbarModule,
     MatListModule,

@@ -176,7 +176,9 @@ export class PalladiumApiService {
   }
   get_history(case_id): Promise<any> {
     this.histories = [];
-    return this.httpService.postData('/case_history', 'case_data[id]=' + case_id).then((resp: any) => {
+    const params = new HttpParams()
+      .set(`case_data[id]`, case_id);
+    return this.httpService.postData('/case_history', params).then((resp: any) => {
       resp['history_data'].forEach(data => {
         if (data['statistic']) {
           data['statistic'] = new Statistic(data['statistic']);
@@ -235,7 +237,9 @@ export class PalladiumApiService {
   }
 
   delete_product(id): Promise<any> {
-    return this.httpService.postData('/product_delete', 'product_data[id]=' + id)
+    const params = new HttpParams()
+      .set(`product_data[id]`, id);
+    return this.httpService.postData('/product_delete', params)
       .then( products => {
           return products;
         }, (errors: any) => {

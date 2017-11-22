@@ -1,0 +1,28 @@
+<modal #Modal>
+  <modal-header>
+    <h2>Product settings</h2>
+  </modal-header>
+  <modal-content>
+    <div class="settings_content">
+      <div class="item-description">
+          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form, form.valid)">
+            <div class="item-option">
+              <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
+                     autofocus>
+              <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
+                Product name can't be empty.
+              </small>
+            </div>
+            <div class="item-option">
+              <label *ngIf="item"> Created at: {{item.created_at}}</label>
+            </div>
+            <div class="item-option">
+              <label *ngIf="item"> Updated at: {{item.updated_at}}</label>
+            </div>
+            <button class="btn btn-danger" [disabled]="item === null" (click)="delete_item()">Delete</button>
+            <button class="btn btn-success save_button" [disabled]="!form.valid || item === null" (click)="form.ngSubmit.emit(form)">Save</button>
+          </form>
+      </div>
+    </div>
+  </modal-content>
+</modal>
