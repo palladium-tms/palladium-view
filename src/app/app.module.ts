@@ -22,8 +22,6 @@ import {ModalModule} from 'ngx-modal';
 import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive';  // import validator
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
-import {SelectModule} from 'ng2-select';
-import {StatusSelectorComponent} from './page-component/status-selector/status-selector.component';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
 import {SortByUpdatedAtPipe} from './pipes/sort-by-created-at/sort-by-updated-at.pipe';
 import {TokenComponent} from './top-toolbar/token/token.component';
@@ -35,18 +33,9 @@ import {AboutComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
 import {RunComponent} from './runs/run/run.component';
 import {SuiteComponent} from './runs/suite/suite.component';
-import {ShContextMenuModule} from 'ng2-right-click-menu';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatButtonModule,
-  MatMenuModule,
-  MatToolbarModule,
-  MatIconModule,
-  MatCardModule,
-  MatListModule
-} from '@angular/material';
 import { ProductSettingsComponent } from './product-settings/product-settings.component';
 import { CaseComponent } from './case/case.component';
 
@@ -90,7 +79,6 @@ const appRoutes: Routes = [
     RegistrationComponent,
     EqualValidator,
     StatusFilterPipe,
-    StatusSelectorComponent,
     SortByCreatedAtPipe,
     SortByUpdatedAtPipe,
     TokenComponent,
@@ -108,20 +96,7 @@ const appRoutes: Routes = [
     CaseComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
-    Angular2FontawesomeModule, SelectModule, ShContextMenuModule, MatButtonModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatListModule,
-    MatIconModule,
-    MatCardModule, BrowserAnimationsModule],
-  exports: [
-    MatButtonModule,
-    MatListModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatCardModule
-  ],
+    Angular2FontawesomeModule, BrowserAnimationsModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })

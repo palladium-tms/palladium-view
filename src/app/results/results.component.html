@@ -1,6 +1,6 @@
 <div class="result-space">
   <div class="item-list">
-    <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';"  (onBeforeMenuOpen)="context_menu($event)" [sh-context]="menuItems">
+    <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
       <div class="small-block" [ngStyle]="getStyles(result.status_id)">
         <div class="sub-blocks-holder">
           <div class="sub-block"><b>{{this.statuses[result.status_id].name}}</b></div>

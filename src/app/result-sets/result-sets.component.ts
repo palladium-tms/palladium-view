@@ -5,7 +5,6 @@ import {Router} from '@angular/router';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
-import {StatusSelectorComponent} from '../page-component/status-selector/status-selector.component';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 import {Case} from '../models/case';
@@ -18,11 +17,9 @@ import {Case} from '../models/case';
 })
 
 export class ResultSetsComponent implements OnInit {
-  @ViewChild('Selector')
   @ViewChild('Modal') Modal;
   @ViewChild('AddResultModal') AddResultModal;
   @ViewChild('form') form;
-  private Selector: StatusSelectorComponent;
   result_sets = [];
   loading = false;
   cases;
