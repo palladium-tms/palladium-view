@@ -37,6 +37,12 @@ export class CaseHistoryComponent implements OnInit {
     return url;
   }
 
+  suite_url(plan_id, suite_id) {
+    let url  = /(.*?)(?=run|$)/.exec(this.location.prepareExternalUrl(this.location.path()))[0];
+    url = /(.*?)(?=\d+\/$)/.exec(url)[0] + plan_id + '/suite/' + suite_id;
+    return url;
+  }
+
   result_set_url(id) {
     let url  = /(.*?)(?=case_history|$)/.exec(this.location.prepareExternalUrl(this.location.path()))[0];
     url = url + 'result_set/' + id;
@@ -54,6 +60,7 @@ export class CaseHistoryComponent implements OnInit {
 
   get_case_history(id) {
     this.ApiService.get_history(id).then(res => {
+      console.log( this.history);
       this.history = res;
     });
   }
