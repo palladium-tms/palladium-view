@@ -37,7 +37,6 @@ export class ResultSetsComponent implements OnInit {
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
 
-  // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.object = null;
