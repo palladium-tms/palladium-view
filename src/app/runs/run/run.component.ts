@@ -48,7 +48,7 @@ export class RunComponent implements OnInit {
 
   select_run() {
     if (this.router.url.indexOf('/run/' + this.object.id) > 0) {
-      this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]], true);
+      this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }
     this.isSelected = true;
   }

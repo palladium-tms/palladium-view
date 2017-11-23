@@ -1,21 +1,42 @@
 <div class="result-set-space">
-  <div class="toolbar filter">
-    <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  <div class="toolbar">
+    <div class="filter">
+      <app-filters [statuses] = statuses [statistic] = statistic [all_data]="" (selected_statuses_emmit)="get_filters($event)"></app-filters>
+    </div>
+    <div class="buttons">
+      <div class="toolbar-element check_button" (click)="unselect_all()" *ngIf="select_all_flag">
+        <i class="fa fa-check-square-o" aria-hidden="true"></i>
+      </div>
+
+      <div class="toolbar-element check_button" (click)="select_all()" *ngIf="!select_all_flag">
+        <i class="fa fa-square-o" aria-hidden="true"></i>
+      </div>
+      <div class="toolbar-element add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': get_selected_count() === 0}">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
+      </div>
+      <div class="toolbar-element" (click)="get_result_sets_and_cases()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+
+      <div class="toolbar-element" (click)="open_history_page()" *ngIf="object">
+        <i class="fa fa-history" aria-hidden="true"></i>
+      </div>
+
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="object">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
 
   <div class="item-list">
-    <div class="item hoverer bipolar-item" routerLinkActive="active"
-         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'"
-         (onBeforeMenuOpen)="context_menu($event, object)" [sh-context]="menuItems" [sh-data-context]="object"  [ngStyle]="getStyles(object)">
+    <div class="item hoverer bipolar-item"
+         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'" [ngClass]="{'active': object.active}" [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">
         <div class="centered-data checkbox-item">
-          <input type="checkbox" [(ngModel)]="object.selected" >
+          <input type="checkbox" [(ngModel)]="object.selected">
         </div>
-        <div class="item-name" *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]">
-          <a *ngIf="object.path === 'result_set'" [routerLink]="['./result_set', object.id]" title={{object.name}}>{{object.name}}</a>
-        </div>
-        <div class="item-name" *ngIf="object.path === 'case'">
-          <span *ngIf="object.path === 'case'" title={{object.name}}>{{object.name}}</span>
+        <div class="item-name">
+          <a (click)="open_results(object)" title={{object.name}} class="pointer">{{object.name}}</a>
         </div>
         <div *ngIf="this.statuses" class="status-name"><b>{{this.statuses[object['status']].name}}</b></div>
       </div>
@@ -28,17 +49,26 @@
     <h1>Change object name</h1>
   </modal-header>
   <modal-content>
-    <form autocomplete="off" #form="ngForm"  (ngSubmit)="edit_object(form, Modal, form.valid )">
-      <input type="text" class="result-set-name" name="name" ngModel required #name="ngModel" autofocus>
-      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-        result_set name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
+
+    <div class="settings_content">
+      <div class="item-description">
+        <div class="item-option">
+          <form autocomplete="off" #form="ngForm"  (ngSubmit)="edit_object(form, form.valid )">
+            <input type="text" class="result-set-name" name="name" ngModel required #name="ngModel" autofocus>
+            <small [hidden]="name.valid || (name.pristine && !form.submitted)">
+              result_set name can't be empty.
+            </small>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
     <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
-  </modal-footer>
+    <button class="btn btn-danger" (click)="delete_object()">Delete</button>
+  </modal-content>
 </modal>
+
 <modal #AddResultModal>
   <modal-header>
     <h1>Add Result</h1>

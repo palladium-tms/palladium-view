@@ -1,34 +1,57 @@
 <div class="run-space">
-  <div class="toolbar filter">
-    <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
-                 (selected_statuses_emmit)="get_filters($event)"></app-filters>
+  <div class="toolbar">
+    <div class="filter" [ngClass]="{'hidden': loading}">
+      <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
+                   (selected_statuses_emmit)="get_filters($event)"></app-filters>
+    </div>
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_runs_and_suites()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
 
   <div class="item-list">
-    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index"
-         [sh-context]="menuItems" [sh-data-context]="object">
+    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index">
       <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './run'"></app-run>
       <app-suite [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
     </div>
   </div>
 </div>
+
+
 <modal #Modal>
   <modal-header>
     <h1>Change object name</h1>
   </modal-header>
   <modal-content>
-    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_object_modal(form, Modal, form.valid )">
-      <input type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
-      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-        Object name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">
-      Save
-    </button>
-  </modal-footer>
-</modal>
+    <div class="settings_content">
+      <div class="item-description">
+        <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_object_modal(form, Modal, form.valid )">
+          <div class="item-option">
+            <input type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
+            <small [hidden]="name.valid || (name.pristine && !form.submitted)">
+              Object name can't be empty.
+            </small>
+          </div>
+          <div class="item-option">
+            <label *ngIf="object"> Created at: {{object.created_at}}</label>
+          </div>
+          <div class="item-option">
+            <label *ngIf="object"> Updated at: {{object.updated_at}}</label>
+          </div>
+          <button class="btn btn-success save_button" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">
+            Save
+          </button>
+        </form>
+        <button class="btn btn-danger" (click)="delete_object()">Delete</button>
+      </div>
 
+
+    </div>
+  </modal-content>
+</modal>
 <router-outlet></router-outlet>

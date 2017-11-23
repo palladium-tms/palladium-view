@@ -1,10 +1,6 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {NgForm} from '@angular/forms';
-import {Product} from '../models/product';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {ActivatedRoute} from '@angular/router';
-declare var $: any;
 
 @Component({
   selector: 'app-products',
@@ -15,58 +11,31 @@ declare var $: any;
 })
 
 export class ProductsComponent implements OnInit {
-  products: Product[] = [];
+  products;
+  loading = false;
   product;
-  @ViewChild('Modal') Modal;
-  @ViewChild('form') form;
-  menuItems = [
-    {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_products.bind(this)},
-    {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-    {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_product.bind(this)}];
 
-  constructor(private ApiService: PalladiumApiService, private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(private ApiService: PalladiumApiService, private router: Router) {}
 
   ngOnInit() {
     this.get_products();
   }
 
   get_products() {
+    this.setting_is_visible();
     this.products = [];
+    this.loading = true;
     this.ApiService.get_products().then(products => {
-      this.products =  products;
+      this.products = products;
+      this.loading = false;
     });
   }
 
-  delete_product(product) {
-    if (confirm('A u shuare?')) {
-      this.ApiService.delete_product(product.dataContext.id).then(products => {
-        this.products = this.products.filter(prod => prod.id !== product.dataContext.id);
-        if (this.router.url.indexOf('/product/' + products['product']) >= 0) {
-          this.router.navigate(['/']);
-        }
-      });
-    }
+  update_products(event) {
+    this.products = [];
+    this.products = event;
   }
-
-  edit_product_modal(form: NgForm, modal, valid: boolean) {
-    if (!valid) {return; }
-    this.edit_product(this.product.id, form.value['product_name']);
-    modal.close();
+  setting_is_visible() {
+    return (/product\/(\d+)/.exec(this.router.url) === null);
   }
-
-  edit_product(id, name) {
-    this.ApiService.edit_product(id, name).then(product => {
-      this.products.forEach(current_product => {
-        if (current_product.id === product.id) {
-          current_product.name = product.name;
-          current_product.updated_at = product.updated_at;
-        }
-      }); // FIXME: need optimize
-    });
-  }
-  open_modal(product) {
-    this.product = this.products.filter(prod => prod.id === product.dataContext.id)[0];
-    this.form.controls['product_name'].setValue(this.product.name);
-    this.Modal.open();
-  };
 }

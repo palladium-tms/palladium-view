@@ -1,31 +1,23 @@
 <div class="product-space">
   <div class="toolbar">
-    <div class="filter"></div>
+    <div class="product-link"><a routerLink="/">Products</a></div>
+    <div class="buttons">
+      <div class="toolbar-element" (click)="get_products()">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
+      </div>
+      <div class="toolbar-element" (click)="settings.open_modal()" [ngClass]="{'hidden': setting_is_visible()}">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
   <div class="item-list">
-    <div class="item hoverer" routerLinkActive="active" *ngFor="let product of products; let index = index"
-         [sh-context]="menuItems" [sh-data-context]="product">
+    <div class="item hoverer" routerLinkActive="active" *ngFor="let product of products; let index = index">
       <div class="item-name"><a [routerLink]="['/product', product.id]"
-                                routerLinkActive="low-priority">{{product.name}}</a></div>
+                                routerLinkActive="low-priority">{{product.name}}</a>
+
+      </div>
     </div>
   </div>
 </div>
-<modal #Modal>
-  <modal-header>
-    <h1>Product edit</h1>
-  </modal-header>
-  <modal-content>
-    <form autocomplete="off" #form="ngForm"
-           (ngSubmit)="edit_product_modal(form, Modal, form.valid)">
-      <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel" autofocus>
-      <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
-        Product name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save
-    </button>
-  </modal-footer>
-</modal>
+<app-product-settings #settings [products] = products (update_products)="update_products($event)"></app-product-settings>
 <router-outlet></router-outlet>

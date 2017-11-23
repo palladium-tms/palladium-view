@@ -7,6 +7,7 @@ export class ResultSet {
   updated_at: number;
   path = 'result_set';
   selected = false;
+  active = false;
   constructor(result_set) {
     if (result_set === null) {
       // this.create_default_result_set();
