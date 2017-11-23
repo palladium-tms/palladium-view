@@ -1,7 +1,6 @@
-<div class="history-space">
-  <div class="toolbar"><h1>History</h1></div>
-  <div class="item-list">
-    <ng-container *ngIf="history && statuses">
+<div class="history-space" [ngClass]="{'full_centered_data': loading}">
+  <div class="item-list" *ngIf="!loading">
+    <ng-container *ngIf="history">
 
     <!--| sortByCreatedAt:'desc'-->
     <div class="item bipolar-item big-item" *ngFor="let plan of history | SortByUpdatedAt:'desc'">
@@ -9,7 +8,8 @@
         <div class="sub-blocks-holder">
           <div class="sub-block"><a class="detail_link" href="{{plan_url(plan['plan_id'])}}" target="_blank"><b>{{plan['plan_name']}}</b></a></div>
             <div class="sub-block" *ngIf="plan['run_id']"><a href="{{run_url(plan['run_id'])}}" target="_blank">Run Detail</a></div>
-            <div class="sub-block" *ngIf="plan['result_set']">
+            <div class="sub-block" *ngIf="plan['suite_id']"><a href="{{suite_url(plan['plan_id'], plan['suite_id'])}}" target="_blank">Suite Detail</a></div>
+            <div class="sub-block" *ngIf="plan['result_set_id']">
               <a href="{{result_set_url(plan['result_set_id'])}}" target="_blank">Results Detail</a>
             </div>
           <div class="sub-block"><b>{{this.statuses[plan['status']]['name']}}</b></div>
@@ -29,6 +29,7 @@
     </div>
     </ng-container>
   </div>
+  <div class="loader" *ngIf="loading"></div>
 </div>
 
 

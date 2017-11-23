@@ -40,6 +40,7 @@ export class ResultSetsComponent implements OnInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.object = null;
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
@@ -233,6 +234,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   select_all() { // FIXME: need optimize
+    console.log(this.object)
     if (this.filter.length === 0) {
       this.result_sets_and_cases.forEach(obj => {
         obj.selected = true;
@@ -331,6 +333,15 @@ export class ResultSetsComponent implements OnInit {
     if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/result_set\/(\d+)/.exec(this.router.url)[1];
       this.object = this.result_sets_and_cases.filter(obj => obj.id === id && obj.path === 'result_set')[0];
+      this.object.active = true;
+    } else if (/case\/(\d+)/.exec(this.router.url) !== null) {
+      const id = +/case\/(\d+)/.exec(this.router.url)[1];
+      this.object = this.result_sets_and_cases.filter(obj => obj.id === id && obj.path === 'case')[0];
+      this.object.active = true;
+    } else if (/case_history\/(\d+)/.exec(this.router.url) !== null) {
+      const id = +/case_history\/(\d+)/.exec(this.router.url)[1];
+      const this_case = this.cases.filter(object => object.id === id)[0];
+      this.object = this.result_sets_and_cases.filter(obj => obj.name === this_case.name)[0];
       this.object.active = true;
     }
   }

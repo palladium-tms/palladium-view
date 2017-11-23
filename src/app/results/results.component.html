@@ -1,5 +1,5 @@
-<div class="result-space">
-  <div class="item-list">
+<div class="result-space" [ngClass]="{'full_centered_data': loading}">
+  <div class="item-list" *ngIf="!loading">
     <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
       <div class="small-block" [ngStyle]="getStyles(result.status_id)">
         <div class="sub-blocks-holder">
@@ -14,4 +14,5 @@
       </div>
     </div>
   </div>
+  <div class="loader" *ngIf="loading"></div>
 </div>
