@@ -40,6 +40,7 @@ export class ResultSetsComponent implements OnInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.object = null;
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
@@ -233,6 +234,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   select_all() { // FIXME: need optimize
+    console.log(this.object)
     if (this.filter.length === 0) {
       this.result_sets_and_cases.forEach(obj => {
         obj.selected = true;
