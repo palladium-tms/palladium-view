@@ -79,7 +79,7 @@ input[type=checkbox] {
   flex: 4;
 }
 
-.result-space, .history-space {
+.result-space, .history-space, .one-case_space {
   flex: 5;
 }
 

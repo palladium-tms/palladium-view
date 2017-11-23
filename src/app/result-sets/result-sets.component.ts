@@ -26,15 +26,12 @@ export class ResultSetsComponent implements OnInit {
   result_sets = [];
   cases;
   object;
-  selected_object;
   statuses;
   all_statuses;
   not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
   statistic: Statistic;
-  selected_objects = [];
-  selected_status_id = null;
   filter: any[] = [];
   select_all_flag = false;
 
@@ -45,7 +42,6 @@ export class ResultSetsComponent implements OnInit {
   // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.selected_objects = [];
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
@@ -104,7 +100,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   get_result_sets_and_cases() {
-    this.selected_objects = [];
     this.result_sets = [];
     this.result_sets_and_cases = [];
     Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
@@ -117,24 +112,26 @@ export class ResultSetsComponent implements OnInit {
         }
       });
       this.result_sets_and_cases = res[0].concat(cases);
+      this.select_object();
       this.update_statistic();
     });
   }
 
   delete_object() {
     if (confirm('A u shuare?')) {
-      const id = this.get_result_set_id();
-      if (this.result_set_opened()) {
-        this.ApiService.delete_result_set(id).then(deleted_id => {
+      if (this.object.path === 'result_set') {
+        this.ApiService.delete_result_set(this.object.id).then(deleted_id => {
           this.result_sets = this.result_sets.filter(obj => (obj.id !== +deleted_id));
           this.merge_result_sets_and_cases();
           this.update_statistic();
+          this.Modal.close();
         });
       } else {
-        this.ApiService.delete_case(id).then((this_case: Case) => {
+        this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
           this.cases = this.cases.filter(obj => (obj.id !== this_case.id));
           this.merge_result_sets_and_cases();
           this.update_statistic();
+          this.Modal.close();
         });
       }
     }
@@ -171,7 +168,9 @@ export class ResultSetsComponent implements OnInit {
   }
 
   add_result_modal() {
-    this.AddResultModal.open();
+    if (this.get_selected_count() !== 0) {
+      this.AddResultModal.open();
+    }
   }
 
   add_results(form: NgForm, modal) {
@@ -179,10 +178,6 @@ export class ResultSetsComponent implements OnInit {
     const status = this.statuses[form.value['result_status']];
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
-      this.result_sets_and_cases.filter(current_object => this.selected_objects.includes(current_object))
-        .forEach((current_result_set) => {
-          current_result_set.status = +this.selected_status_id;
-        });
       this.update_statistic();
       if (this.router.url.indexOf('/result_set/') >= 0) {
         this.resultservice.update_results();
@@ -226,7 +221,6 @@ export class ResultSetsComponent implements OnInit {
 
   get_filters(e) {
     this.unselect_all();
-    this.selected_objects = [];
     this.filter = e;
     this.check_selected_is_hidden(e);
   }
@@ -252,23 +246,12 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_history_page() {
-    const path = this.get_path();
-    const data = this.get_item_data();
-    const case_id = this.get_case_id_by_result_set(data[1]);
-    if (data[0] === 'case') {
-      this.router.navigate([path + '/case_history/',  case_id]);
+    const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
+    if (this.object.path === 'case') {
+      this.router.navigate([path,  this.object.id]);
     } else {
-      this.router.navigate([path + 'case_history/', case_id]);
-    }
-  }
-
-  get_path() {
-    if (this.router.url.match(/case_history\/(\d+)/i) !== null) {
-      return /(.*?)(?=case_history|$)/.exec(this.router.url)[0];
-    } else if (this.router.url.match(/result_set\/(\d+)/i) !== null) {
-      return /(.*?)(?=result_set|$)/.exec(this.router.url)[0];
-    } else {
-      return this.router.url + '/';
+      const case_id = this.get_case_id_by_result_set(this.object);
+      this.router.navigate([path, case_id]);
     }
   }
 
@@ -303,13 +286,9 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_modal() {
-    const object_data = this.get_item_data();
-    console.log(this.result_sets_and_cases[0]);
-    this.object = this.result_sets_and_cases.filter(obj => obj.id === object_data[1] && obj.path === object_data[0])[0];
     this.form.controls['name'].setValue(this.object.name);
     this.Modal.open();
   };
-
 
   toolbar_opened() {
     return (this.result_set_opened() || this.case_opened());
@@ -323,18 +302,8 @@ export class ResultSetsComponent implements OnInit {
     return this.router.url.indexOf('case') >= 0;
   }
 
-  get_item_data() {
-    console.log(this.selected_object);
-    // Result_set or case is opened? and get it id]
-    if (this.selected_object) {
-      return (['case', this.selected_object]);
-    } else {
-      return(['result_set', this.get_result_set_id()]);
-    }
-  }
-  get_case_id_by_result_set(result_set_id) {
-    const set = this.result_sets.filter(obj => obj.id === result_set_id)[0];
-    return this.cases.filter(obj => obj.name === set.name)[0].id;
+  get_case_id_by_result_set(result_set) {
+    return this.cases.filter(obj => obj.name === result_set.name)[0].id;
   }
 
   get_result_set_id() {
@@ -345,9 +314,10 @@ export class ResultSetsComponent implements OnInit {
     this.reset_active();
     object.active = true;
     this.object = object;
-    console.log(object.id);
     if (object.path === 'result_set') {
       this.router.navigate(['result_set', object.id], {relativeTo: this.activatedRoute});
+    } else {
+      this.router.navigate(['case', object.id], {relativeTo: this.activatedRoute});
     }
   }
 
@@ -357,10 +327,11 @@ export class ResultSetsComponent implements OnInit {
       active_element[0].active = false;
     }
   }
-  select_object(object) {
-    if (!object.selected) {
-      this.unselect_all();
-      object.selected = true;
+  select_object() {
+    if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
+      const id = +/result_set\/(\d+)/.exec(this.router.url)[1];
+      this.object = this.result_sets_and_cases.filter(obj => obj.id === id && obj.path === 'result_set')[0];
+      this.object.active = true;
     }
   }
 

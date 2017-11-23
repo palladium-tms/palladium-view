@@ -11,18 +11,18 @@
       <div class="toolbar-element check_button" (click)="select_all()" *ngIf="!select_all_flag">
         <i class="fa fa-square-o" aria-hidden="true"></i>
       </div>
-      <div class="toolbar-element add_result_button" (click)="open_modal()" [ngClass]="{'disabled': get_selected_count() === 0}">
+      <div class="toolbar-element add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': get_selected_count() === 0}">
         <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
       </div>
       <div class="toolbar-element" (click)="get_result_sets_and_cases()">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
 
-      <div class="toolbar-element" (click)="open_history_page()" *ngIf="toolbar_opened()">
+      <div class="toolbar-element" (click)="open_history_page()" *ngIf="object">
         <i class="fa fa-history" aria-hidden="true"></i>
       </div>
 
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="object">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
@@ -36,7 +36,7 @@
           <input type="checkbox" [(ngModel)]="object.selected">
         </div>
         <div class="item-name">
-          <a (click)="open_results(object)" title={{object.name}}>{{object.name}}</a>
+          <a (click)="open_results(object)" title={{object.name}} class="pointer">{{object.name}}</a>
         </div>
         <div *ngIf="this.statuses" class="status-name"><b>{{this.statuses[object['status']].name}}</b></div>
       </div>
