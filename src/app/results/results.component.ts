@@ -12,6 +12,7 @@ import {ResultService} from '../../services/result.service';
 export class ResultsComponent implements OnInit {
   results: Result[] = [];
   statuses;
+  loading = false;
 
   constructor(private ApiService: PalladiumApiService, private resultservice: ResultService,
               private activatedRoute: ActivatedRoute, private router: Router) {}
@@ -22,9 +23,11 @@ export class ResultsComponent implements OnInit {
   }
 
   init_results() {
+    this.loading = true;
     Promise.all([this.get_statuses(), this.get_results()]).then(res => {
       this.results = res[1];
       this.statuses = res[0];
+      this.loading = false;
     });
   }
 

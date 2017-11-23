@@ -11,6 +11,7 @@ import { Location } from '@angular/common';
 export class CaseHistoryComponent implements OnInit {
   history;
   statuses;
+  loading = false;
   constructor( private activatedRoute: ActivatedRoute, private location: Location,
                private ApiService: PalladiumApiService) { }
 
@@ -43,9 +44,11 @@ export class CaseHistoryComponent implements OnInit {
   }
 
   init_data(id) {
+    this.loading = true;
     Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
       this.statuses = res[0];
       this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
+      this.loading = false;
     });
   }
 

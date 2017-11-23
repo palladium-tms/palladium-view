@@ -1,6 +1,5 @@
-<div class="history-space">
-  <div class="toolbar"><h1>History</h1></div>
-  <div class="item-list">
+<div class="history-space" [ngClass]="{'full_centered_data': loading}">
+  <div class="item-list" *ngIf="!loading">
     <ng-container *ngIf="history && statuses">
 
     <!--| sortByCreatedAt:'desc'-->
@@ -29,6 +28,7 @@
     </div>
     </ng-container>
   </div>
+  <div class="loader" *ngIf="loading"></div>
 </div>
 
 
