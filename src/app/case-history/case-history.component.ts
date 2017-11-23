@@ -54,14 +54,13 @@ export class CaseHistoryComponent implements OnInit {
     Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
       this.statuses = res[0];
       this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
-      this.loading = false;
     });
   }
 
   get_case_history(id) {
     this.ApiService.get_history(id).then(res => {
-      console.log( this.history);
       this.history = res;
+      this.loading = false;
     });
   }
 
