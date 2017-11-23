@@ -24,6 +24,7 @@ export class ResultSetsComponent implements OnInit {
   @ViewChild('form') form;
   private Selector: StatusSelectorComponent;
   result_sets = [];
+  loading = false;
   cases;
   object;
   statuses;
@@ -102,6 +103,7 @@ export class ResultSetsComponent implements OnInit {
   get_result_sets_and_cases() {
     this.result_sets = [];
     this.result_sets_and_cases = [];
+    this.loading = true;
     Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
       this.result_sets = res[0];
       this.cases = res[1];
@@ -114,6 +116,7 @@ export class ResultSetsComponent implements OnInit {
       this.result_sets_and_cases = res[0].concat(cases);
       this.select_object();
       this.update_statistic();
+      this.loading = false;
     });
   }
 
