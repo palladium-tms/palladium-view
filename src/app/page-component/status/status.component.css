@@ -17,5 +17,6 @@
   text-overflow: ellipsis;
 }
 .selected {
+  background-color: #b2c4c5;
   font-weight: bold;
 }
