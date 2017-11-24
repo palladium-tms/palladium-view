@@ -49,23 +49,26 @@
     <h1>Change object name</h1>
   </modal-header>
   <modal-content>
-
     <div class="settings_content">
       <div class="item-description">
-        <div class="item-option">
           <form autocomplete="off" #form="ngForm"  (ngSubmit)="edit_object(form, form.valid )">
+            <div class="item-option">
             <input type="text" class="result-set-name" name="name" ngModel required #name="ngModel" autofocus>
             <small [hidden]="name.valid || (name.pristine && !form.submitted)">
               result_set name can't be empty.
             </small>
+            </div>
+            <div class="item-option">
+              <label *ngIf="object"> Created at: {{object.created_at}}</label>
+            </div>
+            <div class="item-option">
+              <label *ngIf="object"> Updated at: {{object.updated_at}}</label>
+            </div>
+            <button class="btn btn-success save_button" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
           </form>
-
-        </div>
-
+        <button class="btn btn-danger" (click)="delete_object()">Delete</button>
       </div>
     </div>
-    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
-    <button class="btn btn-danger" (click)="delete_object()">Delete</button>
   </modal-content>
 </modal>
 

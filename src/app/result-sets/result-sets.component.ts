@@ -37,7 +37,6 @@ export class ResultSetsComponent implements OnInit {
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
 
-  // FIXME: https://github.com/valor-software/ng2-select/pull/712
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.object = null;
@@ -126,6 +125,7 @@ export class ResultSetsComponent implements OnInit {
           this.merge_result_sets_and_cases();
           this.update_statistic();
           this.Modal.close();
+          this.navigate_it_to_case();
         });
       } else {
         this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
@@ -181,7 +181,7 @@ export class ResultSetsComponent implements OnInit {
       status)]).then(res => {
       this.update_statistic();
       if (this.router.url.indexOf('/result_set/') >= 0) {
-        this.resultservice.update_results();
+        this.resultservice.update_results(res[0]);
       } else if (this.router.url.indexOf('/case_history/') >= 0) {
         // Fixme: Add history updating
       }
@@ -196,8 +196,8 @@ export class ResultSetsComponent implements OnInit {
     }
     return this.ApiService.result_new(result_sets, message, status).then(res => {
       this.result_sets_and_cases.filter(obj => obj.path === 'result_set').forEach(obj => {
-        if (res['other_data']['result_set_id'].includes(obj.id)) {
-          obj.status = res['result']['status_id'];
+        if (res[1]['result_set_id'].includes(obj.id)) {
+          obj.status = res[0].status_id;
         }
       });
       return res;
@@ -216,8 +216,24 @@ export class ResultSetsComponent implements OnInit {
         index = this.result_sets_and_cases.findIndex(current_object =>
           responce_result_set.name === current_object.name);
         this.result_sets_and_cases[index] = responce_result_set;
+        this.result_sets_and_cases[index].selected = true;
+        this.result_sets.push(responce_result_set);
       });
+      this.navigate_if_case_has_opened();
     });
+  }
+
+  navigate_if_case_has_opened() {
+    if (this.router.url.indexOf('/case/') >= 0) {
+      this.reset_active();
+      this.open_results(this.result_sets_and_cases.filter(obj => obj.name === this.object.name)[0]);
+    }
+  }
+
+  // take this.object.name and find case with this name.
+  // method will navigate to case page
+  navigate_it_to_case() {
+    this.open_results(this.result_sets_and_cases.filter(obj => obj.name === this.object.name)[0]);
   }
 
   get_filters(e) {
@@ -234,7 +250,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   select_all() { // FIXME: need optimize
-    console.log(this.object)
     if (this.filter.length === 0) {
       this.result_sets_and_cases.forEach(obj => {
         obj.selected = true;
@@ -250,7 +265,7 @@ export class ResultSetsComponent implements OnInit {
   open_history_page() {
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
-      this.router.navigate([path,  this.object.id]);
+      this.router.navigate([path, this.object.id]);
     } else {
       const case_id = this.get_case_id_by_result_set(this.object);
       this.router.navigate([path, case_id]);
@@ -292,25 +307,11 @@ export class ResultSetsComponent implements OnInit {
     this.Modal.open();
   };
 
-  toolbar_opened() {
-    return (this.result_set_opened() || this.case_opened());
-  }
-
-  result_set_opened() {
-    return this.router.url.indexOf('result_set') >= 0;
-  }
-
-  case_opened() {
-    return this.router.url.indexOf('case') >= 0;
-  }
 
   get_case_id_by_result_set(result_set) {
     return this.cases.filter(obj => obj.name === result_set.name)[0].id;
   }
 
-  get_result_set_id() {
-    return ( +/result_set\/(\d+)/.exec(this.router.url)[1]);
-  }
 
   open_results(object) {
     this.reset_active();
@@ -325,10 +326,11 @@ export class ResultSetsComponent implements OnInit {
 
   reset_active() {
     const active_element = this.result_sets_and_cases.filter(obj => obj.active);
-    if (active_element.length !== 0 ) {
+    if (active_element.length !== 0) {
       active_element[0].active = false;
     }
   }
+
   select_object() {
     if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/result_set\/(\d+)/.exec(this.router.url)[1];
