@@ -8,8 +8,8 @@ import { Subject } from 'rxjs/Subject';
 export class ResultService {
   private subject = new Subject<any>();
 
-  update_results() {
-    this.subject.next();
+  update_results(res) {
+    this.subject.next(res);
   }
   news(): Observable<any> {
     return this.subject.asObservable();

@@ -185,7 +185,6 @@ export class PalladiumApiService {
         }
           this.histories.push(new History(data));
       });
-      console.log(this.histories);
       return this.histories;
     }, (errors: any) => {
       console.log(errors);
@@ -332,6 +331,7 @@ export class PalladiumApiService {
           return this.results;
         }, error => console.log(error));
   }
+
   get_result(result_id): Promise<any> {
     return this.httpService.postData('/result', 'result_data[id]=' + result_id)
       .then(
@@ -348,7 +348,7 @@ export class PalladiumApiService {
       params = params.append('result_data[result_set_id][]', result_set.id);
     }
     return this.httpService.postData('/result_new', params).then(res => {
-      return res;
+      return [new Result(res['result']), res['other_data']];
     }, error => console.log(error));
   }
 

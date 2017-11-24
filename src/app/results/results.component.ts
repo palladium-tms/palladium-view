@@ -19,7 +19,13 @@ export class ResultsComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
-    this.resultservice.news().subscribe(data => { this.init_results(); });
+    this.resultservice.news().subscribe(data => {
+      this.add_result(data);
+    });
+  }
+
+  add_result(data) {
+    this.results.unshift(data[0]);
   }
 
   init_results() {
@@ -47,9 +53,5 @@ export class ResultsComponent implements OnInit {
     if (this.statuses) {
       return {'border-right': '7px solid ' + this.statuses[id].color};
     }
-  }
-
-  context_menu(event) {
-    event.open([{label: '<span class="menu-icon">Refresh</span>', onClick: this.init_results.bind(this)}]);
   }
 }
