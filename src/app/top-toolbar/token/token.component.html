@@ -1,24 +1,41 @@
 <a class="link" (click)="get_tokens(Modal)">Tokens</a>
 
-<modal #Modal>
+<modal #Modal (onClose)="creating = false">
   <modal-header>
-    <h1>Tokens settings</h1>
+    <h2>Tokens settings
+      <a  class="btn btn-success"
+          [ngClass]="{'hidden': creating}"
+          (click)="creating = true">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </a>
+      <a class="btn btn-danger"
+         [ngClass]="{'hidden': !creating}"
+         (click)="creating = false">
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </a>
+    </h2>
   </modal-header>
   <modal-content>
-    Tokens list:
-    <form autocomplete="off" #tokenform="ngForm" (ngSubmit)="create_token(token_name)">
-      <input class="status-color" name="token_name" ngModel required #token_name="ngModel" autofocus>
-      <button class="btn btn-success" (click)="tokenform.ngSubmit" [disabled]="!token_name.valid">Create</button>
-      <small [hidden]="token_name.valid || (token_name.pristine && !tokenform.submitted)">
-        token name can't be empty
-      </small>
-    </form>
-    <div *ngFor="let current_token of tokens">
-      <div class="token_name">{{current_token['name']}}</div>
-      <pre class="token_value">{{current_token['token']}}</pre>
+    <div class="creating_new_token" [ngClass]="{'hidden': !creating}">
+      <form class="new-token-form" autocomplete="off" #tokenform="ngForm" (ngSubmit)="create_token(token_name)">
+          <input class="token-name-input" placeholder="Set token name" name="token_name" ngModel required #token_name="ngModel" autofocus>
+          <button class="btn btn-success create-token-button" (click)="tokenform.ngSubmit" [disabled]="!token_name.valid">Create</button>
+        <small [hidden]="token_name.valid || (token_name.pristine && !tokenform.submitted)">
+          token name can't be empty
+        </small>
+      </form>
+    </div>
+
+    <div class="no_select_message" [ngClass]="{'hidden': tokens !== []}">
+      <h2>You have no tokens. Create it!!</h2>
+    </div>
+    <div class="token-list">
+      <div *ngFor="let current_token of tokens" class="token-item">
+        <div class="token-describe">
+          <div class="token_name"><b>{{current_token['name']}}</b></div>
+          <pre class="token_value">{{current_token['token']}}</pre>
+        </div>
+      </div>
     </div>
   </modal-content>
-  <modal-footer>
-    <button class="btn" (click)="Modal.close()">Close</button>
-  </modal-footer>
 </modal>

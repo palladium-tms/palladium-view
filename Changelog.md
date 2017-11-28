@@ -4,3 +4,4 @@
  * Opportunity to create status
  * Changed status settings modal
  * Added Changelog file
+ * Change style from token setting modal

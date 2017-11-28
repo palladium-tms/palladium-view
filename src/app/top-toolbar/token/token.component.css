@@ -1,0 +1,32 @@
+.no_select_message{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: center;
+  margin-left: 0.5em;
+}
+.token-item {
+  flex: 1;
+  margin: 0.5em;
+}
+
+.token-list{
+  display: flex;
+  flex-direction: column;
+}
+.creating_new_token {
+  margin: 0.5em;
+}
+.create-token-button{
+  margin-left: 0.5em;
+}
+.new-token-form{
+  display: flex;
+}
+.token-name-input {
+  flex: 1;
+}
+.token-list {
+  max-height: 20em;
+  overflow: auto;
+}

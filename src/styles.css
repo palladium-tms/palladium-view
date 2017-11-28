@@ -38,10 +38,10 @@ input[type=checkbox] {
   margin: 2px 0 0;
 }
 /* === flex update ====*/
-.active {
+.activated {
   background-color: #b2c4c5;
 }
-.active:hover{
+.activated:hover{
   background-color: #b2c4c5 !important;
 }
 .product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space, .case_space {
