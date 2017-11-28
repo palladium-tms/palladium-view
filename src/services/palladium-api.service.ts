@@ -13,6 +13,7 @@ import {URLSearchParams} from '@angular/http';
 import {Statistic} from '../app/models/statistic';
 import {History} from '../app/models/history_object';
 import {HttpParams} from '@angular/common/http';
+import {Status} from "../app/models/status";
 
 @Injectable()
 export class PalladiumApiService {
@@ -36,26 +37,42 @@ export class PalladiumApiService {
     });
   }
 
-  get_not_blocked_statuses(): Promise<JSON> {
+  get_not_blocked_statuses(): Promise<any> {
     return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
-      return resp['statuses'];
+      const statuses = [];
+      Object.keys(resp['statuses']).forEach(key => {
+        statuses.push(new Status(resp['statuses'][key]));
+      });
+      console.log(statuses);
+      return statuses;
     });
   }
 
   block_status(id): Promise<JSON> {
     return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[block]=true'
     ).then((resp: any) => {
-      return resp;
+      return resp['status'];
     });
   }
 
-  color_status(id, color): Promise<JSON> {
-    return this.httpService.postData('/status_edit', 'status_data[id]=' + id + '&status_data[color]=' + color
-    ).then((resp: any) => {
-      return resp;
+  update_status(id, name, color): Promise<any> {
+    const params = new HttpParams()
+      .set(`status_data[id]`, id)
+      .set(`status_data[name]`, name)
+      .set(`status_data[color]`, color);
+    return this.httpService.postData('/status_edit', params).then((resp: any) => {
+      return new Status(resp['status']);
     });
   }
 
+  status_new(name, color) {
+    const params = new HttpParams()
+      .set(`status_data[color]`, color)
+      .set(`status_data[name]`, name);
+    return this.httpService.postData('/status_new', params).then((resp: any) => {
+      return resp['status'];
+    });
+  }
   //#endregion
 
   //#region Token

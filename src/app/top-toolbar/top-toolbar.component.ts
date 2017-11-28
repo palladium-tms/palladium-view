@@ -1,4 +1,4 @@
-import {Component, OnInit, DoCheck} from '@angular/core';
+import {Component, OnInit, DoCheck, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -12,6 +12,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 export class TopToolbarComponent implements OnInit, DoCheck {
   public authorize;
   public statuses = {};
+  @ViewChild('Modal') Modal;
 
   constructor(private router: Router,
               private authenticationService: AuthenticationService) {

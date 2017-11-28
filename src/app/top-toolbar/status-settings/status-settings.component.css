@@ -5,3 +5,51 @@
   color: #e2e2e2;
   padding-right: 2em;
 }
+
+.status-settings{
+  max-height: 20em;
+  display: flex;
+  flex-direction: row;
+}
+.status-settings-form {
+  display: flex;
+  flex-direction: column;
+}
+.status-list, .status-details, .no_select_message, .status-new {
+  overflow: auto;
+  flex: 1;
+}
+.status-details, .status-new {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.status-item{
+  user-select: none;
+  cursor: pointer;
+  padding: 0.5em 0.7em 0.5em 0.5em;
+  max-height: 6em;
+  max-width: 100%;
+  border: 1px solid #848484;
+}
+.status-name-input, .status-color-input {
+  flex: 1;
+  box-sizing: border-box;
+  margin: 0.5em;
+}
+.save-status {
+  float: right;
+  margin-left: auto;
+}
+.status-buttons{
+  flex: 5;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5em;
+}
+.message-error{
+  text-align: center;
+}
+.new-status{
+
+}
