@@ -10,21 +10,22 @@ import {PalladiumApiService} from '../../../services/palladium-api.service';
 })
 export class TokenComponent implements OnInit {
   tokens;
+  creating = false;
   constructor(private ApiService: PalladiumApiService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   get_tokens(modal) {
     modal.open();
     this.ApiService.get_tokens().then(tokens => {
       this.tokens = tokens;
     });
-  }
 
+  }
   create_token(form: NgForm) {
     this.ApiService.create_token(form.value).then(token => {
       this.tokens.push(token['token_data']);
+      this.creating = false;
     });
   }
 }

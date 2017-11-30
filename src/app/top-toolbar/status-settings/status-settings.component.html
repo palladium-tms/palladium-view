@@ -1,7 +1,11 @@
 <a class="link" (click)="status_settings(Modal)">Statuses</a>
 <modal #Modal>
   <modal-header>
-    <h2>Status settings <a class="btn btn-success" (click)="new_status_create()"><i class="fa fa-plus" aria-hidden="true"></i></a></h2>
+    <h2>Status settings <button type="button"  class="btn btn-success"
+                           (click)="new_status_create()"
+                           [ngClass]="{'active': mode === 'creating'}">
+      <i class="fa fa-plus" aria-hidden="true"></i>
+    </button></h2>
 
   </modal-header>
   <modal-content>
@@ -10,7 +14,7 @@
         <div class="status-list">
           <div class="status-item hoverer" *ngFor="let status of statuses; let index = index"
                [ngStyle]="getStyles(status)" (click)="item_selected(status)"
-               [ngClass]="{'active': status === selected }">
+               [ngClass]="{'activated': status === selected }">
             <span>{{status.name}}</span>
           </div>
         </div>

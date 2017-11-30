@@ -30,7 +30,7 @@
 
   <div class="item-list">
     <div class="item hoverer bipolar-item"
-         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'" [ngClass]="{'active': object.active}" [ngStyle]="getStyles(object)">
+         *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">
         <div class="centered-data checkbox-item">
           <input type="checkbox" [(ngModel)]="object.selected">
