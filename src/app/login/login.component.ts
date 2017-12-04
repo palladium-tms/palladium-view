@@ -9,6 +9,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 
 export class LoginComponent implements OnInit {
   model: any = {};
+  no_users = false;
   loading = false;
   error = '';
 
@@ -20,6 +21,9 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // reset login status
     this.authenticationService.logout();
+    this.authenticationService.get_no_user_status().then(data => {
+      this.no_users = data['no_users'];
+    });
   }
 
   login() {
