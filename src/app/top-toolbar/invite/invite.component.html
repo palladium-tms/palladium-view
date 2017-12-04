@@ -1,0 +1,16 @@
+<a class="link" (click)="get_invite(Modal)">Invite</a>
+
+<modal #Modal>
+  <modal-header>
+    <h2>Invite</h2>
+  </modal-header>
+  <modal-content>
+    <div *ngIf="invite">
+      <p>{{generate_registration_link()}}</p>
+      <p>{{invite.token}}</p>
+      <p>{{invite.created_at}}</p>
+      <p>{{invite.expiration_data}}</p>
+    </div>
+    <button class="btn btn-success create-token-button">Generate Invite</button>
+  </modal-content>
+</modal>

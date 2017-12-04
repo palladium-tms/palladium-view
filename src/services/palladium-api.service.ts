@@ -13,7 +13,8 @@ import {URLSearchParams} from '@angular/http';
 import {Statistic} from '../app/models/statistic';
 import {History} from '../app/models/history_object';
 import {HttpParams} from '@angular/common/http';
-import {Status} from "../app/models/status";
+import {Status} from '../app/models/status';
+import {Invite} from '../app/models/invite';
 
 @Injectable()
 export class PalladiumApiService {
@@ -390,5 +391,13 @@ export class PalladiumApiService {
     }, error => console.log(error));
   }
 
+  //#endregion
+
+  //#region Result
+  generate_invite(): Promise<any> {
+    return this.httpService.postData('/create_invite_token', {}).then(res => {
+      return new Invite(res['invite_data']);
+    }, error => console.log(error));
+  }
   //#endregion
 }

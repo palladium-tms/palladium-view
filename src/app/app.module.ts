@@ -38,6 +38,7 @@ import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductSettingsComponent } from './product-settings/product-settings.component';
 import { CaseComponent } from './case/case.component';
+import { InviteComponent } from './top-toolbar/invite/invite.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -94,6 +95,7 @@ const appRoutes: Routes = [
     CaseHistoryComponent,
     ProductSettingsComponent,
     CaseComponent,
+    InviteComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule],
