@@ -399,5 +399,15 @@ export class PalladiumApiService {
       return new Invite(res['invite_data']);
     }, error => console.log(error));
   }
+
+  get_invite(): Promise<any> {
+    return this.httpService.postData('/get_invite_token', {}).then(res => {
+      if (res['invite_data']) {
+        return new Invite(res['invite_data']);
+      } else {
+        return null;
+      }
+    }, error => console.log(error));
+  }
   //#endregion
 }

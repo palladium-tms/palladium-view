@@ -29,15 +29,16 @@ export class AuthenticationService {
     });
   };
 
-  registration(username: string, password: string): Promise<any>  {
+  registration(username: string, password: string, invite: string): Promise<any>  {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
-    // headers.append('Authorization', 'Bearer');
-    console.log(environment.host + '/registration');
+    const params = new HttpParams()
+      .set(`user_data[email]`, username)
+      .set(`user_data[password]`, password)
+      .set(`user_data[invite]`, invite);
     const options = { headers: headers };
-    return this.http.post(environment.host + '/registration',
-      'user_data[email]=' + username + '&user_data[password]=' + password, options).toPromise()
+    return this.http.post(environment.host + '/registration', params, options).toPromise()
       .then(result => {
-        return Promise.resolve({message: ''});
+        return Promise.resolve(result);
       }, (error: any) => {
         return Promise.reject({status: false, message: error._body});
       });

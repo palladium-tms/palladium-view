@@ -5,12 +5,17 @@
     <h2>Invite</h2>
   </modal-header>
   <modal-content>
-    <div *ngIf="invite">
-      <p>{{generate_registration_link()}}</p>
-      <p>{{invite.token}}</p>
+    <div *ngIf="invite !== null">
+      <pre>{{generate_registration_link()}}</pre>
+      <label>Created at</label>
       <p>{{invite.created_at}}</p>
+      <label>Expiration data</label>
       <p>{{invite.expiration_data}}</p>
+      <button class="btn btn-success create-token-button" (click)="generate_invite()">Update Invite</button>
     </div>
-    <button class="btn btn-success create-token-button">Generate Invite</button>
+    <div *ngIf="invite === null">
+      You have no invite link now.
+      <button class="btn btn-success create-token-button" (click)="generate_invite()">Generate Invite</button>
+    </div>
   </modal-content>
 </modal>
