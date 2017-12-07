@@ -9,3 +9,4 @@
  * Invite registration
  * Plans sorting by name
  * Add styles to login page
+ * Redirect to registration page if no_users
