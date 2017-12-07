@@ -6,3 +6,5 @@
  * Added Changelog file
  * Change style from token setting modal
  * Hide registration link if any user is exist
+ * Invite registration
+ * Plans sorting by name
