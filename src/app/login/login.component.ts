@@ -10,8 +10,8 @@ import { AuthenticationService } from '../../services/authentication.service';
 
 export class LoginComponent implements OnInit {
   model: any = {};
-  no_users = false;
   loading = false;
+  load_form = false;
   error = '';
 
   constructor(
@@ -23,13 +23,16 @@ export class LoginComponent implements OnInit {
     // reset login status
     this.authenticationService.logout();
     this.authenticationService.get_no_user_status().then(data => {
-      this.no_users = data['no_users'];
+      if (data['no_users']) {
+        this.router.navigate(['/registration']);
+      } else {
+        this.load_form = true;
+      }
     });
   }
 
   login() {
     this.loading = true;
-    // console.log(this.authenticationService.login(this.model.username, this.model.password));
     this.authenticationService.login(this.model.username, this.model.password)
       .then(result => {
           this.router.navigate(['/']);
