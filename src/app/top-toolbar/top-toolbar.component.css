@@ -14,7 +14,7 @@
  *= require_self
  */
 .header {
-  background-color: cadetblue;
+  background-color: #246E6E;
   height: 3em;
   display: flex;
   flex-direction: row-reverse;

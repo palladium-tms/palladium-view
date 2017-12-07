@@ -8,3 +8,4 @@
  * Hide registration link if any user is exist
  * Invite registration
  * Plans sorting by name
+ * Add styles to login page
