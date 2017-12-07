@@ -39,6 +39,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductSettingsComponent } from './product-settings/product-settings.component';
 import { CaseComponent } from './case/case.component';
 import { InviteComponent } from './top-toolbar/invite/invite.component';
+import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -96,6 +97,7 @@ const appRoutes: Routes = [
     ProductSettingsComponent,
     CaseComponent,
     InviteComponent,
+    SortByNamePipe,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule],
