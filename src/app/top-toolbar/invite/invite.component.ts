@@ -15,7 +15,6 @@ export class InviteComponent implements OnInit {
 
   generate_invite() {
     this.ApiService.generate_invite().then(invite => {
-      console.log(invite);
       this.invite = invite;
     });
   }

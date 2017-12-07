@@ -10,7 +10,9 @@ import {NgForm} from '@angular/forms';
 export class RegistrationComponent implements OnInit {
   loading = false;
   error = 'Invite key not found';
+  registration_hidden = true;
   invite;
+  no_users = true;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private authenticationService: AuthenticationService) {}
 
@@ -19,6 +21,7 @@ export class RegistrationComponent implements OnInit {
       if (this.invite === undefined) {
         this.invite = null;
       }
+      this.get_no_users_flag();
   }
 
   registration(form: NgForm, valid: boolean) {
@@ -36,6 +39,21 @@ export class RegistrationComponent implements OnInit {
         }, errors => {
           this.loading = false;
         });
+    }
+  }
+
+  get_no_users_flag() {
+    this.authenticationService.get_no_user_status().then(data => {
+      console.log(data['no_users']);
+      this.hide_registration(data['no_users']);
+    });
+  }
+
+  hide_registration(no_users) {
+    if (no_users) {
+      this.registration_hidden = false;
+    } else {
+      this.registration_hidden = (this.invite === null);
     }
   }
 }

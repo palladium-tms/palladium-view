@@ -1,4 +1,4 @@
-<div  [ngClass]="{'hidden': invite === null}">
+<div  [ngClass]="{'hidden': registration_hidden}">
   <h2>Registration</h2>
   <form autocomplete="off" #form="ngForm">
     <div class="item-option">
@@ -28,7 +28,7 @@
     </button>
   </form>
 </div>
-<div [ngClass]="{'hidden': invite !== null}">
+<div [ngClass]="{'hidden': !registration_hidden}">
   <h2>Registration error!</h2>
   <h3>{{error}}</h3>
 </div>
