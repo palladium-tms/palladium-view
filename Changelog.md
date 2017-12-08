@@ -2,6 +2,7 @@
 ## [0.2.4]
 ### Fixed
   * Close modal window after plan deleting
+  * Hidden statuses in result set if result set name is long
   
 ## [0.2.3]
 ### Added
