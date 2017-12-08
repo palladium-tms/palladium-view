@@ -88,6 +88,7 @@ export class PlansComponent implements OnInit {
   delete_plan(id) {
     if (confirm('A u shuare?')) {
       this.ApiService.delete_plan(id).then(plan_id => {
+        this.Modal.close();
         this.plans = this.plans.filter(current_plan => current_plan.id !== +plan_id);
         if (this.router.url.indexOf('/plan/' + plan_id) >= 0) {
           this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);

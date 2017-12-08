@@ -1,4 +1,8 @@
 # Changelog
+## [0.2.4]
+### Fixed
+  * Close modal window after plan deleting
+  
 ## [0.2.3]
 ### Added
  * Opportunity to create status
