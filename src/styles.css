@@ -233,6 +233,7 @@ font-size: 1.7em;
 .result-set-discriber{
   flex: 1;
   display: flex;
+  overflow: hidden;
   flex-direction: row;
 }
 .checkbox-item{
