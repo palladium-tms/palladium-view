@@ -27,7 +27,6 @@ export class InviteComponent implements OnInit {
     modal.open();
     this.ApiService.get_invite().then(invite => {
       this.invite = invite;
-      console.log(this.invite);
     });
   }
 }

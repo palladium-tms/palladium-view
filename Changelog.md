@@ -1,8 +1,12 @@
 # Changelog
 ## [0.2.4]
+###Added
+  * Styling login and registration pages
+  
 ### Fixed
   * Close modal window after plan deleting
   * Hidden statuses in result set if result set name is long
+  * Fixed autologin after registration
   
 ## [0.2.3]
 ### Added

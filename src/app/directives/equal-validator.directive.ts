@@ -9,19 +9,19 @@ import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
 export class EqualValidator implements Validator {
   constructor( @Attribute('validateEqual') public validateEqual: string) {}
 
-  validate(c: AbstractControl): { [key: string]: any } {
-    // self value (e.g. retype password)
-    const v = c.value;
-
-    // control value (e.g. password)
-    const e = c.root.get(this.validateEqual);
-
-    // value not equal
-    if (e && v !== e.value) {
-      return {
-        validateEqual: false
-      };
-    }
-    return null;
+  validate(password: AbstractControl): { [key: string]: any } {
+      const retype_pass = password.root.get(this.validateEqual);
+      if (retype_pass !== null) {
+        if (password.value === retype_pass.value) {
+          password.root.get('confirmPassword').setErrors( null);
+          password.root.get('password').setErrors( null);
+          return null;
+        } else {
+          password.root.get('confirmPassword').setErrors( {validateEqual: false} );
+          password.root.get('password').setErrors( {validateEqual: false});
+          return {validateEqual: false};
+        }
+      }
+    return {test: true};
   }
 }

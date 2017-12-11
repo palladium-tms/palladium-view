@@ -1,17 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NgForm} from '@angular/forms';
 
 @Component({
-  templateUrl: './registration.component.html',
-  styleUrls: ['./registration.component.css'],
+  moduleId: module.id,
+  styleUrls: ['registration.component.css'],
+  templateUrl: 'registration.component.html'
 })
 export class RegistrationComponent implements OnInit {
   loading = false;
-  error = 'Invite key not found';
+  error;
   registration_hidden = true;
   invite;
+  model: any = {};
   no_users = true;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private authenticationService: AuthenticationService) {}
@@ -24,13 +25,12 @@ export class RegistrationComponent implements OnInit {
       this.get_no_users_flag();
   }
 
-  registration(form: NgForm, valid: boolean) {
-    if (valid) {
+  registration(form) {
       this.loading = true;
       this.authenticationService.registration(form.value['username'], form.value['password'], this.invite)
         .then(result => {
           if (result['errors'].length === 0) {
-            this.router.navigate(['/login']);
+            this.login(form.value['username'], form.value['password']);
           } else {
             this.invite = null;
             this.error = result['errors'];
@@ -39,12 +39,21 @@ export class RegistrationComponent implements OnInit {
         }, errors => {
           this.loading = false;
         });
-    }
+  }
+
+  login(username, password) {
+    this.authenticationService.login(username, password)
+      .then(result => {
+        this.router.navigate(['/']);
+        this.loading = false;
+      }, error => {
+        this.error = 'Username or password is incorrect';
+        this.loading = false;
+      });
   }
 
   get_no_users_flag() {
     this.authenticationService.get_no_user_status().then(data => {
-      console.log(data['no_users']);
       this.hide_registration(data['no_users']);
     });
   }

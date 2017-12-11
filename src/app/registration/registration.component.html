@@ -1,36 +1,34 @@
-<div  [ngClass]="{'hidden': registration_hidden}">
-  <h2>Registration</h2>
-  <form autocomplete="off" #form="ngForm">
-    <div class="item-option">
-      <label>Username</label>
-      <input type="email" name="username" class="form-control" ngModel required #email="ngModel" email>
-      <small [hidden]="email.valid || (email.pristine && !form.submitted)">
-        Email is required and format should be <i>john@doe.com</i>.
-      </small>
+<div class="registration-box">
+  <div class="sing-in">
+    <h2>SING UP</h2>
+  </div>
+
+  <form name="form" (ngSubmit)="registration(f)" #f="ngForm">
+
+    <div class="input-wrapper" [ngClass]="{ 'validation-error': username.invalid && !username.pristine }">
+      <input placeholder="Email Address" type="text" class="login-form" name="username" [(ngModel)]="model.username"
+             #username="ngModel"
+             required email/>
+      <div *ngIf="username.invalid && !username.pristine && username.value !== ''" class="error-description">Email is required and format should be <i>john@doe.com</i>.</div>
+      <div *ngIf="username.value == '' && !username.pristine" class="error-description">Name is required</div>
     </div>
-    <div class="item-option">
-      <label>Password</label>
-      <input type="password" class="form-control" name="password" ngModel required #password="ngModel" autofocus password>
-      <small [hidden]="password.valid || (password.pristine && !form.submitted)">
-        Password is required
-      </small>
+
+    <div class="input-wrapper">
+      <input placeholder="Password" type="password" class="login-form" name="password" [(ngModel)]="model.password"
+             #password="ngModel"
+             validateEqual="confirmPassword" required/>
     </div>
-    <div class="item-option">
-      <label>Retype password</label>
-      <input type="password" name="confirmPassword" class="form-control" ngModel required
-             validateEqual="password" #confirmPassword="ngModel">
-      <small [hidden]="confirmPassword.valid || (confirmPassword.pristine && !form.submitted)">
-        Password mismatch
-      </small>
+
+    <div class="input-wrapper" [ngClass]="{ 'validation-error': confirmPassword.errors && password.errors }">
+      <input placeholder="Retype password" type="password" class="login-form" name="confirmPassword" [(ngModel)]="model.confirmPassword"
+             #confirmPassword="ngModel" validateEqual="password" required/>
+      <div  *ngIf="confirmPassword.errors && password.errors" class="error-description">
+        <span *ngIf="!confirmPassword.errors.validateEqual && !password.errors.validateEqual && !confirmPassword.pristine">Passwords do not match</span></div>
     </div>
-    <button class="btn btn-success save_button" [disabled]="!form.valid || item === null"
-            (click)="registration(form, form.valid )">Save
+
+    <button [disabled]="f.invalid" type="submit" class="btn btn-primary registration-button"><span [ngClass]="{'hidden': loading}">Sing up</span>
+      <span [ngClass]="{'hidden': !loading}">Loading...</span>
     </button>
+    <div *ngIf="error" class="login-failed">{{error}}</div>
   </form>
 </div>
-<div [ngClass]="{'hidden': !registration_hidden}">
-  <h2>Registration error!</h2>
-  <h3>{{error}}</h3>
-</div>
-
-
