@@ -1,4 +1,8 @@
 # Changelog
+## [0.2.5]
+### Fixed:
+    * Error after case delete
+      
 ## [0.2.4]
 ###Added
   * Styling login and registration pages
