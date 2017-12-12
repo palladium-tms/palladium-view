@@ -44,7 +44,6 @@ export class PalladiumApiService {
       Object.keys(resp['statuses']).forEach(key => {
         statuses.push(new Status(resp['statuses'][key]));
       });
-      console.log(statuses);
       return statuses;
     });
   }
