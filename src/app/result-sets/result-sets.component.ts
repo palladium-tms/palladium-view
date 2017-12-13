@@ -182,6 +182,7 @@ export class ResultSetsComponent implements OnInit {
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
       this.update_statistic();
+      this.unselect_all();
       if (this.router.url.indexOf('/result_set/') >= 0) {
         this.resultservice.update_results(res[0]);
       } else if (this.router.url.indexOf('/case_history/') >= 0) {
@@ -242,6 +243,13 @@ export class ResultSetsComponent implements OnInit {
     this.unselect_all();
     this.filter = e;
     this.check_selected_is_hidden(e);
+    this.unfilter_if_list_empty();
+  }
+
+  unfilter_if_list_empty() {
+    if (!this.statistic.has_statuses(this.filter)) {
+      this.filter = [];
+    }
   }
 
   unselect_all() {
