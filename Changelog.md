@@ -1,4 +1,7 @@
 # Changelog
+## [0.2.6]
+### Fixed
+    * Unselect all after add result
 ## [0.2.5]
 ### Fixed:
     * Error after case delete
