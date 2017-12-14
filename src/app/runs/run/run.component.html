@@ -3,12 +3,12 @@
   </div>
   <div class="run-statistic">
     <div *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
-      {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
+      {{ object.statistic.extended[status] }} {{ get_status_by_id(status).name}},
     </div>
   </div>
   <div class="item-statistic">
     <div *ngFor="let status of object.statistic.existed_statuses"
-         [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': statuses[status]['color']}">
+         [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': get_status_by_id(status).color}">
     </div>
   </div>
 </div>

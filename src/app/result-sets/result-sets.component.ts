@@ -25,7 +25,6 @@ export class ResultSetsComponent implements OnInit {
   cases;
   object;
   statuses;
-  all_statuses;
   not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
@@ -43,17 +42,15 @@ export class ResultSetsComponent implements OnInit {
       this.get_result_sets_and_cases();
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
-        this.statuses = JSON.parse(JSON.stringify(res));
-        this.all_statuses = JSON.parse(JSON.stringify(res));
-        Object.keys(this.statuses).forEach(status => {
-          if (!this.all_statuses[status].block) {
-            this.not_blocked_status.push(status);
-          }
-        });
+        this.statuses = res;
+        this.not_blocked_status = this.statuses.filter(status => !status.block);
         this.statuses_array = Object.keys(this.statuses);
-        this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       });
     });
+  }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === id);
   }
 
   set_default_filter() {
@@ -78,7 +75,7 @@ export class ResultSetsComponent implements OnInit {
 
   getStyles(object) {
     if (this.statuses && object['status']) {
-      return {'border-right': '7px solid ' + this.statuses[object['status']].color};
+      return {'border-right': '7px solid ' + this.get_status_by_id(object.status).color};
     }
   }
 
@@ -125,7 +122,10 @@ export class ResultSetsComponent implements OnInit {
           this.merge_result_sets_and_cases();
           this.update_statistic();
           this.Modal.close();
-          this.navigate_it_to_case();
+          this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
+          if (this.check_selected_is_hidden()) {
+            this.navigate_to_run_show();
+          }
         });
       } else {
           this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
@@ -134,7 +134,9 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = null;
-          this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+          if (this.check_selected_is_hidden()) {
+              this.navigate_to_run_show();
+            }
           });
       }
     }
@@ -178,12 +180,14 @@ export class ResultSetsComponent implements OnInit {
 
   add_results(form: NgForm, modal) {
     const description = form.value['result_description'];
-    const status = this.statuses[form.value['result_status']];
+    const status = form.value['result_status'];
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
       this.update_statistic();
       this.unselect_all();
-      if (this.router.url.indexOf('/result_set/') >= 0) {
+      if (this.check_selected_is_hidden()) {
+        this.navigate_to_run_show();
+      } else if (this.router.url.indexOf('/result_set/') >= 0) {
         this.resultservice.update_results(res[0]);
       } else if (this.router.url.indexOf('/case_history/') >= 0) {
         // Fixme: Add history updating
@@ -240,10 +244,24 @@ export class ResultSetsComponent implements OnInit {
   }
 
   get_filters(e) {
+    this.filter = [];
     this.unselect_all();
-    this.filter = e;
-    this.check_selected_is_hidden(e);
+    this.statuses = e;
+    this.statuses.forEach(status => {
+      if (status.active) {
+        this.filter.push(status.id);
+      }
+    });
+    if (this.check_selected_is_hidden()) {
+      this.navigate_to_run_show();
+    }
     this.unfilter_if_list_empty();
+  }
+
+  navigate_to_run_show() {
+    this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
+    this.object = null;
+    this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
   }
 
   unfilter_if_list_empty() {
@@ -282,20 +300,11 @@ export class ResultSetsComponent implements OnInit {
     }
   }
 
-  check_selected_is_hidden(filters) {
-    if (this.router.url.indexOf('/result_set/') >= 0) {
-      this.result_set_selected(filters);
-    }
-  }
-
-  result_set_selected(filters) {
-    const id = this.router.url.match(/result_set\/(\d+)/i)[1];
-    const object = this.result_sets_and_cases.filter(obj => obj.id === +id)[0];
-    if (filters.length === 0) {
-      return;
-    }
-    if (filters.indexOf(object.status) === -1) {
-      this.router.navigate([/(.*?)(?=result_set|$)/.exec(this.router.url)[0]]);
+  check_selected_is_hidden() {
+    if (this.object) {
+      return !(this.filter.length === 0 || this.filter.indexOf(this.object.status) !== -1);
+    } else {
+      return false;
     }
   }
 
@@ -317,11 +326,9 @@ export class ResultSetsComponent implements OnInit {
     this.Modal.open();
   };
 
-
   get_case_id_by_result_set(result_set) {
     return this.cases.filter(obj => obj.name === result_set.name)[0].id;
   }
-
 
   open_results(object) {
     this.reset_active();

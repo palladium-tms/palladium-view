@@ -72,7 +72,6 @@ export class RunsComponent implements OnInit {
 
   get_statuses() {
     return this.ApiService.get_statuses().then(res => {
-      res[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       return res;
     });
   }
@@ -117,8 +116,14 @@ export class RunsComponent implements OnInit {
   }
 
   get_filters(e) {
-    this.filter = e;
-    this.check_selected_is_hidden(e);
+    this.filter = [];
+    this.statuses = e;
+    this.statuses.forEach(status => {
+      if (status.active) {
+        this.filter.push(status.id);
+      }
+    });
+    this.check_selected_is_hidden(this.filter);
   }
 
   check_selected_is_hidden(filters) {
