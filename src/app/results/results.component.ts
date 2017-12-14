@@ -51,7 +51,11 @@ export class ResultsComponent implements OnInit {
 
   getStyles(id) {
     if (this.statuses) {
-      return {'border-right': '7px solid ' + this.statuses[id].color};
+      return {'border-right': '7px solid ' +  this.get_status_by_id(id.status_id).color};
     }
+  }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === id);
   }
 }

@@ -123,7 +123,9 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
-          if (this.check_selected_is_hidden()) {
+          if (this.filter.includes(0) || this.filter.length === 0) {
+            this.navigate_it_to_case();
+          } else {
             this.navigate_to_run_show();
           }
         });
@@ -134,9 +136,7 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = null;
-          if (this.check_selected_is_hidden()) {
-              this.navigate_to_run_show();
-            }
+          this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
           });
       }
     }
@@ -259,6 +259,8 @@ export class ResultSetsComponent implements OnInit {
   }
 
   navigate_to_run_show() {
+    var result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
+
     this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
     this.object = null;
     this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});

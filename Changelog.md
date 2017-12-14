@@ -1,4 +1,8 @@
 # Changelog
+## [0.2.7]
+### Refactor
+    * Refactor methods for filters
+    
 ## [0.2.6]
 ### Fixed
     * Unselect all after add result

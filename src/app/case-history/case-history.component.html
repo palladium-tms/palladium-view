@@ -20,7 +20,7 @@
           <div class="item-statistic">
             <ng-container *ngIf="plan.statistic">
               <div *ngFor="let status of plan.statistic.existed_statuses"
-                   [ngStyle]="{ 'width': (plan['statistic'].extended[status] / plan['statistic'].all * 100) + '%', 'background-color': statuses[status]['color']}">
+                   [ngStyle]="{ 'width': (plan['statistic'].extended[status] / plan['statistic'].all * 100) + '%', 'background-color':  get_status_by_id(status).color}">
               </div>
             </ng-container>
           </div>
