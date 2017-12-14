@@ -1,7 +1,7 @@
 <div class="run-space">
   <div class="toolbar">
     <div class="filter" [ngClass]="{'hidden': loading}">
-      <app-filters #Filter [all_data]="runs_and_suites" [statuses]=statuses [statistic]="statistic"
+      <app-filters #Filter [statuses]=statuses [statistic]="statistic"
                    (selected_statuses_emmit)="get_filters($event)"></app-filters>
     </div>
     <div class="buttons">

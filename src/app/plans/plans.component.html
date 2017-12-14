@@ -17,12 +17,12 @@
       </div>
       <div class="statistic status-name" *ngIf="this.statuses">
         <span *ngFor="let status of plan.statistic" class="status-position"
-              [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
+              [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}" (value)=status>
         </span>
       </div>
       <div class="item-statistic">
         <ng-container *ngIf="plan.statistic && this.statuses">
-        <span *ngFor="let status of plan.statistic" [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': this.statuses[status['status']]['color']}" (value)=status>
+        <span *ngFor="let status of plan.statistic" [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}" (value)=status>
         </span>
         </ng-container>
       </div>
