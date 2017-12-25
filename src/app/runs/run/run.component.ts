@@ -52,4 +52,8 @@ export class RunComponent implements OnInit {
     }
     this.isSelected = true;
   }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === +id);
+  }
 }

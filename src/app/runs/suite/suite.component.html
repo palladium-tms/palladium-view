@@ -3,7 +3,7 @@
   </div>
   <div class="run-statistic">
     <div *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
-      {{ object.statistic.extended[status] }} {{ this.statuses[status]['name'] }},
+      {{ object.statistic.extended[status] }} {{ get_status_by_id(status).name }},
     </div>
   </div>
 </div>

@@ -47,7 +47,6 @@ export class PlansComponent implements OnInit {
   get_statuses() {
     this.ApiService.get_statuses().then(res => {
       this.statuses = res;
-      this.statuses[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
     });
   }
 
@@ -121,5 +120,9 @@ export class PlansComponent implements OnInit {
 
   toolbar_opened() {
     return this.router.url.indexOf('plan') >= 0;
+  }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === +id);
   }
 }

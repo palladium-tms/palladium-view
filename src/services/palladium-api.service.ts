@@ -32,9 +32,14 @@ export class PalladiumApiService {
   }
 
   //#region Status
-  get_statuses(): Promise<JSON> {
+  get_statuses(): Promise<any> {
     return this.httpService.postData('/statuses', '').then((resp: any) => {
-      return resp['statuses'];
+      const statuses = [];
+      Object.keys(resp['statuses']).forEach(key => {
+        statuses.push(new Status(resp['statuses'][key]));
+      });
+      statuses.push(new Status({name: 'Untested', color: '#ffffff', id: 0, 'blocked': true}));
+      return statuses;
     });
   }
 

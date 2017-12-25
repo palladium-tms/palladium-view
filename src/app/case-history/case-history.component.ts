@@ -53,7 +53,6 @@ export class CaseHistoryComponent implements OnInit {
     this.loading = true;
     Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
       this.statuses = res[0];
-      this.statuses['0'] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
     });
   }
 
@@ -66,5 +65,9 @@ export class CaseHistoryComponent implements OnInit {
 
   get_statuses() {
     return this.ApiService.get_statuses().then(res => { return res; });
+  }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === +id);
   }
 }
