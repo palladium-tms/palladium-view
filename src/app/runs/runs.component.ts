@@ -27,6 +27,7 @@ export class RunsComponent implements OnInit {
   plan_id;
   statuses;
   object;
+  ResultSetComponent;
   statistic: Statistic;
   filter = [];
   loading = false;
@@ -101,6 +102,14 @@ export class RunsComponent implements OnInit {
       this.loading = false;
     });
   }
+
+  update_click() {
+    this.get_runs_and_suites();
+    if (this.ResultSetComponent) {
+      this.ResultSetComponent.update_click();
+    }
+  }
+
   merge_suites_and_runs() {
     const suite_for_add = [];
     this.suites.forEach(suite => {
@@ -221,5 +230,9 @@ export class RunsComponent implements OnInit {
     } else {
       return ( +/suite\/(\d+)/.exec(this.router.url)[1]);
     }
+  }
+
+  onActivate(componentRef) {
+    this.ResultSetComponent = componentRef;
   }
 }

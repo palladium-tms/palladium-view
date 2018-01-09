@@ -24,6 +24,7 @@ export class ResultSetsComponent implements OnInit {
   loading = false;
   cases;
   object;
+  ResultComponent;
   statuses;
   not_blocked_status = [];
   statuses_array = [];
@@ -369,5 +370,14 @@ export class ResultSetsComponent implements OnInit {
 
   get_selected_count() {
     return this.result_sets_and_cases.filter(obj => obj.selected).length;
+  }
+
+  update_click() {
+    this.get_result_sets_and_cases();
+    this.ResultComponent.update_click();
+  }
+
+  onActivate(componentRef) {
+    this.ResultComponent = componentRef;
   }
 }

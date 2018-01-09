@@ -5,7 +5,7 @@
                    (selected_statuses_emmit)="get_filters($event)"></app-filters>
     </div>
     <div class="buttons">
-      <div class="toolbar-element" (click)="get_runs_and_suites()">
+      <div class="toolbar-element" (click)="update_click()">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
       <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
@@ -52,4 +52,4 @@
     </div>
   </modal-content>
 </modal>
-<router-outlet></router-outlet>
+<router-outlet (activate)="onActivate($event)"></router-outlet>

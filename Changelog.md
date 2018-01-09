@@ -1,4 +1,8 @@
 # Changelog
+## [0.2.8]
+### Added 
+    * Updating all childrens element after update parent element
+    
 ## [0.2.7]
 ### Refactor
     * Refactor methods for filters
@@ -6,6 +10,7 @@
 ## [0.2.6]
 ### Fixed
     * Unselect all after add result
+
 ## [0.2.5]
 ### Fixed:
     * Error after case delete

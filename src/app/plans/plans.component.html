@@ -1,7 +1,7 @@
 <div class="plan-space">
   <div class="toolbar">
     <div class="buttons">
-      <div class="toolbar-element" (click)="init_data()">
+      <div class="toolbar-element" (click)="update_click()">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
       <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
@@ -58,4 +58,4 @@
 </modal>
 
 
-<router-outlet></router-outlet>
+<router-outlet (activate)="onActivate($event)"></router-outlet>
