@@ -16,6 +16,7 @@ export class PlansComponent implements OnInit {
   product_id = null;
   plans: Plan[] = [new Plan(null)];
   plan;
+  RunComponent;
   @ViewChild('Modal') Modal;
   @ViewChild('form') form;
   statuses;
@@ -70,6 +71,15 @@ export class PlansComponent implements OnInit {
     });
   }
 
+  update_click() {
+    this.init_data();
+    this.RunComponent.update_click();
+  }
+
+  onActivate(componentRef) {
+    this.RunComponent = componentRef;
+  }
+
   edit_plan_modal(form: NgForm, modal, valid: boolean) {
     if (!valid) {
       return;
@@ -104,6 +114,7 @@ export class PlansComponent implements OnInit {
       const untested = count_of_cases - plan.all_statistic['all'];
       plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
       plan.get_statistic();
+      console.log('oiasdfisadoifsad')
     }
     return (plan);
   }

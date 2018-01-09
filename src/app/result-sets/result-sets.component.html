@@ -14,7 +14,7 @@
       <div class="toolbar-element add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': get_selected_count() === 0}">
         <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
       </div>
-      <div class="toolbar-element" (click)="get_result_sets_and_cases()">
+      <div class="toolbar-element" (click)="update_click()">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
 
@@ -97,4 +97,4 @@
   </modal-footer>
 </modal>
 
-<router-outlet></router-outlet>
+<router-outlet (activate)="onActivate($event)"></router-outlet>
