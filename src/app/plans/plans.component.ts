@@ -114,7 +114,6 @@ export class PlansComponent implements OnInit {
       const untested = count_of_cases - plan.all_statistic['all'];
       plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
       plan.get_statistic();
-      console.log('oiasdfisadoifsad')
     }
     return (plan);
   }
