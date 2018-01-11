@@ -70,4 +70,5 @@ export class CaseHistoryComponent implements OnInit {
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
   }
+  update_click() {}
 }

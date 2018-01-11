@@ -73,7 +73,9 @@ export class PlansComponent implements OnInit {
 
   update_click() {
     this.init_data();
-    this.RunComponent.update_click();
+    if (this.RunComponent) {
+      this.RunComponent.update_click();
+    }
   }
 
   onActivate(componentRef) {

@@ -59,4 +59,9 @@ export class CasesComponent implements OnInit {
         this.cases = this.cases.filter(current_case => current_case.id !== this_case.id)[0];
       });
   }
+
+  update_click() {
+    this.cases = [];
+    this.get_cases();
+  }
 }
