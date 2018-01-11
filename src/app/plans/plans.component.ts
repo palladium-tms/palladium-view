@@ -73,7 +73,9 @@ export class PlansComponent implements OnInit {
 
   update_click() {
     this.init_data();
-    this.RunComponent.update_click();
+    if (this.RunComponent) {
+      this.RunComponent.update_click();
+    }
   }
 
   onActivate(componentRef) {
@@ -114,7 +116,6 @@ export class PlansComponent implements OnInit {
       const untested = count_of_cases - plan.all_statistic['all'];
       plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
       plan.get_statistic();
-      console.log('oiasdfisadoifsad')
     }
     return (plan);
   }

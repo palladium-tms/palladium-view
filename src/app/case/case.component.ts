@@ -9,7 +9,8 @@ export class CaseComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
+
+  update_click() {}
 
 }

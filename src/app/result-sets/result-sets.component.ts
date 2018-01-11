@@ -374,7 +374,9 @@ export class ResultSetsComponent implements OnInit {
 
   update_click() {
     this.get_result_sets_and_cases();
-    this.ResultComponent.update_click();
+    if (this.ResultComponent) {
+      this.ResultComponent.update_click();
+    }
   }
 
   onActivate(componentRef) {

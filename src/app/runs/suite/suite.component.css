@@ -11,3 +11,7 @@
 .suite-item{
   background-color: #428bca;
 }
+.create_run_button:hover{
+  color: #246e6e;
+  cursor: pointer;
+}

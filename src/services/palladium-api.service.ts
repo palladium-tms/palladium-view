@@ -229,6 +229,19 @@ export class PalladiumApiService {
         });
   }
 
+  create_run(run_name, plan_id): Promise<any> {
+    const params = new HttpParams()
+      .set(`run_data[plan_id]`, plan_id)
+      .set(`run_data[name]`, run_name);
+    return this.httpService.postData('/run_new', params)
+      .then(
+        (resp: any) => {
+          return new Run(resp['run']);
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+
   delete_run(run_id): Promise<any> {
     return this.httpService.postData('/run_delete', 'run_data[id]=' + run_id)
       .then(
@@ -341,6 +354,7 @@ export class PalladiumApiService {
         });
   }
   //#endregion
+
   //#region Result
   get_results(result_set_id): Promise<any> {
     this.results = [];

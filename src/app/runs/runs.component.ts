@@ -175,6 +175,7 @@ export class RunsComponent implements OnInit {
     }
     modal.close();
   }
+
   delete_object() {
     if (confirm('A u shuare?')) {
       const id = this.get_items_id();
@@ -200,6 +201,7 @@ export class RunsComponent implements OnInit {
     }
     this.Modal.close();
   }
+
   open_modal() {
     this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
       current_object.path === this.opened_item())[0];
@@ -210,12 +212,15 @@ export class RunsComponent implements OnInit {
   toolbar_opened() {
     return (this.run_opened() || this.suite_opened());
   }
+
   run_opened() {
     return this.router.url.indexOf('run') >= 0;
   }
+
   suite_opened() {
     return this.router.url.indexOf('suite') >= 0;
   }
+
   opened_item() {
     if (this.run_opened()) {
       return ('./run');
@@ -223,7 +228,6 @@ export class RunsComponent implements OnInit {
       return ('./suite');
     }
   }
-
   get_items_id() {
     if (this.run_opened()) {
       return ( +/run\/(\d+)/.exec(this.router.url)[1]);
@@ -234,5 +238,14 @@ export class RunsComponent implements OnInit {
 
   onActivate(componentRef) {
     this.ResultSetComponent = componentRef;
+  }
+
+  replace_to_run($event) {
+    this.runs.push($event[1]);
+    this.merge_suites_and_runs();
+    this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+    if (this.router.url.indexOf('/suite/' + $event[0].id) >= 0) {
+      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+    }
   }
 }

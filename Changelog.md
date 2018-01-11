@@ -1,4 +1,10 @@
 # Changelog
+## [0.2.9]
+### Added
+    * Add opportunity to create run
+### Fixed
+    * Errors after update element if not all elements opened
+    
 ## [0.2.8]
 ### Added 
     * Updating all childrens element after update parent element

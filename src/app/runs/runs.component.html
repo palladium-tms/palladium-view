@@ -17,7 +17,7 @@
   <div class="item-list">
     <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index">
       <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './run'"></app-run>
-      <app-suite [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
+      <app-suite (replace_to_run)="replace_to_run($event)" [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
     </div>
   </div>
 </div>
