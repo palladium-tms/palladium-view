@@ -27,11 +27,14 @@ export class CasesComponent implements OnInit {
       this.get_cases();
     });
   }
+
   get_cases() {
-    const id = this.router.url.match(/suite\/(\d+)/i)[1];
-    this.ApiService.get_cases(id).then(cases => {
-      this.cases = cases;
-    });
+    if (this.router.url.match(/suite\/(\d+)/i)) {
+      const id = this.router.url.match(/suite\/(\d+)/i)[1];
+      this.ApiService.get_cases(id).then(cases => {
+        this.cases = cases;
+      });
+    }
   }
 
   open_modal(object) {
@@ -62,6 +65,6 @@ export class CasesComponent implements OnInit {
 
   update_click() {
     this.cases = [];
-    this.get_cases();
+      this.get_cases();
   }
 }

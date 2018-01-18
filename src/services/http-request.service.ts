@@ -10,18 +10,16 @@ import {environment} from '../environments/environment';
 
 export class HttpService {
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   /*endpoint for api server can be like http://192.168.0.1, without last slash.
    * if request is used api (need token) - part /api/ will be added to url */
   postData(path, params) {
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      'Authorization': JSON.parse(localStorage.getItem('auth_data'))['token'] };
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization',  JSON.parse(localStorage.getItem('auth_data'))['token'] );
     const options = {headers: headers};
-
-     return this.http.post(environment.host + '/api' + path, params, options).toPromise().then((param: any) => {
+    return this.http.post(environment.host + '/api' + path, JSON.stringify(params), options).toPromise().then((param: any) => {
       return Promise.resolve(this.extractData(param));
     }, param => {
       return Promise.reject(this.handleError(param));

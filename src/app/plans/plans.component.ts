@@ -34,6 +34,7 @@ export class PlansComponent implements OnInit {
   }
 
   get_plans(product_id) {
+    this.plans = [];
     return this.ApiService.get_plans(product_id).then(plans => {
       return plans;
     });
@@ -61,7 +62,6 @@ export class PlansComponent implements OnInit {
 
   init_data() {
     this.loading = true;
-    this.plans = [];
     Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id), this.get_statuses()]).then(res => {
       this.plans = res[0];
       this.plans.forEach(plan => {

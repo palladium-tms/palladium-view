@@ -1,4 +1,11 @@
 # Changelog
+## [0.3.0]
+### Added
+    * Custom result message
+### Fixed
+    * Delete phantom plan name from results
+    * All requests has content type applicaction/json
+    * Names can contains "+"
 ## [0.2.9]
 ### Added
     * Add opportunity to create run
