@@ -17,7 +17,7 @@ export class Result {
           this.describer = data.message;
         }
       } else {
-        this.describer = JSON.parse(data.message);
+        this.describer = data.message;
       }
     } else {
       this.describer = data.message;

@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.1]
+### Fixed
+    * Fix result message if it unformated
 ## [0.3.0]
 ### Added
     * Custom result message
