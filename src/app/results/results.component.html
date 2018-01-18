@@ -5,12 +5,12 @@
         <div class="sub-blocks-holder">
           <div class="sub-block"><b>{{get_status_by_id(result.status_id).name}}</b></div>
           <div class="sub-block">{{result.created_at | date:'medium' }}</div>
-          <div class="sub-block">ver. 5.0.3 (build:18)</div>
+            <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
           <div class="sub-block"><a routerLink="/result/{{result.id}}" target="_blank">Details</a></div>
         </div>
       </div>
       <div class="big-block">
-        <pre>{{result.message}}</pre>
+        {{ result.describer}}
       </div>
     </div>
   </div>
