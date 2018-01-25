@@ -9,10 +9,8 @@ import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
-import {URLSearchParams} from '@angular/http';
 import {Statistic} from '../app/models/statistic';
 import {History} from '../app/models/history_object';
-import {HttpParams} from '@angular/common/http';
 import {Status} from '../app/models/status';
 import {Invite} from '../app/models/invite';
 
@@ -60,20 +58,13 @@ export class PalladiumApiService {
   }
 
   update_status(id, name, color): Promise<any> {
-    const params = new HttpParams()
-      .set(`status_data[id]`, id)
-      .set(`status_data[name]`, name)
-      .set(`status_data[color]`, color);
-    return this.httpService.postData('/status_edit', params).then((resp: any) => {
+    return this.httpService.postData('/status_edit', {status_data: {id: id, name: name, color: color}}).then((resp: any) => {
       return new Status(resp['status']);
     });
   }
 
   status_new(name, color) {
-    const params = new HttpParams()
-      .set(`status_data[color]`, color)
-      .set(`status_data[name]`, name);
-    return this.httpService.postData('/status_new', params).then((resp: any) => {
+    return this.httpService.postData('/status_new', {status_data: {color: color, name: name}}).then((resp: any) => {
       return resp['status'];
     });
   }

@@ -11,6 +11,7 @@ export class DetailResultComponent implements OnInit {
   statuses;
   result_id;
   result;
+  status;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute) {}
 
@@ -25,13 +26,13 @@ export class DetailResultComponent implements OnInit {
     Promise.all([this.get_statuses(), this.get_result()]).then(res => {
       this.statuses = res[0];
       this.result = res[1];
+      this.status = this.statuses.find(status => status.id === this.result.status_id);
     });
   }
 
   get_statuses() {
     return this.ApiService.get_statuses().then(res => {
       this.statuses = res;
-      res[0] = {name: 'Untested', color: '#ffffff', id: 0}; // add untested status. FIXME: need to added automaticly
       return res;
     });
   }
@@ -41,10 +42,7 @@ export class DetailResultComponent implements OnInit {
       return result;
     });
   }
-  getStyles(id) {
-    if (this.statuses) {
-      return {'border-right': '7px solid ' + this.statuses[id].color};
-    }
+  getStyles() {
+      return {'border-right': '7px solid ' +  this.status.color};
   }
-
 }

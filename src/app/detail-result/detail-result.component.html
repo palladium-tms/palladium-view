@@ -1,19 +1,22 @@
-<div class="result-space" *ngIf="this.result">
-  <div class="toolbar"></div>
+<div class="result-space">
   <div class="item-list">
-  <div class="bipolar-item result-details">
-      <div class="small-block">
-        <div class="sub-blocks-holder" [ngStyle]="getStyles(result.status_id)">
-          <div class="sub-block"><b>{{this.statuses[result.status_id].name}}</b></div>
-          <div class="sub-block">{{result.created_at | date:'medium' }}</div>
-          <div class="sub-block">ver. 5.0.3 (build:18)</div>
+    <ng-container *ngIf="result">
+      <div class="item bipolar-item big-item">
+        <div class="small-block" [ngStyle]="getStyles()">
+          <div class="sub-blocks-holder">
+            <div class="sub-block"><b>{{status.name}}</b></div>
+            <div class="sub-block">{{result.created_at | date:'medium' }}</div>
+            <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}
+            </div>
+          </div>
+        </div>
+        <div class="big-block">
+          <div class="message" *ngFor="let data of result.describer">
+            <span><b>{{data["title"]}}:</b></span>
+            <span>{{data["value"]}}</span>
+          </div>
         </div>
       </div>
-      <div class="big-block">
-        <pre>
-          {{result.message}}
-        </pre>
-      </div>
-    </div>
+    </ng-container>
   </div>
 </div>
