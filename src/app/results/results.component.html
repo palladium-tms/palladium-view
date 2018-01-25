@@ -10,7 +10,10 @@
         </div>
       </div>
       <div class="big-block">
-        {{ result.describer}}
+        <div class="message" *ngFor="let data of result.describer">
+          <span><b>{{data["title"]}}:</b></span>
+          <span>{{data["value"]}}</span>
+        </div>
       </div>
     </div>
   </div>

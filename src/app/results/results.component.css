@@ -3,3 +3,6 @@
   overflow: hidden;
   flex: 5;
 }
+.message{
+  margin-bottom: 0.5em;
+}

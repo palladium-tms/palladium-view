@@ -7,20 +7,17 @@ export class Result {
 
   constructor(data) {
     this.id = data.id;
+    this.describer = [{'title': 'message', 'value': data.message}];
     if (this.isJson(data.message)) {
       const message = JSON.parse(data.message);
       if (message.subdescriber && message.describer) {
         if (message.subdescriber instanceof Array) {
-          this.describer = message.describer;
           this.subdescriber = message.subdescriber;
-        } else {
-          this.describer = data.message;
         }
-      } else {
-        this.describer = data.message;
+        if (message.describer instanceof Array) {
+          this.describer = message.describer;
+        }
       }
-    } else {
-      this.describer = data.message;
     }
     this.status_id = data['status_id'];
     this.created_at = data['created_at'];
