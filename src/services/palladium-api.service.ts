@@ -52,13 +52,19 @@ export class PalladiumApiService {
   }
 
   block_status(id): Promise<JSON> {
-    return this.httpService.postData('/status_edit', {status_data: {id: id, block: true }}).then((resp: any) => {
+    return this.httpService.postData('/status_edit', {status_data: {id: id, block: true}}).then((resp: any) => {
       return resp['status'];
     });
   }
 
   update_status(id, name, color): Promise<any> {
-    return this.httpService.postData('/status_edit', {status_data: {id: id, name: name, color: color}}).then((resp: any) => {
+    return this.httpService.postData('/status_edit', {
+      status_data: {
+        id: id,
+        name: name,
+        color: color
+      }
+    }).then((resp: any) => {
       return new Status(resp['status']);
     });
   }
@@ -141,7 +147,12 @@ export class PalladiumApiService {
   }
 
   get_cases_by_run_id(run_id, product_id): Promise<any> {
-    return this.httpService.postData('/cases', {case_data: {run_id: run_id, product_id: product_id}}).then((resp: any) => {
+    return this.httpService.postData('/cases', {
+      case_data: {
+        run_id: run_id,
+        product_id: product_id
+      }
+    }).then((resp: any) => {
       this.cases = [];
       Object(resp['cases']).forEach(current_case => {
         this.cases.push(new Case(current_case));
@@ -177,6 +188,7 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
+
   get_history(case_id): Promise<any> {
     this.histories = [];
     return this.httpService.postData('/case_history', {case_data: {id: case_id}}).then((resp: any) => {
@@ -184,13 +196,14 @@ export class PalladiumApiService {
         if (data['statistic']) {
           data['statistic'] = new Statistic(data['statistic']);
         }
-          this.histories.push(new History(data));
+        this.histories.push(new History(data));
       });
       return this.histories;
     }, (errors: any) => {
       console.log(errors);
     });
   }
+
   //#endregion
 
   //#region Run
@@ -248,21 +261,22 @@ export class PalladiumApiService {
 
   delete_product(id): Promise<any> {
     return this.httpService.postData('/product_delete', {product_data: {id: id}})
-      .then( products => {
-          return products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+      .then(products => {
+        return products;
+      }, (errors: any) => {
+        console.log(errors);
+      });
   }
 
   edit_product(id, name): Promise<any> {
-     return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
+    return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
       .then((products: any) => {
-          return(new Product(products['product_data']));
-        }, (errors: any) => {
-          console.log(errors);
-        });
+      const product = new Product(products['product_data']);
+      product.errors = products['errors'];
+        return (product);
+      });
   }
+
   //#endregion
 
   //#region Plans
@@ -290,9 +304,10 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   delete_plan(id): Promise<any> {
     return this.httpService.postData('/plan_delete', {plan_data: {id: id}})
-      .then( plan_data => {
+      .then(plan_data => {
         return plan_data['plan'];
       }, (errors: any) => {
         console.log(errors);
@@ -326,6 +341,7 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   //#endregion
 
   //#region Result
@@ -350,11 +366,15 @@ export class PalladiumApiService {
   }
 
   result_new(result_sets, description, status): Promise<any> {
-    return this.httpService.postData('/result_new', {result_data: {message: description, status: status.name,
-      result_set_id: result_sets.map(obj => obj.id)}})
+    return this.httpService.postData('/result_new', {
+      result_data: {
+        message: description, status: status.name,
+        result_set_id: result_sets.map(obj => obj.id)
+      }
+    })
       .then(res => {
-      return [new Result(res['result']), res['other_data']];
-    }, error => console.log(error));
+        return [new Result(res['result']), res['other_data']];
+      }, error => console.log(error));
   }
 
   result_new_by_case(cases, message, status, run_id): Promise<any> {
@@ -393,5 +413,6 @@ export class PalladiumApiService {
       }
     }, error => console.log(error));
   }
+
   //#endregion
 }

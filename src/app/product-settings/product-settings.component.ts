@@ -29,11 +29,19 @@ export class ProductSettingsComponent implements OnInit {
   edit_product(form: NgForm, valid: boolean) {
     if (!valid) {return; }
     this.ApiService.edit_product(this.item.id, form.value['product_name']).then((product: Product) => {
-      this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
-      this.item = product;
-      this.close_modal();
-      this.update_products.emit(this.products);
+      if (product.errors) {
+        console.log(product.errors);
+      } else {
+        this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
+        this.item = product;
+        this.close_modal();
+        this.update_products.emit(this.products);
+      }
     });
+  }
+
+  log() {
+    console.log('11111')
   }
 
   delete_item() {
