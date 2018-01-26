@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.3]
+### Fixed
+    * Blocked status visible in add_result statuses
 ## [0.3.2]
 ### Fixed
     * Fix errors with custom error messages

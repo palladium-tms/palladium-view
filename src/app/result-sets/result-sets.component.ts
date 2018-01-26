@@ -44,7 +44,7 @@ export class ResultSetsComponent implements OnInit {
       this.set_default_filter();
       this.ApiService.get_statuses().then(res => {
         this.statuses = res;
-        this.not_blocked_status = this.statuses.filter(status => !status.block);
+        this.not_blocked_status = this.statuses.filter(status => status.block === false);
         this.statuses_array = Object.keys(this.statuses);
       });
     });
