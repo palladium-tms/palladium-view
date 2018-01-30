@@ -16,6 +16,7 @@ export class ProductSettingsComponent implements OnInit {
   @ViewChild('Modal') Modal;
   @ViewChild('form') form;
   item = null;
+  errors = {};
   constructor(private ApiService: PalladiumApiService, private router: Router) { }
 
   ngOnInit() { }
@@ -30,7 +31,7 @@ export class ProductSettingsComponent implements OnInit {
     if (!valid) {return; }
     this.ApiService.edit_product(this.item.id, form.value['product_name']).then((product: Product) => {
       if (product.errors) {
-        console.log(product.errors);
+        this.errors['name'] = product.errors['name'];
       } else {
         this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
         this.item = product;
@@ -40,8 +41,8 @@ export class ProductSettingsComponent implements OnInit {
     });
   }
 
-  log() {
-    console.log('11111')
+  clear_errors() {
+    this.errors = {};
   }
 
   delete_item() {

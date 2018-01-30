@@ -7,10 +7,13 @@
       <div class="item-description">
           <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form, form.valid)">
             <div class="item-option">
-              <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
+              <input (keyup)="clear_errors()" type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
                      autofocus>
               <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
                 Product name can't be empty.
+              </small>
+              <small [hidden]="!product_name.valid" *ngFor="let error of errors['name']">
+                {{error}}
               </small>
             </div>
             <div class="item-option">
