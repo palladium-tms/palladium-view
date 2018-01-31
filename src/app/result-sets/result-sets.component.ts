@@ -131,14 +131,14 @@ export class ResultSetsComponent implements OnInit {
           }
         });
       } else {
-          this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
+        this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
           this.cases = this.cases.filter(obj => (obj.id !== this_case.id));
           this.merge_result_sets_and_cases();
           this.update_statistic();
           this.Modal.close();
           this.object = null;
           this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
-          });
+        });
       }
     }
   }
@@ -260,7 +260,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   navigate_to_run_show() {
-    var result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
+    const result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
 
     this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
     this.object = null;

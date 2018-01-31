@@ -2,6 +2,7 @@
 ## [0.3.4]
 ### Fixed
     * Fix errors after trying to edit ame of product to exists name
+    * Fix errors in console after click update after open/close result_set list
 ## [0.3.3]
 ### Fixed
     * Blocked status visible in add_result statuses

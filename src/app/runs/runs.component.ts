@@ -105,7 +105,7 @@ export class RunsComponent implements OnInit {
 
   update_click() {
     this.get_runs_and_suites();
-    if (this.ResultSetComponent) {
+    if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
     }
   }
