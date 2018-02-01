@@ -109,17 +109,23 @@ export class PalladiumApiService {
   edit_suite_by_run_id(run_id, name): Promise<any> {
     const params = {suite_data: {run_id: run_id, name: name}};
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
+      if (resp['errors']) {
+        return Promise.reject(resp['errors']);
+      } else {
+        return Promise.resolve(new Suite(resp['suite']));
+      }
     });
   }
 
   edit_suite(id, name): Promise<any> {
     return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
+      if (resp['errors']) {
+        console.log('errors');
+        return Promise.reject(resp['errors']);
+      } else {
+        console.log('all right');
+        return Promise.resolve(new Suite(resp['suite']));
+      }
     });
   }
 
@@ -166,7 +172,6 @@ export class PalladiumApiService {
   edit_case_by_result_set_id(result_set_id, name): Promise<any> {
     const params = {case_data: {result_set_id: result_set_id, name: name}};
     return this.httpService.postData('/case_edit', params).then((resp: any) => {
-      console.log(resp);
       return new Case(resp['case']);
     }, (errors: any) => {
       console.log(errors);
@@ -270,10 +275,12 @@ export class PalladiumApiService {
 
   edit_product(id, name): Promise<any> {
     return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
-      .then((products: any) => {
-      const product = new Product(products['product_data']);
-      product.errors = products['errors'];
-        return (product);
+      .then((resp: any) => {
+        if (resp['errors']) {
+          return Promise.reject(resp['errors']);
+        } else {
+          return Promise.resolve(new Product(resp['product_data']));
+        }
       });
   }
 
@@ -297,12 +304,13 @@ export class PalladiumApiService {
 
   edit_plan(id, name): Promise<any> {
     return this.httpService.postData('/plan_edit', {plan_data: {plan_name: name, id: id}})
-      .then(
-        (plan: any) => {
-          return new Plan(plan['plan_data']);
-        }, (errors: any) => {
-          console.log(errors);
-        });
+      .then((resp: any) => {
+        if (resp['errors']) {
+          return Promise.reject(resp['errors']);
+        } else {
+          return Promise.resolve(new Plan(resp['plan']));
+        }
+      });
   }
 
   delete_plan(id): Promise<any> {
@@ -349,7 +357,7 @@ export class PalladiumApiService {
     this.results = [];
     return this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}})
       .then(
-        resp => {
+        (resp: any) => {
           Object(resp['results']).forEach(result => {
             this.results.push(new Result(result));
           });
@@ -373,7 +381,7 @@ export class PalladiumApiService {
       }
     })
       .then(res => {
-        return [new Result(res['result']), res['other_data']];
+        return res;
       }, error => console.log(error));
   }
 
@@ -384,11 +392,9 @@ export class PalladiumApiService {
     }
     return this.httpService.postData('/result_new', params).then(res => {
       const result_sets = [];
-      res['other_data']['result_set_id'].forEach((result_set_id, index) => {
-        const new_result_set = new ResultSet(cases[index]);
-        new_result_set.run_id = run_id;
-        new_result_set.status = status['id'];
-        new_result_set.id = result_set_id;
+      console.log(res);
+      res['result_sets'].forEach((result_set) => {
+        const new_result_set = new ResultSet(result_set);
         result_sets.push(new_result_set);
       });
       return result_sets;

@@ -123,6 +123,8 @@ export class ResultSetsComponent implements OnInit {
           this.merge_result_sets_and_cases();
           this.update_statistic();
           this.Modal.close();
+          console.log('deleted_id');
+          console.log(deleted_id);
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
           if (this.filter.includes(0) || this.filter.length === 0) {
             this.navigate_it_to_case();
@@ -162,6 +164,9 @@ export class ResultSetsComponent implements OnInit {
         const result_set_for_change = this.result_sets.filter(result_set => result_set.id === this.object.id)[0];
         result_set_for_change.name = this_case.name;
         result_set_for_change.updated_at = this_case.updated_at;
+        const case_for_change = this.cases.filter(case_obj => case_obj.id === this_case.id)[0];
+        case_for_change.name = this_case.name;
+        case_for_change.updated_at = this_case.updated_at;
       });
     } else {
       this.ApiService.edit_case(this.object.id, form.value['name']).then(this_case => {
@@ -204,8 +209,9 @@ export class ResultSetsComponent implements OnInit {
     }
     return this.ApiService.result_new(result_sets, message, status).then(res => {
       this.result_sets_and_cases.filter(obj => obj.path === 'result_set').forEach(obj => {
-        if (res[1]['result_set_id'].includes(obj.id)) {
-          obj.status = res[0].status_id;
+        const result_sets_array = res['result_sets'].map(result_set => result_set['id']);
+        if (result_sets_array.includes(obj.id)) {
+          obj.status = res['result'].status_id;
         }
       });
       return res;

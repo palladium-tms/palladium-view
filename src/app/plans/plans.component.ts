@@ -21,7 +21,7 @@ export class PlansComponent implements OnInit {
   @ViewChild('form') form;
   statuses;
   loading = false;
-
+  errors = {};
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute, private router: Router) {
   }
 
@@ -29,7 +29,6 @@ export class PlansComponent implements OnInit {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.product_id = params.id;
       this.init_data();
-
     });
   }
 
@@ -83,16 +82,13 @@ export class PlansComponent implements OnInit {
   }
 
   edit_plan_modal(form: NgForm, modal, valid: boolean) {
-    if (!valid) {
-      return;
-    }
-    this.edit_plan(this.plan.id, form.value['name']);
-    modal.close();
-  }
-
-  edit_plan(id, name) {
-    this.ApiService.edit_plan(id, name).then((plan: Plan) => {
-      this.plans[this.plans.indexOf(this.plans.filter(it => it.id === plan.id)[0])] = plan;
+    this.ApiService.edit_plan(this.plan.id, form.value['name']).then((plan: any) => {
+      this.plans[this.plans.indexOf(this.plans.filter(it => it.id === plan.id)[0])].name = plan.name;
+      modal.close();
+    }, errors => {
+      console.log('123123123123')
+      console.log( errors)
+      this.errors['name'] = errors['name'];
     });
   }
 
@@ -125,6 +121,7 @@ export class PlansComponent implements OnInit {
   }
 
   open_modal() {
+    this.errors = {};
     this.plan = this.plans.filter(current_plan => current_plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
     this.form.controls['name'].setValue(this.plan.name);
     this.Modal.open();

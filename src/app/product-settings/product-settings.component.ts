@@ -22,22 +22,20 @@ export class ProductSettingsComponent implements OnInit {
   ngOnInit() { }
 
   open_modal() {
+    this.errors = {};
     this.Modal.open();
     this.item = this.products.filter(product => product.id === +/product\/(\d+)/.exec(this.router.url)[1])[0];
     this.form.controls['product_name'].setValue(this.item.name);
   }
 
-  edit_product(form: NgForm, valid: boolean) {
-    if (!valid) {return; }
+  edit_product(form: NgForm) {
     this.ApiService.edit_product(this.item.id, form.value['product_name']).then((product: Product) => {
-      if (product.errors) {
-        this.errors['name'] = product.errors['name'];
-      } else {
         this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
         this.item = product;
         this.close_modal();
         this.update_products.emit(this.products);
-      }
+    }, error => {
+      this.errors['name'] = error['name'];
     });
   }
 

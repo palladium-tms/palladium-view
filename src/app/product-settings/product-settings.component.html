@@ -5,7 +5,7 @@
   <modal-content>
     <div class="settings_content">
       <div class="item-description">
-          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form, form.valid)">
+          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form)" (onClose) = "clear_errors()">
             <div class="item-option">
               <input (keyup)="clear_errors()" type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
                      autofocus>

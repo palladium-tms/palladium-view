@@ -42,6 +42,9 @@
             <small [hidden]="name.valid || (name.pristine && !form.submitted)">
               Plan name can't be empty.
             </small>
+            <small [hidden]="!name.valid" *ngFor="let error of errors['name']">
+              {{error}}
+            </small>
           </div>
           <div class="item-option">
             <label *ngIf="plan"> Created at: {{plan.created_at}}</label>
@@ -49,7 +52,7 @@
           <div class="item-option">
             <label *ngIf="plan"> Updated at: {{plan.updated_at}}</label>
           </div>
-          <button class="btn btn-success save_button" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
+          <button class="btn btn-success save_button" [disabled]="!form.valid">Save</button>
         </form>
         <button class="btn btn-danger" (click)="delete_selected_plan()">Delete</button>
       </div>
