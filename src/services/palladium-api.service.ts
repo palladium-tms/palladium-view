@@ -52,13 +52,19 @@ export class PalladiumApiService {
   }
 
   block_status(id): Promise<JSON> {
-    return this.httpService.postData('/status_edit', {status_data: {id: id, block: true }}).then((resp: any) => {
+    return this.httpService.postData('/status_edit', {status_data: {id: id, block: true}}).then((resp: any) => {
       return resp['status'];
     });
   }
 
   update_status(id, name, color): Promise<any> {
-    return this.httpService.postData('/status_edit', {status_data: {id: id, name: name, color: color}}).then((resp: any) => {
+    return this.httpService.postData('/status_edit', {
+      status_data: {
+        id: id,
+        name: name,
+        color: color
+      }
+    }).then((resp: any) => {
       return new Status(resp['status']);
     });
   }
@@ -103,17 +109,23 @@ export class PalladiumApiService {
   edit_suite_by_run_id(run_id, name): Promise<any> {
     const params = {suite_data: {run_id: run_id, name: name}};
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
+      if (resp['errors']) {
+        return Promise.reject(resp['errors']);
+      } else {
+        return Promise.resolve(new Suite(resp['suite']));
+      }
     });
   }
 
   edit_suite(id, name): Promise<any> {
     return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
+      if (resp['errors']) {
+        console.log('errors');
+        return Promise.reject(resp['errors']);
+      } else {
+        console.log('all right');
+        return Promise.resolve(new Suite(resp['suite']));
+      }
     });
   }
 
@@ -141,7 +153,12 @@ export class PalladiumApiService {
   }
 
   get_cases_by_run_id(run_id, product_id): Promise<any> {
-    return this.httpService.postData('/cases', {case_data: {run_id: run_id, product_id: product_id}}).then((resp: any) => {
+    return this.httpService.postData('/cases', {
+      case_data: {
+        run_id: run_id,
+        product_id: product_id
+      }
+    }).then((resp: any) => {
       this.cases = [];
       Object(resp['cases']).forEach(current_case => {
         this.cases.push(new Case(current_case));
@@ -155,7 +172,6 @@ export class PalladiumApiService {
   edit_case_by_result_set_id(result_set_id, name): Promise<any> {
     const params = {case_data: {result_set_id: result_set_id, name: name}};
     return this.httpService.postData('/case_edit', params).then((resp: any) => {
-      console.log(resp);
       return new Case(resp['case']);
     }, (errors: any) => {
       console.log(errors);
@@ -177,6 +193,7 @@ export class PalladiumApiService {
       console.log(errors);
     });
   }
+
   get_history(case_id): Promise<any> {
     this.histories = [];
     return this.httpService.postData('/case_history', {case_data: {id: case_id}}).then((resp: any) => {
@@ -184,13 +201,14 @@ export class PalladiumApiService {
         if (data['statistic']) {
           data['statistic'] = new Statistic(data['statistic']);
         }
-          this.histories.push(new History(data));
+        this.histories.push(new History(data));
       });
       return this.histories;
     }, (errors: any) => {
       console.log(errors);
     });
   }
+
   //#endregion
 
   //#region Run
@@ -248,21 +266,24 @@ export class PalladiumApiService {
 
   delete_product(id): Promise<any> {
     return this.httpService.postData('/product_delete', {product_data: {id: id}})
-      .then( products => {
-          return products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+      .then(products => {
+        return products;
+      }, (errors: any) => {
+        console.log(errors);
+      });
   }
 
   edit_product(id, name): Promise<any> {
-     return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
-      .then((products: any) => {
-          return(new Product(products['product_data']));
-        }, (errors: any) => {
-          console.log(errors);
-        });
+    return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
+      .then((resp: any) => {
+        if (resp['errors']) {
+          return Promise.reject(resp['errors']);
+        } else {
+          return Promise.resolve(new Product(resp['product_data']));
+        }
+      });
   }
+
   //#endregion
 
   //#region Plans
@@ -283,16 +304,18 @@ export class PalladiumApiService {
 
   edit_plan(id, name): Promise<any> {
     return this.httpService.postData('/plan_edit', {plan_data: {plan_name: name, id: id}})
-      .then(
-        (plan: any) => {
-          return new Plan(plan['plan_data']);
-        }, (errors: any) => {
-          console.log(errors);
-        });
+      .then((resp: any) => {
+        if (resp['errors']) {
+          return Promise.reject(resp['errors']);
+        } else {
+          return Promise.resolve(new Plan(resp['plan']));
+        }
+      });
   }
+
   delete_plan(id): Promise<any> {
     return this.httpService.postData('/plan_delete', {plan_data: {id: id}})
-      .then( plan_data => {
+      .then(plan_data => {
         return plan_data['plan'];
       }, (errors: any) => {
         console.log(errors);
@@ -326,6 +349,7 @@ export class PalladiumApiService {
           console.log(errors);
         });
   }
+
   //#endregion
 
   //#region Result
@@ -333,7 +357,7 @@ export class PalladiumApiService {
     this.results = [];
     return this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}})
       .then(
-        resp => {
+        (resp: any) => {
           Object(resp['results']).forEach(result => {
             this.results.push(new Result(result));
           });
@@ -350,11 +374,15 @@ export class PalladiumApiService {
   }
 
   result_new(result_sets, description, status): Promise<any> {
-    return this.httpService.postData('/result_new', {result_data: {message: description, status: status.name,
-      result_set_id: result_sets.map(obj => obj.id)}})
+    return this.httpService.postData('/result_new', {
+      result_data: {
+        message: description, status: status.name,
+        result_set_id: result_sets.map(obj => obj.id)
+      }
+    })
       .then(res => {
-      return [new Result(res['result']), res['other_data']];
-    }, error => console.log(error));
+        return res;
+      }, error => console.log(error));
   }
 
   result_new_by_case(cases, message, status, run_id): Promise<any> {
@@ -364,11 +392,9 @@ export class PalladiumApiService {
     }
     return this.httpService.postData('/result_new', params).then(res => {
       const result_sets = [];
-      res['other_data']['result_set_id'].forEach((result_set_id, index) => {
-        const new_result_set = new ResultSet(cases[index]);
-        new_result_set.run_id = run_id;
-        new_result_set.status = status['id'];
-        new_result_set.id = result_set_id;
+      console.log(res);
+      res['result_sets'].forEach((result_set) => {
+        const new_result_set = new ResultSet(result_set);
         result_sets.push(new_result_set);
       });
       return result_sets;
@@ -393,5 +419,6 @@ export class PalladiumApiService {
       }
     }, error => console.log(error));
   }
+
   //#endregion
 }

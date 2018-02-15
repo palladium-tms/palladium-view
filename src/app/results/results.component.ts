@@ -9,6 +9,8 @@ import {ResultService} from '../../services/result.service';
   templateUrl: './results.component.html',
   styleUrls: ['./results.component.css']
 })
+
+
 export class ResultsComponent implements OnInit {
   results: Result[] = [];
   statuses;
@@ -20,12 +22,12 @@ export class ResultsComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
     this.resultservice.news().subscribe(data => {
-      this.add_result(data);
+      this.add_result(data['result']);
     });
   }
 
   add_result(data) {
-    this.results.unshift(data[0]);
+    this.results.unshift(data);
   }
 
   init_results() {

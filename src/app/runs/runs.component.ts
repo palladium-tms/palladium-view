@@ -31,7 +31,7 @@ export class RunsComponent implements OnInit {
   statistic: Statistic;
   filter = [];
   loading = false;
-
+  errors = {};
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, public StatisticService: StatisticService) {
   }
@@ -105,7 +105,7 @@ export class RunsComponent implements OnInit {
 
   update_click() {
     this.get_runs_and_suites();
-    if (this.ResultSetComponent) {
+    if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
     }
   }
@@ -118,7 +118,7 @@ export class RunsComponent implements OnInit {
         suite_for_add.push(suite);
       } else if (same[0].statistic.all !== suite.statistic.all) {
         const untested = suite.statistic.all - same[0].statistic.all;
-        same[0].statistic.add_status('0', untested);
+        same[0].statistic.add_status(0, untested);
       }
     });
     this.runs_and_suites = this.runs.concat(suite_for_add);
@@ -165,15 +165,20 @@ export class RunsComponent implements OnInit {
         const edited = this.runs_and_suites[this.runs_and_suites.indexOf(this.runs_and_suites.filter(it => it.id === this.object.id)[0])];
         edited.name = suite.name;
         edited.updated_at = suite.updated_at;
+        modal.close();
+      },  (errors: any) => {
+        this.errors['name'] = errors['name'];
       });
     } else {
       this.ApiService.edit_suite(this.object.id, form.value['name']).then((suite: Suite)  => {
         const edited = this.runs_and_suites[this.runs_and_suites.indexOf(this.runs_and_suites.filter(it => it.id === this.object.id)[0])];
         edited.name = suite.name;
         edited.updated_at = suite.updated_at;
+        modal.close();
+      },  (errors: any) => {
+        this.errors['name'] = errors['name'];
       });
     }
-    modal.close();
   }
 
   delete_object() {
@@ -203,6 +208,7 @@ export class RunsComponent implements OnInit {
   }
 
   open_modal() {
+    this.clear_errors();
     this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
       current_object.path === this.opened_item())[0];
     this.form.controls['name'].setValue(this.object.name);
@@ -247,5 +253,9 @@ export class RunsComponent implements OnInit {
     if (this.router.url.indexOf('/suite/' + $event[0].id) >= 0) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
     }
+  }
+
+  clear_errors() {
+    this.errors = {};
   }
 }

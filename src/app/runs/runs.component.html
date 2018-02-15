@@ -32,9 +32,12 @@
       <div class="item-description">
         <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_object_modal(form, Modal, form.valid )">
           <div class="item-option">
-            <input type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
+            <input (keyup)="clear_errors()" type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
             <small [hidden]="name.valid || (name.pristine && !form.submitted)">
               Object name can't be empty.
+            </small>
+            <small [hidden]="!name.valid" *ngFor="let error of errors['name']">
+              {{error}}
             </small>
           </div>
           <div class="item-option">

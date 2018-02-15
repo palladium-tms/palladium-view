@@ -5,12 +5,15 @@
   <modal-content>
     <div class="settings_content">
       <div class="item-description">
-          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form, form.valid)">
+          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form)" (onClose) = "clear_errors()">
             <div class="item-option">
-              <input type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
+              <input (keyup)="clear_errors()" type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
                      autofocus>
               <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
                 Product name can't be empty.
+              </small>
+              <small [hidden]="!product_name.valid" *ngFor="let error of errors['name']">
+                {{error}}
               </small>
             </div>
             <div class="item-option">
@@ -19,7 +22,7 @@
             <div class="item-option">
               <label *ngIf="item"> Updated at: {{item.updated_at}}</label>
             </div>
-            <button class="btn btn-success save_button" [disabled]="!form.valid || item === null" (click)="form.ngSubmit.emit(form)">Save</button>
+            <button class="btn btn-success save_button" [disabled]="!form.valid || item === null">Save</button>
           </form>
         <button class="btn btn-danger" [disabled]="item === null" (click)="delete_item()">Delete</button>
       </div>

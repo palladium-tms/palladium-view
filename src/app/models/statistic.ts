@@ -12,7 +12,7 @@ export class Statistic {
       this.existed_statuses = Object.keys(this.extended);
       this.existed_statuses.forEach(status_id => {
         this.all += this.extended[status_id];
-        if (status_id === '0') {
+        if (status_id === 0) {
           this.lost = this.extended[status_id];
         }
       });
@@ -28,7 +28,7 @@ export class Statistic {
     this.existed_statuses = Object.keys(this.extended);
     this.existed_statuses.forEach(status_id => {
       this.all += this.extended[status_id];
-      if (status_id === '0') {
+      if (status_id === 0) {
         this.lost = this.extended[status_id];
       }
     });
