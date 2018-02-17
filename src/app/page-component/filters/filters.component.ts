@@ -27,9 +27,7 @@ export class FiltersComponent implements OnChanges {
 
   hide_element(element, status) {
     if (element) {
-      if (element.extended[status.id] || status.active) {
-        return false;
-      } else { return true; }
+      return !(element.extended[status.id] || status.active);
     }
     return true;
   }
