@@ -179,6 +179,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   add_result_modal() {
+    if (this.loading) {return}
     if (this.get_selected_count() !== 0) {
       this.AddResultModal.open();
     }
@@ -280,6 +281,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   unselect_all() {
+    if (this.loading) {return}
     this.result_sets_and_cases.forEach(obj => {
       obj.selected = false;
     });
@@ -287,6 +289,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   select_all() { // FIXME: need optimize
+    if (this.loading) {return}
     if (this.filter.length === 0) {
       this.result_sets_and_cases.forEach(obj => {
         obj.selected = true;
@@ -300,6 +303,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_history_page() {
+    if (this.loading) {return}
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
       this.router.navigate([path, this.object.id]);
@@ -331,6 +335,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_modal() {
+    if (this.loading) {return};
     this.form.controls['name'].setValue(this.object.name);
     this.Modal.open();
   };
@@ -379,6 +384,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_click() {
+    if (this.loading) {return}
     this.get_result_sets_and_cases();
     if (this.ResultComponent) {
       this.ResultComponent.update_click();

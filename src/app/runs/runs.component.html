@@ -5,10 +5,10 @@
                    (selected_statuses_emmit)="get_filters($event)"></app-filters>
     </div>
     <div class="buttons">
-      <div class="toolbar-element" (click)="update_click()">
+      <div class="toolbar-element" (click)="update_click()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()">
+      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>

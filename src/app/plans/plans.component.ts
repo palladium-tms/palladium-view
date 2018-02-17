@@ -71,6 +71,7 @@ export class PlansComponent implements OnInit {
   }
 
   update_click() {
+    if (this.loading) {return}
     this.init_data();
     if (this.RunComponent) {
       this.RunComponent.update_click();
@@ -121,6 +122,7 @@ export class PlansComponent implements OnInit {
   }
 
   open_modal() {
+    if (this.loading) {return}
     this.errors = {};
     this.plan = this.plans.filter(current_plan => current_plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
     this.form.controls['name'].setValue(this.plan.name);

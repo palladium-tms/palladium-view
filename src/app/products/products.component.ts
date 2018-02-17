@@ -22,6 +22,7 @@ export class ProductsComponent implements OnInit {
   }
 
   get_products() {
+    if (this.loading) {return}
     this.setting_is_visible();
     this.products = [];
     this.loading = true;
@@ -35,6 +36,11 @@ export class ProductsComponent implements OnInit {
     this.products = [];
     this.products = event;
   }
+
+  open_settings(settings) {
+    if (!this.loading) {settings.open_modal()}
+  }
+
   setting_is_visible() {
     return (/product\/(\d+)/.exec(this.router.url) === null);
   }
