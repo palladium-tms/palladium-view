@@ -22,7 +22,7 @@ export class CaseHistoryComponent implements OnInit {
   }
 
   getStyles(status) {
-      return {'border-right': '7px solid ' + this.statuses[status['status']]['color']};
+      return {'border-right': '7px solid ' + this.get_status_by_id(status['status']).color};
   }
 
   plan_url(id) {
