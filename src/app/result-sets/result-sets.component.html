@@ -41,6 +41,9 @@
         <div *ngIf="this.statuses" class="status-name"><b>{{get_status_by_id(object['status']).name}}</b></div>
       </div>
     </div>
+    <div class="empty_list_message" [ngClass]="{'hidden': result_sets_and_cases.length > 0}">
+      <p>Result set list is empty</p>
+    </div>
   </div>
 </div>
 

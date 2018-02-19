@@ -368,3 +368,9 @@ a.link:hover {
 .full_centered_data {
   justify-content: center;
 }
+
+.empty_list_message {
+  color: #2e4b4c;
+  font-size: 1.7em;
+  text-align: center;
+}

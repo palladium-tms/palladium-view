@@ -1,5 +1,7 @@
 # Changelog
 ## [0.3.5]
+### Added
+    * Add message to empty result_set list
 ### Fixed
     * Block toolbar buttons if list of plan, product, run of result-set is updated
     * Fix long status name bug
