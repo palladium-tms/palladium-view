@@ -4,25 +4,25 @@
       <app-filters [statuses] = statuses [statistic] = statistic (selected_statuses_emmit)="get_filters($event)"></app-filters>
     </div>
     <div class="buttons">
-      <div class="toolbar-element check_button" (click)="unselect_all()" *ngIf="select_all_flag">
+      <div class="toolbar-element check_button" (click)="unselect_all()" [ngClass]="{'disabled': this.loading}" *ngIf="select_all_flag">
         <i class="fa fa-check-square-o" aria-hidden="true"></i>
       </div>
 
-      <div class="toolbar-element check_button" (click)="select_all()" *ngIf="!select_all_flag">
+      <div class="toolbar-element check_button" (click)="select_all()" [ngClass]="{'disabled': this.loading}" *ngIf="!select_all_flag">
         <i class="fa fa-square-o" aria-hidden="true"></i>
       </div>
-      <div class="toolbar-element add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': get_selected_count() === 0}">
+      <div class="toolbar-element add_result_button" (click)="add_result_modal()"  [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
         <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
       </div>
-      <div class="toolbar-element" (click)="update_click()">
+      <div class="toolbar-element" (click)="update_click()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
 
-      <div class="toolbar-element" (click)="open_history_page()" *ngIf="object">
+      <div class="toolbar-element" (click)="open_history_page()" [ngClass]="{'disabled': this.loading}" *ngIf="object">
         <i class="fa fa-history" aria-hidden="true"></i>
       </div>
 
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="object">
+      <div class="toolbar-element" (click)="open_modal()" [ngClass]="{'disabled': this.loading}" *ngIf="object">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
@@ -40,6 +40,9 @@
         </div>
         <div *ngIf="this.statuses" class="status-name"><b>{{get_status_by_id(object['status']).name}}</b></div>
       </div>
+    </div>
+    <div class="empty_list_message" [ngClass]="{'hidden': result_sets_and_cases.length > 0}">
+      <p>Result set list is empty</p>
     </div>
   </div>
 </div>

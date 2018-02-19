@@ -1,6 +1,9 @@
-<ng-container *ngIf="statuses">
+<ng-container *ngIf="statuses && all_statistic">
   <div *ngFor="let status of statuses" class="status-block" (click)="select_filter(status)"
        [ngStyle]="{'border-bottom': '7px solid ' + status.color}" [ngClass]="{'hidden': hide_element(this.statistic, status), 'activated': status.active}">
-    <div class="status-name">{{all_statistic[status.id] || 0}} {{status.name}}</div>
+    <div class="status">
+      <div class="status-count">{{all_statistic[status.id] || 0}}</div>
+      <div class="status-name">{{status.name}}</div>
+    </div>
   </div>
 </ng-container>

@@ -42,16 +42,19 @@ export class ResultSetsComponent implements OnInit {
       this.object = null;
       this.get_result_sets_and_cases();
       this.set_default_filter();
-      this.ApiService.get_statuses().then(res => {
-        this.statuses = res;
-        this.not_blocked_status = this.statuses.filter(status => status.block === false);
-        this.statuses_array = Object.keys(this.statuses);
-      });
     });
   }
 
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === id);
+  }
+
+  get_statuses() {
+    this.ApiService.get_statuses().then(res => {
+      this.statuses = res;
+      this.not_blocked_status = this.statuses.filter(status => status.block === false);
+      this.statuses_array = Object.keys(this.statuses);
+    });
   }
 
   set_default_filter() {
@@ -97,9 +100,11 @@ export class ResultSetsComponent implements OnInit {
 
   get_result_sets_and_cases() {
     this.result_sets = [];
+    this.statuses = null;
+    this.statistic = new Statistic(null);
     this.result_sets_and_cases = [];
     this.loading = true;
-    Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
+    Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
       this.result_sets = res[0];
       this.cases = res[1];
       const cases = [];
@@ -179,6 +184,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   add_result_modal() {
+    if (this.loading) {return}
     if (this.get_selected_count() !== 0) {
       this.AddResultModal.open();
     }
@@ -280,6 +286,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   unselect_all() {
+    if (this.loading) {return}
     this.result_sets_and_cases.forEach(obj => {
       obj.selected = false;
     });
@@ -287,6 +294,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   select_all() { // FIXME: need optimize
+    if (this.loading) {return}
     if (this.filter.length === 0) {
       this.result_sets_and_cases.forEach(obj => {
         obj.selected = true;
@@ -300,6 +308,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_history_page() {
+    if (this.loading) {return}
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
       this.router.navigate([path, this.object.id]);
@@ -331,6 +340,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_modal() {
+    if (this.loading) {return};
     this.form.controls['name'].setValue(this.object.name);
     this.Modal.open();
   };
@@ -379,6 +389,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_click() {
+    if (this.loading) {return}
     this.get_result_sets_and_cases();
     if (this.ResultComponent) {
       this.ResultComponent.update_click();

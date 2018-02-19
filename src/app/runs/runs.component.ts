@@ -104,6 +104,7 @@ export class RunsComponent implements OnInit {
   }
 
   update_click() {
+    if (this.loading) {return}
     this.get_runs_and_suites();
     if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
@@ -208,6 +209,7 @@ export class RunsComponent implements OnInit {
   }
 
   open_modal() {
+    if (this.loading) {return}
     this.clear_errors();
     this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
       current_object.path === this.opened_item())[0];

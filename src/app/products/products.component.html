@@ -2,10 +2,10 @@
   <div class="toolbar">
     <div class="product-link"><a routerLink="/">Products</a></div>
     <div class="buttons">
-      <div class="toolbar-element" (click)="get_products()">
+      <div class="toolbar-element" (click)="get_products()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
-      <div class="toolbar-element" (click)="settings.open_modal()" [ngClass]="{'hidden': setting_is_visible()}">
+      <div class="toolbar-element" (click)="open_settings(settings)" [ngClass]="{'hidden': setting_is_visible(), 'disabled': this.loading}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
