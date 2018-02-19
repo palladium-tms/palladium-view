@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.7] - 2018-02-20
+### Fixed
+    * Update package.json
 ## [0.3.6] - 2018-02-19
 ### Fixed
     * Fix history colors
