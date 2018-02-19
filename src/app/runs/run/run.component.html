@@ -2,8 +2,9 @@
   <div class="item-name"><a [routerLink]="[object.path, object.id]" [queryParams]=get_query() (click)="select_run()">{{object.name}}</a>
   </div>
   <div class="run-statistic">
-    <div *ngFor="let status of object.statistic.existed_statuses" class="status-legend-small">
-      {{ object.statistic.extended[status] }} {{ get_status_by_id(status).name}},
+    <div *ngFor="let status of object.statistic.existed_statuses" class="status-small">
+      <div class="status-count">{{object.statistic.extended[status] }}</div>
+      <div class="status-name">{{ get_status_by_id(status).name || 0}}</div>
     </div>
   </div>
   <div class="item-statistic">

@@ -2,6 +2,7 @@
 ## [0.3.5]
 ### Fixed
     * Block toolbar buttons if list of plan, product, run of result-set is updated
+    * Fix long status name bug
 ## [0.3.4]
 ### Fixed
     * Fix errors after trying to edit ame of product to exists name

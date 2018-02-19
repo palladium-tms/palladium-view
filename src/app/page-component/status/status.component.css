@@ -9,13 +9,6 @@
   height: 1em;
   background: rgb(170, 255, 170);
 }
-.status-name{
-  display: inline-block;
-  max-width: 12em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .selected {
   background-color: #b2c4c5;
   font-weight: bold;
