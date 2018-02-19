@@ -42,16 +42,19 @@ export class ResultSetsComponent implements OnInit {
       this.object = null;
       this.get_result_sets_and_cases();
       this.set_default_filter();
-      this.ApiService.get_statuses().then(res => {
-        this.statuses = res;
-        this.not_blocked_status = this.statuses.filter(status => status.block === false);
-        this.statuses_array = Object.keys(this.statuses);
-      });
     });
   }
 
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === id);
+  }
+
+  get_statuses() {
+    this.ApiService.get_statuses().then(res => {
+      this.statuses = res;
+      this.not_blocked_status = this.statuses.filter(status => status.block === false);
+      this.statuses_array = Object.keys(this.statuses);
+    });
   }
 
   set_default_filter() {
@@ -97,9 +100,11 @@ export class ResultSetsComponent implements OnInit {
 
   get_result_sets_and_cases() {
     this.result_sets = [];
+    this.statuses = null;
+    this.statistic = new Statistic(null);
     this.result_sets_and_cases = [];
     this.loading = true;
-    Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
+    Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
       this.result_sets = res[0];
       this.cases = res[1];
       const cases = [];

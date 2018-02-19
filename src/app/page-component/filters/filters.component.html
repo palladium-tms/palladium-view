@@ -1,4 +1,4 @@
-<ng-container *ngIf="statuses">
+<ng-container *ngIf="statuses && all_statistic">
   <div *ngFor="let status of statuses" class="status-block" (click)="select_filter(status)"
        [ngStyle]="{'border-bottom': '7px solid ' + status.color}" [ngClass]="{'hidden': hide_element(this.statistic, status), 'activated': status.active}">
     <div class="status">
