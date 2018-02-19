@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.6] - 2018-02-19
+### Fixed
+    * Fix history colors
 ## [0.3.5]
 ### Added
     * Add message to empty result_set list
