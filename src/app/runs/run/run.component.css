@@ -1,5 +1,4 @@
 .run-statistic {
-  display: flex;
   padding-bottom: 0.2em;
   font-size: 0.9em;
 }
@@ -7,4 +6,10 @@
   max-width: 11em;
   overflow: hidden;
   max-height: 1em;
+}
+.status-count-under-line, .status-name-under-line, .status-small-under-line {
+  display: inline-block;
+}
+.status-small-under-line {
+  margin-right: 0.4em;
 }
