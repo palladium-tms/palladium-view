@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.8] - 2018-02-20
+### Added
+    * Change statistic style
 ## [0.3.7] - 2018-02-20
 ### Fixed
     * Update package.json
