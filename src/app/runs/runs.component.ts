@@ -152,7 +152,7 @@ export class RunsComponent implements OnInit {
 
   run_selected(filters) {
     const id = this.router.url.match(/run\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.constructor.name === 'Run' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === './run' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }

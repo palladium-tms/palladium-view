@@ -4,6 +4,8 @@
     * Change statistic style
 ### Changed
     * Synchronous filter for run and result set
+### Fixed
+    * Error after minification: run is not hide after filter it
 ## [0.3.7] - 2018-02-20
 ### Fixed
     * Update package.json
