@@ -32,12 +32,13 @@ export class RunsComponent implements OnInit {
   filter = [];
   loading = false;
   errors = {};
+  existed_statuses = {};
+  all_statistic = {};
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, public StatisticService: StatisticService) {
   }
 
   ngOnInit() {
-    this.set_default_filter();
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
       this.get_runs_and_suites();
@@ -52,21 +53,6 @@ export class RunsComponent implements OnInit {
         });
         this.statistic = statistic;
         this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
-      }
-    });
-  }
-
-  set_default_filter() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      let filter;
-      filter = params['filter'];
-      if (!(filter instanceof Array)) {
-        filter = [filter];
-      }
-      if (filter[0]) {
-        filter.forEach(f => {
-          this.filter.push(+f);
-        });
       }
     });
   }
@@ -99,7 +85,9 @@ export class RunsComponent implements OnInit {
       this.runs = res[0];
       this.merge_suites_and_runs();
       this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+      this.all_statistic = this.statistic.extended;
       this.loading = false;
+      this.get_filters();
     });
   }
 
@@ -125,22 +113,32 @@ export class RunsComponent implements OnInit {
     this.runs_and_suites = this.runs.concat(suite_for_add);
   }
 
-  get_filters(e) {
-    this.filter = [];
-    this.statuses = e;
-    this.statuses.forEach(status => {
-      if (status.active) {
-        this.filter.push(status.id);
-      }
-    });
-    this.check_selected_is_hidden(this.filter);
+  select_filter(filter) {
+    filter.active = !filter.active;
+    this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id)
+    this.check_selected_is_hidden();
   }
 
-  check_selected_is_hidden(filters) {
+  get_filters() {
+    this.statuses.forEach(elem => {
+      if (this.filter.includes(elem.id)) {
+        elem.active = true;
+      }
+    });
+  }
+
+  hide_element(element, status) {
+    if (element) {
+      return !(element.extended[status.id] || status.active);
+    }
+    return true;
+  }
+
+  check_selected_is_hidden() {
     if (this.router.url.indexOf('/suite/') >= 0) {
-      this.suite_selected(filters);
+      this.suite_selected(this.filter);
     } else if (this.router.url.indexOf('/run/') >= 0) {
-      this.run_selected(filters);
+      this.run_selected(this.filter);
     }
   }
 
@@ -236,6 +234,7 @@ export class RunsComponent implements OnInit {
       return ('./suite');
     }
   }
+
   get_items_id() {
     if (this.run_opened()) {
       return ( +/run\/(\d+)/.exec(this.router.url)[1]);

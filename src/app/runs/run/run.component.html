@@ -1,5 +1,5 @@
 <div class="item" [ngClass]="{'activated': isSelected}">
-  <div class="item-name"><a [routerLink]="[object.path, object.id]" [queryParams]=get_query() (click)="select_run()">{{object.name}}</a>
+  <div class="item-name"><a [routerLink]="[object.path, object.id]" (click)="select_run()">{{object.name}}</a>
   </div>
   <div class="run-statistic">
     <div *ngFor="let status of object.statistic.existed_statuses" class="status-small-under-line">

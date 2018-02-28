@@ -32,20 +32,6 @@ export class RunComponent implements OnInit {
     }
   }
 
-  get_query() {
-    if (this.filter.length === 0) {
-      return '';
-    } else {
-      const unic = [];
-      this.filter.forEach( status => {
-        if (unic.indexOf(status) === -1) {
-          unic.push(status);
-        }
-      });
-      return {'filter': unic};
-    }
-  }
-
   select_run() {
     if (this.router.url.indexOf('/run/' + this.object.id) > 0) {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);

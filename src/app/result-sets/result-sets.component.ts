@@ -41,7 +41,6 @@ export class ResultSetsComponent implements OnInit {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.object = null;
       this.get_result_sets_and_cases();
-      this.set_default_filter();
     });
   }
 
@@ -55,26 +54,6 @@ export class ResultSetsComponent implements OnInit {
       this.not_blocked_status = this.statuses.filter(status => status.block === false);
       this.statuses_array = Object.keys(this.statuses);
     });
-  }
-
-  set_default_filter() {
-    const params = this.get_query_filters();
-    params.forEach(f => {
-      this.filter.push(+f);
-    });
-  }
-
-  get_query_filters() {
-    let filters = [];
-    const params = this.activatedRoute.snapshot.queryParams;
-    if (Object.keys(params).indexOf('filter') !== -1) {
-      if (!(params['filter'] instanceof Array)) {
-        filters = [params['filter']];
-      } else {
-        filters = params['filter'];
-      }
-    }
-    return filters;
   }
 
   getStyles(object) {
@@ -117,6 +96,9 @@ export class ResultSetsComponent implements OnInit {
       this.select_object();
       this.update_statistic();
       this.loading = false;
+      if (this.statuses) {
+        this.set_filters();
+      }
     });
   }
 
@@ -128,8 +110,6 @@ export class ResultSetsComponent implements OnInit {
           this.merge_result_sets_and_cases();
           this.update_statistic();
           this.Modal.close();
-          console.log('deleted_id');
-          console.log(deleted_id);
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
           if (this.filter.includes(0) || this.filter.length === 0) {
             this.navigate_it_to_case();
@@ -266,9 +246,18 @@ export class ResultSetsComponent implements OnInit {
       }
     });
     if (this.check_selected_is_hidden()) {
+      this.ResultComponent = null;
       this.navigate_to_run_show();
     }
     this.unfilter_if_list_empty();
+  }
+
+  set_filters() {
+    this.statuses.forEach(status => {
+      if (this.filter.includes(status.id)) {
+        status.active = true;
+      }
+    });
   }
 
   navigate_to_run_show() {
