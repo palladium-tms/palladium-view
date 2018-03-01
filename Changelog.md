@@ -2,6 +2,7 @@
 ## [0.3.8] - 2018-02-20
 ### Added
     * Change statistic style
+    * Add images view in result
 ### Changed
     * Synchronous filter for run and result set
 ### Fixed

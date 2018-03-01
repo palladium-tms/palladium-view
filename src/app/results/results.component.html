@@ -12,7 +12,7 @@
       <div class="big-block">
         <div class="message" *ngFor="let data of result.describer">
           <span><b>{{data["title"]}}:</b></span>
-          <span>{{data["value"]}}</span>
+          <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' ></app-result-value>
         </div>
       </div>
     </div>

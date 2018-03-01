@@ -15,8 +15,7 @@ export class FiltersComponent implements OnChanges {
   all_statistic = {};
   existed_statuses = [];
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnChanges() {
     if (this.statuses && this.statistic) {
