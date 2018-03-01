@@ -40,6 +40,7 @@ import { ProductSettingsComponent } from './product-settings/product-settings.co
 import { CaseComponent } from './case/case.component';
 import { InviteComponent } from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
+import { ResultValueComponent } from './page-component/result-value/result-value.component';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -98,6 +99,7 @@ const appRoutes: Routes = [
     CaseComponent,
     InviteComponent,
     SortByNamePipe,
+    ResultValueComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule],
