@@ -5,6 +5,7 @@
     * Add images view in result
 ### Changed
     * Synchronous filter for run and result set
+    * Sorting of plans: now it sort by id (line sort by created at)
 ### Fixed
     * Error after minification: run is not hide after filter it
 ## [0.3.7] - 2018-02-20
