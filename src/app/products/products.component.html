@@ -1,3 +1,4 @@
+<div class="dndPlaceholder" #placeholder></div>
 <div class="product-space">
   <div class="toolbar">
     <div class="product-link"><a routerLink="/">Products</a></div>
@@ -8,13 +9,21 @@
       <div class="toolbar-element" (click)="open_settings(settings)" [ngClass]="{'hidden': setting_is_visible(), 'disabled': this.loading}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
+      <div class="toolbar-element" (click)="pin_list()">
+        <i class="fa fa-thumb-tack" aria-hidden="true" [ngClass]="{'fa-rotate-270': !pinned}"></i>
+      </div>
     </div>
   </div>
-  <div class="item-list">
-    <div class="item hoverer" routerLinkActive="activated" *ngFor="let product of products; let index = index">
+  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder">
+    <div class="item hoverer" routerLinkActive="activated" *ngFor="let product of products"
+         [dndDragDisabled] = pinned
+         [dndDraggable]
+         [dndType]="product"
+         (dndMoved)="removeItem(product, products)"
+         [class.selected]="products.selected === product"
+         [dndObject]="product">
       <div class="item-name"><a [routerLink]="['/product', product.id]"
                                 routerLinkActive="low-priority">{{product.name}}</a>
-
       </div>
     </div>
   </div>

@@ -3,7 +3,6 @@ export class Product {
   name: string;
   created_at: number;
   updated_at: number;
-  errors = [];
   constructor(product) {
     if (product === null) {
       this.id = 0;

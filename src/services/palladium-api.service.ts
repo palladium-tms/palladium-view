@@ -286,6 +286,19 @@ export class PalladiumApiService {
 
   //#endregion
 
+  //#region Products
+  send_product_position(product_ids_array): Promise<any> {
+    return this.httpService.postData('/set_product_position', {product_position: product_ids_array})
+      .then(
+        (resp: any) => {
+          console.log(resp);
+          return this.products;
+        }, (errors: any) => {
+          console.log(errors);
+        });
+  }
+  //#endregion
+
   //#region Plans
   get_plans(product_id): Promise<any> {
     this.plans = [];
