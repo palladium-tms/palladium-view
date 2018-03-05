@@ -3,6 +3,7 @@
 ### Added
     * Change statistic style
     * Add images view in result
+    * Add opportunity to change product positions
 ### Changed
     * Synchronous filter for run and result set
     * Sorting of plans: now it sort by id (line sort by created at)

@@ -41,6 +41,7 @@ import { CaseComponent } from './case/case.component';
 import { InviteComponent } from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 import { ResultValueComponent } from './page-component/result-value/result-value.component';
+import { DndListModule } from 'ngx-drag-and-drop-lists';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -102,7 +103,7 @@ const appRoutes: Routes = [
     ResultValueComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
-    Angular2FontawesomeModule, BrowserAnimationsModule],
+    Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })

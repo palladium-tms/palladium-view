@@ -6,3 +6,6 @@
 .product-space {
   flex: 1;
 }
+.dndPlaceholder{
+  border: 2px solid  #246E6E;
+}

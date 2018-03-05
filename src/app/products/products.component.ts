@@ -13,6 +13,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 export class ProductsComponent implements OnInit {
   products;
   loading = false;
+  pinned = true;
   product;
 
   constructor(private ApiService: PalladiumApiService, private router: Router) {}
@@ -43,5 +44,20 @@ export class ProductsComponent implements OnInit {
 
   setting_is_visible() {
     return (/product\/(\d+)/.exec(this.router.url) === null);
+  }
+
+  pin_list() {
+    this.pinned = !this.pinned;
+    this.send_products_position();
+  }
+
+  send_products_position() {
+    this.ApiService.send_product_position(this.products.map(elem => elem['id'])).then(response => {
+      console.log('ok')
+    })
+  }
+
+  public removeItem(item: any, list: any[]): void {
+    list.splice(list.indexOf(item), 1);
   }
 }
