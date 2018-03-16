@@ -252,7 +252,7 @@ export class RunsComponent implements OnInit {
     this.merge_suites_and_runs();
     this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     if (this.router.url.indexOf('/suite/' + $event[0].id) >= 0) {
-      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
+      this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0] + 'run/' + $event[1].id]);
     }
   }
 

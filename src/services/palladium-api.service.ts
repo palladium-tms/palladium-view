@@ -408,7 +408,6 @@ export class PalladiumApiService {
     }
     return this.httpService.postData('/result_new', params).then(res => {
       const result_sets = [];
-      console.log(res);
       res['result_sets'].forEach((result_set) => {
         const new_result_set = new ResultSet(result_set);
         result_sets.push(new_result_set);
