@@ -19,6 +19,7 @@ export class PalladiumApiService {
   suites: Suite[] = [];
   products: Product[] = [];
   plans: Plan[] = [];
+  plans_data = {};
   runs: Run[] = [];
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
@@ -302,14 +303,16 @@ export class PalladiumApiService {
   //#region Plans
   get_plans(product_id): Promise<any> {
     this.plans = [];
+    this.plans_data[product_id] = [];
     const params = {plan_data: {product_id: product_id}};
     return this.httpService.postData('/plans', params)
       .then(
         (resp: any) => {
-          Object(resp['plans']).forEach(plan => {
-            this.plans.push(new Plan(plan));
+          const objects =  Object(resp['plans']);
+          objects.forEach(plan => {
+            this.plans_data[product_id].push(new Plan(plan));
           });
-          return this.plans;
+          return  this.plans_data;
         }, (errors: any) => {
           console.log(errors);
         });
