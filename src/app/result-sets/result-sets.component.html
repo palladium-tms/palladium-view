@@ -75,7 +75,7 @@
   </modal-content>
 </modal>
 
-<modal #AddResultModal>
+<modal #AddResultModal (onClose)="reset_form(addresultform)">
   <modal-header>
     <h1>Add Result</h1>
   </modal-header>

@@ -185,6 +185,7 @@ export class ResultSetsComponent implements OnInit {
         // Fixme: Add history updating
       }
     });
+    this.reset_form(form);
     modal.close();
   }
 
@@ -387,5 +388,9 @@ export class ResultSetsComponent implements OnInit {
 
   onActivate(componentRef) {
     this.ResultComponent = componentRef;
+  }
+
+  reset_form(form) {
+    form.reset();
   }
 }

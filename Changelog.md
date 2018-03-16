@@ -1,4 +1,7 @@
 # Changelog
+## [0.3.9] - 2018-03-16
+### Fixed
+    * Result message save after result add
 ## [0.3.8] - 2018-02-20
 ### Added
     * Change statistic style
