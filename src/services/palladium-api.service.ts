@@ -83,7 +83,7 @@ export class PalladiumApiService {
       return resp['tokens'];
     }, (errors: any) => {
       this.authenticationService.logout();
-      this.router.navigate(['/login']);
+      this.router.navigate(['/singin']);
     });
   }
 
