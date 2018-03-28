@@ -1,4 +1,8 @@
 # Changelog
+## [0.4.0] - 2018-03-28
+### Changed
+    * Change login, registration, no_users methods like public
+    * Change path strategy to no hash (without # before path)
 ## [0.3.9] - 2018-03-16
 ### Fixed
     * FIX Result message save after result add

@@ -44,7 +44,7 @@ import { ResultValueComponent } from './page-component/result-value/result-value
 import { DndListModule } from 'ngx-drag-and-drop-lists';
 
 const appRoutes: Routes = [
-  {path: 'login', component: LoginComponent},
+  {path: 'singin', component: LoginComponent},
   {path: 'registration', component: RegistrationComponent},
   {
     path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
@@ -102,7 +102,7 @@ const appRoutes: Routes = [
     SortByNamePipe,
     ResultValueComponent,
   ],
-  imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, {useHash: true}), FormsModule,
+  imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]

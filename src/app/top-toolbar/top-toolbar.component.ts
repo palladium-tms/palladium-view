@@ -28,6 +28,6 @@ export class TopToolbarComponent implements OnInit, DoCheck {
   logout() {
     this.authenticationService.logout();
     this.authorize = (this.authenticationService.saved_token() != null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/singin']);
   }
 }

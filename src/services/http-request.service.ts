@@ -19,7 +19,7 @@ export class HttpService {
       .set('Content-Type', 'application/json')
       .set('Authorization',  JSON.parse(localStorage.getItem('auth_data'))['token'] );
     const options = {headers: headers};
-    return this.http.post(environment.host + '/api' + path, JSON.stringify(params), options).toPromise().then((param: any) => {
+    return this.http.post('/api' + path, JSON.stringify(params), options).toPromise().then((param: any) => {
       return Promise.resolve(this.extractData(param));
     }, param => {
       return Promise.reject(this.handleError(param));
