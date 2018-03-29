@@ -172,21 +172,29 @@ export class ResultSetsComponent implements OnInit {
 
   add_results(form: NgForm, modal) {
     const description = form.value['result_description'];
-    const status = form.value['result_status'];
+    let status = form.value['result_status'];
+    if (status == null) {
+      status = this.not_blocked_status[0]
+    }
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
       this.update_statistic();
       this.unselect_all();
-      if (this.check_selected_is_hidden()) {
-        this.navigate_to_run_show();
-      } else if (this.router.url.indexOf('/result_set/') >= 0) {
-        this.resultservice.update_results(res[0]);
+      if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
+        if (this.add_result_to_selected_result_set(res[0]['result_sets'])) {
+          this.resultservice.update_results(res[0]);
+        }
       } else if (this.router.url.indexOf('/case_history/') >= 0) {
         // Fixme: Add history updating
       }
     });
     this.reset_form(form);
     modal.close();
+  }
+
+  add_result_to_selected_result_set(results) {
+    const filtered_list = results.filter(result => result['id'] === +/result_set\/(\d+)/.exec(this.router.url)[1]);
+    return filtered_list.length === 1;
   }
 
   add_result_for_result_set(message, status) {
@@ -246,10 +254,6 @@ export class ResultSetsComponent implements OnInit {
         this.filter.push(status.id);
       }
     });
-    if (this.check_selected_is_hidden()) {
-      this.ResultComponent = null;
-      this.navigate_to_run_show();
-    }
     this.unfilter_if_list_empty();
   }
 
@@ -305,14 +309,6 @@ export class ResultSetsComponent implements OnInit {
     } else {
       const case_id = this.get_case_id_by_result_set(this.object);
       this.router.navigate([path, case_id]);
-    }
-  }
-
-  check_selected_is_hidden() {
-    if (this.object) {
-      return !(this.filter.length === 0 || this.filter.indexOf(this.object.status) !== -1);
-    } else {
-      return false;
     }
   }
 
