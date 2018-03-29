@@ -27,7 +27,7 @@ export class ResultsComponent implements OnInit {
   }
 
   add_result(data) {
-    this.results.unshift(data);
+    this.results.unshift(new Result(data));
   }
 
   init_results() {
