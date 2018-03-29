@@ -20,8 +20,7 @@
       "prefix": "app",
       "styles": [
         "../node_modules/font-awesome/css/font-awesome.css",
-        "styles.css",
-        "../src/assets/ng2-select.css"
+        "styles.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",

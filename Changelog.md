@@ -8,6 +8,7 @@
     * FIX Result message save after result add
     * Fix uncorrect plan list if product has updating fast
     * Fix opening run after create
+    * Fix build errors
 ## [0.3.8] - 2018-02-20
 ### Added
     * Change statistic style
