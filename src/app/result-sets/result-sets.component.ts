@@ -172,7 +172,10 @@ export class ResultSetsComponent implements OnInit {
 
   add_results(form: NgForm, modal) {
     const description = form.value['result_description'];
-    const status = form.value['result_status'];
+    let status = form.value['result_status'];
+    if (status == null) {
+      status = this.not_blocked_status[0]
+    }
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
       this.update_statistic();
