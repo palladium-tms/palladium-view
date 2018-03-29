@@ -1,4 +1,7 @@
 # Changelog
+## [0.4.0] - 2018-03-29
+### Added
+    * Opportunity to set developer api server for easy debug
 ## [0.4.0] - 2018-03-28
 ### Changed
     * Change login, registration, no_users methods like public

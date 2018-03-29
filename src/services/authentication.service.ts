@@ -20,7 +20,7 @@ export class AuthenticationService {
     const params = new HttpParams()
       .set(`user_data[email]`, username)
       .set(`user_data[password]`, password);
-      return this.http.post('/public/login', params, options).toPromise().then((response: JSON) => {
+      return this.http.post(environment.host + '/public/login', params, options).toPromise().then((response: JSON) => {
       localStorage.setItem('auth_data', JSON.stringify({ username: username, token: response['token'] }));
       return Promise.resolve(true);
     }, response => {
@@ -36,7 +36,7 @@ export class AuthenticationService {
       .set(`user_data[password]`, password)
       .set(`user_data[invite]`, invite);
     const options = { headers: headers };
-    return this.http.post('/public/registration', params, options).toPromise()
+    return this.http.post(environment.host + '/public/registration', params, options).toPromise()
       .then(result => {
         return Promise.resolve(result);
       }, (error: any) => {
@@ -47,7 +47,7 @@ export class AuthenticationService {
   get_no_user_status() {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
     const options = { headers: headers };
-    return this.http.post('/public/no_users', {}, options).toPromise().then((response: JSON) => {
+    return this.http.post(environment.host + '/public/no_users', {}, options).toPromise().then((response: JSON) => {
       return Promise.resolve(response);
     }, response => {
       console.log(response);

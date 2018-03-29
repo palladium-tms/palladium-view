@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  host: require('../../config.json').host
+  host: 'http://0.0.0.0:9292'
 };
