@@ -1,11 +1,13 @@
 # Changelog
-## [0.4.0] - 2018-03-29
+## [0.4.1] - 2018-03-29
 ### Added
     * Opportunity to set developer api server for easy debug
 ### Fixed
     * Fixed hidden result in result list after it add
     * Fixed adding result to results list after adding it to any of result sets
     * Fix error after add result to other runs. It's temporary fix, will be changed in future
+### Changed
+    * Build setting changed. Now all production build will be with --prob flag (aot and etc)
 ## [0.4.0] - 2018-03-28
 ### Changed
     * Change login, registration, no_users methods like public
