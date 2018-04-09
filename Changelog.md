@@ -1,6 +1,7 @@
 # Changelog
 ## [0.4.1] - 2018-03-29
 ### Added
+    * New login page with reactive form style and material design
     * Opportunity to set developer api server for easy debug
 ### Fixed
     * Fixed hidden result in result list after it add

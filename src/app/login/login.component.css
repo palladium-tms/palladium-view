@@ -4,66 +4,32 @@
   width: 100%;
   min-height: 27em;
 }
-
+.form-field {
+padding-bottom: 1em;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+}
+.container > * {
+  width: 100%;
+}
 .login-box{
-  margin-top: 2em;
-  padding: 1em 3em 3em 3em;
+  margin-top: 3em;
+  padding: 1em;
   width: 32em;
-  height: 22em;
+  height: 19em;
   border: 0.3em solid #E77676;
   display: flex;
   flex-direction: column;
   border-radius: 4px;
 }
-.sing-in {
+.sing-in, .login-error {
   text-align: center;
-  margin-bottom: 2em;
 }
-
-input.login-form {
-  width: 100%;
-  box-sizing: border-box;
-  height: 4em;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-input.login-form:focus {
-  outline: none !important;
-  border:1px solid rgba(29, 115, 115, 0.49);
-  box-shadow: 0 0 10px #5DA4A4;
-}
-
-.login-button{
-  background-color: #E77676;
-  border-color: #E77676;
-  width: 100%;
-  height: 4em;
-  box-sizing: border-box;
-}
-
-.login-button:hover {
-  background-color: #B83D3D;
-}
-
-.input-wrapper{
-  padding-bottom: 2em;
-}
-
-.validation-error{
-   padding-bottom: 0;
-}
-.error-description{
-  display: block;
-  height: 1.5em;
+.login-error {
   margin-top: 0.5em;
-  color: #737373;
 }
-.login-failed {
-  text-align: center;
-  display: block;
-  height: 1.5em;
-  margin-top: 0.5em;
-  color: #B83D3D;
+form {
+  display: flex;
 }

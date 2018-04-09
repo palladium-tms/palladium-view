@@ -1,3 +1,4 @@
+import '../polyfills';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
@@ -11,7 +12,7 @@ import {LocalSettingsService} from '../services/local-settings.service';
 import {StatisticService} from '../services/statistic.service';
 import {PalladiumApiService} from '../services/palladium-api.service';
 import {HttpService} from '../services/http-request.service';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
 import {PlansComponent} from './plans/plans.component';
 import {RunsComponent} from './runs/runs.component';
@@ -42,6 +43,40 @@ import { InviteComponent } from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 import { ResultValueComponent } from './page-component/result-value/result-value.component';
 import { DndListModule } from 'ngx-drag-and-drop-lists';
+import {CdkTableModule} from '@angular/cdk/table';
+import {
+  MatAutocompleteModule,
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
+  MatDatepickerModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatExpansionModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatNativeDateModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
+  MatRippleModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule,
+} from '@angular/material';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -69,8 +104,40 @@ const appRoutes: Routes = [
   {path: 'result/:id', component: DetailResultComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: '/404'},
 ];
-
-@NgModule({
+@NgModule({  exports: [
+    CdkTableModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+  ],
   declarations: [
     MainComponent,
     TopToolbarComponent,
@@ -103,7 +170,39 @@ const appRoutes: Routes = [
     ResultValueComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
-    Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule],
+    Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
+    CdkTableModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent]
 })

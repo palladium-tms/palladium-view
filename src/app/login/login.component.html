@@ -3,21 +3,32 @@
     <h2>SING IN</h2>
   </div>
 
-  <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
-    <div class="input-wrapper" [ngClass]="{ 'validation-error': f.submitted && !username.valid }">
-      <input placeholder="Email Address" type="text" class="login-form" name="username" [(ngModel)]="model.username"
-             #username="ngModel"
-             required/>
-      <div *ngIf="f.submitted && !username.valid" class="error-description">Username is required</div>
+  <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" [formGroup]="login_form">
+
+    <div class="container">
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Email" formControlName="email"
+               [errorStateMatcher]="matcher" name="username"
+               [(ngModel)]="model.username">
+        <mat-error *ngIf="login_form.controls.email.hasError('pattern')">
+          Please enter a valid email address
+        </mat-error>
+        <mat-error *ngIf="login_form.controls.email.hasError('required')">
+          Email is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'" name="password"
+               [(ngModel)]="model.password" formControlName="password">
+        <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+        <mat-error *ngIf="login_form.controls.password.hasError('required')">
+          Password is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <button mat-raised-button [disabled]="loading || !f.valid">Login</button>
+      <mat-error class="login-error" *ngIf="error">{{error}}</mat-error>
     </div>
-    <div class="input-wrapper" [ngClass]="{ 'validation-error': f.submitted && !password.valid }">
-      <input placeholder="Password" type="password" class="login-form" name="password" [(ngModel)]="model.password"
-             #password="ngModel"
-             required/>
-      <div *ngIf="f.submitted && !password.valid" class="error-description">Password is required</div>
-    </div>
-    <button class="btn btn-primary login-button" [disabled]="loading || !f.valid "><span [ngClass]="{'hidden': loading}">Login</span>
-      <span [ngClass]="{'hidden': !loading}">Loading...</span></button>
-    <div *ngIf="error" class="login-failed">{{error}}</div>
   </form>
 </div>
+
