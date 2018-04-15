@@ -4,6 +4,7 @@
     * Add material design to project
     * Changed login page by material design
     * Change registration page by material design
+    * Add option for inaccurately deleting, but option not implemented to interface
 ### Fixed
     * Raise condition error: elements will not merge after fast page data loading
     * Opening results without message

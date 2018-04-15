@@ -3,3 +3,11 @@
   overflow: hidden;
   flex: 9;
 }
+.inaccurately_trash {
+  color: #8a4343;
+  cursor: pointer;
+}
+.inaccurately_trash:hover {
+  color: #cc5151;
+}
+

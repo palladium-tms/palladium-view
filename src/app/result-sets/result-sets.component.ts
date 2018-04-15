@@ -8,6 +8,7 @@ import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 import {Case} from '../models/case';
+import {LocalSettingsService} from '../../services/local-settings.service';
 
 @Component({
   selector: 'app-result-sets',
@@ -32,13 +33,14 @@ export class ResultSetsComponent implements OnInit {
   statistic: Statistic;
   filter: any[] = [];
   select_all_flag = false;
+  settings = new LocalSettingsService;
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
+    this.activatedRoute.params.subscribe(() => {
       this.object = null;
       this.get_result_sets_and_cases();
     });
@@ -127,6 +129,28 @@ export class ResultSetsComponent implements OnInit {
           this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
         });
       }
+    }
+  }
+
+  inaccurately_delete(object) {
+    this.object = object;
+    if (object.path === 'result_set') {
+      this.ApiService.delete_result_set(object.id).then(deleted_id => {
+        this.result_sets = this.result_sets.filter(obj => (obj.id !== +deleted_id));
+        this.merge_result_sets_and_cases();
+        this.update_statistic();
+        this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
+        this.navigate_to_run_show();
+      });
+    } else {
+      this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
+        this.cases = this.cases.filter(obj => (obj.id !== this_case.id));
+        this.merge_result_sets_and_cases();
+        this.update_statistic();
+        this.Modal.close();
+        this.object = null;
+        this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+      });
     }
   }
 
@@ -266,7 +290,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   navigate_to_run_show() {
-    const result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
+    // const result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
 
     this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
     this.object = null;
@@ -326,7 +350,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_modal() {
-    if (this.loading) {return};
+    if (this.loading) {return}
     this.form.controls['name'].setValue(this.object.name);
     this.Modal.open();
   };
