@@ -196,9 +196,9 @@ export class PalladiumApiService {
   }
 
   get_history(case_id): Promise<any> {
-    this.histories = [];
     return this.httpService.postData('/case_history', {case_data: {id: case_id}}).then((resp: any) => {
       resp['history_data'].forEach(data => {
+        this.histories = [];
         if (data['statistic']) {
           data['statistic'] = new Statistic(data['statistic']);
         }
@@ -214,10 +214,10 @@ export class PalladiumApiService {
 
   //#region Run
   get_runs(plan_id): Promise<any> {
-    this.runs = [];
     return this.httpService.postData('/runs', {run_data: {plan_id: plan_id}})
       .then(
         (resp: any) => {
+          this.runs = [];
           Object(resp['runs']).forEach(run => {
             this.runs.push(new Run(run));
           });
@@ -252,10 +252,10 @@ export class PalladiumApiService {
 
   //#region Products
   get_products(): Promise<any> {
-    this.products = [];
     return this.httpService.postData('/products', '')
       .then(
         (resp: any) => {
+          this.products = [];
           Object(resp['products']).forEach(product => {
             this.products.push(new Product(product));
           });
@@ -302,12 +302,12 @@ export class PalladiumApiService {
 
   //#region Plans
   get_plans(product_id): Promise<any> {
-    this.plans = [];
     this.plans_data[product_id] = [];
     const params = {plan_data: {product_id: product_id}};
     return this.httpService.postData('/plans', params)
       .then(
         (resp: any) => {
+          this.plans = [];
           const objects =  Object(resp['plans']);
           objects.forEach(plan => {
             this.plans_data[product_id].push(new Plan(plan));
@@ -342,10 +342,10 @@ export class PalladiumApiService {
 
   //#region Result Set
   get_result_sets(run_id): Promise<any> {
-    this.result_sets = [];
     return this.httpService.postData('/result_sets', {result_set_data: {run_id: run_id}})
       .then(
         resp => {
+          this.result_sets = [];
           Object(resp['result_sets']).forEach(result_set => {
             this.result_sets.push(new ResultSet(result_set));
           });
@@ -370,10 +370,10 @@ export class PalladiumApiService {
 
   //#region Result
   get_results(result_set_id): Promise<any> {
-    this.results = [];
     return this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}})
       .then(
         (resp: any) => {
+          this.results = [];
           Object(resp['results']).forEach(result => {
             this.results.push(new Result(result));
           });

@@ -4,6 +4,8 @@
     * Add material design to project
     * Changed login page by material design
     * Change registration page by material design
+### Fixed
+    * Raise condition error: elements will not merge after fast page data loading
 ## [0.4.1] - 2018-03-29
 ### Added
     * New login page with reactive form style and material design
