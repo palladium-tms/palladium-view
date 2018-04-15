@@ -2,33 +2,41 @@
   <div class="sing-in">
     <h2>SING UP</h2>
   </div>
+  <form name="form" (ngSubmit)="f.form.valid && registration()" #f="ngForm" [formGroup]="registration_form">
+    <div class="container">
 
-  <form name="form" (ngSubmit)="registration(f)" #f="ngForm">
+      <mat-form-field class="form-field">
+        <input matInput placeholder="Email" formControlName="email"  name="username">
+        <mat-error *ngIf="email.hasError('pattern')">
+          Please enter a valid email address
+        </mat-error>
+        <mat-error *ngIf="email.hasError('required')">
+          Email is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <div formGroupName="password" class="passwords-group">
+        <mat-form-field class="form-field">
+          <input matInput placeholder="Password" formControlName="pwd" [type]="hide_pwd ? 'password' : 'text'">
+          <mat-icon matSuffix (click)="hide_pwd = !hide_pwd">{{hide_pwd ? 'visibility' : 'visibility_off'}}</mat-icon>
+          <mat-error *ngIf="registration_form.controls.password.controls.pwd.hasError('minlength')">
+            Password must <strong>be > 4 simbols</strong>
+          </mat-error>
+        </mat-form-field>
 
-    <div class="input-wrapper" [ngClass]="{ 'validation-error': username.invalid && !username.pristine }">
-      <input placeholder="Email Address" type="text" class="login-form" name="username" [(ngModel)]="model.username"
-             #username="ngModel"
-             required email/>
-      <div *ngIf="username.invalid && !username.pristine && username.value !== ''" class="error-description">Email is required and format should be <i>john@doe.com</i>.</div>
-      <div *ngIf="username.value == '' && !username.pristine" class="error-description">Name is required</div>
+
+        <mat-form-field class="form-field">
+          <input matInput placeholder="Confirm Password" formControlName="confirmpwd"
+                 [type]="hide_confirmpwd ? 'password' : 'text'">
+          <mat-icon matSuffix (click)="hide_confirmpwd = !hide_confirmpwd">{{hide_confirmpwd ? 'visibility' :
+            'visibility_off'}}
+          </mat-icon>
+          <mat-error *ngIf="registration_form.controls.password.controls.confirmpwd.hasError('MatchPassword')">
+            Passwords is <strong>not match</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button [disabled]="loading || !f.form.valid">Login</button>
+      <mat-error class="registration-error" *ngIf="error">{{error}}</mat-error>
     </div>
-
-    <div class="input-wrapper">
-      <input placeholder="Password" type="password" class="login-form" name="password" [(ngModel)]="model.password"
-             #password="ngModel"
-             validateEqual="confirmPassword" required/>
-    </div>
-
-    <div class="input-wrapper" [ngClass]="{ 'validation-error': confirmPassword.errors && password.errors }">
-      <input placeholder="Retype password" type="password" class="login-form" name="confirmPassword" [(ngModel)]="model.confirmPassword"
-             #confirmPassword="ngModel" validateEqual="password" required/>
-      <div  *ngIf="confirmPassword.errors && password.errors" class="error-description">
-        <span *ngIf="!confirmPassword.errors.validateEqual && !password.errors.validateEqual && !confirmPassword.pristine">Passwords do not match</span></div>
-    </div>
-
-    <button [disabled]="f.invalid" type="submit" class="btn btn-primary registration-button"><span [ngClass]="{'hidden': loading}">Sing up</span>
-      <span [ngClass]="{'hidden': !loading}">Loading...</span>
-    </button>
-    <div *ngIf="error" class="login-failed">{{error}}</div>
   </form>
 </div>

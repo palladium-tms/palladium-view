@@ -1,4 +1,9 @@
 # Changelog
+## [0.4.2] - 2018-04-15
+### Added
+    * Add material design to project
+    * Changed login page by material design
+    * Change registration page by material design
 ## [0.4.1] - 2018-03-29
 ### Added
     * New login page with reactive form style and material design

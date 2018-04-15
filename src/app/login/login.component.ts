@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FormControl, Validators, FormGroup} from '@angular/forms';
-import {LoginErrorStateMatcher} from './login_errors/login_error_state_matcher';
 
 @Component({
   moduleId: module.id,
@@ -11,14 +10,12 @@ import {LoginErrorStateMatcher} from './login_errors/login_error_state_matcher';
 })
 
 export class LoginComponent implements OnInit {
+  email = new FormControl('', [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$'), Validators.required]);
+  password = new FormControl('', [Validators.required, Validators.minLength(4)]);
   login_form = new FormGroup({
-    email: new FormControl('', [
-      Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$'),
-      Validators.required
-    ]),
-    password: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    email: this.email,
+    password: this.password,
   });
-  matcher = new LoginErrorStateMatcher();
   model: any = {};
   loading = false;
   load_form = false;
@@ -26,7 +23,7 @@ export class LoginComponent implements OnInit {
   error = '';
 
   constructor(private router: Router,
-              private authenticationService: AuthenticationService,) {
+              private authenticationService: AuthenticationService) {
   }
 
   ngOnInit() {
