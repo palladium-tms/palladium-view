@@ -8,7 +8,7 @@ export class Result {
   constructor(data) {
     this.id = data.id;
     this.describer = [{'title': 'message', 'value': data.message}];
-    if (this.isJson(data.message)) {
+    if (this.isJson(data.message) && JSON.parse(data.message)) {
       const message = JSON.parse(data.message);
       if (message.subdescriber && message.describer) {
         if (message.subdescriber instanceof Array) {
