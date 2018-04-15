@@ -30,7 +30,7 @@ pre {
   /* Since CSS 2.1 */
   white-space: -moz-pre-wrap;
   /* Mozilla, since 1999 */
-  white-space: -pre-wrap;
+  white-space: pre-wrap;
   /* Opera 4-6 */
   white-space: -o-pre-wrap;
   /* Opera 7 */
@@ -151,6 +151,7 @@ input[type=checkbox] {
 }
 
 .bipolar-item {
+  border-right: 7px solid rgba(255, 255, 255, 0);
   display: flex;
   overflow: hidden;
   flex-direction: row;
@@ -238,8 +239,6 @@ input[type=checkbox] {
   -webkit-touch-callout: none;
   /* iOS Safari */
   -webkit-user-select: none;
-  /* Safari */
-  -khtml-user-select: none;
   /* Konqueror HTML */
   -moz-user-select: none;
   /* Firefox */
