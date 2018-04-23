@@ -197,8 +197,8 @@ export class PalladiumApiService {
 
   get_history(case_id): Promise<any> {
     return this.httpService.postData('/case_history', {case_data: {id: case_id}}).then((resp: any) => {
+      this.histories = [];
       resp['history_data'].forEach(data => {
-        this.histories = [];
         if (data['statistic']) {
           data['statistic'] = new Statistic(data['statistic']);
         }

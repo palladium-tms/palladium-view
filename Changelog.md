@@ -6,6 +6,7 @@
     * Change registration page by material design
     * Add option for inaccurately deleting, but option not implemented to interface
 ### Fixed
+    * Fix bug: only one history result is displayed
     * Raise condition error: elements will not merge after fast page data loading
     * Opening results without message
 ## [0.4.1] - 2018-03-29
