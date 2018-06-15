@@ -64,7 +64,7 @@ export class PlansComponent implements OnInit {
     Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id), this.get_statuses()]).then(res => {
       this.plans = res[0][this.product_id];
       this.plans.forEach(plan => {
-        this.update_statistic(plan, this.count_of_cases(res[1]));
+        this.update_statistic(plan, this.count_of_cases(res[1][this.product_id]));
       });
       this.loading = false;
     });

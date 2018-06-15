@@ -72,7 +72,7 @@ export class RunsComponent implements OnInit {
   get_suites() {
     const product_id = this.router.url.match(/product\/(\d+)/i)[1];
     return this.ApiService.get_suites(product_id).then(suites => {
-      return suites;
+      return suites[product_id];
     });
   }
 

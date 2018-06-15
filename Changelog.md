@@ -1,4 +1,7 @@
 # Changelog
+## [0.4.3] - 2018-06-15
+### Fixed
+    *Fixed race condition while plans load
 ## [0.4.2] - 2018-04-15
 ### Added
     * Add material design to project

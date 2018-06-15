@@ -19,7 +19,9 @@ export class PalladiumApiService {
   suites: Suite[] = [];
   products: Product[] = [];
   plans: Plan[] = [];
-  plans_data = {};
+  product_id = 0;
+  response_plan_data = {};
+  response_suite_data = {};
   runs: Run[] = [];
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
@@ -98,11 +100,11 @@ export class PalladiumApiService {
   //#region Suite
   get_suites(product_id): Promise<any> {
     return this.httpService.postData('/suites', {suite_data: {product_id: product_id}}).then((resp: any) => {
-      this.suites = [];
+      this.response_suite_data[product_id] = [];
       Object(resp['suites']).forEach(suite => {
-        this.suites.push(new Suite(suite));
+        this.response_suite_data[product_id].push(new Suite(suite));
       });
-      return this.suites;
+      return this.response_suite_data;
     }, (errors: any) => {
     });
   }
@@ -302,17 +304,16 @@ export class PalladiumApiService {
 
   //#region Plans
   get_plans(product_id): Promise<any> {
-    this.plans_data[product_id] = [];
+    this.product_id = product_id;
     const params = {plan_data: {product_id: product_id}};
     return this.httpService.postData('/plans', params)
       .then(
         (resp: any) => {
-          this.plans = [];
-          const objects =  Object(resp['plans']);
-          objects.forEach(plan => {
-            this.plans_data[product_id].push(new Plan(plan));
+          this.response_plan_data [product_id] = [];
+          Object(resp['plans']).forEach(plan => {
+            this.response_plan_data[product_id].push(new Plan(plan));
           });
-          return  this.plans_data;
+            return this.response_plan_data ;
         }, (errors: any) => {
           console.log(errors);
         });
