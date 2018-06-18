@@ -9,8 +9,7 @@ export class ResultValueComponent implements OnInit {
 
   @Input() value;
   @Input() type;
+  @Input() note;
   constructor() { }
-  ngOnInit() {
-  }
-
+  ngOnInit() { }
 }

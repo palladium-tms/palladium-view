@@ -1,3 +1,7 @@
 <span [ngClass]="{'hidden': type}">{{value}}</span>
-<img class="result-image" *ngIf="type" src = {{value}}>
+
+<figure *ngIf="type">
+  <figcaption [ngClass]="{'hidden': note}">{{note}}</figcaption>
+  <p><img class="result-image" src = {{value}}></p>
+</figure>
 
