@@ -120,14 +120,15 @@ export class ResultSetsComponent implements OnInit {
           }
         });
       } else {
+        this.object.deleting = true;
         this.ApiService.delete_case(this.object.id).then((this_case: Case) => {
           this.cases = this.cases.filter(obj => (obj.id !== this_case.id));
           this.merge_result_sets_and_cases();
           this.update_statistic();
-          this.Modal.close();
           this.object = null;
           this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
         });
+        this.Modal.close();
       }
     }
   }

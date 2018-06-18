@@ -1,5 +1,7 @@
 # Changelog
 ## [0.4.3] - 2018-06-15
+### Added
+    * Loading while case is delete
 ### Fixed
     *Fixed race condition while plans load
 ## [0.4.2] - 2018-04-15

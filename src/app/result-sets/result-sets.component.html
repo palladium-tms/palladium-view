@@ -38,7 +38,12 @@
         <div class="item-name">
           <a (click)="open_results(object)" title={{object.name}} class="pointer">{{object.name}}</a>
         </div>
-        <div *ngIf="this.statuses" class="status-name"><b>{{get_status_by_id(object['status']).name}}</b></div>
+        <div *ngIf="this.statuses && !object.deleting" class="status-name">
+          <b>{{get_status_by_id(object['status']).name}}</b>
+        </div>
+        <div *ngIf="object.deleting">
+          <b style="color: #ca0a0a">Deleting...</b>
+        </div>
         <div *ngIf="settings.inaccurately_deleting"><a class="inaccurately_trash" (click)="inaccurately_delete(object)"><i class="fa fa-trash" aria-hidden="true"></i></a></div>
       </div>
     </div>
