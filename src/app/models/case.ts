@@ -8,6 +8,7 @@ export class Case {
   path = 'case';
   selected = false;
   active = false;
+  deleting = false;
   constructor (current_case) {
     if (current_case.constructor.name === 'ResultSet') {
       current_case = this.create_case_by_result_set(current_case);
