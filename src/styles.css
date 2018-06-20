@@ -1,6 +1,7 @@
 @import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
 
 html, body {
+  color: #333;
   margin: 0;
   height: 100%;
   display: flex;
@@ -38,12 +39,20 @@ pre {
   /* Internet Explorer 5.5+ */
 }
 
+
+figure {
+  margin: 0;
+}
 input[type=checkbox] {
   transform: scale(1.2);
   margin: 2px 1px 0;
 }
 
 /* === flex update ====*/
+.hidden {
+  display: none;
+}
+
 .activated {
   background-color: #b2c4c5;
 }
