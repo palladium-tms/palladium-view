@@ -27,12 +27,11 @@ export class HttpService {
   }
 
   private extractData(res: any) {
-    const body = res;
-    return body || {};
+    return res || {};
   }
 
   private handleError(error:  any) {
-    // In a real world app, you might use a remote logging infrastructure
+    // TODO: add remote logging
     let errMsg: string;
        console.log(error);
       const body = error.json() || '';
