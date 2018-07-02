@@ -4,7 +4,9 @@
     * Loading while case is delete
     * Add "note" attr for image: annotation(:string) of image
 ### Fixed
-    *Fixed race condition while plans load
+    * Fixed race condition while plans load
+### Changed
+    * Updated package.json
 ## [0.4.2] - 2018-04-15
 ### Added
     * Add material design to project
