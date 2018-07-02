@@ -38,6 +38,7 @@
         <div class="item-name">
           <a (click)="open_results(object)" title={{object.name}} class="pointer">{{object.name}}</a>
         </div>
+        <app-copy-button [name] = object.name></app-copy-button>
         <div *ngIf="this.statuses && !object.deleting" class="status-name">
           <b>{{get_status_by_id(object['status']).name}}</b>
         </div>

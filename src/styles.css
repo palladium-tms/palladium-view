@@ -125,6 +125,20 @@ input[type=checkbox] {
   max-width: 100%;
 }
 
+.copy-button{
+  display: none;
+}
+.copy-button:active {
+ color: #5f9ea0;
+}
+.item:hover .copy-button{
+  color: #2e4b4c;
+  cursor: pointer;
+  display: inline;
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+}
+
 .hoverer:hover {
   background-color: #e6e6e6;
 }

@@ -77,6 +77,7 @@ import {
   MatToolbarModule,
   MatTooltipModule,
 } from '@angular/material';
+import { CopyButtonComponent } from './page-component/copy-button/copy-button.component';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -168,6 +169,7 @@ const appRoutes: Routes = [
     InviteComponent,
     SortByNamePipe,
     ResultValueComponent,
+    CopyButtonComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
