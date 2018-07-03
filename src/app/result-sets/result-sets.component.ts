@@ -414,4 +414,12 @@ export class ResultSetsComponent implements OnInit {
   reset_form(form) {
     form.reset();
   }
+
+  clicked(event) {
+    if (event.target.classList.contains('result_set_link')) {
+      const object = this.result_sets_and_cases.filter(obj => obj.id == event.target.dataset.id &&
+        obj.path == event.target.dataset.path)[0];
+      this.open_results(object)
+    }
+  }
 }

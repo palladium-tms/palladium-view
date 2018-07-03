@@ -28,7 +28,7 @@
     </div>
   </div>
 
-  <div class="item-list">
+  <div class="item-list" (click)="clicked($event)">
     <div class="item hoverer bipolar-item"
          *ngFor="let object of result_sets_and_cases | statusFilter:filter | sortByCreatedAt:'asc'" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">
@@ -36,7 +36,7 @@
           <input type="checkbox" [(ngModel)]="object.selected">
         </div>
         <div class="item-name">
-          <a (click)="open_results(object)" title={{object.name}} class="pointer">{{object.name}}</a>
+          <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}" attr.data-path="{{object.path}}">{{object.name}}</a>
         </div>
         <app-copy-button [name] = object.name></app-copy-button>
         <div *ngIf="this.statuses && !object.deleting" class="status-name">

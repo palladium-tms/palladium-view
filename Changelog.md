@@ -4,6 +4,7 @@
     * Loading while case is delete
     * Add "note" attr for image: annotation(:string) of image
     * Add copy button to all result_sets
+    * Improved  performance of result_set list
 ### Fixed
     * Fixed race condition while plans load
 ### Changed
