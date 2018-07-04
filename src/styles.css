@@ -352,7 +352,7 @@ a.link:hover {
   max-width: 2em;
 }
 
-.add_result_button {
+.add_result_button, .search_button {
   max-width: 4em;
 }
 

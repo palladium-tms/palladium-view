@@ -422,4 +422,12 @@ export class ResultSetsComponent implements OnInit {
       this.open_results(object)
     }
   }
+
+  open_search() {
+    console.log('search')
+  }
+
+  search(event){
+    console.log(event)
+  }
 }
