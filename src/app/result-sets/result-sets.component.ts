@@ -21,12 +21,14 @@ export class ResultSetsComponent implements OnInit {
   @ViewChild('Modal') Modal;
   @ViewChild('AddResultModal') AddResultModal;
   @ViewChild('form') form;
+  @ViewChild('search_input_element') search_input_element;
   result_sets = [];
+  search_input = false;
   loading = false;
   cases;
   object;
   ResultComponent;
-  statuses;
+  statuses = [];
   not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
@@ -34,7 +36,7 @@ export class ResultSetsComponent implements OnInit {
   filter: any[] = [];
   select_all_flag = false;
   settings = new LocalSettingsService;
-
+  search_data = '';
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
@@ -44,6 +46,38 @@ export class ResultSetsComponent implements OnInit {
       this.object = null;
       this.get_result_sets_and_cases();
     });
+  }
+
+  get_used_statuses_id() {
+    return this.statuses.filter(x => { return x.active }).map(x => { return x.id });
+  }
+
+  filter_by_status() {
+    const statuses_id = this.get_used_statuses_id();
+    if (statuses_id.length == 0) {
+      return this.result_sets_and_cases
+    }
+    return this.result_sets_and_cases.filter(x => {
+      return statuses_id.includes(x.status)
+    });
+  }
+
+  filter_by_search(data) {
+    if (this.search_data == '') {
+      return data;
+    }
+    return data.filter(item =>  {
+      return item.name.toLowerCase().includes(this.search_data);
+    });
+  }
+
+  write_to_search($event) {
+    this.search_data = $event.target.value.toLowerCase();
+  }
+
+  show_all() {
+    const filtered_by_status = this.filter_by_status();
+    return this.filter_by_search(filtered_by_status);
   }
 
   get_status_by_id(id) {
@@ -81,7 +115,6 @@ export class ResultSetsComponent implements OnInit {
 
   get_result_sets_and_cases() {
     this.result_sets = [];
-    this.statuses = null;
     this.statistic = new Statistic(null);
     this.result_sets_and_cases = [];
     this.loading = true;
@@ -270,18 +303,6 @@ export class ResultSetsComponent implements OnInit {
     this.open_results(this.result_sets_and_cases.filter(obj => obj.name === this.object.name)[0]);
   }
 
-  get_filters(e) {
-    this.filter = [];
-    this.unselect_all();
-    this.statuses = e;
-    this.statuses.forEach(status => {
-      if (status.active) {
-        this.filter.push(status.id);
-      }
-    });
-    this.unfilter_if_list_empty();
-  }
-
   set_filters() {
     this.statuses.forEach(status => {
       if (this.filter.includes(status.id)) {
@@ -298,12 +319,6 @@ export class ResultSetsComponent implements OnInit {
     this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
   }
 
-  unfilter_if_list_empty() {
-    if (!this.statistic.has_statuses(this.filter)) {
-      this.filter = [];
-    }
-  }
-
   unselect_all() {
     if (this.loading) {return}
     this.result_sets_and_cases.forEach(obj => {
@@ -314,15 +329,9 @@ export class ResultSetsComponent implements OnInit {
 
   select_all() { // FIXME: need optimize
     if (this.loading) {return}
-    if (this.filter.length === 0) {
-      this.result_sets_and_cases.forEach(obj => {
+      this.show_all().forEach(obj => {
         obj.selected = true;
       });
-    } else {
-      this.result_sets_and_cases.filter(item => this.filter.indexOf(item.status) > -1).forEach(obj => {
-        obj.selected = true;
-      });
-    }
     this.select_all_flag = true;
   }
 
@@ -421,5 +430,15 @@ export class ResultSetsComponent implements OnInit {
         obj.path == event.target.dataset.path)[0];
       this.open_results(object)
     }
+  }
+
+  search_open() {
+    this.search_input = !this.search_input;
+      if (this.search_input) {
+        // FIXME
+        setTimeout(() => {
+          this.search_input_element.nativeElement.focus();
+        }, 100);
+      }
   }
 }

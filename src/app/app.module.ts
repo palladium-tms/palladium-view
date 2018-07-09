@@ -78,6 +78,8 @@ import {
   MatTooltipModule,
 } from '@angular/material';
 import { CopyButtonComponent } from './page-component/copy-button/copy-button.component';
+import { SearchPipe } from './pipes/search/search.pipe';
+import { SearchBarComponent } from './page-component/search-bar/search-bar.component';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -170,6 +172,8 @@ const appRoutes: Routes = [
     SortByNamePipe,
     ResultValueComponent,
     CopyButtonComponent,
+    SearchPipe,
+    SearchBarComponent,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
