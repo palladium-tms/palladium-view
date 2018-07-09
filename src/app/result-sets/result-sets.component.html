@@ -14,7 +14,7 @@
         <div class="button add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
         </div>
-        <input class="search-input" type="text" placeholder="Search" (keyup)="write_to_search($event)" *ngIf="search_input">
+        <input class="search-input" type="text" placeholder="Search" (keyup)="write_to_search($event)" *ngIf="search_input" #search_input_element>
         <div class="button" (click)="update_click()"  *ngIf="!search_input" [ngClass]="{'disabled': this.loading}">
           <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
         </div>

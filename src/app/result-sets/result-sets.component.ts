@@ -21,6 +21,7 @@ export class ResultSetsComponent implements OnInit {
   @ViewChild('Modal') Modal;
   @ViewChild('AddResultModal') AddResultModal;
   @ViewChild('form') form;
+  @ViewChild('search_input_element') search_input_element;
   result_sets = [];
   search_input = false;
   loading = false;
@@ -433,5 +434,11 @@ export class ResultSetsComponent implements OnInit {
 
   search_open() {
     this.search_input = !this.search_input;
+      if (this.search_input) {
+        // FIXME
+        setTimeout(() => {
+          this.search_input_element.nativeElement.focus();
+        }, 100);
+      }
   }
 }
