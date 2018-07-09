@@ -32,11 +32,14 @@ export class ResultSetsComponent implements OnInit {
   not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
+  show_all_elemets = [];
   statistic: Statistic;
   filter: any[] = [];
   select_all_flag = false;
   settings = new LocalSettingsService;
   search_data = '';
+  scrollPos = 0;
+  public Math: Math = Math;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
   }
@@ -73,11 +76,12 @@ export class ResultSetsComponent implements OnInit {
 
   write_to_search($event) {
     this.search_data = $event.target.value.toLowerCase();
+    this.show_all()
   }
 
   show_all() {
     const filtered_by_status = this.filter_by_status();
-    return this.filter_by_search(filtered_by_status);
+    this.show_all_elemets = this.filter_by_search(filtered_by_status);
   }
 
   get_status_by_id(id) {
@@ -134,6 +138,7 @@ export class ResultSetsComponent implements OnInit {
       if (this.statuses) {
         this.set_filters();
       }
+      this.show_all();
     });
   }
 
@@ -329,7 +334,7 @@ export class ResultSetsComponent implements OnInit {
 
   select_all() { // FIXME: need optimize
     if (this.loading) {return}
-      this.show_all().forEach(obj => {
+      this.show_all_elemets.forEach(obj => {
         obj.selected = true;
       });
     this.select_all_flag = true;
@@ -441,5 +446,9 @@ export class ResultSetsComponent implements OnInit {
           this.search_input_element.nativeElement.focus();
         }, 100);
       }
+  }
+
+  colScroll(event) {
+    this.scrollPos = Math.floor(event.target.scrollTop / 33);
   }
 }

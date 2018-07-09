@@ -80,6 +80,7 @@ import {
 import { CopyButtonComponent } from './page-component/copy-button/copy-button.component';
 import { SearchPipe } from './pipes/search/search.pipe';
 import { SearchBarComponent } from './page-component/search-bar/search-bar.component';
+import { VirtualscrollPipe } from './pipes/virtual-scroll/virtualscroll.pipe';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -174,6 +175,7 @@ const appRoutes: Routes = [
     CopyButtonComponent,
     SearchPipe,
     SearchBarComponent,
+    VirtualscrollPipe,
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,

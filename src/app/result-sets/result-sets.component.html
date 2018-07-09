@@ -2,7 +2,7 @@
 
     <div class="toolbar">
       <div class="filters">
-        <app-filters [statuses] = statuses [statistic] = statistic (selected_statuses_emmit)="filter_by_status()"></app-filters>
+        <app-filters [statuses] = statuses [statistic] = statistic (selected_statuses_emmit)="show_all()"></app-filters>
       </div>
       <div class="buttons">
         <div class="button check_button" (click)="unselect_all()" [ngClass]="{'disabled': this.loading}" *ngIf="select_all_flag">
@@ -30,9 +30,10 @@
         </div>
       </div>
     </div>
-  <div class="item-list" (click)="clicked($event)">
+  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)">
+    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
     <div class="item hoverer bipolar-item"
-         *ngFor="let object of show_all() | sortByCreatedAt:'asc'" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
+         *ngFor="let object of show_all_elemets | sortByCreatedAt:'asc'| virtualscroll:scrollPos:30" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
       <div class="result-set-discriber centered-data">
         <div class="centered-data checkbox-item">
           <input type="checkbox" [(ngModel)]="object.selected">
@@ -50,6 +51,7 @@
         <div *ngIf="settings.inaccurately_deleting"><a class="inaccurately_trash" (click)="inaccurately_delete(object)"><i class="fa fa-trash" aria-hidden="true"></i></a></div>
       </div>
     </div>
+    <div [style.height.px]="Math.max(0, (show_all_elemets.length - scrollPos - 40)  * 33)"></div>
     <div class="empty_list_message" [ngClass]="{'hidden': result_sets_and_cases.length > 0}">
       <p>Result set list is empty</p>
     </div>
