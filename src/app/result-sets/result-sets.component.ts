@@ -433,6 +433,7 @@ export class ResultSetsComponent implements OnInit {
   }
 
   search_open() {
+    this.search_data = '';
     this.search_input = !this.search_input;
       if (this.search_input) {
         // FIXME
