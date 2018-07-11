@@ -34,6 +34,8 @@ export class RunsComponent implements OnInit {
   errors = {};
   existed_statuses = {};
   all_statistic = {};
+  scrollPos = 0;
+  public Math: Math = Math;
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, public StatisticService: StatisticService) {
   }
@@ -258,5 +260,9 @@ export class RunsComponent implements OnInit {
 
   clear_errors() {
     this.errors = {};
+  }
+
+  colScroll(event) {
+    this.scrollPos = Math.floor(event.target.scrollTop / 53.5);
   }
 }

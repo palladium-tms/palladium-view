@@ -21,11 +21,13 @@
     </div>
   </div>
 
-  <div class="item-list">
-    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter; let index = index">
+  <div class="item-list" (scroll)="colScroll($event)">
+    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 53.5 )"></div>
+    <div class="item-wrapper hoverer" *ngFor="let object of runs_and_suites| statisticFilter:filter| virtualscroll:scrollPos:20; let index = index">
       <app-run [filter]=filter [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './run'"></app-run>
       <app-suite (replace_to_run)="replace_to_run($event)" [object]=object [index]=index [statuses]=statuses *ngIf="object.path === './suite'"></app-suite>
     </div>
+    <div [style.height.px]="Math.max(0, (runs_and_suites.length - scrollPos - 20)  * 53.5)"></div>
   </div>
 </div>
 

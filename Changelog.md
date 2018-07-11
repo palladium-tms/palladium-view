@@ -6,6 +6,7 @@
     * Add copy button to all result_sets
     * Improved  performance of result_set list
     * Add search button
+    * Add virtual scroll for runs and result_sets
 ### Fixed
     * Fixed race condition while plans load
 ### Changed
