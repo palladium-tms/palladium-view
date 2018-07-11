@@ -1,11 +1,12 @@
 # Changelog
-## [0.4.3] - 2018-06-15
+## [0.4.4] - 2018-06-15
 ### Added
     * Loading while case is delete
     * Add "note" attr for image: annotation(:string) of image
     * Add copy button to all result_sets
     * Improved  performance of result_set list
     * Add search button
+    * Add virtual scroll for runs and result_sets
 ### Fixed
     * Fixed race condition while plans load
 ### Changed
