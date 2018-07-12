@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
@@ -153,11 +153,14 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
-          if (this.filter.includes(0) || this.filter.length === 0) {
-            this.navigate_it_to_case();
-          } else {
-            this.navigate_to_run_show();
+          if (this.object) {
+            if (this.filter.includes(0) || this.filter.length === 0) {
+              this.navigate_it_to_case();
+            } else {
+              this.navigate_to_run_show();
+            }
           }
+          this.show_all();
         });
       } else {
         this.object.deleting = true;
@@ -167,6 +170,7 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.object = null;
           this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+          this.show_all();
         });
         this.Modal.close();
       }
