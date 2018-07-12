@@ -9,6 +9,7 @@ import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 import {Case} from '../models/case';
 import {LocalSettingsService} from '../../services/local-settings.service';
+import {ResultSet} from '../models/result_set';
 
 @Component({
   selector: 'app-result-sets',
@@ -153,13 +154,11 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
-          if (this.object) {
-            if (this.filter.includes(0) || this.filter.length === 0) {
+            if (this.object) {
               this.navigate_it_to_case();
             } else {
               this.navigate_to_run_show();
             }
-          }
           this.show_all();
         });
       } else {
@@ -276,9 +275,9 @@ export class ResultSetsComponent implements OnInit {
         let index;
         index = this.result_sets_and_cases.findIndex(current_object =>
           result_set.name === current_object.name);
-        this.result_sets_and_cases[index] = result_set;
+        this.result_sets_and_cases[index] = new ResultSet(result_set);
         this.result_sets_and_cases[index].selected = true;
-    });
+      });
       return res;
     });
   }
@@ -322,9 +321,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   navigate_to_run_show() {
-    // const result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
-
-    this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
     this.object = null;
     this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
   }
