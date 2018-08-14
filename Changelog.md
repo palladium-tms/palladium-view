@@ -11,6 +11,7 @@
     * Fixed race condition while plans load
 ### Changed
     * Updated package.json
+    * Delete link to run in case history for all result sets, because link to result is more informative
 ## [0.4.2] - 2018-04-15
 ### Added
     * Add material design to project
