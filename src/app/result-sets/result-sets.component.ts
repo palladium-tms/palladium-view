@@ -2,13 +2,14 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 import {Case} from '../models/case';
 import {LocalSettingsService} from '../../services/local-settings.service';
+import {ResultSet} from '../models/result_set';
 
 @Component({
   selector: 'app-result-sets',
@@ -39,6 +40,7 @@ export class ResultSetsComponent implements OnInit {
   settings = new LocalSettingsService;
   search_data = '';
   scrollPos = 0;
+  run_id;
   public Math: Math = Math;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router, private resultservice: ResultService) {
@@ -48,6 +50,7 @@ export class ResultSetsComponent implements OnInit {
     this.activatedRoute.params.subscribe(() => {
       this.object = null;
       this.get_result_sets_and_cases();
+      this.run_id = this.router.url.match(/run\/(\d+)/i)[1];
     });
   }
 
@@ -151,11 +154,12 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.Modal.close();
           this.object = this.result_sets_and_cases.find(obj => obj.name === this.object.name && obj.path === 'case');
-          if (this.filter.includes(0) || this.filter.length === 0) {
-            this.navigate_it_to_case();
-          } else {
-            this.navigate_to_run_show();
-          }
+            if (this.object) {
+              this.navigate_it_to_case();
+            } else {
+              this.navigate_to_run_show();
+            }
+          this.show_all();
         });
       } else {
         this.object.deleting = true;
@@ -165,6 +169,7 @@ export class ResultSetsComponent implements OnInit {
           this.update_statistic();
           this.object = null;
           this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+          this.show_all();
         });
         this.Modal.close();
       }
@@ -236,13 +241,12 @@ export class ResultSetsComponent implements OnInit {
   add_results(form: NgForm, modal) {
     const description = form.value['result_description'];
     let status = form.value['result_status'];
-    if (status == null) {
+    if (status == null) { // FIXME: need validation
       status = this.not_blocked_status[0]
     }
     Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
       status)]).then(res => {
       this.update_statistic();
-      this.unselect_all();
       if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
         if (this.add_result_to_selected_result_set(res[0]['result_sets'])) {
           this.resultservice.update_results(res[0]);
@@ -250,8 +254,9 @@ export class ResultSetsComponent implements OnInit {
       } else if (this.router.url.indexOf('/case_history/') >= 0) {
         // Fixme: Add history updating
       }
+      this.show_all();
     });
-    this.reset_form(form);
+    form.reset();
     modal.close();
   }
 
@@ -266,30 +271,29 @@ export class ResultSetsComponent implements OnInit {
       return Promise.resolve([]);
     }
     return this.ApiService.result_new(result_sets, message, status).then(res => {
-      this.result_sets_and_cases.filter(obj => obj.path === 'result_set').forEach(obj => {
-        const result_sets_array = res['result_sets'].map(result_set => result_set['id']);
-        if (result_sets_array.includes(obj.id)) {
-          obj.status = res['result'].status_id;
-        }
+      res['result_sets'].forEach( result_set => {
+        let index;
+        index = this.result_sets_and_cases.findIndex(current_object =>
+          result_set.name === current_object.name);
+        this.result_sets_and_cases[index] = new ResultSet(result_set);
+        this.result_sets_and_cases[index].selected = true;
       });
       return res;
     });
   }
 
   add_result_for_case(message, status) {
-    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
     const cases = this.result_sets_and_cases.filter(obj => obj.path === 'case' && obj.selected);
     if (cases.length === 0) {
       return Promise.resolve([]);
     }
-    return this.ApiService.result_new_by_case(cases, message, status, run_id).then((res: any) => {
+    return this.ApiService.result_new_by_case(cases, message, status, this.run_id).then((res: any) => {
       res.forEach(responce_result_set => {
         let index;
         index = this.result_sets_and_cases.findIndex(current_object =>
           responce_result_set.name === current_object.name);
         this.result_sets_and_cases[index] = responce_result_set;
         this.result_sets_and_cases[index].selected = true;
-        this.result_sets.push(responce_result_set);
       });
       this.navigate_if_case_has_opened();
     });
@@ -317,9 +321,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   navigate_to_run_show() {
-    // const result_object = this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path);
-
-    this.result_sets_and_cases.find(obj => obj.id === this.object.id && obj.path === this.object.path).active = false;
     this.object = null;
     this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
   }
@@ -425,10 +426,6 @@ export class ResultSetsComponent implements OnInit {
     this.ResultComponent = componentRef;
   }
 
-  reset_form(form) {
-    form.reset();
-  }
-
   clicked(event) {
     if (event.target.classList.contains('result_set_link')) {
       const object = this.result_sets_and_cases.filter(obj => obj.id == event.target.dataset.id &&
@@ -439,6 +436,7 @@ export class ResultSetsComponent implements OnInit {
 
   search_open() {
     this.search_data = '';
+    this.show_all();
     this.search_input = !this.search_input;
       if (this.search_input) {
         // FIXME
