@@ -1,7 +1,7 @@
 <div class="result-space">
   <div class="item-list">
     <ng-container *ngIf="result">
-      <div class="item bipolar-item big-item">
+      <div class="detail_item">
         <div class="small-block" [ngStyle]="getStyles()">
           <div class="sub-blocks-holder">
             <div class="sub-block"><b>{{status.name}}</b></div>
@@ -10,7 +10,7 @@
             </div>
           </div>
         </div>
-        <div class="big-block">
+        <div class="big-block-detail">
           <div class="message" *ngFor="let data of result.describer">
             <span><b>{{data["title"]}}:</b></span>
             <span>{{data["value"]}}</span>

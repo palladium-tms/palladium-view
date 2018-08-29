@@ -3,3 +3,20 @@
   overflow: hidden;
   flex: 5;
 }
+.detail_item {
+  max-height: 100%;
+  border-right: 7px solid rgba(255, 255, 255, 0);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.big-block-detail{
+  margin: 0.2em;
+  word-wrap: break-word;
+  flex: 3;
+}
