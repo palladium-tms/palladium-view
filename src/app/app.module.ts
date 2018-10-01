@@ -77,7 +77,6 @@ import {
   MatToolbarModule,
   MatTooltipModule,
 } from '@angular/material';
-import { CopyButtonComponent } from './page-component/copy-button/copy-button.component';
 import { SearchPipe } from './pipes/search/search.pipe';
 import { SearchBarComponent } from './page-component/search-bar/search-bar.component';
 import { VirtualscrollPipe } from './pipes/virtual-scroll/virtualscroll.pipe';
@@ -172,7 +171,6 @@ const appRoutes: Routes = [
     InviteComponent,
     SortByNamePipe,
     ResultValueComponent,
-    CopyButtonComponent,
     SearchPipe,
     SearchBarComponent,
     VirtualscrollPipe,
