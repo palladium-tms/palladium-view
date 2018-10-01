@@ -434,6 +434,28 @@ export class ResultSetsComponent implements OnInit {
     }
   }
 
+  copy_result_set_name($event) {
+    const txtArea = document.createElement('textarea');
+    txtArea.id = 'txt';
+    txtArea.style.position = 'fixed';
+    txtArea.style.top = '0';
+    txtArea.style.left = '0';
+    txtArea.style.opacity = '0';
+    txtArea.value = $event.target.closest('.item').querySelector('.result_set_link').title;
+    document.body.appendChild(txtArea);
+    txtArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        return true;
+      }
+    } catch (err) {
+    } finally {
+      document.body.removeChild(txtArea);
+    }
+    return false;
+  }
+
   search_open() {
     this.search_data = '';
     this.show_all();

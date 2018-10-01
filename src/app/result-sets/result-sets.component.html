@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)">
+  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)" (dblclick)="copy_result_set_name($event)">
     <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
     <div class="item hoverer bipolar-item"
          *ngFor="let object of show_all_elemets | sortByCreatedAt:'asc'| virtualscroll:scrollPos:30" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
@@ -41,7 +41,6 @@
         <div class="item-name">
           <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}" attr.data-path="{{object.path}}">{{object.name}}</a>
         </div>
-        <app-copy-button [name] = object.name></app-copy-button>
         <div *ngIf="this.statuses && !object.deleting" class="status-name">
           <b>{{get_status_by_id(object['status']).name}}</b>
         </div>
