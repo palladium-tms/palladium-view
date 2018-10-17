@@ -23,6 +23,9 @@ export class ResultSetsComponent implements OnInit {
   @ViewChild('AddResultModal') AddResultModal;
   @ViewChild('form') form;
   @ViewChild('search_input_element') search_input_element;
+  add_result_modal_open = false;
+  add_result_open = false;
+  selected_status;
   result_sets = [];
   search_input = false;
   loading = false;
@@ -234,6 +237,7 @@ export class ResultSetsComponent implements OnInit {
   add_result_modal() {
     if (this.loading) {return}
     if (this.get_selected_count() !== 0) {
+      this.add_result_modal_open = true;
       this.AddResultModal.open();
     }
   }
@@ -256,8 +260,14 @@ export class ResultSetsComponent implements OnInit {
       }
       this.show_all();
     });
-    form.reset();
+    this.reset_add_result_form(form);
     modal.close();
+    this.add_result_modal_open = false;
+  }
+
+  reset_add_result_form(form) {
+    form.reset();
+    this.add_result_modal_open = false
   }
 
   add_result_to_selected_result_set(results) {
@@ -471,4 +481,47 @@ export class ResultSetsComponent implements OnInit {
   colScroll(event) {
     this.scrollPos = Math.floor(event.target.scrollTop / 33);
   }
+
+  select_status($event) {
+    this.selected_status = this.statuses.filter(x => { return x.id == $event})[0]
+  }
+
+  get_selected_for_add_result() {
+    return this.result_sets_and_cases.filter(x => x.selected);
+  }
+
+  add_result_custom(form: NgForm) {
+    if (this.selected_status) {
+      const description = form.value['result_description'];
+      const status = this.selected_status;
+      Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
+        status)]).then(res => {
+        this.update_statistic();
+        if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
+          if (this.add_result_to_selected_result_set(res[0]['result_sets'])) {
+            this.resultservice.update_results(res[0]);
+          }
+        } else if (this.router.url.indexOf('/case_history/') >= 0) {
+          // Fixme: Add history updating
+        }
+        this.show_all();
+      });
+      this.selected_status = '';
+      this.add_result_open = false;
+    }
+  }
+
+  cancel_result_custom() {
+    this.selected_status = '';
+    this.add_result_open = false;
+  }
+
+  unselect(object) {
+    object.selected = false;
+    if (this.get_selected_count() == 0) {
+      this.cancel_result_custom()
+    }
+  }
+
+  log(a) {console.log(a)}
 }

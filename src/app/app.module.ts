@@ -80,6 +80,8 @@ import {
 import { SearchPipe } from './pipes/search/search.pipe';
 import { SearchBarComponent } from './page-component/search-bar/search-bar.component';
 import { VirtualscrollPipe } from './pipes/virtual-scroll/virtualscroll.pipe';
+import { DropdownMenuComponent } from './page-component/dropdown-menu/dropdown-menu.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -174,6 +176,8 @@ const appRoutes: Routes = [
     SearchPipe,
     SearchBarComponent,
     VirtualscrollPipe,
+    DropdownMenuComponent,
+    ClickOutsideDirective
   ],
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
