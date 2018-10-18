@@ -12,8 +12,8 @@ export class Product {
     } else {
       this.id = product['id'];
       this.name = product['name'];
-      this.created_at = product['created_at'];
-      this.updated_at = product['updated_at'];
+      this.created_at = product['created_at'].split(' +')[0];
+      this.updated_at = product['updated_at'].split(' +')[0];
     }
   }
 }

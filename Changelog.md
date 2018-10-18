@@ -1,4 +1,8 @@
 # Changelog
+## [0.4.4] - 2018-10-18
+### Changed
+    * Delete timezone from date
+
 ## [0.4.3] - 2018-06-15
 ### Added
     * Loading while case is delete

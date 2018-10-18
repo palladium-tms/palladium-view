@@ -15,8 +15,8 @@ export class Run {
       this.id = run['id'];
       this.name = run['name'];
       this.plan_id = run['plan_id'];
-      this.created_at = run['created_at'];
-      this.updated_at = run['updated_at'];
+      this.created_at = run['created_at'].split(' +')[0];
+      this.updated_at = run['updated_at'].split(' +')[0];
       this.statistic = this.get_statistic(run);
     }
   }

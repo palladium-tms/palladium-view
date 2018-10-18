@@ -18,8 +18,8 @@ export class ResultSet {
       this.name = result_set['name'];
       this.run_id = result_set['plan_id'];
       this.status = result_set['status'];
-      this.created_at = result_set['created_at'];
-      this.updated_at = result_set['updated_at'];
+      this.created_at = result_set['created_at'].split(' +')[0];
+      this.updated_at = result_set['updated_at'].split(' +')[0];
     }
   }
 
@@ -28,7 +28,7 @@ export class ResultSet {
     this.name = this_case['name'];
     this.run_id = this_case['plan_id'];
     this.status = this_case['status'];
-    this.created_at = this_case['created_at'];
-    this.updated_at = this_case['updated_at'];
+    this.created_at = this_case['created_at'].split(' +')[0];
+    this.updated_at = this_case['updated_at'].split(' +')[0];
   }
 }
