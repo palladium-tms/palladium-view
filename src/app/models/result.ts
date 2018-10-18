@@ -20,7 +20,7 @@ export class Result {
       }
     }
     this.status_id = data['status_id'];
-    this.created_at = data['created_at'];
+    this.created_at = data['created_at'].split(' +')[0];
   }
 
   isJson(str) {

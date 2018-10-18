@@ -13,8 +13,8 @@ export class Plan {
       this.id = plan['id'];
       this.name = plan['name'];
       this.product_id = plan['product_id'];
-      this.created_at = plan['created_at'];
-      this.updated_at = plan['updated_at'];
+      this.created_at = plan['created_at'].split(' +')[0];
+      this.updated_at = plan['updated_at'].split(' +')[0];
       if (plan['statistic']) {
         this.statistic = plan['statistic'];
         this.get_statistic();
