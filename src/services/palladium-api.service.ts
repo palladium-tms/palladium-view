@@ -17,7 +17,6 @@ import {Invite} from '../app/models/invite';
 @Injectable()
 export class PalladiumApiService {
   suites: Suite[] = [];
-  products: Product[] = [];
   plans: Plan[] = [];
   product_id = 0;
   response_plan_data = {};
@@ -253,19 +252,10 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Products
-  get_products(): Promise<any> {
-    return this.httpService.postData('/products', '')
-      .then(
-        (resp: any) => {
-          this.products = [];
-          Object(resp['products']).forEach(product => {
-            this.products.push(new Product(product));
-          });
-          return this.products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
-  }
+  products = async () => {
+    const product_pack = await this.httpService.postData('/products', '');
+    return product_pack['products'].map(product => new Product(product));
+  };
 
   delete_product(id): Promise<any> {
     return this.httpService.postData('/product_delete', {product_data: {id: id}})
