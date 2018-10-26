@@ -61,9 +61,7 @@
   <div class="toolbar">
     <form #addresult="ngForm">
       <div class="new_result_form">
-        <div class="status-selector">
           <app-dropdown-menu [statuses] = not_blocked_status [current_status] = selected_status (set_status)="select_status($event)"></app-dropdown-menu>
-        </div>
         <textarea class="result-description" ngModel name="result_description" #result_description="ngModel"></textarea>
         <div>
           <div class="add_result_space_button" (click)="cancel_result_custom()">cancel</div>
@@ -88,7 +86,7 @@
         </div>
       </div>
     </div>
-    <div [style.height.px]="Math.max(0, (show_all_elemets.length - scrollPos - 30)  * 33)"></div>
+    <div [style.height.px]="Math.max(0, (get_selected_for_add_result().length - scrollPos - 30)  * 33)"></div>
   </div>
 </div>
 

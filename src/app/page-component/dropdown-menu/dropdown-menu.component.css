@@ -1,14 +1,14 @@
 .menu {
   position: relative;
-  display: flex;
+  display: inline-block;
   width: min-content
 }
 
 .menu-content {
-  flex: 1;
   position: absolute;
+  display: inline-block;
   background-color: #f9f9f9;
-  bottom: -4em;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   z-index: 1;
 }
 
