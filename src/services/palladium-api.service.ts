@@ -257,38 +257,22 @@ export class PalladiumApiService {
     return product_pack['products'].map(product => new Product(product));
   };
 
-  delete_product(id): Promise<any> {
-    return this.httpService.postData('/product_delete', {product_data: {id: id}})
-      .then(products => {
-        return products;
-      }, (errors: any) => {
-        console.log(errors);
-      });
+  async delete_product(id) {
+    return await this.httpService.postData('/product_delete', {product_data: {id: id}})
   }
 
-  edit_product(id, name): Promise<any> {
-    return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
-      .then((resp: any) => {
-        if (resp['errors']) {
-          return Promise.reject(resp['errors']);
-        } else {
-          return Promise.resolve(new Product(resp['product_data']));
-        }
-      });
+  async edit_product(id, name) {
+    try {
+      const product = await this.httpService.postData('/product_edit', {product_data: {name: name, id: id}});
+      return new Product(product['product']);
+    } catch (error) {console.log(error)}
   }
 
   //#endregion
 
   //#region Products
-  send_product_position(product_ids_array): Promise<any> {
-    return this.httpService.postData('/set_product_position', {product_position: product_ids_array})
-      .then(
-        (resp: any) => {
-          console.log(resp);
-          return this.products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+  send_product_position(product_ids_array) {
+    this.httpService.postData('/set_product_position', {product_position: product_ids_array})
   }
   //#endregion
 
