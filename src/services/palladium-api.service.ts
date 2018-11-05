@@ -305,13 +305,8 @@ export class PalladiumApiService {
       });
   }
 
-  delete_plan(id): Promise<any> {
-    return this.httpService.postData('/plan_delete', {plan_data: {id: id}})
-      .then(plan_data => {
-        return plan_data['plan'];
-      }, (errors: any) => {
-        console.log(errors);
-      });
+  async delete_plan(id) {
+    return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan']
   }
 
   //#endregion

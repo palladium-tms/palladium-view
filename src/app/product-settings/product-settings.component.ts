@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {NgForm, Validators} from '@angular/forms';
+import {Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -17,7 +17,6 @@ export class ProductSettingsComponent implements OnInit {
 
   @Output() update_products = new EventEmitter();
   @ViewChild('Modal') Modal;
-  @ViewChild('form') form;
   item = null;
   errors = {};
   constructor(private ApiService: PalladiumApiService, private router: Router) { }
@@ -33,17 +32,23 @@ export class ProductSettingsComponent implements OnInit {
   }
 
   async edit_product() {
-    this.item = await this.ApiService.edit_product(this.item.id, this.name.value);
-    this.products[this.products.findIndex(x => x.id === this.item.id)] = this.item;
+    if (!this.name_not_changed()) {
+      this.item = await this.ApiService.edit_product(this.item.id, this.name.value);
+      this.products[this.products.findIndex(x => x.id === this.item.id)] = this.item;
+    }
     this.close_modal();
     this.update_products.emit(this.products);
   }
 
   name_is_existed() {
     if (this.item) {
-      if (this.item.name == this.name.value) { return false }
+      if (this.name_not_changed()) { return false }
       return this.products.some(product => product.name == this.name.value);
     }
+  }
+
+  name_not_changed() {
+    return this.item.name == this.name.value;
   }
 
   check_existing() {
