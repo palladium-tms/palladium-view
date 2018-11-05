@@ -7,9 +7,6 @@ export class Plan {
   statistic: any;
   all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
   constructor (plan) {
-    if (plan === null) {
-      this.create_default_plan();
-    } else {
       this.id = plan['id'];
       this.name = plan['name'];
       this.product_id = plan['product_id'];
@@ -18,16 +15,7 @@ export class Plan {
       if (plan['statistic']) {
         this.statistic = plan['statistic'];
         this.get_statistic();
-      }
     }
-  }
-  create_default_plan() {
-    this.id = 0;
-    this.name = 'name_loading';
-    this.product_id = 'product_id_loading';
-    this.created_at = 0;
-    this.updated_at = 0;
-    this.statistic = [];
   }
   get_statistic() {
     this.all_statistic = {'all': 0, 'lost': 0, 'attitude': 0};

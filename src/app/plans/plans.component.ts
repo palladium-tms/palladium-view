@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
-import {Plan} from '../models/plan';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
@@ -14,7 +13,7 @@ import {Router} from '@angular/router';
 })
 export class PlansComponent implements OnInit {
   product_id = null;
-  plans: Plan[] = [new Plan(null)];
+  plans = [];
   plan;
   RunComponent;
   @ViewChild('Modal') Modal;
@@ -32,10 +31,8 @@ export class PlansComponent implements OnInit {
     });
   }
 
-  get_plans(product_id) {
-    return this.ApiService.get_plans(product_id).then(plans => {
-      return plans;
-    });
+  async get_plans(product_id) {
+    return await this.ApiService.get_plans(product_id)
   }
 
   get_suites(product_id) {
@@ -62,7 +59,7 @@ export class PlansComponent implements OnInit {
     this.plans = [];
     this.loading = true;
     Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id), this.get_statuses()]).then(res => {
-      this.plans = res[0][this.product_id];
+      this.plans = res[0][this.product_id] || [];
       this.plans.forEach(plan => {
         this.update_statistic(plan, this.count_of_cases(res[1][this.product_id]));
       });
@@ -87,7 +84,6 @@ export class PlansComponent implements OnInit {
       this.plans[this.plans.indexOf(this.plans.filter(it => it.id === plan.id)[0])].name = plan.name;
       modal.close();
     }, errors => {
-      console.log('123123123123')
       console.log( errors)
       this.errors['name'] = errors['name'];
     });

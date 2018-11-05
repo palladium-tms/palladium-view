@@ -76,6 +76,7 @@ export class PalladiumApiService {
       return resp['status'];
     });
   }
+
   //#endregion
 
   //#region Token
@@ -265,32 +266,32 @@ export class PalladiumApiService {
     try {
       const product = await this.httpService.postData('/product_edit', {product_data: {name: name, id: id}});
       return new Product(product['product']);
-    } catch (error) {console.log(error)}
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   //#endregion
 
   //#region Products
   send_product_position(product_ids_array) {
-    this.httpService.postData('/set_product_position', {product_position: product_ids_array})
+    return this.httpService.postData('/set_product_position', {product_position: product_ids_array})
   }
+
   //#endregion
 
   //#region Plans
-  get_plans(product_id): Promise<any> {
-    this.product_id = product_id;
-    const params = {plan_data: {product_id: product_id}};
-    return this.httpService.postData('/plans', params)
-      .then(
-        (resp: any) => {
-          this.response_plan_data [product_id] = [];
-          Object(resp['plans']).forEach(plan => {
-            this.response_plan_data[product_id].push(new Plan(plan));
-          });
-            return this.response_plan_data ;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+  async get_plans(product_id) {
+    try {
+      const response = await this.httpService.postData('/plans', {plan_data: {product_id: product_id}});
+      this.response_plan_data[product_id] = [];
+      Object(response['plans']).forEach(plan => {
+        this.response_plan_data[product_id].push(new Plan(plan));
+      });
+      return this.response_plan_data;
+    } catch (errors) {
+      console.log(errors);
+    }
   }
 
   edit_plan(id, name): Promise<any> {
