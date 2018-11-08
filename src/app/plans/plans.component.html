@@ -36,15 +36,17 @@
   <modal-content>
     <div class="settings_content">
       <div class="item-description">
-        <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_plan_modal(form, Modal, form.valid )">
+        <form autocomplete="off" [formGroup]="plan_form" (ngSubmit)="edit_plan()">
           <div class="item-option">
-            <input type="text" name="name" ngModel required #name="ngModel" autofocus>
-            <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-              Plan name can't be empty.
-            </small>
-            <small [hidden]="!name.valid" *ngFor="let error of errors['name']">
-              {{error}}
-            </small>
+            <input (keyup)="check_existing()" type="text" name="name" formControlName="name" autofocus>
+            <div *ngIf="name.invalid && (name.dirty || name.touched)">
+              <small *ngIf="name.errors.required">
+                Plan name can't be empty.
+              </small>
+              <small *ngIf="name.errors.incorrect">
+                This name is taken
+              </small>
+            </div>
           </div>
           <div class="item-option">
             <label *ngIf="plan"> Created at: {{plan.created_at}}</label>
@@ -52,7 +54,7 @@
           <div class="item-option">
             <label *ngIf="plan"> Updated at: {{plan.updated_at}}</label>
           </div>
-          <button class="btn btn-success save_button" [disabled]="!form.valid">Save</button>
+          <button class="btn btn-success save_button" [disabled]="!plan_form.valid">Save</button>
         </form>
         <button class="btn btn-danger" (click)="delete_selected_plan()">Delete</button>
       </div>

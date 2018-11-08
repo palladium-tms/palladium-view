@@ -12,7 +12,6 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 
 export class ProductsComponent implements OnInit {
   products;
-  loading = false;
   pinned = true;
   product;
 
@@ -22,15 +21,9 @@ export class ProductsComponent implements OnInit {
     this.get_products();
   }
 
-  get_products() {
-    if (this.loading) {return}
-    this.setting_is_visible();
+  async get_products() {
     this.products = [];
-    this.loading = true;
-    this.ApiService.get_products().then(products => {
-      this.products = products;
-      this.loading = false;
-    });
+    this.products = await this.ApiService.products();
   }
 
   update_products(event) {
@@ -39,7 +32,7 @@ export class ProductsComponent implements OnInit {
   }
 
   open_settings(settings) {
-    if (!this.loading) {settings.open_modal()}
+    if (this.products.length) {settings.open_modal()}
   }
 
   setting_is_visible() {
@@ -52,9 +45,7 @@ export class ProductsComponent implements OnInit {
   }
 
   send_products_position() {
-    this.ApiService.send_product_position(this.products.map(elem => elem['id'])).then(response => {
-      console.log('ok')
-    })
+    this.ApiService.send_product_position(this.products.map(elem => elem['id']))
   }
 
   public removeItem(item: any, list: any[]): void {

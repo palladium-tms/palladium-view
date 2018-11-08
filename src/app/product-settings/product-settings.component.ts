@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {NgForm} from '@angular/forms';
-import {Product} from '../models/product';
+import {Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-product-settings',
@@ -11,36 +11,50 @@ import {Router} from '@angular/router';
 })
 export class ProductSettingsComponent implements OnInit {
   @Input() products;
+  product_form = new FormGroup({
+    name: new FormControl('',  [Validators.required])
+  });
+
   @Output() update_products = new EventEmitter();
-  @ViewChild('product_name') product_name;
   @ViewChild('Modal') Modal;
-  @ViewChild('form') form;
   item = null;
   errors = {};
   constructor(private ApiService: PalladiumApiService, private router: Router) { }
 
-  ngOnInit() { }
+  ngOnInit(): void { }
+
+  get name() { return this.product_form.get('name'); }
 
   open_modal() {
-    this.errors = {};
     this.Modal.open();
     this.item = this.products.filter(product => product.id === +/product\/(\d+)/.exec(this.router.url)[1])[0];
-    this.form.controls['product_name'].setValue(this.item.name);
+    this.product_form.patchValue({name: this.item.name});
   }
 
-  edit_product(form: NgForm) {
-    this.ApiService.edit_product(this.item.id, form.value['product_name']).then((product: Product) => {
-        this.products[this.products.indexOf(this.products.filter(it => it.id === product.id)[0])] = product;
-        this.item = product;
-        this.close_modal();
-        this.update_products.emit(this.products);
-    }, error => {
-      this.errors['name'] = error['name'];
-    });
+  async edit_product() {
+    if (!this.name_not_changed()) {
+      this.item = await this.ApiService.edit_product(this.item.id, this.name.value);
+      this.products[this.products.findIndex(x => x.id === this.item.id)] = this.item;
+    }
+    this.close_modal();
+    this.update_products.emit(this.products);
   }
 
-  clear_errors() {
-    this.errors = {};
+  name_is_existed() {
+    if (this.item) {
+      if (this.name_not_changed()) { return false }
+      return this.products.some(product => product.name == this.name.value);
+    }
+  }
+
+  name_not_changed() {
+    return this.item.name == this.name.value;
+  }
+
+  check_existing() {
+    if (this.name_is_existed()) {
+      this.product_form.controls['name'].setErrors({'incorrect': true});
+    }
   }
 
   delete_item() {

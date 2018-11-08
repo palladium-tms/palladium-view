@@ -5,25 +5,26 @@
   <modal-content>
     <div class="settings_content">
       <div class="item-description">
-          <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_product(form)" (onClose) = "clear_errors()">
-            <div class="item-option">
-              <input (keyup)="clear_errors()" type="text" class="product-name" name="product_name" ngModel required #product_name="ngModel"
-                     autofocus>
-              <small [hidden]="product_name.valid || (product_name.pristine && !form.submitted)">
+        <form autocomplete="off" [formGroup]="product_form" (ngSubmit)="edit_product()" (onClose)="clear_errors()">
+          <div class="item-option">
+            <input (keyup)="check_existing()" type="text" class="product-name" formControlName="name" autofocus>
+            <div *ngIf="name.invalid && (name.dirty || name.touched)">
+              <small *ngIf="name.errors.required">
                 Product name can't be empty.
               </small>
-              <small [hidden]="!product_name.valid" *ngFor="let error of errors['name']">
-                {{error}}
+              <small *ngIf="name.errors.incorrect">
+                This name is taken
               </small>
             </div>
-            <div class="item-option">
-              <label *ngIf="item"> Created at: {{item.created_at}}</label>
-            </div>
-            <div class="item-option">
-              <label *ngIf="item"> Updated at: {{item.updated_at}}</label>
-            </div>
-            <button class="btn btn-success save_button" [disabled]="!form.valid || item === null">Save</button>
-          </form>
+          </div>
+          <div class="item-option">
+            <label *ngIf="item"> Created at: {{item.created_at}}</label>
+          </div>
+          <div class="item-option">
+            <label *ngIf="item"> Updated at: {{item.updated_at}}</label>
+          </div>
+          <button class="btn btn-success save_button" type="submit" [disabled]="!product_form.valid">Save</button>
+        </form>
         <button class="btn btn-danger" [disabled]="item === null" (click)="delete_item()">Delete</button>
       </div>
     </div>

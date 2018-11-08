@@ -17,7 +17,6 @@ import {Invite} from '../app/models/invite';
 @Injectable()
 export class PalladiumApiService {
   suites: Suite[] = [];
-  products: Product[] = [];
   plans: Plan[] = [];
   product_id = 0;
   response_plan_data = {};
@@ -77,6 +76,7 @@ export class PalladiumApiService {
       return resp['status'];
     });
   }
+
   //#endregion
 
   //#region Token
@@ -253,70 +253,45 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Products
-  get_products(): Promise<any> {
-    return this.httpService.postData('/products', '')
-      .then(
-        (resp: any) => {
-          this.products = [];
-          Object(resp['products']).forEach(product => {
-            this.products.push(new Product(product));
-          });
-          return this.products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+  products = async () => {
+    const product_pack = await this.httpService.postData('/products', '');
+    return product_pack['products'].map(product => new Product(product));
+  };
+
+  async delete_product(id) {
+    return await this.httpService.postData('/product_delete', {product_data: {id: id}})
   }
 
-  delete_product(id): Promise<any> {
-    return this.httpService.postData('/product_delete', {product_data: {id: id}})
-      .then(products => {
-        return products;
-      }, (errors: any) => {
-        console.log(errors);
-      });
-  }
-
-  edit_product(id, name): Promise<any> {
-    return this.httpService.postData('/product_edit', {product_data: {name: name, id: id}})
-      .then((resp: any) => {
-        if (resp['errors']) {
-          return Promise.reject(resp['errors']);
-        } else {
-          return Promise.resolve(new Product(resp['product_data']));
-        }
-      });
+  async edit_product(id, name) {
+    try {
+      const product = await this.httpService.postData('/product_edit', {product_data: {name: name, id: id}});
+      return new Product(product['product']);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   //#endregion
 
   //#region Products
-  send_product_position(product_ids_array): Promise<any> {
+  send_product_position(product_ids_array) {
     return this.httpService.postData('/set_product_position', {product_position: product_ids_array})
-      .then(
-        (resp: any) => {
-          console.log(resp);
-          return this.products;
-        }, (errors: any) => {
-          console.log(errors);
-        });
   }
+
   //#endregion
 
   //#region Plans
-  get_plans(product_id): Promise<any> {
-    this.product_id = product_id;
-    const params = {plan_data: {product_id: product_id}};
-    return this.httpService.postData('/plans', params)
-      .then(
-        (resp: any) => {
-          this.response_plan_data [product_id] = [];
-          Object(resp['plans']).forEach(plan => {
-            this.response_plan_data[product_id].push(new Plan(plan));
-          });
-            return this.response_plan_data ;
-        }, (errors: any) => {
-          console.log(errors);
-        });
+  async get_plans(product_id) {
+    try {
+      const response = await this.httpService.postData('/plans', {plan_data: {product_id: product_id}});
+      this.response_plan_data[product_id] = [];
+      Object(response['plans']).forEach(plan => {
+        this.response_plan_data[product_id].push(new Plan(plan));
+      });
+      return this.response_plan_data;
+    } catch (errors) {
+      console.log(errors);
+    }
   }
 
   edit_plan(id, name): Promise<any> {
@@ -330,13 +305,8 @@ export class PalladiumApiService {
       });
   }
 
-  delete_plan(id): Promise<any> {
-    return this.httpService.postData('/plan_delete', {plan_data: {id: id}})
-      .then(plan_data => {
-        return plan_data['plan'];
-      }, (errors: any) => {
-        console.log(errors);
-      });
+  async delete_plan(id) {
+    return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan']
   }
 
   //#endregion
