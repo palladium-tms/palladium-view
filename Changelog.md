@@ -1,5 +1,8 @@
 # Changelog
 ## [0.4.4] - 2018-10-18
+
+### Added
+    * New menu for add new result
 ### Changed
     * Delete timezone from date
     * Update packages

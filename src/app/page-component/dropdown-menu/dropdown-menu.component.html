@@ -1,0 +1,10 @@
+<div class="menu" (clickOutside)="close()">
+  <div class="custom-dropdown-button" (click)="visibility = !visibility" [ngClass]="{'dropdown-border': current_status}" [ngStyle]="{'border-right-color': (current_status ? current_status.color : '#848484')}">
+    <div class="custom-dropdown-title-status-name">{{current_status ? current_status.name : "Select status"}}</div>
+  </div>
+  <div class="menu-content" *ngIf="visibility">
+    <div class="custom-dropdown-menu-element" *ngFor="let status of statuses" [ngStyle]="{'border-right': '0.5em solid '  + status.color}" (click)="select_status(status.id)">
+      <span class="custom-dropdown-status-name">{{status.name}}</span>
+    </div>
+  </div>
+</div>

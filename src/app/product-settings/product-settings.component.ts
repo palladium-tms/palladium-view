@@ -74,4 +74,8 @@ export class ProductSettingsComponent implements OnInit {
     this.Modal.close();
     this.item = null;
   }
+
+  clear_errors() {
+    this.errors = {};
+  }
 }

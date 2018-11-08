@@ -1,4 +1,4 @@
-<div class="result-set-space">
+<div class="result-set-space" *ngIf="!add_result_open">
 
     <div class="toolbar">
       <div class="filters">
@@ -11,11 +11,11 @@
         <div class="button check_button" (click)="select_all()" [ngClass]="{'disabled': this.loading}" *ngIf="!select_all_flag">
           <i class="fa fa-square-o" aria-hidden="true"></i>
         </div>
-        <div class="button add_result_button" (click)="add_result_modal()" [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
+        <div class="button add_result_button" (click)="add_result_open = true" [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
         </div>
         <input class="search-input" type="text" (keydown.esc)="search_open()" placeholder="Search" (keyup)="write_to_search($event)" *ngIf="search_input" #search_input_element>
-        <div class="button" (click)="update_click()"  *ngIf="!search_input" [ngClass]="{'disabled': this.loading}">
+        <div class="button" (click)="update_click(addresultform)"  *ngIf="!search_input" [ngClass]="{'disabled': this.loading}">
           <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
         </div>
         <div class="button" (click)="open_history_page()" [ngClass]="{'disabled': this.loading}" *ngIf="object && !search_input">
@@ -57,6 +57,39 @@
   </div>
 </div>
 
+<div class="new-result-space" *ngIf="add_result_open">
+  <div class="toolbar">
+    <form #addresult="ngForm">
+      <div class="new_result_form">
+          <app-dropdown-menu [statuses] = not_blocked_status [current_status] = selected_status (set_status)="select_status($event)"></app-dropdown-menu>
+        <textarea class="result-description" ngModel name="result_description" #result_description="ngModel"></textarea>
+        <div>
+          <div class="add_result_space_button" (click)="cancel_result_custom()">cancel</div>
+          <div class="add_result_space_button" [ngClass]="{'block': !selected_status}" style="float: right" (click)="add_result_custom(addresult)">add result (<b>{{get_selected_count()}}</b>)</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)" (dblclick)="copy_result_set_name($event)">
+    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
+    <div class="item hoverer bipolar-item"
+         *ngFor="let object of get_selected_for_add_result()" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
+      <div class="result-set-discriber centered-data">
+        <div class="centered-data delete-item">
+          <i class="fa fa-times" aria-hidden="true" (click)="unselect(object)"></i>
+        </div>
+        <div class="item-name">
+          <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}" attr.data-path="{{object.path}}">{{object.name}}</a>
+        </div>
+        <div *ngIf="this.statuses && !object.deleting" class="status-name">
+          <b>{{get_status_by_id(object['status']).name}}</b>
+        </div>
+      </div>
+    </div>
+    <div [style.height.px]="Math.max(0, (get_selected_for_add_result().length - scrollPos - 30)  * 33)"></div>
+  </div>
+</div>
+
 <modal #Modal>
   <modal-header>
     <h1>Change object name</h1>
@@ -83,31 +116,6 @@
       </div>
     </div>
   </modal-content>
-</modal>
-
-<modal #AddResultModal (onClose)="addresultform.reset()">
-  <modal-header>
-    <h1>Add Result</h1>
-  </modal-header>
-  <modal-content>
-    Add result for <b>{{get_selected_count()}}</b> result_sets
-    <form autocomplete="off" #addresultform="ngForm">
-
-      <select ngModel name="result_status" #result_status="ngModel">
-        <option *ngFor="let item of  not_blocked_status"
-                [ngValue]="item">
-          {{item.name}}
-        </option>
-      </select>
-      <small *ngIf="addresultform.controls['result_status']" [hidden]="(addresultform.controls['result_status'].value !== '') && !addresultform.submitted">
-        Need to change status
-      </small>
-      <textarea placeholder="Result description" class="result-description" name="result_description" ngModel required #result_description="ngModel" autofocus></textarea>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-success" (click)="add_results(addresultform, AddResultModal)">Add result</button>
-  </modal-footer>
 </modal>
 
 <router-outlet (activate)="onActivate($event)"></router-outlet>

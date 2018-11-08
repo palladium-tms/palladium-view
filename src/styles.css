@@ -9,7 +9,6 @@ html, body {
   overflow: hidden;
   font-family: Open Sans, sans-serif;
   font-size: 14px;
-  line-height: 1;
 }
 
 a:hover {
@@ -61,7 +60,7 @@ input[type=checkbox] {
   background-color: #b2c4c5 !important;
 }
 
-.product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space, .case_space {
+.product-space, .plan-space, .run-space, .result-set-space, .result-space, .history-space, .case_space, .new-result-space {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -104,7 +103,6 @@ input[type=checkbox] {
   width: 100%;
   min-height: 5em;
   border: 1px solid #848484;
-  border-bottom: 2px solid #848484
 }
 
 .filters {
@@ -318,15 +316,11 @@ input[type=checkbox] {
   flex-direction: row;
 }
 
-.checkbox-item {
+.checkbox-item, .delete-item {
   padding-right: 0.3em;
+  cursor: pointer;
 }
 
-.result-description {
-  width: 100%;
-  height: 8em;
-  box-sizing: border-box;
-}
 
 a.link {
   font-weight: bold;
