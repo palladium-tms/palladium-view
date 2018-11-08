@@ -13,9 +13,16 @@
 }
 
 .custom-dropdown-status-name {
-width: 100%;
-display: list-item;
-overflow: hidden;
+  width: 100%;
+  display: list-item;
+  overflow: hidden;
+}
+
+.custom-dropdown-title-status-name {
+  text-align: center;
+  display: inline-block;
+  overflow: hidden;
+  width: 7em;
 }
 
 .custom-dropdown-menu-element {
