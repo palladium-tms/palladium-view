@@ -523,5 +523,11 @@ export class ResultSetsComponent implements OnInit {
     }
   }
 
+  add_result_open_menu() {
+    if (!this.loading && this.get_selected_count() != 0) {
+      this.add_result_open = true;
+    }
+  }
+
   log(a) {console.log(a)}
 }
