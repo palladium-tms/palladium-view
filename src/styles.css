@@ -136,6 +136,7 @@ input[type=checkbox] {
 }
 
 .search-input {
+  padding: 0.35em;
   outline: 1px solid #848484;
   border: none;
   flex: 1;
