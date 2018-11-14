@@ -265,11 +265,7 @@ input[type=checkbox] {
 
 .big-item {
   max-height: 30em;
-  padding: 0px;
-}
-
-.sub-block {
-  padding-bottom: 0.5em;
+  padding: 0;
 }
 
 .filter {
