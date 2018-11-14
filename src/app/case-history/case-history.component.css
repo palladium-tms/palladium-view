@@ -3,4 +3,53 @@
   overflow: hidden;
   flex: 5;
 }
+ .history-item {
+   height: 3em;
+   border: 1px solid #848484;
+   max-width: 100%;
+   display: flex;
+ }
 
+.history-status{
+  width: 6em;
+  display: flex;
+}
+.plan-name {
+  margin: auto;
+  flex: 1;
+  text-align: center;
+}
+.history-status-name{
+  flex: 1;
+  margin: auto;
+  text-align: center;
+}
+
+.history {
+  border: 1px solid #000000;
+}
+
+.show-all{
+  width: 6em;
+  text-align: center;
+  margin: auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+.loader_wrapper {
+  width: 6em;
+  margin: auto;
+  user-select: none;
+}
+
+.loader {
+  margin: auto;
+  border: 0.3em solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 0.3em solid #5f9ea0;
+  width: 1em;
+  height: 1em;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+ }

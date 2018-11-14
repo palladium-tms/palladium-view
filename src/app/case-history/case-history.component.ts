@@ -12,6 +12,7 @@ export class CaseHistoryComponent implements OnInit {
   history;
   statuses;
   loading = false;
+  results_data = {};
   constructor( private activatedRoute: ActivatedRoute, private location: Location,
                private ApiService: PalladiumApiService) { }
 
@@ -21,8 +22,8 @@ export class CaseHistoryComponent implements OnInit {
     });
   }
 
-  getStyles(status) {
-      return {'border-right': '7px solid ' + this.get_status_by_id(status['status']).color};
+  getStyles(status_id) {
+      return {'border-right': '7px solid ' + this.get_status_by_id(status_id).color};
   }
 
   plan_url(id) {
@@ -57,7 +58,7 @@ export class CaseHistoryComponent implements OnInit {
   }
 
   get_case_history(id) {
-    this.ApiService.get_history(id).then(res => {
+    this.ApiService.history(id).then(res => {
       this.history = res;
       this.loading = false;
     });
@@ -68,7 +69,26 @@ export class CaseHistoryComponent implements OnInit {
   }
 
   get_status_by_id(id) {
-    return this.statuses.find(status => status.id === +id);
+    return this.statuses.find(status => status.id == id);
+  }
+
+  async get_results(history) {
+    if (this.results_data[history.id] == undefined) {
+      history.object_status = 'loading';
+      const results = await this.ApiService.results(history.id);
+      history.object_status = 'closed';
+      this.results_data[history.id] = {results: results};
+    }
+    history.object_status == 'closed' ? history.object_status = 'opened' : history.object_status = 'closed';
+  }
+
+  close_all() {
+    console.log('close_all')
   }
   update_click() {}
+
+  log(a) {
+    console.log('kkkkk')
+    console.log(a)
+  }
 }

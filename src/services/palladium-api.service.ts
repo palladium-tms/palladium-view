@@ -9,7 +9,6 @@ import {Plan} from '../app/models/plan';
 import {Case} from '../app/models/case';
 import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
-import {Statistic} from '../app/models/statistic';
 import {History} from '../app/models/history_object';
 import {Status} from '../app/models/status';
 import {Invite} from '../app/models/invite';
@@ -18,14 +17,13 @@ import {Invite} from '../app/models/invite';
 export class PalladiumApiService {
   suites: Suite[] = [];
   plans: Plan[] = [];
-  product_id = 0;
   response_plan_data = {};
   response_suite_data = {};
+  response_results_data = {};
   runs: Run[] = [];
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
-  results: Result[] = [];
-  histories: History[] = [];
+  histories: ResultSet[] = [];
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -197,20 +195,14 @@ export class PalladiumApiService {
     });
   }
 
-  get_history(case_id): Promise<any> {
-    return this.httpService.postData('/case_history', {case_data: {id: case_id}}).then((resp: any) => {
+  history = async (case_id) => {
+    const resp = await this.httpService.postData('/case_history', {case_data: {id: case_id}});
       this.histories = [];
-      resp['history_data'].forEach(data => {
-        if (data['statistic']) {
-          data['statistic'] = new Statistic(data['statistic']);
-        }
+      resp['result_sets_history'].forEach(data => {
         this.histories.push(new History(data));
       });
       return this.histories;
-    }, (errors: any) => {
-      console.log(errors);
-    });
-  }
+  };
 
   //#endregion
 
@@ -340,17 +332,14 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Result
-  get_results(result_set_id): Promise<any> {
-    return this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}})
-      .then(
-        (resp: any) => {
-          this.results = [];
-          Object(resp['results']).forEach(result => {
-            this.results.push(new Result(result));
-          });
-          return this.results;
-        }, error => console.log(error));
-  }
+  results = async (result_set_id) => {
+    const response =  await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
+    this.response_results_data[result_set_id] = [];
+    Object(response['results']).forEach(result => {
+      this.response_results_data[result_set_id].push(new Result(result));
+    });
+    return this.response_results_data[result_set_id];
+  };
 
   get_result(result_id): Promise<any> {
     return this.httpService.postData('/result', {result_data: {id: result_id}})

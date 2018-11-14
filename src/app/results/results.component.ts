@@ -43,12 +43,9 @@ export class ResultsComponent implements OnInit {
     return this.ApiService.get_statuses().then(res => { return res; });
   }
 
-  get_results() {
+  async get_results() {
     const result_set_id = this.router.url.match(/result_set\/(\d+)/i)[1];
-    return this.ApiService.get_results(result_set_id).then(res => {
-      return res;
-    }); //FIXME: Dont need to update all.
-    // Need only paint new result in list and wait respond 200 in result-set component
+    return await this.ApiService.results(result_set_id)
   }
 
   getStyles(id) {

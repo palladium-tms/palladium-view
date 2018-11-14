@@ -1,7 +1,11 @@
 # Changelog
 ## master (unreleased)
+## Fixed
     * Fix opening add_result menu without result_set select
     * Fix not correct search height
+## Changed
+    * Changed history menu
+    
 ## [0.4.4] - 2018-10-18
 ### Added
     * New menu for add new result

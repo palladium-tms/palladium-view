@@ -1,36 +1,53 @@
 <div class="history-space" [ngClass]="{'full_centered_data': loading}">
-  <div class="item-list" *ngIf="!loading">
-    <ng-container *ngIf="history">
-
-    <!--| sortByCreatedAt:'desc'-->
-    <div class="item bipolar-item big-item" *ngFor="let plan of history | SortByUpdatedAt:'desc'">
-      <div class="small-block" [ngStyle]="getStyles(plan)">
-        <div class="sub-blocks-holder">
-          <div class="sub-block"><a class="detail_link" href="{{plan_url(plan['plan_id'])}}" target="_blank"><b>{{plan['plan_name']}}</b></a></div>
-          <div class="sub-block" *ngIf="plan['result_set_id'] == undefined"><a href="{{run_url(plan['run_id'])}}" target="_blank">Run Detail</a></div>
-            <div class="sub-block" *ngIf="plan['suite_id']"><a href="{{suite_url(plan['plan_id'], plan['suite_id'])}}" target="_blank">Suite Detail</a></div>
-            <div class="sub-block" *ngIf="plan['result_set_id']">
-              <a href="{{result_set_url(plan['result_set_id'])}}" target="_blank">Results Detail</a>
-            </div>
-          <div class="sub-block"><b>{{get_status_by_id(plan['status']).name}}</b></div>
-        </div>
-      </div>
-      <div class="big-block">
-        <div class="status-history">
-          <div class="item-statistic">
-            <ng-container *ngIf="plan.statistic">
-              <div *ngFor="let status of plan.statistic.existed_statuses"
-                   [ngStyle]="{ 'width': (plan['statistic'].extended[status] / plan['statistic'].all * 100) + '%', 'background-color':  get_status_by_id(status).color}">
-              </div>
-            </ng-container>
-          </div>
-        </div>
+  <div class="toolbar">
+    <div class="buttons">
+      <div class="toolbar-element" (click)="close_all()" [ngClass]="{'disabled': this.loading}">
+        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
     </div>
+  </div>
+  <div class="item-list">
+    <ng-container *ngIf="history">
+      <div class="history" *ngFor="let result_set of history | SortByUpdatedAt:'desc'">
+        <div class="history-item">
+          <div class="history-status" [ngStyle]="getStyles(result_set.status)">
+            <div class="history-status-name"><b>{{get_status_by_id(result_set.status).name}}</b></div>
+          </div>
+          <div class="show-all" (click)="get_results(result_set)" *ngIf="result_set.object_status == 'closed'">
+           <span>Show_all</span>
+          </div>
+          <div class="loader_wrapper" *ngIf="result_set.object_status == 'loading'">
+            <div class="loader"></div>
+          </div>
+          <div class="show-all" (click)="get_results(result_set)" *ngIf="result_set.object_status == 'opened'">
+            <span>Hide</span>
+          </div>
+          <div class="plan-name">
+            {{result_set.plan.name}}
+          </div>
+        </div>
+        <div class="results-item" *ngIf="result_set.object_status == 'opened'">
+          <div class="item bipolar-item big-item" *ngFor="let result of results_data[result_set.id].results">
+            <div class="small-block" [ngStyle]="getStyles(result.status_id)">
+              <div class="sub-blocks-holder">
+                <div class="sub-block"><b>{{get_status_by_id(result.status_id).name}}</b></div>
+                <div class="sub-block">{{result.created_at | date:'medium' }}</div>
+                <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
+                <!--<div class="sub-block"><a routerLink="/result/{{result.id}}" target="_blank">Details</a></div>-->
+              </div>
+            </div>
+            <div class="big-block">
+              <div class="message" *ngFor="let data of result.describer">
+                <span><b>{{data["title"]}}:</b></span>
+                <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' [note] = 'data["note"]'></app-result-value>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
     </ng-container>
   </div>
-  <div class="loader" *ngIf="loading"></div>
 </div>
-
-
 
