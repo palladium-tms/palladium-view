@@ -1,14 +1,12 @@
-<div class="login-box" *ngIf="load_form">
+<mat-card class="login-box" *ngIf="load_form">
   <div class="sing-in">
     <h2>SING IN</h2>
   </div>
 
   <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" [formGroup]="login_form">
-
     <div class="container">
       <mat-form-field class="form-field">
-        <input matInput placeholder="Email" formControlName="email"  name="username"
-               [(ngModel)]="model.username">
+        <input matInput placeholder="Email" formControlName="email" name="username">
         <mat-error *ngIf="email.hasError('pattern')">
           Please enter a valid email address
         </mat-error>
@@ -17,8 +15,7 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field class="form-field">
-        <input matInput placeholder="Enter your password" [(ngModel)]="model.password" [type]="hide ? 'password' : 'text'" name="password"  formControlName="password">
-        <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+        <input matInput placeholder="Enter your password" name="password" type="password" formControlName="password">
         <mat-error *ngIf="password.hasError('required')">
           Password is <strong>required</strong>
         </mat-error>
@@ -30,5 +27,4 @@
       <mat-error class="login-error" *ngIf="error">{{error}}</mat-error>
     </div>
   </form>
-</div>
-
+</mat-card>
