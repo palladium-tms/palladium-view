@@ -5,7 +5,7 @@
     * Fix not correct search height
 ## Changed
     * Changed history menu
-    
+    * Restyle login page and add reactive form to it
 ## [0.4.4] - 2018-10-18
 ### Added
     * New menu for add new result

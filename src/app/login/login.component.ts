@@ -10,16 +10,12 @@ import {FormControl, Validators, FormGroup} from '@angular/forms';
 })
 
 export class LoginComponent implements OnInit {
-  email = new FormControl('', [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$'), Validators.required]);
-  password = new FormControl('', [Validators.required, Validators.minLength(4)]);
   login_form = new FormGroup({
-    email: this.email,
-    password: this.password,
+    email: new FormControl('', [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$'), Validators.required]),
+    password: new FormControl('', [Validators.required, Validators.minLength(4)]),
   });
-  model: any = {};
   loading = false;
   load_form = false;
-  hide = true;
   error = '';
 
   constructor(private router: Router,
@@ -38,9 +34,13 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  get email() { return this.login_form.get('email'); }
+
+  get password() { return this.login_form.get('password'); }
+
   login() {
     this.loading = true;
-    this.authenticationService.login(this.model.username, this.model.password)
+    this.authenticationService.login(this.email.value, this.password.value)
       .then(result => {
         this.router.navigate(['/']);
         this.loading = false;
