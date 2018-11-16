@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="results-item" *ngIf="result_set.object_status == 'opened'">
-          <div class="item bipolar-item big-item" *ngFor="let result of results_data[result_set.id].results">
+          <div class="item bipolar-item big-item" *ngFor="let result of results_data[result_set.id].results | sortByCreatedAt:'desc'">
             <div class="small-block" [ngStyle]="getStyles(result.status_id)">
               <div class="sub-blocks-holder">
                 <div class="sub-block"><b>{{get_status_by_id(result.status_id).name}}</b></div>
