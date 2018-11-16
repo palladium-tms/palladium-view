@@ -3,6 +3,7 @@
 ## Fixed
     * Fix opening add_result menu without result_set select
     * Fix not correct search height
+    * Fix wrong sort for results in case history
 ## Changed
     * Changed history menu
     * Restyle login page and add reactive form to it
