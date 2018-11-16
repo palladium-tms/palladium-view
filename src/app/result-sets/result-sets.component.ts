@@ -36,7 +36,7 @@ export class ResultSetsComponent implements OnInit {
   not_blocked_status = [];
   statuses_array = [];
   result_sets_and_cases = [];
-  show_all_elemets = [];
+  show_all_elements = [];
   statistic: Statistic;
   filter: any[] = [];
   select_all_flag = false;
@@ -87,7 +87,7 @@ export class ResultSetsComponent implements OnInit {
 
   show_all() {
     const filtered_by_status = this.filter_by_status();
-    this.show_all_elemets = this.filter_by_search(filtered_by_status);
+    this.show_all_elements = this.filter_by_search(filtered_by_status);
   }
 
   get_status_by_id(id) {
@@ -345,7 +345,7 @@ export class ResultSetsComponent implements OnInit {
 
   select_all() { // FIXME: need optimize
     if (this.loading) {return}
-      this.show_all_elemets.forEach(obj => {
+      this.show_all_elements.forEach(obj => {
         obj.selected = true;
       });
     this.select_all_flag = true;
