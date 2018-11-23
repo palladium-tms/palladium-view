@@ -1,6 +1,5 @@
 :host{
   display: flex;
-  overflow: hidden;
   flex: 1;
 }
 .product-space {
