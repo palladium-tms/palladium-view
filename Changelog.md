@@ -1,5 +1,7 @@
 # Changelog
 ## master (unreleased)
+
+## [0.4.5] - 2018-06-15
 ## Fixed
     * Fix opening add_result menu without result_set select
     * Fix not correct search height
