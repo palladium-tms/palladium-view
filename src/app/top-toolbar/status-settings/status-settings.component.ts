@@ -5,19 +5,20 @@ import {Status} from '../../models/status';
 @Component({
   selector: 'app-status-settings',
   templateUrl: './status-settings.component.html',
-  styleUrls: ['./status-settings.component.css']
+  styleUrls: ['./status-settings.component.scss']
 })
 export class StatusSettingsComponent implements OnInit {
   @ViewChild('form') form;
   @ViewChild('creating_form') creating_form;
+  @ViewChild('Modal') Modal;
   statuses;
   selected;
   mode = 'empty';
   constructor(private ApiService: PalladiumApiService) { }
 
   ngOnInit() {}
-  status_settings(modal) {
-    modal.open();
+  open() {
+    this.Modal.open();
     this.ApiService.get_not_blocked_statuses().then(res => {
       this.statuses = res;
     });

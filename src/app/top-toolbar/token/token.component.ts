@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 
@@ -6,17 +6,19 @@ import {PalladiumApiService} from '../../../services/palladium-api.service';
 @Component({
   selector: 'app-token',
   templateUrl: './token.component.html',
-  styleUrls: ['./token.component.css'],
+  styleUrls: ['./token.component.scss'],
 })
 export class TokenComponent implements OnInit {
   tokens;
   creating = false;
+  @ViewChild('Modal') Modal;
+
   constructor(private ApiService: PalladiumApiService) { }
 
   ngOnInit() {}
 
-  get_tokens(modal) {
-    modal.open();
+  open() {
+    this.Modal.open();
     this.ApiService.get_tokens().then(tokens => {
       this.tokens = tokens;
     });

@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 
 @Component({
   selector: 'app-invite',
   templateUrl: './invite.component.html',
-  styleUrls: ['./invite.component.css']
+  styleUrls: ['./invite.component.scss']
 })
 export class InviteComponent implements OnInit {
   invite = null;
+  @ViewChild('Modal') Modal;
 
   constructor(private ApiService: PalladiumApiService) { }
 
@@ -23,8 +24,8 @@ export class InviteComponent implements OnInit {
     return location.host + '/#/registration?invite=' + this.invite.token;
   }
 
-  get_invite(modal) {
-    modal.open();
+  open() {
+    this.Modal.open();
     this.ApiService.get_invite().then(invite => {
       this.invite = invite;
     });

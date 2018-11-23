@@ -6,7 +6,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 @Component({
   selector: 'app-top-toolbar',
   templateUrl: './top-toolbar.component.html',
-  styleUrls: ['./top-toolbar.component.css'],
+  styleUrls: ['./top-toolbar.component.scss'],
   providers: [PalladiumApiService]
 })
 export class TopToolbarComponent implements OnInit, DoCheck {
