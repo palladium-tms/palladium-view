@@ -7,6 +7,9 @@
 ## Changed
     * Changed history menu
     * Restyle login page and add reactive form to it
+    * Changed checkboxes to material design
+## Added
+    * Add Sass pre-processor
 ## [0.4.4] - 2018-10-18
 ### Added
     * New menu for add new result
