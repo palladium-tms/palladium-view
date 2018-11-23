@@ -5,11 +5,13 @@
         <app-filters [statuses] = statuses [statistic] = statistic (selected_statuses_emmit)="show_all()"></app-filters>
       </div>
       <div class="buttons">
-        <div class="button check_button" (click)="unselect_all()" [ngClass]="{'disabled': this.loading}" *ngIf="select_all_flag">
-          <i class="fa fa-check-square-o" aria-hidden="true"></i>
-        </div>
-        <div class="button check_button" (click)="select_all()" [ngClass]="{'disabled': this.loading}" *ngIf="!select_all_flag">
-          <i class="fa fa-square-o" aria-hidden="true"></i>
+        <div class="button check_button">
+          <mat-checkbox
+            class="select_all_checkbox"
+            (change)="select()"
+            [(ngModel)]="this.select_all_flag"
+            [disabled]="this.loading">
+          </mat-checkbox>
         </div>
         <div class="button add_result_button" (click)="add_result_open_menu()" [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
           <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
@@ -34,10 +36,8 @@
     <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
     <div class="item hoverer bipolar-item"
          *ngFor="let object of show_all_elements | sortByCreatedAt:'asc'| virtualscroll:scrollPos:30" [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
+      <mat-checkbox [(ngModel)]="object.selected" class="result-set-checkbox"></mat-checkbox>
       <div class="result-set-discriber centered-data">
-        <div class="centered-data checkbox-item">
-          <input type="checkbox" [(ngModel)]="object.selected">
-        </div>
         <div class="item-name">
           <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}" attr.data-path="{{object.path}}">{{object.name}}</a>
         </div>

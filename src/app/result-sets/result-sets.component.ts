@@ -14,7 +14,7 @@ import {ResultSet} from '../models/result_set';
 @Component({
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
-  styleUrls: ['./result-sets.component.css'],
+  styleUrls: ['./result-sets.component.scss'],
   providers: [PalladiumApiService, StatusFilterPipe, ResultService]
 })
 
@@ -23,7 +23,6 @@ export class ResultSetsComponent implements OnInit {
   @ViewChild('AddResultModal') AddResultModal;
   @ViewChild('form') form;
   @ViewChild('search_input_element') search_input_element;
-  add_result_modal_open = false;
   add_result_open = false;
   selected_status;
   result_sets = [];
@@ -234,42 +233,6 @@ export class ResultSetsComponent implements OnInit {
     this.Modal.close();
   }
 
-  add_result_modal() {
-    if (this.loading) {return}
-    if (this.get_selected_count() !== 0) {
-      this.add_result_modal_open = true;
-      this.AddResultModal.open();
-    }
-  }
-
-  add_results(form: NgForm, modal) {
-    const description = form.value['result_description'];
-    let status = form.value['result_status'];
-    if (status == null) { // FIXME: need validation
-      status = this.not_blocked_status[0]
-    }
-    Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
-      status)]).then(res => {
-      this.update_statistic();
-      if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
-        if (this.add_result_to_selected_result_set(res[0]['result_sets'])) {
-          this.resultservice.update_results(res[0]);
-        }
-      } else if (this.router.url.indexOf('/case_history/') >= 0) {
-        // Fixme: Add history updating
-      }
-      this.show_all();
-    });
-    this.reset_add_result_form(form);
-    modal.close();
-    this.add_result_modal_open = false;
-  }
-
-  reset_add_result_form(form) {
-    form.reset();
-    this.add_result_modal_open = false
-  }
-
   add_result_to_selected_result_set(results) {
     const filtered_list = results.filter(result => result['id'] === +/result_set\/(\d+)/.exec(this.router.url)[1]);
     return filtered_list.length === 1;
@@ -336,19 +299,16 @@ export class ResultSetsComponent implements OnInit {
   }
 
   unselect_all() {
-    if (this.loading) {return}
+    this.select_all_flag = false;
     this.result_sets_and_cases.forEach(obj => {
       obj.selected = false;
     });
-    this.select_all_flag = false;
   }
 
-  select_all() { // FIXME: need optimize
-    if (this.loading) {return}
-      this.show_all_elements.forEach(obj => {
-        obj.selected = true;
+  select() {
+    this.show_all_elements.forEach(obj => {
+        obj.selected = this.select_all_flag;
       });
-    this.select_all_flag = true;
   }
 
   open_history_page() {
@@ -505,6 +465,7 @@ export class ResultSetsComponent implements OnInit {
           // Fixme: Add history updating
         }
         this.show_all();
+        this.unselect_all();
       });
       this.selected_status = '';
       this.add_result_open = false;
