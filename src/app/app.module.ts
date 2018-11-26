@@ -30,7 +30,7 @@ import {CasesComponent} from './cases/cases.component';
 import {FiltersComponent} from './page-component/filters/filters.component';
 import {StatusComponent} from './page-component/status/status.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
-import {AboutComponent} from './top-toolbar/about/about.component';
+import {AboutComponent, AboutDialogComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
 import {RunComponent} from './runs/run/run.component';
 import {SuiteComponent} from './runs/suite/suite.component';
@@ -164,6 +164,7 @@ const appRoutes: Routes = [
     StatusComponent,
     StatisticFilterPipe,
     AboutComponent,
+    AboutDialogComponent,
     StatusSettingsComponent,
     RunComponent,
     SuiteComponent,
@@ -217,7 +218,7 @@ const appRoutes: Routes = [
     MatTooltipModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
   bootstrap: [MainComponent],
-  entryComponents: [TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent],
+  entryComponents: [TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent, AboutComponent, AboutDialogComponent],
 })
 export class AppModule {
 }
