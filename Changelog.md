@@ -2,6 +2,8 @@
 ## master (unreleased)
 ## Added
     * Change bootstrap modals to angular material dialogs in token settings
+## Changed
+    * Get invite and generate invite methods is changed for work with await/async
 ## [0.4.5] - 2018-06-15
 ## Fixed
     * Fix opening add_result menu without result_set select

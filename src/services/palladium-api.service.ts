@@ -197,11 +197,11 @@ export class PalladiumApiService {
 
   history = async (case_id) => {
     const resp = await this.httpService.postData('/case_history', {case_data: {id: case_id}});
-      this.histories = [];
-      resp['result_sets_history'].forEach(data => {
-        this.histories.push(new History(data));
-      });
-      return this.histories;
+    this.histories = [];
+    resp['result_sets_history'].forEach(data => {
+      this.histories.push(new History(data));
+    });
+    return this.histories;
   };
 
   //#endregion
@@ -333,7 +333,7 @@ export class PalladiumApiService {
 
   //#region Result
   results = async (result_set_id) => {
-    const response =  await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
+    const response = await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
     this.response_results_data[result_set_id] = [];
     Object(response['results']).forEach(result => {
       this.response_results_data[result_set_id].push(new Result(result));
@@ -379,20 +379,18 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Result
-  generate_invite(): Promise<any> {
-    return this.httpService.postData('/create_invite_token', {}).then(res => {
-      return new Invite(res['invite_data']);
-    }, error => console.log(error));
+  async generate_invite() {
+    const response =  await this.httpService.postData('/create_invite_token', {})
+    return new Invite(response['invite_data'])
   }
 
-  get_invite(): Promise<any> {
-    return this.httpService.postData('/get_invite_token', {}).then(res => {
-      if (res['invite_data']) {
-        return new Invite(res['invite_data']);
-      } else {
-        return null;
-      }
-    }, error => console.log(error));
+  async get_invite() {
+    let invite = null;
+    const data = await this.httpService.postData('/get_invite_token', {});
+    if (data['invite_data']) {
+      invite = new Invite(data['invite_data']);
+    }
+    return invite;
   }
 
   //#endregion
