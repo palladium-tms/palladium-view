@@ -25,7 +25,7 @@ import {EqualValidator} from './directives/equal-validator.directive';  // impor
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
 import {SortByUpdatedAtPipe} from './pipes/sort-by-created-at/sort-by-updated-at.pipe';
-import {TokenComponent} from './top-toolbar/token/token.component';
+import {TokenComponent, TokenDialogComponent} from './top-toolbar/token/token.component';
 import {CasesComponent} from './cases/cases.component';
 import {FiltersComponent} from './page-component/filters/filters.component';
 import {StatusComponent} from './page-component/status/status.component';
@@ -158,6 +158,7 @@ const appRoutes: Routes = [
     SortByCreatedAtPipe,
     SortByUpdatedAtPipe,
     TokenComponent,
+    TokenDialogComponent,
     CasesComponent,
     FiltersComponent,
     StatusComponent,
@@ -214,7 +215,8 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatTooltipModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
-  bootstrap: [MainComponent]
+  bootstrap: [MainComponent],
+  entryComponents: [TokenComponent, TokenDialogComponent,],
 })
 export class AppModule {
 }

@@ -1,6 +1,7 @@
 # Changelog
 ## master (unreleased)
-
+## Added
+    * Change bootstrap modals to angular material dialogs in token settings
 ## [0.4.5] - 2018-06-15
 ## Fixed
     * Fix opening add_result menu without result_set select
