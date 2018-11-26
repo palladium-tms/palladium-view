@@ -1,33 +1,31 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
+import {MatDialog} from '@angular/material';
 
 @Component({
   selector: 'app-invite',
-  templateUrl: './invite.component.html',
-  styleUrls: ['./invite.component.scss']
+  templateUrl: './invite.component.html'
 })
-export class InviteComponent implements OnInit {
-  invite = null;
-  @ViewChild('Modal') Modal;
-
-  constructor(private ApiService: PalladiumApiService) { }
-
-  ngOnInit() {}
-
-  generate_invite() {
-    this.ApiService.generate_invite().then(invite => {
-      this.invite = invite;
-    });
-  }
-
-  generate_registration_link() {
-    return location.host + '/#/registration?invite=' + this.invite.token;
-  }
+export class InviteComponent {
+  constructor(private dialog: MatDialog) {}
 
   open() {
-    this.Modal.open();
-    this.ApiService.get_invite().then(invite => {
-      this.invite = invite;
-    });
+    this.dialog.open(InviteDialogComponent);
+  }
+}
+
+@Component({
+  selector: 'app-invite-dialog',
+  templateUrl: './invite.component.dialog.html',
+})
+export class InviteDialogComponent implements OnInit {
+  invite;
+  constructor(private ApiService: PalladiumApiService) {}
+
+  async ngOnInit() {
+    this.invite = await this.ApiService.get_invite();
+  }
+  async generate_invite() {
+    this.invite = await this.ApiService.generate_invite()
   }
 }
