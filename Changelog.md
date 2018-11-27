@@ -1,5 +1,6 @@
 # Changelog
 ## master (unreleased)
+## [0.4.6] - 2018-11-27
 ## Added
     * Change bootstrap modals to angular material dialogs in token settings
 ## Changed
