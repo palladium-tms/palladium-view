@@ -1,17 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {MatDialog} from '@angular/material';
 const { version: appVersion } = require('../../../../package.json');
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
-  styleUrls: ['./about.component.css']
 })
-export class AboutComponent implements OnInit {
-  appVersion;
+export class AboutComponent {
 
-  constructor() { }
+  constructor(private dialog: MatDialog) {}
+
+  open() {
+    this.dialog.open(AboutDialogComponent);
+  }
+}
+
+@Component({
+  selector: 'app-about-dialog',
+  templateUrl: './about.dialog.component.html',
+})
+export class AboutDialogComponent implements OnInit  {
+  version;
 
   ngOnInit() {
-    this.appVersion = appVersion;
+    this.version = appVersion;
   }
 }

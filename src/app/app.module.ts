@@ -25,13 +25,13 @@ import {EqualValidator} from './directives/equal-validator.directive';  // impor
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
 import {SortByUpdatedAtPipe} from './pipes/sort-by-created-at/sort-by-updated-at.pipe';
-import {TokenComponent} from './top-toolbar/token/token.component';
+import {TokenComponent, TokenDialogComponent} from './top-toolbar/token/token.component';
 import {CasesComponent} from './cases/cases.component';
 import {FiltersComponent} from './page-component/filters/filters.component';
 import {StatusComponent} from './page-component/status/status.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
-import {AboutComponent} from './top-toolbar/about/about.component';
-import {StatusSettingsComponent} from './top-toolbar/status-settings/status-settings.component';
+import {AboutComponent, AboutDialogComponent} from './top-toolbar/about/about.component';
+import {StatusSettingsComponent, StatusSettingsDialogComponent} from './top-toolbar/status-settings/status-settings.component';
 import {RunComponent} from './runs/run/run.component';
 import {SuiteComponent} from './runs/suite/suite.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
@@ -39,7 +39,7 @@ import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductSettingsComponent } from './product-settings/product-settings.component';
 import { CaseComponent } from './case/case.component';
-import { InviteComponent } from './top-toolbar/invite/invite.component';
+import {InviteComponent, InviteDialogComponent} from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 import { ResultValueComponent } from './page-component/result-value/result-value.component';
 import { DndListModule } from 'ngx-drag-and-drop-lists';
@@ -158,12 +158,15 @@ const appRoutes: Routes = [
     SortByCreatedAtPipe,
     SortByUpdatedAtPipe,
     TokenComponent,
+    TokenDialogComponent,
     CasesComponent,
     FiltersComponent,
     StatusComponent,
     StatisticFilterPipe,
     AboutComponent,
+    AboutDialogComponent,
     StatusSettingsComponent,
+    StatusSettingsDialogComponent,
     RunComponent,
     SuiteComponent,
     DetailResultComponent,
@@ -171,6 +174,7 @@ const appRoutes: Routes = [
     ProductSettingsComponent,
     CaseComponent,
     InviteComponent,
+    InviteDialogComponent,
     SortByNamePipe,
     ResultValueComponent,
     SearchPipe,
@@ -214,7 +218,12 @@ const appRoutes: Routes = [
     MatToolbarModule,
     MatTooltipModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
-  bootstrap: [MainComponent]
+  bootstrap: [MainComponent],
+  entryComponents: [TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
+    AboutComponent,
+    AboutDialogComponent,
+    StatusSettingsComponent,
+    StatusSettingsDialogComponent],
 })
 export class AppModule {
 }
