@@ -6,6 +6,7 @@
     * Get invite and generate invite methods is changed for work with await/async
     * Invite modal is rework to angular material dialog
     * About modal is rework to angular material dialog
+    * Status setting modal is rework to angular material dialog
     * Delete unused scss file from invite component
 ## [0.4.5] - 2018-06-15
 ## Fixed

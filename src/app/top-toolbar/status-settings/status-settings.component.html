@@ -1,77 +1,80 @@
-<modal #Modal>
-  <modal-header>
-    <h2>Status settings <button type="button"  class="btn btn-success"
-                           (click)="new_status_create()"
-                           [ngClass]="{'active': mode === 'creating'}">
-      <i class="fa fa-plus" aria-hidden="true"></i>
-    </button></h2>
-
-  </modal-header>
-  <modal-content>
-    <div class="status-settings">
-      <ng-container *ngIf="this.statuses">
-        <div class="status-list">
-          <div class="status-item hoverer" *ngFor="let status of statuses; let index = index"
-               [ngStyle]="getStyles(status)" (click)="item_selected(status)"
-               [ngClass]="{'activated': status === selected }">
-            <span>{{status.name}}</span>
-          </div>
-        </div>
-      </ng-container>
 
 
-      <div class="status-details" [ngClass]="{'hidden': mode !== 'editing' }">
-        <div class="form-wrapper">
 
-        <form autocomplete="off" #form="ngForm" class="status-settings-form" (ngSubmit)="update_status()">
-            <input type="text" class="status-name-input" name="status_name" ngModel required #status_name="ngModel"
-                   autofocus>
-          <small [hidden]="status_name.valid || (status_name.pristine && !form.submitted)" class="message-error">
-            Status name can't be empty.
-          </small>
-          <input type="text" class="status-color-input" name="status_color" ngModel required #status_color="ngModel"
-                 autofocus>
-          <small [hidden]="status_color.valid || (status_color.pristine && !form.submitted)" class="message-error">
-            Status color can't be empty.
-          </small>
-        </form>
+<!--<modal #Modal>-->
+  <!--<modal-header>-->
+    <!--<h2>Status settings <button type="button"  class="btn btn-success"-->
+                           <!--(click)="new_status_create()"-->
+                           <!--[ngClass]="{'active': mode === 'creating'}">-->
+      <!--<i class="fa fa-plus" aria-hidden="true"></i>-->
+    <!--</button></h2>-->
 
-        </div>
-        <div class="status-buttons">
-          <a class="btn btn-danger" (click)="delete_status()">
-            <i class="fa fa-trash-o fa-lg"></i> Delete
-          </a>
-          <button class="btn btn-success save-status " [disabled]="!form.valid" (click)="form.ngSubmit.emit()" type="submit"><span>Save</span></button>
-        </div>
-      </div>
-      <div class="status-new"  [ngClass]="{'hidden': mode !== 'creating' }">
-        <div class="form-wrapper">
-          <form autocomplete="off" #creating_form="ngForm" class="status-settings-form" (ngSubmit)="status_new()">
-            <input type="text" placeholder="Status name" class="status-name-input" name="status_name" ngModel required #status_name="ngModel"
-                   autofocus>
-            <small [hidden]="status_name.valid || (status_name.pristine && !creating_form.submitted)" class="message-error">
-              Status name can't be empty.
-            </small>
-            <input type="text" placeholder="Status color" class="status-color-input" name="status_color" ngModel required #status_color="ngModel"
-                   autofocus>
-            <small [hidden]="status_color.valid || (status_color.pristine && !creating_form.submitted)" class="message-error">
-              Status color can't be empty.
-            </small>
-          </form>
-        </div>
-        <div class="status-buttons">
-          <button class="btn btn-success save-status " [disabled]="!creating_form.valid" (click)="creating_form.ngSubmit.emit()" type="submit"><span>Create</span></button>
-        </div>
-      </div>
+  <!--</modal-header>-->
+  <!--<modal-content>-->
+    <!--<div class="status-settings">-->
+      <!--<ng-container *ngIf="this.statuses">-->
+        <!--<div class="status-list">-->
+          <!--<div class="status-item hoverer" *ngFor="let status of statuses; let index = index"-->
+               <!--[ngStyle]="getStyles(status)" (click)="item_selected(status)"-->
+               <!--[ngClass]="{'activated': status === selected }">-->
+            <!--<span>{{status.name}}</span>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</ng-container>-->
 
 
-      <ng-container *ngIf="mode === 'empty'">
-        <div class="no_select_message">
-          <h2>Select status</h2>
-        </div>
-      </ng-container>
+      <!--<div class="status-details" [ngClass]="{'hidden': mode !== 'editing' }">-->
+        <!--<div class="form-wrapper">-->
+
+        <!--<form autocomplete="off" #form="ngForm" class="status-settings-form" (ngSubmit)="update_status()">-->
+            <!--<input type="text" class="status-name-input" name="status_name" ngModel required #status_name="ngModel"-->
+                   <!--autofocus>-->
+          <!--<small [hidden]="status_name.valid || (status_name.pristine && !form.submitted)" class="message-error">-->
+            <!--Status name can't be empty.-->
+          <!--</small>-->
+          <!--<input type="text" class="status-color-input" name="status_color" ngModel required #status_color="ngModel"-->
+                 <!--autofocus>-->
+          <!--<small [hidden]="status_color.valid || (status_color.pristine && !form.submitted)" class="message-error">-->
+            <!--Status color can't be empty.-->
+          <!--</small>-->
+        <!--</form>-->
+
+        <!--</div>-->
+        <!--<div class="status-buttons">-->
+          <!--<a class="btn btn-danger" (click)="delete_status()">-->
+            <!--<i class="fa fa-trash-o fa-lg"></i> Delete-->
+          <!--</a>-->
+          <!--<button class="btn btn-success save-status " [disabled]="!form.valid" (click)="form.ngSubmit.emit()" type="submit"><span>Save</span></button>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="status-new"  [ngClass]="{'hidden': mode !== 'creating' }">-->
+        <!--<div class="form-wrapper">-->
+          <!--<form autocomplete="off" #creating_form="ngForm" class="status-settings-form" (ngSubmit)="status_new()">-->
+            <!--<input type="text" placeholder="Status name" class="status-name-input" name="status_name" ngModel required #status_name="ngModel"-->
+                   <!--autofocus>-->
+            <!--<small [hidden]="status_name.valid || (status_name.pristine && !creating_form.submitted)" class="message-error">-->
+              <!--Status name can't be empty.-->
+            <!--</small>-->
+            <!--<input type="text" placeholder="Status color" class="status-color-input" name="status_color" ngModel required #status_color="ngModel"-->
+                   <!--autofocus>-->
+            <!--<small [hidden]="status_color.valid || (status_color.pristine && !creating_form.submitted)" class="message-error">-->
+              <!--Status color can't be empty.-->
+            <!--</small>-->
+          <!--</form>-->
+        <!--</div>-->
+        <!--<div class="status-buttons">-->
+          <!--<button class="btn btn-success save-status " [disabled]="!creating_form.valid" (click)="creating_form.ngSubmit.emit()" type="submit"><span>Create</span></button>-->
+        <!--</div>-->
+      <!--</div>-->
 
 
-    </div>
-  </modal-content>
-</modal>
+      <!--<ng-container *ngIf="mode === 'empty'">-->
+        <!--<div class="no_select_message">-->
+          <!--<h2>Select status</h2>-->
+        <!--</div>-->
+      <!--</ng-container>-->
+
+
+    <!--</div>-->
+  <!--</modal-content>-->
+<!--</modal>-->
