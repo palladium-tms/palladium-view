@@ -77,8 +77,8 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Token
-  get_tokens(): Promise<any> {
-    return this.httpService.postData('/tokens', '').then((resp: any) => {
+  async get_tokens() {
+    return  await this.httpService.postData('/tokens', '').then((resp: any) => {
       return resp['tokens'];
     }, (errors: any) => {
       this.authenticationService.logout();

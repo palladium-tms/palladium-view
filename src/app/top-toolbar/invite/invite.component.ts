@@ -19,13 +19,21 @@ export class InviteComponent {
   templateUrl: './invite.component.dialog.html',
 })
 export class InviteDialogComponent implements OnInit {
+  mode: 'empty' | 'exist' | 'loading' | 'generating' = 'loading';
   invite;
   constructor(private ApiService: PalladiumApiService) {}
 
   async ngOnInit() {
     this.invite = await this.ApiService.get_invite();
+    if (this.invite) {
+      this.mode = 'exist'
+    } else {
+      this.mode = 'empty'
+    }
   }
   async generate_invite() {
-    this.invite = await this.ApiService.generate_invite()
+    this.mode = 'generating';
+    this.invite = await this.ApiService.generate_invite();
+    this.mode = 'exist'
   }
 }

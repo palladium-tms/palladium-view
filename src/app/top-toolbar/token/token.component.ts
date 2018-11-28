@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 import {MatDialog} from '@angular/material';
@@ -22,19 +22,23 @@ export class TokenComponent {
   templateUrl: 'app-token-dialog.html',
 })
 
-export class TokenDialogComponent {
-  tokens = [];
+export class TokenDialogComponent implements OnInit {
+  mode: 'loading' | 'exist' | 'empty' = 'loading';
+  tokens;
   token_form = new FormGroup({
     name: new FormControl('',  [Validators.required])
   });
 
-  constructor(private ApiService: PalladiumApiService) {
-    this.ApiService.get_tokens().then(tokens => {
-      this.tokens = tokens;
-    });
+  constructor(private ApiService: PalladiumApiService) {}
+
+  async ngOnInit() {
+    this.tokens = await this.ApiService.get_tokens();
+    if (this.tokens) {
+      this.mode = 'empty'
+    }
   }
 
-  get name() { return this.token_form.get('name'); }
+    get name() { return this.token_form.get('name'); }
 
   create_token() {
     console.log(this.name.value);

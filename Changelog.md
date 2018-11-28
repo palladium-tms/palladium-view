@@ -9,6 +9,7 @@
     * Added message to invite dialog if link is not found
 ## Added
     * Add new status button
+    * Add loading for invite, statuses and tokens dialog
     
 ## [0.4.6] - 2018-11-27
 ## Added

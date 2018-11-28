@@ -1,4 +1,6 @@
-<mat-card-title cdkFocusInitial>Status settings</mat-card-title>
+<mat-card-title cdkFocusInitial>Statuses</mat-card-title>
+<mat-card-content *ngIf="mode == 'loading'"><mat-spinner color="accent"></mat-spinner></mat-card-content>
+
 <mat-dialog-content *ngIf="mode == 'list_show'">
   <mat-nav-list>
     <a [ngStyle]="getStyles(status)" mat-list-item *ngFor="let status of statuses" (click)="edit(status)">
@@ -15,7 +17,7 @@
   <p>Create first status</p>
 </mat-dialog-content>
 
-<mat-dialog-content *ngIf="mode != 'list_show'">
+<mat-dialog-content *ngIf="mode != 'list_show' && mode != 'loading'">
   <form #StatusForm [formGroup]="status_form" (ngSubmit)="save()" id="status_form">
     <mat-form-field>
       <input matInput formControlName="name" placeholder="Status name">
@@ -27,7 +29,7 @@
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="mode != 'loading'">
   <button mat-raised-button (click)="back()" *ngIf="mode == 'editing' || mode == 'creating'">Back</button>
   <button mat-raised-button color="accent" (click)="mode = 'creating'" *ngIf="mode == 'list_show'">Create new</button>
   <button mat-raised-button color="warn" (click)="delete_status()" *ngIf="mode == 'editing'">Delete</button>
