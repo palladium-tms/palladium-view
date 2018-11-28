@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:10.14.0-jessie
 RUN mkdir /palladium-view
 WORKDIR /palladium-view
 COPY . /palladium-view
