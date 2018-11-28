@@ -7,6 +7,8 @@
     * Up version to 0.5.0
 ## Fixed
     * Added message to invite dialog if link is not found
+## Added
+    * Add new status button
     
 ## [0.4.6] - 2018-11-27
 ## Added

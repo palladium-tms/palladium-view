@@ -69,10 +69,9 @@ export class PalladiumApiService {
     });
   }
 
-  status_new(name, color) {
-    return this.httpService.postData('/status_new', {status_data: {color: color, name: name}}).then((resp: any) => {
-      return resp['status'];
-    });
+  async status_new(name, color) {
+    const resp = await this.httpService.postData('/status_new', {status_data: {color: color, name: name}});
+    return new Status(resp['status']);
   }
 
   //#endregion
