@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+## [0.5.0] - 2018-11-28
+## Changed
+    * Update packages to 7.1.0 version
 ## Fixed
     * Added message to invite dialog if link is not found
     
