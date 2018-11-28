@@ -22,8 +22,8 @@ export class StatusSettingsComponent {
   templateUrl: './status-settings-dialog.component.html',
 })
 export class StatusSettingsDialogComponent implements OnInit {
+  private mode: 'editing' | 'creating' | 'list_show' | 'empty';
   statuses;
-  editing = false;
   selected;
   status_form = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -44,32 +44,59 @@ export class StatusSettingsDialogComponent implements OnInit {
   async ngOnInit() {
     this.ApiService.get_not_blocked_statuses().then(res => {
       this.statuses = res;
+      this.mode = 'list_show';
+      this.empty_statuses_list()
     });
   }
 
   edit(status) {
     this.name.setValue(status.name);
     this.color.setValue(status.color);
-    this.editing = true;
+    this.mode = 'editing';
     this.selected = status;
   }
 
-  save() {
-    this.ApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
-      this.selected.name = res.name;
-      this.selected.color = res.color;
-      this.editing = false;
-    });
+  async save() {
+    if (this.mode == 'editing') {
+      this.ApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
+        this.selected.name = res.name;
+        this.selected.color = res.color;
+        this.mode = 'list_show';
+      });
+    } else {
+      const a = await this.ApiService.status_new(this.name.value, this.color.value);
+      this.statuses.push( a);
+      this.mode = 'list_show';
+      this.empty_statuses_list()
+    }
+    this.reset_form()
   }
 
   delete_status() {
     if (confirm('A u shuare?')) {
       this.ApiService.block_status(this.selected.id).then(res => {
         this.statuses = this.statuses.filter(status => status.id !== res['id']);
-        this.editing = false;
+        this.mode = 'list_show';
         this.selected = null;
+        this.empty_statuses_list();
+        this.status_form.reset()
       });
     }
+  }
+
+  empty_statuses_list() {
+    if (!this.statuses.length) {
+      this.mode = 'empty'
+    }
+  }
+
+  reset_form() {
+    this.status_form.reset();
+  }
+
+  back() {
+    this.reset_form();
+    this.mode = 'list_show';
   }
 
   getStyles(object) {

@@ -1,25 +1,36 @@
 <mat-card-title cdkFocusInitial>Status settings</mat-card-title>
-<mat-dialog-content *ngIf="!editing">
+<mat-dialog-content *ngIf="mode == 'list_show'">
   <mat-nav-list>
     <a [ngStyle]="getStyles(status)" mat-list-item *ngFor="let status of statuses" (click)="edit(status)">
       {{status.name}}
     </a>
   </mat-nav-list>
 </mat-dialog-content>
-<mat-dialog-content *ngIf="editing">
+
+<mat-dialog-content *ngIf="mode == 'empty'">
+  <p>Create first status</p>
+</mat-dialog-content>
+
+<mat-dialog-content *ngIf="mode == 'creating'">
+  <p>Create first status</p>
+</mat-dialog-content>
+
+<mat-dialog-content *ngIf="mode != 'list_show'">
   <form #StatusForm [formGroup]="status_form" (ngSubmit)="save()" id="status_form">
     <mat-form-field>
-      <input matInput formControlName="name" placeholder="Status name" [value]=selected.name>
+      <input matInput formControlName="name" placeholder="Status name">
     </mat-form-field>
     <mat-form-field>
-      <input matInput formControlName="color" placeholder="Status color" [value]=selected.color #Color>
+      <input matInput formControlName="color" placeholder="Status color" #Color>
       <mat-icon matSuffix [ngStyle]="{'color': Color.value}">brightness_1</mat-icon>
     </mat-form-field>
   </form>
 </mat-dialog-content>
-<mat-dialog-actions *ngIf="editing">
-  <button mat-raised-button (click)="editing = false">Back</button>
-  <button mat-raised-button color="warn" (click)="delete_status()">Delete</button>
-  <button mat-raised-button color="accent" type="submit" form="status_form" [disabled]="!status_form.valid">Save
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="back()" *ngIf="mode == 'editing' || mode == 'creating'">Back</button>
+  <button mat-raised-button color="accent" (click)="mode = 'creating'" *ngIf="mode == 'list_show'">Create new</button>
+  <button mat-raised-button color="warn" (click)="delete_status()" *ngIf="mode == 'editing'">Delete</button>
+  <button mat-raised-button color="accent" type="submit" form="status_form" [disabled]="!status_form.valid" *ngIf="mode != 'list_show'">Save
   </button>
 </mat-dialog-actions>
