@@ -1,13 +1,17 @@
-<mat-card-title>Invite</mat-card-title>
-<mat-dialog-content>
-  <mat-card-content *ngIf="invite">
+<h1 mat-dialog-title>Invite</h1>
+<mat-dialog-content *ngIf="invite">
     <pre>{{invite.link}}</pre>
     <label>Created at</label>
     <p>{{invite.created_at}}</p>
     <label>Expiration data</label>
     <p>{{invite.expiration_data}}</p>
-  </mat-card-content>
+</mat-dialog-content>
+<mat-dialog-content *ngIf="!invite">
+  <p>Invite link has not been created. Generate it first</p>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button color="accent" mat-raised-button (click)="generate_invite()">Update link</button>
+    <button color="accent" mat-raised-button (click)="generate_invite()">
+      <span *ngIf="invite">Update link</span>
+      <span *ngIf="!invite">Generate link</span>
+    </button>
 </mat-dialog-actions>
