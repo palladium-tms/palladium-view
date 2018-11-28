@@ -4,6 +4,7 @@
 ## Changed
     * Update packages to 7.1.0 version
     * Update nodejs version to 10.14.0 in docker
+    * Up version to 0.5.0
 ## Fixed
     * Added message to invite dialog if link is not found
     
