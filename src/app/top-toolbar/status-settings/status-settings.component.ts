@@ -22,7 +22,7 @@ export class StatusSettingsComponent {
   templateUrl: './status-settings-dialog.component.html',
 })
 export class StatusSettingsDialogComponent implements OnInit {
-  private mode: 'editing' | 'creating' | 'list_show' | 'empty';
+  mode: 'editing' | 'creating' | 'list_show' | 'empty';
   statuses;
   selected;
   status_form = new FormGroup({
