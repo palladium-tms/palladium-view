@@ -22,7 +22,7 @@ export class StatusSettingsComponent {
   templateUrl: './status-settings-dialog.component.html',
 })
 export class StatusSettingsDialogComponent implements OnInit {
-  mode: 'editing' | 'creating' | 'list_show' | 'empty';
+  mode: 'editing' | 'creating' | 'list_show' | 'empty' | 'loading' = 'loading';
   statuses;
   selected;
   status_form = new FormGroup({
@@ -42,6 +42,7 @@ export class StatusSettingsDialogComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.mode = 'loading';
     this.ApiService.get_not_blocked_statuses().then(res => {
       this.statuses = res;
       this.mode = 'list_show';

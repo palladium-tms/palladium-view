@@ -1,6 +1,7 @@
-<h2 cdkFocusInitial>Tokens settings</h2>
-<mat-dialog-content>
+<h2 cdkFocusInitial>Tokens</h2>
+<mat-card-content *ngIf="mode == 'loading'"><mat-spinner color="accent"></mat-spinner></mat-card-content>
 
+<mat-dialog-content *ngIf="mode != 'loading'">
   <form [formGroup]="token_form" (ngSubmit)="create_token()">
     <mat-form-field>
       <input formControlName="name" matInput placeholder="Token name">
@@ -9,7 +10,6 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-content>
-
   <div *ngFor="let current_token of tokens" class="token-item">
     <div class="token-describe">
         <div class="token_name"><b>{{current_token['name']}}</b></div>

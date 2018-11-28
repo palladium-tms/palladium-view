@@ -1,17 +1,19 @@
 <h1 mat-dialog-title>Invite</h1>
-<mat-dialog-content *ngIf="invite">
-    <pre>{{invite.link}}</pre>
+<mat-card-content *ngIf="mode == 'loading'"><mat-spinner color="accent"></mat-spinner></mat-card-content>
+<mat-dialog-content *ngIf="mode == 'exist' || mode == 'generating'">
+  <pre>{{invite.link}}</pre>
     <label>Created at</label>
     <p>{{invite.created_at}}</p>
     <label>Expiration data</label>
     <p>{{invite.expiration_data}}</p>
 </mat-dialog-content>
-<mat-dialog-content *ngIf="!invite">
+<mat-dialog-content *ngIf="mode == 'empty'">
   <p>Invite link has not been created. Generate it first</p>
 </mat-dialog-content>
-<mat-dialog-actions>
-    <button color="accent" mat-raised-button (click)="generate_invite()">
-      <span *ngIf="invite">Update link</span>
-      <span *ngIf="!invite">Generate link</span>
+<mat-dialog-actions *ngIf="mode != 'loading'">
+    <button color="accent" mat-raised-button (click)="generate_invite()" [disabled]="mode == 'generating'">
+      <span *ngIf="mode == 'exist'">Update link</span>
+      <span *ngIf="mode == 'empty'" >Generate link</span>
+      <span *ngIf=" mode == 'generating'" >Generating...</span>
     </button>
 </mat-dialog-actions>
