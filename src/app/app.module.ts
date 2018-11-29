@@ -45,6 +45,7 @@ import { ResultValueComponent } from './page-component/result-value/result-value
 import { DndListModule } from 'ngx-drag-and-drop-lists';
 import {CdkTableModule} from '@angular/cdk/table';
 import {
+  ErrorStateMatcher,
   MatAutocompleteModule,
   MatButtonModule,
   MatButtonToggleModule,
@@ -75,7 +76,7 @@ import {
   MatTableModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule,
+  MatTooltipModule, ShowOnDirtyErrorStateMatcher,
 } from '@angular/material';
 import { SearchPipe } from './pipes/search/search.pipe';
 import { SearchBarComponent } from './page-component/search-bar/search-bar.component';
@@ -217,7 +218,8 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule],
-  providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, LocalSettingsService],
+  providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService,
+    LocalSettingsService, {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],
   entryComponents: [TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
     AboutComponent,

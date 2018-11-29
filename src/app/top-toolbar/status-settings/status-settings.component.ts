@@ -26,7 +26,7 @@ export class StatusSettingsDialogComponent implements OnInit {
   statuses;
   selected;
   status_form = new FormGroup({
-    name: new FormControl('', [Validators.required]),
+    name: new FormControl('', [Validators.required, Validators.maxLength(40)]),
     color: new FormControl('', [Validators.required])
   });
 
@@ -95,7 +95,7 @@ export class StatusSettingsDialogComponent implements OnInit {
     this.status_form.reset();
   }
 
-  back() {
+  back_to_show_all() {
     this.reset_form();
     this.mode = 'list_show';
   }

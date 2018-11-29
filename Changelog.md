@@ -1,5 +1,10 @@
 # Changelog
 ## master (unreleased)
+## Changed
+    * Status edit dialog
+    * Add error matcher global
+    * Add error if status name is more 40 character
+
 ## [0.5.0] - 2018-11-28
 ## Changed
     * Update packages to 7.1.0 version
