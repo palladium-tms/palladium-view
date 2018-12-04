@@ -4,7 +4,9 @@
     * Status edit dialog
     * Add error matcher global
     * Add error if status name is more 40 character
-
+## Fixed
+    * Fix wrong result size if message is long
+    
 ## [0.5.0] - 2018-11-28
 ## Changed
     * Update packages to 7.1.0 version
