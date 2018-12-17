@@ -6,7 +6,7 @@
       <div class="toolbar-element" (click)="get_products()" [ngClass]="{'disabled': !this.products.length}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': !this.products.length}"></i>
       </div>
-      <div class="toolbar-element" (click)="open_settings(settings)" [ngClass]="{'hidden': setting_is_visible(), 'disabled': !this.products.length}">
+      <div class="toolbar-element" (click)="open_settings()" [ngClass]="{'hidden': setting_is_visible(), 'disabled': !this.products.length}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
       <div class="toolbar-element" (click)="pin_list()">
@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder">
+  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder" (click)="clicked($event)">
     <div class="item hoverer" routerLinkActive="activated" *ngFor="let product of products"
          [dndDragDisabled] = pinned
          [dndDraggable]
@@ -22,11 +22,10 @@
          (dndMoved)="removeItem(product, products)"
          [class.selected]="products.selected === product"
          [dndObject]="product">
-      <div class="item-name"><a [routerLink]="['/product', product.id]"
+      <div class="item-name product-name-link"><a [routerLink]="['/product', product.id]"
                                 routerLinkActive="low-priority">{{product.name}}</a>
       </div>
     </div>
   </div>
 </div>
-<app-product-settings #settings [products] = products (update_products)="update_products($event)"></app-product-settings>
 <router-outlet></router-outlet>

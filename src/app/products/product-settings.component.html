@@ -1,0 +1,29 @@
+<mat-card-title>
+  <h2>Product settings</h2>
+</mat-card-title>
+<mat-dialog-content>
+  <form autocomplete="off" [formGroup]="product_form" (onClose)="clear_errors()">
+    <mat-form-field color="accent" style="width: 100%">
+      <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Product name"
+             autocomplete="off" [value]="item.name">
+      <mat-error *ngIf="name.hasError('is_exist')">
+        Product with this name is exist
+      </mat-error>
+      <mat-error *ngIf="name.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+    <div class="item-option">
+      <label> Created at: {{item.created_at}}</label>
+    </div>
+    <div class="item-option">
+      <label> Updated at: {{item.updated_at}}</label>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="warn" (click)="delete_item()">Delete</button>
+  <button mat-raised-button color="accent" (click)="edit_product()" [disabled]="!product_form.valid">Save
+  </button>
+</mat-dialog-actions>

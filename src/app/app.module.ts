@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
-import {ProductsComponent} from './products/products.component';
 import {HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
@@ -37,7 +36,7 @@ import {SuiteComponent} from './runs/suite/suite.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ProductSettingsComponent } from './product-settings/product-settings.component';
+import { ProductsComponent, ProductSettingsComponent } from './products/products.component';
 import { CaseComponent } from './case/case.component';
 import {InviteComponent, InviteDialogComponent} from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
@@ -225,7 +224,9 @@ const appRoutes: Routes = [
     AboutComponent,
     AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent],
+    StatusSettingsDialogComponent,
+    ProductsComponent,
+    ProductSettingsComponent],
 })
 export class AppModule {
 }
