@@ -4,7 +4,7 @@
       <div class="toolbar-element" (click)="update_click()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
+      <div class="toolbar-element" (click)="open_settings()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
@@ -29,38 +29,5 @@
     </div>
   </div>
 </div>
-<modal #Modal>
-  <modal-header>
-    <h2>Plan edit</h2>
-  </modal-header>
-  <modal-content>
-    <div class="settings_content">
-      <div class="item-description">
-        <form autocomplete="off" [formGroup]="plan_form" (ngSubmit)="edit_plan()">
-          <div class="item-option">
-            <input (keyup)="check_existing()" type="text" name="name" formControlName="name" autofocus>
-            <div *ngIf="name.invalid && (name.dirty || name.touched)">
-              <small *ngIf="name.errors.required">
-                Plan name can't be empty.
-              </small>
-              <small *ngIf="name.errors.incorrect">
-                This name is taken
-              </small>
-            </div>
-          </div>
-          <div class="item-option">
-            <label *ngIf="plan"> Created at: {{plan.created_at}}</label>
-          </div>
-          <div class="item-option">
-            <label *ngIf="plan"> Updated at: {{plan.updated_at}}</label>
-          </div>
-          <button class="btn btn-success save_button" [disabled]="!plan_form.valid">Save</button>
-        </form>
-        <button class="btn btn-danger" (click)="delete_selected_plan()">Delete</button>
-      </div>
-    </div>
-  </modal-content>
-</modal>
-
 
 <router-outlet (activate)="onActivate($event)"></router-outlet>

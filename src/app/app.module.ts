@@ -13,7 +13,7 @@ import {PalladiumApiService} from '../services/palladium-api.service';
 import {HttpService} from '../services/http-request.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
-import {PlansComponent} from './plans/plans.component';
+import {PlansComponent, PlansSettingsComponent} from './plans/plans.component';
 import {RunsComponent} from './runs/runs.component';
 import {ResultSetsComponent} from './result-sets/result-sets.component';
 import {ResultsComponent} from './results/results.component';
@@ -148,6 +148,7 @@ const appRoutes: Routes = [
     TopToolbarComponent,
     ProductsComponent,
     PlansComponent,
+    PlansSettingsComponent,
     RunsComponent,
     LoginComponent,
     ResultSetsComponent,
@@ -226,7 +227,9 @@ const appRoutes: Routes = [
     StatusSettingsComponent,
     StatusSettingsDialogComponent,
     ProductsComponent,
-    ProductSettingsComponent],
+    ProductSettingsComponent,
+    PlansComponent,
+    PlansSettingsComponent],
 })
 export class AppModule {
 }

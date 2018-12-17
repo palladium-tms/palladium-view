@@ -18,7 +18,7 @@ export class ProductsComponent implements OnInit {
   pinned = true;
   product;
 
-  constructor(private ApiService: PalladiumApiService, private router: Router,  private dialog: MatDialog) {}
+  constructor(private ApiService: PalladiumApiService, private router: Router, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.get_products();
