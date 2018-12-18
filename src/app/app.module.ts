@@ -14,7 +14,7 @@ import {HttpService} from '../services/http-request.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
 import {PlansComponent, PlansSettingsComponent} from './plans/plans.component';
-import {RunsComponent} from './runs/runs.component';
+import {RunsComponent, RunsSettingsComponent} from './runs/runs.component';
 import {ResultSetsComponent} from './result-sets/result-sets.component';
 import {ResultsComponent} from './results/results.component';
 import {Angular2FontawesomeModule} from 'angular2-fontawesome/angular2-fontawesome';
@@ -150,6 +150,7 @@ const appRoutes: Routes = [
     PlansComponent,
     PlansSettingsComponent,
     RunsComponent,
+    RunsSettingsComponent,
     LoginComponent,
     ResultSetsComponent,
     ResultsComponent,
@@ -229,7 +230,9 @@ const appRoutes: Routes = [
     ProductsComponent,
     ProductSettingsComponent,
     PlansComponent,
-    PlansSettingsComponent],
+    PlansSettingsComponent,
+    RunsComponent,
+    RunsSettingsComponent],
 })
 export class AppModule {
 }

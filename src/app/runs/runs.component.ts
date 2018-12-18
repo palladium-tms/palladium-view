@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Run} from '../models/run';
 import {Suite} from '../models/suite';
@@ -7,7 +7,9 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
 import {FiltersComponent} from '../page-component/filters/filters.component';
-import {NgForm} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {ProductSettingsComponent} from '../products/products.component';
 
 @Component({
   selector: 'app-runs',
@@ -36,8 +38,9 @@ export class RunsComponent implements OnInit {
   all_statistic = {};
   scrollPos = 0;
   public Math: Math = Math;
+
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, public StatisticService: StatisticService) {
+              private router: Router, private StatisticService: StatisticService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -94,7 +97,9 @@ export class RunsComponent implements OnInit {
   }
 
   update_click() {
-    if (this.loading) {return}
+    if (this.loading) {
+      return
+    }
     this.get_runs_and_suites();
     if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
@@ -160,61 +165,31 @@ export class RunsComponent implements OnInit {
     }
   }
 
-  edit_object_modal(form: NgForm, modal) {
-    if (this.run_opened()) {
-      this.ApiService.edit_suite_by_run_id(this.object.id, form.value['name']).then((suite: Suite) => {
-        const edited = this.runs_and_suites[this.runs_and_suites.indexOf(this.runs_and_suites.filter(it => it.id === this.object.id)[0])];
-        edited.name = suite.name;
-        edited.updated_at = suite.updated_at;
-        modal.close();
-      },  (errors: any) => {
-        this.errors['name'] = errors['name'];
-      });
-    } else {
-      this.ApiService.edit_suite(this.object.id, form.value['name']).then((suite: Suite)  => {
-        const edited = this.runs_and_suites[this.runs_and_suites.indexOf(this.runs_and_suites.filter(it => it.id === this.object.id)[0])];
-        edited.name = suite.name;
-        edited.updated_at = suite.updated_at;
-        modal.close();
-      },  (errors: any) => {
-        this.errors['name'] = errors['name'];
-      });
-    }
-  }
 
-  delete_object() {
-    if (confirm('A u shuare?')) {
-      const id = this.get_items_id();
-      if (this.run_opened()) {
-        this.ApiService.delete_run(id).then(run => {
-          this.runs = this.runs.filter(current_run => current_run.id !== +run);
-          this.merge_suites_and_runs();
-          this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
-          if (this.router.url.indexOf('/run/' + id) >= 0) {
-            this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
-          }
-        });
-      } else {
-        this.ApiService.delete_suite(id).then((suite: Suite) => {
-          this.suites = this.suites.filter(obj => (obj.id !== suite.id));
-          this.merge_suites_and_runs();
-          this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
-          if (this.router.url.indexOf('/suite/' + id) >= 0) {
-            this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
-          }
-        });
-      }
-    }
-    this.Modal.close();
-  }
-
-  open_modal() {
-    if (this.loading) {return}
-    this.clear_errors();
+  open_settings() {
     this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
       current_object.path === this.opened_item())[0];
-    this.form.controls['name'].setValue(this.object.name);
-    this.Modal.open();
+    const dialogRef = this.dialog.open(RunsSettingsComponent, {
+      data: {
+        object: this.object,
+        suites: this.suites,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.path == './run') {
+          this.runs = this.runs.filter(current_run => current_run.id !== result.id);
+          const path = this.router.url.replace(/run.*/, 'suite/');
+          this.router.navigate([ path + this.suites.find(suite => suite.name == result.name).id]);
+        } else {
+          this.suites = this.suites.filter(obj => (obj.id !== result.id));
+          this.router.navigate([ this.router.url.replace(/\/suite.*/, '')]);
+        }
+        this.merge_suites_and_runs();
+        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+      }
+    });
   };
 
   toolbar_opened() {
@@ -239,9 +214,9 @@ export class RunsComponent implements OnInit {
 
   get_items_id() {
     if (this.run_opened()) {
-      return ( +/run\/(\d+)/.exec(this.router.url)[1]);
+      return (+/run\/(\d+)/.exec(this.router.url)[1]);
     } else {
-      return ( +/suite\/(\d+)/.exec(this.router.url)[1]);
+      return (+/suite\/(\d+)/.exec(this.router.url)[1]);
     }
   }
 
@@ -264,5 +239,84 @@ export class RunsComponent implements OnInit {
 
   colScroll(event) {
     this.scrollPos = Math.floor(event.target.scrollTop / 53.5);
+  }
+}
+
+@Component({
+  selector: 'app-runs-settings',
+  templateUrl: 'runs-settings.component.html',
+})
+export class RunsSettingsComponent implements OnInit {
+  object;
+  object_form = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  });
+
+  constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
+              private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+              private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
+  }
+
+  ngOnInit() {
+    this.object = this.data.object;
+    this.object_form.patchValue({name: this.object.name});
+  }
+
+  get name() {
+    return this.object_form.get('name');
+  }
+
+
+  edit_object() {
+    if (this.name.value !== this.object.name) {
+      this.editing();
+    }
+    this.dialogRef.close();
+  }
+
+  editing() {
+    if (this.run_opened) {
+      this.ApiService.edit_suite_by_run_id(this.object.id, this.name.value).then((suite: Suite) => {
+        this.object.name = suite.name;
+        this.object.updated_at = suite.updated_at;
+      })
+    } else {
+      this.ApiService.edit_suite(this.object.id, this.object.name).then((suite: Suite) => {
+        this.object.name = suite.name;
+        this.object.updated_at = suite.updated_at;
+      })
+    }
+  }
+
+  async delete_object() {
+    if (confirm('A u shuare?')) {
+      if (this.run_opened()) {
+        await this.ApiService.delete_run(this.object.id);
+      } else {
+        await this.ApiService.delete_suite(this.object.id)
+      }
+      this.dialogRef.close(this.object);
+    }
+  }
+
+  run_opened() {
+    return this.router.url.indexOf('run') >= 0;
+  }
+
+  name_is_existed() {
+    if (this.name_is_not_changed()) {
+      return false
+    }
+    return this.data.suites.some(suite => suite.name == this.name.value)
+  }
+
+  name_is_not_changed() {
+    return this.object.name == this.name.value;
+  }
+
+  check_existing() {
+    if (this.name_is_existed()) {
+      this.object_form.controls['name'].setErrors({'is_exist': true});
+    }
   }
 }

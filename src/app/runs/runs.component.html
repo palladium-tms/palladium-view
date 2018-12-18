@@ -15,7 +15,7 @@
       <div class="toolbar-element" (click)="update_click()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>
-      <div class="toolbar-element" (click)="open_modal()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
+      <div class="toolbar-element" (click)="open_settings()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-cogs" aria-hidden="true"></i>
       </div>
     </div>
@@ -30,38 +30,4 @@
     <div [style.height.px]="Math.max(0, (runs_and_suites.length - scrollPos - 20)  * 53.5)"></div>
   </div>
 </div>
-
-
-<modal #Modal>
-  <modal-header>
-    <h1>Change object name</h1>
-  </modal-header>
-  <modal-content>
-    <div class="settings_content">
-      <div class="item-description">
-        <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_object_modal(form, Modal)">
-          <div class="item-option">
-            <input (keyup)="clear_errors()" type="text" class="run-name" name="name" ngModel required #name="ngModel" autofocus>
-            <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-              Object name can't be empty.
-            </small>
-            <small [hidden]="!name.valid" *ngFor="let error of errors['name']">
-              {{error}}
-            </small>
-          </div>
-          <div class="item-option">
-            <label *ngIf="object"> Created at: {{object.created_at}}</label>
-          </div>
-          <div class="item-option">
-            <label *ngIf="object"> Updated at: {{object.updated_at}}</label>
-          </div>
-          <button class="btn btn-success save_button" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">
-            Save
-          </button>
-        </form>
-        <button class="btn btn-danger" (click)="delete_object()">Delete</button>
-      </div>
-    </div>
-  </modal-content>
-</modal>
 <router-outlet (activate)="onActivate($event)"></router-outlet>
