@@ -129,12 +129,9 @@ export class PalladiumApiService {
     });
   }
 
-  delete_suite(suite_id): Promise<any> {
-    return this.httpService.postData('/suite_delete', {suite_data: {id: suite_id}}).then((resp: any) => {
-      return new Suite(resp['suite']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
+  async delete_suite(suite_id) {
+    const resp = await this.httpService.postData('/suite_delete', {suite_data: {id: suite_id}});
+    return new Suite(resp['suite']);
   }
 
   //#endregion
@@ -230,15 +227,8 @@ export class PalladiumApiService {
         });
   }
 
-  delete_run(run_id): Promise<any> {
-    return this.httpService.postData('/run_delete', {run_data: {id: run_id}})
-      .then(
-        run => {
-          return run['run'];
-        },
-        (errors: any) => {
-          console.log(errors);
-        });
+  async delete_run(run_id) {
+    return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run']
   }
 
   //#endregion
