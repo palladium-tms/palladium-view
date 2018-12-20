@@ -1,10 +1,10 @@
 <mat-card-title>
-  <h2>Suite settings</h2>
+  <h2>Case settings</h2>
 </mat-card-title>
 <mat-dialog-content>
   <form autocomplete="off" [formGroup]="object_form">
     <mat-form-field color="accent" style="width: 100%">
-      <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Plan name"
+      <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Case name"
              autocomplete="off" [value]="object.name">
       <mat-error *ngIf="name.hasError('is_exist')">
         This name is exist

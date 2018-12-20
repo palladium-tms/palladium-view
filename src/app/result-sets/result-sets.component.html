@@ -24,7 +24,7 @@
           <i class="fa fa-history" aria-hidden="true"></i>
         </div>
 
-        <div class="button" (click)="open_modal()" [ngClass]="{'disabled': this.loading}" *ngIf="object && !search_input">
+        <div class="button" (click)="open_settings()" [ngClass]="{'disabled': this.loading}" *ngIf="object && !search_input">
           <i class="fa fa-cogs" aria-hidden="true"></i>
         </div>
         <div class="button search_button" (click)="search_open()" [ngClass]="{'disabled': this.loading, 'long-search': search_input}">
