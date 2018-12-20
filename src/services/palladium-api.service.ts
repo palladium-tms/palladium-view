@@ -81,6 +81,7 @@ export class PalladiumApiService {
     return  await this.httpService.postData('/tokens', '').then((resp: any) => {
       return resp['tokens'];
     }, (errors: any) => {
+      console.log(errors);
       this.authenticationService.logout();
       this.router.navigate(['/singin']);
     });
@@ -103,6 +104,7 @@ export class PalladiumApiService {
       });
       return this.response_suite_data;
     }, (errors: any) => {
+      console.log(errors);
     });
   }
 
@@ -166,29 +168,19 @@ export class PalladiumApiService {
     });
   }
 
-  edit_case_by_result_set_id(result_set_id, name): Promise<any> {
-    const params = {case_data: {result_set_id: result_set_id, name: name}};
-    return this.httpService.postData('/case_edit', params).then((resp: any) => {
-      return new Case(resp['case']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
+  async edit_case_by_result_set_id(result_set_id, name): Promise<any> {
+    const resp = await this.httpService.postData('/case_edit', {case_data: {result_set_id: result_set_id, name: name}});
+    return new Case(resp['case']);
   }
 
-  edit_case(case_id, name): Promise<any> {
-    return this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}}).then((resp: any) => {
-      return new Case(resp['case']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
+  async edit_case(case_id, name) {
+    const resp = await this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}});
+    return new Case(resp['case']);
   }
 
-  delete_case(case_id): Promise<any> {
-    return this.httpService.postData('/case_delete', {case_data: {id: case_id}}).then((resp: any) => {
-      return new Case(resp['case']);
-    }, (errors: any) => {
-      console.log(errors);
-    });
+  async delete_case(case_id) {
+    const resp = await this.httpService.postData('/case_delete', {case_data: {id: case_id}});
+    return new Case(resp['case']);
   }
 
   history = async (case_id) => {
@@ -307,15 +299,9 @@ export class PalladiumApiService {
         });
   }
 
-  delete_result_set(id): Promise<any> {
-    return this.httpService.postData('/result_set_delete',
-      {result_set_data: {id: id}})
-      .then(result_set => {
-          return result_set['result_set']['id'];
-        },
-        (errors: any) => {
-          console.log(errors);
-        });
+  async delete_result_set(id) {
+    const result_set = await this.httpService.postData('/result_set_delete', {result_set_data: {id: id}});
+    return result_set['result_set']['id'];
   }
 
   //#endregion
@@ -369,7 +355,7 @@ export class PalladiumApiService {
 
   //#region Result
   async generate_invite() {
-    const response =  await this.httpService.postData('/create_invite_token', {})
+    const response =  await this.httpService.postData('/create_invite_token', {});
     return new Invite(response['invite_data'])
   }
 
