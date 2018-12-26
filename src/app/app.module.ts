@@ -45,7 +45,7 @@ import { DndListModule } from 'ngx-drag-and-drop-lists';
 import {CdkTableModule} from '@angular/cdk/table';
 import {
   ErrorStateMatcher,
-  MatAutocompleteModule,
+  MatAutocompleteModule, MatBadgeModule,
   MatButtonModule,
   MatButtonToggleModule,
   MatCardModule,
@@ -111,7 +111,7 @@ const appRoutes: Routes = [
 ];
 @NgModule({  exports: [
     CdkTableModule,
-    MatAutocompleteModule,
+    MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -189,7 +189,7 @@ const appRoutes: Routes = [
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
     CdkTableModule,
-    MatAutocompleteModule,
+    MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
