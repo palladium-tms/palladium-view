@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
 import {ActivatedRoute} from '@angular/router';
