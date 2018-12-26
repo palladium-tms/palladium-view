@@ -78,7 +78,7 @@ export class PalladiumApiService {
 
   //#region Token
   async get_tokens() {
-    return  await this.httpService.postData('/tokens', '').then((resp: any) => {
+    return await this.httpService.postData('/tokens', '').then((resp: any) => {
       return resp['tokens'];
     }, (errors: any) => {
       console.log(errors);
@@ -324,38 +324,32 @@ export class PalladiumApiService {
         }, error => console.log(error));
   }
 
-  result_new(result_sets, description, status): Promise<any> {
-    return this.httpService.postData('/result_new', {
+  async result_new(result_sets, description, status) {
+    if (result_sets.length == 0) { return [] }
+    const res = await this.httpService.postData('/result_new', {
       result_data: {
         message: description, status: status.name,
         result_set_id: result_sets.map(obj => obj.id)
       }
-    })
-      .then(res => {
-        return res;
-      }, error => console.log(error));
+    });
+    return res['result_sets'].map(result => new ResultSet(result));
   }
 
-  result_new_by_case(cases, message, status, run_id): Promise<any> {
+  async result_new_by_case(cases, message, status, run_id) {
+    if (cases.length == 0) { return [] }
     const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
     for (const this_case of cases) {
       params.result_set_data.name.push(this_case.name);
     }
-    return this.httpService.postData('/result_new', params).then(res => {
-      const result_sets = [];
-      res['result_sets'].forEach((result_set) => {
-        const new_result_set = new ResultSet(result_set);
-        result_sets.push(new_result_set);
-      });
-      return result_sets;
-    }, error => console.log(error));
+    const res = await this.httpService.postData('/result_new', params);
+    return res['result_sets'].map(result => new ResultSet(result));
   }
 
   //#endregion
 
   //#region Result
   async generate_invite() {
-    const response =  await this.httpService.postData('/create_invite_token', {});
+    const response = await this.httpService.postData('/create_invite_token', {});
     return new Invite(response['invite_data'])
   }
 
