@@ -20,8 +20,10 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 })
 
 export class ResultSetsComponent implements OnInit {
-  @ViewChild('AddResultModal') AddResultModal;
-  @ViewChild('form') form;
+  new_result_form = new FormGroup({
+    status: new FormControl('', [Validators.required]),
+    message: new FormControl('')
+  });
   @ViewChild('search_input_element') search_input_element;
   add_result_open = false;
   selected_status;
@@ -189,52 +191,6 @@ export class ResultSetsComponent implements OnInit {
     });
   };
 
-  add_result_to_selected_result_set(results) {
-    const filtered_list = results.filter(result => result['id'] === +/result_set\/(\d+)/.exec(this.router.url)[1]);
-    return filtered_list.length === 1;
-  }
-
-  add_result_for_result_set(message, status) {
-    const result_sets = this.result_sets_and_cases.filter(obj => obj.path === 'result_set' && obj.selected);
-    if (result_sets.length === 0) {
-      return Promise.resolve([]);
-    }
-    return this.ApiService.result_new(result_sets, message, status).then(res => {
-      res['result_sets'].forEach(result_set => {
-        let index;
-        index = this.result_sets_and_cases.findIndex(current_object =>
-          result_set.name === current_object.name);
-        this.result_sets_and_cases[index] = new ResultSet(result_set);
-        this.result_sets_and_cases[index].selected = true;
-      });
-      return res;
-    });
-  }
-
-  add_result_for_case(message, status) {
-    const cases = this.result_sets_and_cases.filter(obj => obj.path === 'case' && obj.selected);
-    if (cases.length === 0) {
-      return Promise.resolve([]);
-    }
-    return this.ApiService.result_new_by_case(cases, message, status, this.run_id).then((res: any) => {
-      res.forEach(responce_result_set => {
-        let index;
-        index = this.result_sets_and_cases.findIndex(current_object =>
-          responce_result_set.name === current_object.name);
-        this.result_sets_and_cases[index] = responce_result_set;
-        this.result_sets_and_cases[index].selected = true;
-      });
-      this.navigate_if_case_has_opened();
-    });
-  }
-
-  navigate_if_case_has_opened() {
-    if (this.router.url.indexOf('/case/') >= 0) {
-      this.reset_active();
-      this.open_results(this.result_sets_and_cases.filter(obj => obj.name === this.object.name)[0]);
-    }
-  }
-
   set_filters() {
     this.statuses.forEach(status => {
       if (this.filter.includes(status.id)) {
@@ -385,36 +341,56 @@ export class ResultSetsComponent implements OnInit {
     this.scrollPos = Math.floor(event.target.scrollTop / 33);
   }
 
-  select_status($event) {
-    this.selected_status = this.statuses.filter(x => {
-      return x.id == $event
-    })[0]
-  }
 
   get_selected_for_add_result() {
     return this.result_sets_and_cases.filter(x => x.selected);
   }
 
-  add_result_custom(form: NgForm) {
-    if (this.selected_status) {
-      const description = form.value['result_description'];
-      const status = this.selected_status;
-      Promise.all([this.add_result_for_result_set(description, status), this.add_result_for_case(description,
-        status)]).then(res => {
-        this.update_statistic();
-        if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
-          if (this.add_result_to_selected_result_set(res[0]['result_sets'])) {
-            this.resultservice.update_results(res[0]);
-          }
-        } else if (this.router.url.indexOf('/case_history/') >= 0) {
-          // Fixme: Add history updating
-        }
-        this.show_all();
-        this.unselect_all();
-      });
-      this.selected_status = '';
-      this.add_result_open = false;
-    }
+  selected_result_sets() {
+    return this.result_sets_and_cases.filter(obj => obj.path === 'result_set' && obj.selected);
+  }
+
+  selected_cases() {
+    return this.result_sets_and_cases.filter(obj => obj.path === 'case' && obj.selected);
+  }
+
+  get status() {
+    return this.new_result_form.get('status').value;
+  }
+
+  get message() {
+    return this.new_result_form.get('message').value;
+  }
+
+  async add_result() {
+    const result_sets_promise = this.ApiService.result_new(this.selected_result_sets(), this.message, this.status);
+    const cases_promise = this.ApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.run_id);
+    this.update_result_sets(await result_sets_promise);
+    this.update_cases(await cases_promise);
+    this.show_all();
+    this.update_statistic();
+    this.unselect_all();
+    this.new_result_form.reset(['name', 'status']);
+    this.add_result_open = false;
+  }
+
+  update_result_sets(result_sets) {
+    result_sets.forEach(element => {
+      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'ResultSet');
+      this.result_sets_and_cases[index].status = element.status;
+    });
+  }
+
+  update_cases(cases) {
+    cases.forEach(element => {
+      const new_result_set = new ResultSet(element);
+      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'Case');
+      if (this.result_sets_and_cases[index].active) {
+        new_result_set.active = true;
+        this.open_results(new_result_set);
+      }
+      this.result_sets_and_cases[index] = new_result_set;
+    });
   }
 
   cancel_result_custom() {
@@ -430,8 +406,14 @@ export class ResultSetsComponent implements OnInit {
   }
 
   add_result_open_menu() {
-    if (!this.loading && this.get_selected_count() != 0) {
+    const selected = this.result_sets_and_cases.filter(obj => obj.selected);
+    if (!this.loading && selected.length != 0) {
       this.add_result_open = true;
+      if (selected.length == 1) {
+        this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
+      } else {
+        this.new_result_form.reset('status');
+      }
     }
   }
 }
