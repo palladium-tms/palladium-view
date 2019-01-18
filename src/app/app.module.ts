@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
-import {ProductsComponent} from './products/products.component';
 import {HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
@@ -14,9 +13,9 @@ import {PalladiumApiService} from '../services/palladium-api.service';
 import {HttpService} from '../services/http-request.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MainComponent} from './main/main.component';
-import {PlansComponent} from './plans/plans.component';
-import {RunsComponent} from './runs/runs.component';
-import {ResultSetsComponent} from './result-sets/result-sets.component';
+import {PlansComponent, PlansSettingsComponent} from './plans/plans.component';
+import {RunsComponent, RunsSettingsComponent} from './runs/runs.component';
+import {ResultSetsComponent, ResultSetsSettingsComponent} from './result-sets/result-sets.component';
 import {ResultsComponent} from './results/results.component';
 import {Angular2FontawesomeModule} from 'angular2-fontawesome/angular2-fontawesome';
 import {ModalModule} from 'ngx-modal';
@@ -37,7 +36,7 @@ import {SuiteComponent} from './runs/suite/suite.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ProductSettingsComponent } from './product-settings/product-settings.component';
+import { ProductsComponent, ProductSettingsComponent } from './products/products.component';
 import { CaseComponent } from './case/case.component';
 import {InviteComponent, InviteDialogComponent} from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
@@ -46,7 +45,7 @@ import { DndListModule } from 'ngx-drag-and-drop-lists';
 import {CdkTableModule} from '@angular/cdk/table';
 import {
   ErrorStateMatcher,
-  MatAutocompleteModule,
+  MatAutocompleteModule, MatBadgeModule,
   MatButtonModule,
   MatButtonToggleModule,
   MatCardModule,
@@ -112,7 +111,7 @@ const appRoutes: Routes = [
 ];
 @NgModule({  exports: [
     CdkTableModule,
-    MatAutocompleteModule,
+    MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -149,9 +148,12 @@ const appRoutes: Routes = [
     TopToolbarComponent,
     ProductsComponent,
     PlansComponent,
+    PlansSettingsComponent,
     RunsComponent,
+    RunsSettingsComponent,
     LoginComponent,
     ResultSetsComponent,
+    ResultSetsSettingsComponent,
     ResultsComponent,
     RegistrationComponent,
     EqualValidator,
@@ -187,7 +189,7 @@ const appRoutes: Routes = [
   imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
     CdkTableModule,
-    MatAutocompleteModule,
+    MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -225,7 +227,15 @@ const appRoutes: Routes = [
     AboutComponent,
     AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent],
+    StatusSettingsDialogComponent,
+    ProductsComponent,
+    ProductSettingsComponent,
+    PlansComponent,
+    PlansSettingsComponent,
+    RunsComponent,
+    RunsSettingsComponent,
+    ResultSetsComponent,
+    ResultSetsSettingsComponent],
 })
 export class AppModule {
 }

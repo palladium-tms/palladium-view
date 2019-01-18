@@ -1,8 +1,10 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
+import {ProductSettingsComponent} from '../products/products.component';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-plans',
@@ -16,14 +18,11 @@ export class PlansComponent implements OnInit {
   plans = [];
   plan;
   RunComponent;
-  @ViewChild('Modal') Modal;
-  plan_form = new FormGroup({
-    name: new FormControl('',  [Validators.required])
-  });
   statuses;
   loading = false;
   errors = {};
-  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+              private router: Router, private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -32,7 +31,6 @@ export class PlansComponent implements OnInit {
       this.init_data();
     });
   }
-  get name() { return this.plan_form.get('name'); }
 
   async get_plans(product_id) {
     return await this.ApiService.get_plans(product_id)
@@ -82,45 +80,6 @@ export class PlansComponent implements OnInit {
     this.RunComponent = componentRef;
   }
 
-  async edit_plan() {
-    if (!this.name_is_not_changed()) {
-      const plan = await this.ApiService.edit_plan(this.plan.id, this.name.value);
-      this.plans.filter(x => x.id == plan.id)[0].name = plan.name;
-    }
-    this.Modal.close();
-  }
-
-  name_is_existed() {
-    if (this.plan) {
-      if (this.name_is_not_changed()) { return false }
-      return this.plans.some(product => product.name == this.name.value);
-    }
-  }
-
-  name_is_not_changed() {
-    return this.plan.name == this.name.value;
-  }
-
-  check_existing() {
-    if (this.name_is_existed()) {
-      this.plan_form.controls['name'].setErrors({'incorrect': true});
-    }
-  }
-
-  async delete_plan(id) {
-    if (confirm('A u shuare?')) {
-      await this.ApiService.delete_plan(id);
-      this.Modal.close();
-      this.plans = this.plans.filter(current_plan => current_plan.id !== +id);
-      if (this.router.url.indexOf('/plan/' + id) >= 0) {
-         this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
-       }
-    }
-  }
-  delete_selected_plan() {
-    this.delete_plan( +/plan\/(\d+)/.exec(this.router.url)[1]);
-  }
-
   update_statistic(plan, count_of_cases) {
     if (plan.all_statistic['all'] < count_of_cases) {
       const untested = count_of_cases - plan.all_statistic['all'];
@@ -134,12 +93,18 @@ export class PlansComponent implements OnInit {
     return (Math.floor(data * 100) / 100);
   }
 
-  open_modal() {
-    if (this.loading) {return}
-    this.errors = {};
-    this.plan = this.plans.filter(current_plan => current_plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
-    this.plan_form.patchValue({name: this.plan.name});
-    this.Modal.open();
+  open_settings() {
+    const dialogRef = this.dialog.open(PlansSettingsComponent, {
+      data: {
+        plans: this.plans,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.plans = result;
+      }
+    });
   };
 
   toolbar_opened() {
@@ -148,5 +113,63 @@ export class PlansComponent implements OnInit {
 
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
+  }
+}
+
+
+@Component({
+  selector: 'app-plan-settings',
+  templateUrl: 'plans-settings.component.html',
+})
+
+export class PlansSettingsComponent implements OnInit {
+  item;
+  plans;
+  plan_form = new FormGroup({
+    name: new FormControl('',  [Validators.required])
+  });
+  constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
+              private ApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
+
+  ngOnInit(): void {
+    this.plans = this.data.plans;
+    this.item = this.plans.filter(plan => plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
+    this.plan_form.patchValue({name: this.item.name});
+  }
+
+  get name() { return this.plan_form.get('name'); }
+
+  async edit_plan() {
+    if (!this.name_is_not_changed()) {
+      const plan = await this.ApiService.edit_plan(this.item.id, this.name.value);
+      this.plans.filter(x => x.id == plan.id)[0].name = plan.name;
+    }
+    this.dialogRef.close(this.plans);
+  }
+
+  name_is_existed() {
+    if (this.item) {
+      if (this.name_is_not_changed()) { return false }
+      return this.plans.some(product => product.name == this.name.value);
+    }
+  }
+
+  name_is_not_changed() {
+    return this.item.name == this.name.value;
+  }
+
+  check_existing() {
+    if (this.name_is_existed()) {
+      this.plan_form.controls['name'].setErrors({'incorrect': true});
+    }
+  }
+
+  async delete_plan() {
+    if (confirm('A u shuare?')) {
+      await this.ApiService.delete_plan(this.item.id);
+      this.plans = this.plans.filter(current_plan => current_plan.id !== this.item.id);
+      this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
+      this.dialogRef.close(this.plans);
+    }
   }
 }
