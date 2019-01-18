@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder" (click)="clicked($event)">
+  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder">
     <div class="item hoverer" routerLinkActive="activated" *ngFor="let product of products"
          [dndDragDisabled] = pinned
          [dndDraggable]

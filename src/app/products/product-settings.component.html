@@ -2,7 +2,7 @@
   <h2>Product settings</h2>
 </mat-card-title>
 <mat-dialog-content>
-  <form autocomplete="off" [formGroup]="product_form" (onClose)="clear_errors()">
+  <form autocomplete="off" [formGroup]="product_form">
     <mat-form-field color="accent" style="width: 100%">
       <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Product name"
              autocomplete="off" [value]="item.name">
