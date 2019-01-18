@@ -1,5 +1,9 @@
 # Changelog
 ## master (unreleased)
+## [0.5.1] - 2019-01-18
+## Changed
+    * Changed new_result windows
+    
 ## Changed
     * Status edit dialog
     * Add error matcher global
