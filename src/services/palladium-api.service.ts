@@ -325,24 +325,24 @@ export class PalladiumApiService {
   }
 
   async result_new(result_sets, description, status) {
-    if (result_sets.length == 0) { return [] }
+    if (result_sets.length == 0) { return {} }
     const res = await this.httpService.postData('/result_new', {
       result_data: {
         message: description, status: status.name,
         result_set_id: result_sets.map(obj => obj.id)
       }
     });
-    return res['result_sets'].map(result => new ResultSet(result));
+    return this.reformat_response(res);
   }
 
   async result_new_by_case(cases, message, status, run_id) {
-    if (cases.length == 0) { return [] }
+    if (cases.length == 0) { return {} }
     const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
     for (const this_case of cases) {
       params.result_set_data.name.push(this_case.name);
     }
     const res = await this.httpService.postData('/result_new', params);
-    return res['result_sets'].map(result => new ResultSet(result));
+    return this.reformat_response(res)
   }
 
   //#endregion
@@ -360,6 +360,17 @@ export class PalladiumApiService {
       invite = new Invite(data['invite_data']);
     }
     return invite;
+  }
+
+  reformat_response(res) {
+    const response = {};
+    if (res['result_sets']) {
+      response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
+    }
+    if (res['result']) {
+      response['result'] = new Result(res['result'])
+    }
+    return response;
   }
 
   //#endregion

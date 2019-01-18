@@ -363,11 +363,16 @@ export class ResultSetsComponent implements OnInit {
   }
 
   async add_result() {
-    const result_sets_promise = this.ApiService.result_new(this.selected_result_sets(), this.message, this.status);
-    const cases_promise = this.ApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.run_id);
-    this.update_result_sets(await result_sets_promise);
-    this.update_cases(await cases_promise);
+    const result_sets_result_promise = this.ApiService.result_new(this.selected_result_sets(), this.message, this.status);
+    const cases_result_promise = this.ApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.run_id);
+    const result_sets_result = await result_sets_result_promise;
+    const cases_result = await cases_result_promise;
+    this.update_result_sets(result_sets_result);
+    this.update_cases(cases_result);
     this.show_all();
+    if (this.object.active && this.object.selected) {
+      this.resultservice.update_results(result_sets_result || cases_result);
+    }
     this.update_statistic();
     this.unselect_all();
     this.new_result_form.reset(['name', 'status']);
@@ -375,14 +380,16 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_result_sets(result_sets) {
-    result_sets.forEach(element => {
+    if (!result_sets['result_sets']) { return }
+    result_sets['result_sets'].forEach(element => {
       const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'ResultSet');
       this.result_sets_and_cases[index].status = element.status;
     });
   }
 
   update_cases(cases) {
-    cases.forEach(element => {
+    if ( !cases['result_sets'] ) { return }
+    cases['result_sets'].forEach(element => {
       const new_result_set = new ResultSet(element);
       const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'Case');
       if (this.result_sets_and_cases[index].active) {
