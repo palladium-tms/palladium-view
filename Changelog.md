@@ -1,10 +1,10 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * Accent color for fieldes on login and reguster pages
 ## [0.5.1] - 2019-01-18
 ## Changed
     * Changed new_result windows
-    
-## Changed
     * Status edit dialog
     * Add error matcher global
     * Add error if status name is more 40 character

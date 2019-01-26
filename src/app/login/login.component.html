@@ -5,7 +5,7 @@
 
   <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" [formGroup]="login_form">
     <div class="container">
-      <mat-form-field class="form-field">
+      <mat-form-field class="form-field" color="accent">
         <input matInput placeholder="Email" formControlName="email" name="username">
         <mat-error *ngIf="email.hasError('pattern')">
           Please enter a valid email address
@@ -14,7 +14,7 @@
           Email is <strong>required</strong>
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="form-field">
+      <mat-form-field class="form-field" color="accent">
         <input matInput placeholder="Enter your password" name="password" type="password" formControlName="password">
         <mat-error *ngIf="password.hasError('required')">
           Password is <strong>required</strong>
