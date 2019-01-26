@@ -4,13 +4,16 @@
   width: 100%;
   min-height: 27em;
 }
+
 .form-field {
-padding-bottom: 1em;
+  padding-bottom: 1em;
 }
+
 .container > * {
   width: 100%;
 }
-.login-box{
+
+.login-box {
   margin-top: 3em;
   padding: 1em;
   width: 32em;
@@ -19,12 +22,11 @@ padding-bottom: 1em;
   flex-direction: column;
   border-radius: 4px;
 }
+
 .sing-in, .login-error {
   text-align: center;
 }
+
 .login-error {
   margin-top: 0.5em;
-}
-form {
-  display: flex;
 }

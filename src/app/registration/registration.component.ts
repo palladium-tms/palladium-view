@@ -27,7 +27,6 @@ export class RegistrationComponent implements OnInit {
   invite;
   hide_pwd = true;
   hide_confirmpwd = true;
-  no_users = true;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private authenticationService: AuthenticationService) {}
 
