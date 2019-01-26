@@ -18,7 +18,6 @@ import {RunsComponent, RunsSettingsComponent} from './runs/runs.component';
 import {ResultSetsComponent, ResultSetsSettingsComponent} from './result-sets/result-sets.component';
 import {ResultsComponent} from './results/results.component';
 import {Angular2FontawesomeModule} from 'angular2-fontawesome/angular2-fontawesome';
-import {ModalModule} from 'ngx-modal';
 import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive';  // import validator
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
@@ -186,7 +185,7 @@ const appRoutes: Routes = [
     DropdownMenuComponent,
     ClickOutsideDirective
   ],
-  imports: [ModalModule, BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
+  imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
     CdkTableModule,
     MatAutocompleteModule, MatBadgeModule,

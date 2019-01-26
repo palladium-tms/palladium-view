@@ -2,6 +2,10 @@
 ## master (unreleased)
 ## Added
     * Accent color for fieldes on login and reguster pages
+    * New case settings window
+## Fixed
+    * Suite and run statistic is updated after case delete
+  
 ## [0.5.1] - 2019-01-18
 ## Changed
     * Changed new_result windows

@@ -48,17 +48,15 @@ export class RunsComponent implements OnInit {
       this.plan_id = params['id'];
       this.get_runs_and_suites();
     });
-    this.StatisticService.getMessage().subscribe(statistic => {
-      const id = this.router.url.match(/run\/(\d+)/i)[1];
-      if (id !== null) {
-        Object(this.runs_and_suites).forEach(obj => {
-          if (obj.constructor.name === 'Run' && obj.id === +id) {
-            obj.statistic = statistic;
-          }
-        });
-        this.statistic = statistic;
-        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+    this.StatisticService.statistic_has_changed().subscribe(statistic => {
+      if (this.router.url.match(/run\/(\d+)/i)) {
+        this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
+          object.constructor.name == 'Run')[0].statistic = statistic;
+      } else {
+        this.runs_and_suites.filter(object => object.id == this.router.url.match(/suite\/(\d+)/i)[1] &&
+          object.constructor.name == 'Suite')[0].statistic = statistic;
       }
+        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     });
   }
 
