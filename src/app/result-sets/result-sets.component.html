@@ -19,7 +19,7 @@
       </div>
       <input class="search-input" type="text" (keydown.esc)="search_open()" placeholder="Search"
              (keyup)="write_to_search($event)" *ngIf="search_input" #search_input_element>
-      <div class="button" (click)="update_click(addresultform)" *ngIf="!search_input"
+      <div class="button" (click)="update_click()" *ngIf="!search_input"
            [ngClass]="{'disabled': this.loading}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
       </div>

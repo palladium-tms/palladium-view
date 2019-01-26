@@ -5,6 +5,8 @@
     * New case settings window
 ## Fixed
     * Suite and run statistic is updated after case delete
+    * Error after adding resulf without result set or case selected
+    * Fix: select all checkbox is not reset after refresh button click
   
 ## [0.5.1] - 2019-01-18
 ## Changed
