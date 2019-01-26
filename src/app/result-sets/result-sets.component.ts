@@ -286,6 +286,7 @@ export class ResultSetsComponent implements OnInit {
   update_click() {
     if (this.loading) { return }
     this.get_result_sets_and_cases();
+    this.select_all_flag = false;
     if (this.ResultComponent) {
       this.ResultComponent.update_click();
     }
@@ -370,7 +371,7 @@ export class ResultSetsComponent implements OnInit {
     this.update_result_sets(result_sets_result);
     this.update_cases(cases_result);
     this.show_all();
-    if (this.object.active && this.object.selected) {
+    if (this.object && this.object.selected) {
       this.resultservice.update_results(result_sets_result || cases_result);
     }
     this.update_statistic();
