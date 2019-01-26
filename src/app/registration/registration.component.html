@@ -5,7 +5,7 @@
   <form name="form" (ngSubmit)="f.form.valid && registration()" #f="ngForm" [formGroup]="registration_form">
     <div class="container">
 
-      <mat-form-field class="form-field">
+      <mat-form-field class="form-field" color="accent">
         <input matInput placeholder="Email" formControlName="email"  name="username">
         <mat-error *ngIf="email.hasError('pattern')">
           Please enter a valid email address
@@ -15,7 +15,7 @@
         </mat-error>
       </mat-form-field>
       <div formGroupName="password" class="passwords-group">
-        <mat-form-field class="form-field">
+        <mat-form-field class="form-field" color="accent">
           <input matInput placeholder="Password" formControlName="pwd" [type]="hide_pwd ? 'password' : 'text'">
           <mat-icon matSuffix (click)="hide_pwd = !hide_pwd">{{hide_pwd ? 'visibility' : 'visibility_off'}}</mat-icon>
           <mat-error *ngIf="registration_form['controls'].password['controls'].pwd.hasError('minlength')">
@@ -23,8 +23,7 @@
           </mat-error>
         </mat-form-field>
 
-
-        <mat-form-field class="form-field">
+        <mat-form-field class="form-field" color="accent">
           <input matInput placeholder="Confirm Password" formControlName="confirmpwd"
                  [type]="hide_confirmpwd ? 'password' : 'text'">
           <mat-icon matSuffix (click)="hide_confirmpwd = !hide_confirmpwd">{{hide_confirmpwd ? 'visibility' :
