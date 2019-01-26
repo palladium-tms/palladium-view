@@ -1,6 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
+import {MatDialog} from '@angular/material';
+import {ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
+import {StatisticService} from '../../services/statistic.service';
+import {Statistic} from '../models/statistic';
 
 @Component({
   selector: 'app-cases',
@@ -13,58 +17,52 @@ export class CasesComponent implements OnInit {
   @ViewChild('Modal') Modal;
   statuses;
   object;
-  menuItems = [
-    {label: '<span class="menu-icon">Refresh</span>', onClick: this.get_cases.bind(this)},
-    {label: '<span class="menu-icon">Edit</span>', onClick: this.open_modal.bind(this)},
-    {label: '<span class="menu-icon">Delete</span>', onClick: this.delete_case.bind(this)}];
+  suite_id;
 
   constructor(private activatedRoute: ActivatedRoute,
-              private ApiService: PalladiumApiService, private router: Router) {
+              private ApiService: PalladiumApiService, private router: Router, private dialog: MatDialog,  public stat: StatisticService) {
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
+      this.suite_id = params.id;
       this.get_cases();
     });
   }
 
   get_cases() {
-    if (this.router.url.match(/suite\/(\d+)/i)) {
-      const id = this.router.url.match(/suite\/(\d+)/i)[1];
-      this.ApiService.get_cases(id).then(cases => {
+      this.ApiService.get_cases(this.suite_id).then(cases => {
         this.cases = cases;
       });
-    }
   }
+  open_settings() {
+    const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
+      data: {
+        object: this.object,
+        cases: this.cases
+      }
+    });
 
-  open_modal(object) {
-    this.object = this.cases.filter(obj => obj.id === object.dataContext.id)[0];
-    this.form.controls['name'].setValue(this.object.name);
-    this.Modal.open();
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.cases = this.cases.filter(obj => (obj.id !== result.id));
+        this.router.navigate([/\S*suite\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+        this.update_statistic();
+        // this.update_statistic();
+      }
+    });
   };
 
-  edit_case_modal() {
-    if (!this.form.valid) {
-      return;
-    }
-    this.ApiService.edit_case(this.object.id, this.form.value['name']).then(
-      this_case => {
-        const result_set_for_change = this.cases.filter(current_case => current_case.id === this.object.id)[0];
-        result_set_for_change.name = this_case.name;
-        result_set_for_change.updated_at = this_case.updated_at;
-        }
-    );
-    this.Modal.close();
-  }
-
-  delete_case(data) {
-      this.ApiService.delete_case(data['dataContext'].id).then(this_case => {
-        this.cases = this.cases.filter(current_case => current_case.id !== this_case.id)[0];
-      });
-  }
-
-  update_click() {
-    this.cases = [];
-      this.get_cases();
+  update_statistic() {
+    const stat_data = {};
+    this.cases.forEach(object => {
+      if (object['status'] in stat_data) {
+        stat_data[object['status']] += 1;
+      } else {
+        stat_data[object['status']] = 1;
+      }
+    });
+    this.stat.update_parant_statistic(new Statistic(stat_data));
   }
 }

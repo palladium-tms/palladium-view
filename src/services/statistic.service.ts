@@ -9,11 +9,11 @@ import {Statistic} from '../app/models/statistic';
 export class StatisticService {
   private subject = new Subject<any>();
 
-  update_run_statistic(Object) {
+  update_parant_statistic(Object) {
     this.subject.next(Object);
   }
 
-  getMessage(): Observable<any> {
+  statistic_has_changed(): Observable<any> {
     return this.subject.asObservable();
   }
   // calculate statistic

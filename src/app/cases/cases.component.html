@@ -1,34 +1,22 @@
 <div class="case_space">
   <div class="toolbar">
     <div class="filter"></div>
+    <div class="buttons">
+      <div class="button" (click)="open_settings()" [ngClass]="{'disabled': this.loading}"
+           *ngIf="object">
+        <i class="fa fa-cogs" aria-hidden="true"></i>
+      </div>
+    </div>
   </div>
   <div class="item-list">
-    <div class="item hoverer bipolar-item" routerLinkActive="activated" *ngFor="let case of cases">
+    <div class="item hoverer bipolar-item" routerLinkActive="activated" *ngFor="let this_case of cases"  [ngClass]="{'activated': object && object.id == this_case.id}">
       <div class="result-set-discriber centered-data">
-        <div class="centered-data checkbox-item">
-          <input type="checkbox">
-        </div>
         <div class="item-name">
-          <span>{{case.name}}</span>
+          <div class="item-name">
+            <a title={{this_case.name}} class="result_set_link pointer" (click)="object = this_case">{{this_case.name}}</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<modal #Modal>
-  <modal-header>
-    <h1>Change case name</h1>
-  </modal-header>
-  <modal-content>
-    <form autocomplete="off" #form="ngForm" (ngSubmit)="edit_case_modal()">
-      <input type="text" class="case-name" name="name" ngModel required #name="ngModel" autofocus>
-      <small [hidden]="name.valid || (name.pristine && !form.submitted)">
-        name can't be empty.
-      </small>
-    </form>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-success" [disabled]="!form.valid" (click)="form.ngSubmit.emit(form)">Save</button>
-  </modal-footer>
-</modal>

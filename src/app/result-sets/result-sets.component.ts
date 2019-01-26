@@ -237,7 +237,7 @@ export class ResultSetsComponent implements OnInit {
       }
     });
     this.statistic = new Statistic(stat_data);
-    this.stat.update_run_statistic(this.statistic);
+    this.stat.update_parant_statistic(this.statistic);
   }
 
   get_case_id_by_result_set(result_set) {
