@@ -36,7 +36,7 @@
     "zone.js": "^0.8.29"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.11.0",
+    "@angular-devkit/build-angular": "^0.12.3",
     "@angular/cli": "7.2.3",
     "@angular/compiler-cli": "7.2.2",
     "@types/jasmine": "^3.3.8",
@@ -56,8 +56,7 @@
     "ts-node": "8.0.1",
     "tslint": "5.12.1",
     "typescript": "3.2.4",
-    "uglify-js": "3.4.9",
-    "webpack-dev-server": ">=3.1.11"
+    "uglify-js": "3.4.9"
   },
   "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.",
   "main": "karma.conf.js",
