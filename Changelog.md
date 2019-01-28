@@ -1,5 +1,6 @@
 # Changelog
 ## master (unreleased)
+## [0.5.2] - 2019-01-18
 ## Added
     * Accent color for fieldes on login and reguster pages
     * New case settings window
