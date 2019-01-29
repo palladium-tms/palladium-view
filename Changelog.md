@@ -2,6 +2,8 @@
 ## master (unreleased)
 ## Changed 
     * Change modal heading size because it has been ugly before changed
+## Fixed 
+    * Fix statistic error if resilt sets statistic has changed, run runs list is not loaded
 ## [0.5.2] - 2019-01-18
 ## Added
     * Accent color for fieldes on login and reguster pages

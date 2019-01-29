@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
-import {Run} from '../models/run';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -49,6 +48,7 @@ export class RunsComponent implements OnInit {
       this.get_runs_and_suites();
     });
     this.StatisticService.statistic_has_changed().subscribe(statistic => {
+      if (this.runs_and_suites.length == 0) {return}
       if (this.router.url.match(/run\/(\d+)/i)) {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
           object.constructor.name == 'Run')[0].statistic = statistic;
@@ -120,7 +120,7 @@ export class RunsComponent implements OnInit {
 
   select_filter(filter) {
     filter.active = !filter.active;
-    this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id)
+    this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
   }
 
