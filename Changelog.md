@@ -1,9 +1,11 @@
 # Changelog
 ## master (unreleased)
+## [0.5.3] - 01.02.2019
 ## Changed 
     * Change modal heading size because it has been ugly before changed
 ## Fixed 
     * Fix statistic error if resilt sets statistic has changed, run runs list is not loaded
+    * Fix errors ins scrols after chrome update(72)
 ## [0.5.2] - 2019-01-18
 ## Added
     * Accent color for fieldes on login and reguster pages

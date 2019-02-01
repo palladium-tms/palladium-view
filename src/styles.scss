@@ -96,6 +96,7 @@ input[type=checkbox] {
 }
 
 .item-list {
+  height: -webkit-fill-available;
   overflow: auto;
   flex: 1;
 }
