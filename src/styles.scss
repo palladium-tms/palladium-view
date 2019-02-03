@@ -10,10 +10,10 @@
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $palladium-primary: mat-palette($mat-yellow, 200, A100, A400);
-$palladium-accent:  mat-palette($mat-teal, 800, A100, A400);
+$palladium-accent: mat-palette($mat-teal, 800, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$palladium-warn:    mat-palette($mat-red);
+$palladium-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $palladium-theme: mat-light-theme($palladium-primary, $palladium-accent, $palladium-warn);
@@ -22,12 +22,16 @@ $palladium-theme: mat-light-theme($palladium-primary, $palladium-accent, $pallad
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include angular-material-theme($palladium-theme);
+//
 
-
-html, body {
+html,
+body {
   color: #333;
   margin: 0;
   height: 100%;
+}
+
+body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -88,28 +92,12 @@ input[type=checkbox] {
   flex-direction: column;
   overflow: hidden;
 }
-
-.space {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-}
-
 .item-list {
-  height: -webkit-fill-available;
   overflow: auto;
   flex: 1;
 }
 
-.plan-space {
-  max-width: 70em;
-  flex: 2;
-}
 
-.run-space {
-  flex: 3;
-  max-width: 50em;
-}
 
 .result-set-space, .case_space {
   max-width: 60em;
@@ -183,7 +171,7 @@ input[type=checkbox] {
 .copy-button:active {
  color: #5f9ea0;
 }
-.item:hover .copy-button{
+.item:hover .copy-button {
   color: #2e4b4c;
   cursor: pointer;
   display: inline;

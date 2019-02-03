@@ -1,10 +1,10 @@
 :host{
   display: flex;
-  flex: 1;
+  flex-direction: row;
+  overflow: hidden;
 }
+
+
 .product-space {
   flex: 1;
-}
-.dndPlaceholder{
-  border: 2px solid  #246E6E;
 }
