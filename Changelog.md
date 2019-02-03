@@ -1,6 +1,9 @@
 # Changelog
 ## master (unreleased)
 ## [0.5.3] - 01.02.2019
+## Fixed 
+    * Fix scroll errors after  bugfix. Remover main space and changed flex direction for all main component objects(product, run ect)
+## [0.5.3] - 01.02.2019
 ## Changed 
     * Change modal heading size because it has been ugly before changed
 ## Fixed 
