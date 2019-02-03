@@ -1,5 +1,11 @@
-:host {
+:host{
   display: flex;
+  flex-direction: row;
   overflow: hidden;
   flex: 14;
+}
+
+.plan-space {
+  max-width: 70em;
+  flex: 2;
 }

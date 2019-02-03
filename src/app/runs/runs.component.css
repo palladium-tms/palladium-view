@@ -1,5 +1,10 @@
 :host{
   display: flex;
+  flex-direction: row;
   overflow: hidden;
   flex: 12;
+}
+.run-space {
+  flex: 3;
+  max-width: 50em;
 }
