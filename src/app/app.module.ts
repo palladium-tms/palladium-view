@@ -42,6 +42,7 @@ import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 import { ResultValueComponent } from './page-component/result-value/result-value.component';
 import { DndListModule } from 'ngx-drag-and-drop-lists';
 import {CdkTableModule} from '@angular/cdk/table';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 import {
   ErrorStateMatcher,
   MatAutocompleteModule, MatBadgeModule,
@@ -109,6 +110,7 @@ const appRoutes: Routes = [
   {path: '**', redirectTo: '/404'},
 ];
 @NgModule({  exports: [
+    DragDropModule,
     CdkTableModule,
     MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
@@ -188,6 +190,7 @@ const appRoutes: Routes = [
   imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
     CdkTableModule,
+    DragDropModule,
     MatAutocompleteModule, MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,

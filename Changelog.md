@@ -1,5 +1,14 @@
 # Changelog
 ## master (unreleased)
+
+## [0.5.5] - 01.14.2019
+## Changed
+    * List of product is consist of mat-cart now
+    * Product Drug and drop functions
+    * Product selecting
+    * Change body background color
+    
+## [0.5.4] - ??
 ## [0.5.3] - 01.02.2019
 ## Fixed 
     * Fix scroll errors after  bugfix. Remover main space and changed flex direction for all main component objects(product, run ect)
