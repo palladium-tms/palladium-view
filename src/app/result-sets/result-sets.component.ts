@@ -383,7 +383,7 @@ export class ResultSetsComponent implements OnInit {
   update_result_sets(result_sets) {
     if (!result_sets['result_sets']) { return }
     result_sets['result_sets'].forEach(element => {
-      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'ResultSet');
+      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.path == 'result_set');
       this.result_sets_and_cases[index].status = element.status;
     });
   }
@@ -392,7 +392,7 @@ export class ResultSetsComponent implements OnInit {
     if ( !cases['result_sets'] ) { return }
     cases['result_sets'].forEach(element => {
       const new_result_set = new ResultSet(element);
-      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.constructor.name == 'Case');
+      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.path == 'case');
       if (this.result_sets_and_cases[index].active) {
         new_result_set.active = true;
         this.open_results(new_result_set);

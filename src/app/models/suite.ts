@@ -11,7 +11,7 @@ export class Suite {
   constructor (suite) {
     if (suite == null) {
       suite = this.create_default_suite();
-    } else if (suite.constructor.name === 'Run') {
+    } else if (suite.path === './run') {
       suite = this.create_suite_by_run(suite);
     }
     this.id = suite['id'];

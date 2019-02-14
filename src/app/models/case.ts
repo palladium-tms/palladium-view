@@ -10,7 +10,7 @@ export class Case {
   active = false;
   deleting = false;
   constructor (current_case) {
-    if (current_case.constructor.name === 'ResultSet') {
+    if (current_case.path === 'result_set') {
       current_case = this.create_case_by_result_set(current_case);
     }
     this.id = current_case['id'];
