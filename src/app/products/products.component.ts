@@ -4,6 +4,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {Validators} from '@angular/forms';
 import { FormControl, FormGroup } from '@angular/forms';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-products',
@@ -17,6 +18,7 @@ export class ProductsComponent implements OnInit {
   products;
   pinned = true;
   product;
+  selected_product;
 
   constructor(private ApiService: PalladiumApiService, private router: Router, private dialog: MatDialog) {}
 
@@ -56,8 +58,17 @@ export class ProductsComponent implements OnInit {
     this.ApiService.send_product_position(this.products.map(elem => elem['id']))
   }
 
-  removeItem(item: any, list: any[]): void {
-    list.splice(list.indexOf(item), 1);
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.products, event.previousIndex, event.currentIndex);
+  }
+
+  select_product(product) {
+    this.selected_product = product;
+    this.router.navigate(['/product', this.selected_product.id])
+  }
+
+  product_selected(product) {
+    return this.selected_product && (product.id == this.selected_product.id);
   }
 }
 
@@ -115,9 +126,5 @@ export class ProductSettingsComponent implements OnInit {
       this.router.navigate(['/']);
       this.dialogRef.close(this.products);
     }
-  }
-
-  log(a) {
-    console.log(a)
   }
 }

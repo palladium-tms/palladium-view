@@ -1,4 +1,3 @@
-<div class="dndPlaceholder" #placeholder></div>
 <div class="product-space">
   <div class="toolbar">
     <div class="product-link"><a routerLink="/">Products</a></div>
@@ -15,18 +14,15 @@
       </div>
     </div>
   </div>
-  <div class="item-list" [dndList] [dndModel]="products" [dndPlaceholder]="placeholder">
-    <div class="item hoverer" routerLinkActive="activated" *ngFor="let product of products"
-         [dndDragDisabled] = pinned
-         [dndDraggable]
-         [dndType]="product"
-         (dndMoved)="removeItem(product, products)"
-         [class.selected]="products.selected === product"
-         [dndObject]="product">
-      <div class="item-name product-name-link"><a [routerLink]="['/product', product.id]"
-                                                  routerLinkActive="low-priority">{{product.name}}</a>
-      </div>
-    </div>
+  <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
+    <mat-card class="product-item mat-elevation-z0" align="center"
+              *ngFor="let product of products"
+              matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
+              cdkDrag [cdkDragDisabled]=pinned
+              [ngClass]="{'mat-elevation-z8 product-selected': product_selected(product)}"
+              (click)="select_product(product)">
+      {{product.name}}
+    </mat-card>
   </div>
 </div>
 
