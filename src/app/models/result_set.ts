@@ -10,8 +10,7 @@ export class ResultSet {
   active = false;
   constructor(result_set) {
     if (result_set === null) {
-      // this.create_default_result_set();
-    } else if (result_set.constructor.name === 'Case') {
+    } else if (result_set.path === 'case') {
       this.create_result_set_by_case(result_set);
     } else {
       this.id = result_set['id'];

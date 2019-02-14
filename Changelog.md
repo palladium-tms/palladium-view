@@ -1,6 +1,10 @@
 # Changelog
 ## master (unreleased)
 
+## [0.5.6] - 01.14.2019
+## Fixed
+    * Errors after adding results(minification)
+    
 ## [0.5.5] - 01.14.2019
 ## Changed
     * List of product is consist of mat-cart now

@@ -51,10 +51,10 @@ export class RunsComponent implements OnInit {
       if (this.runs_and_suites.length == 0) {return}
       if (this.router.url.match(/run\/(\d+)/i)) {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
-          object.constructor.name == 'Run')[0].statistic = statistic;
+          object.path == './run')[0].statistic = statistic;
       } else {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/suite\/(\d+)/i)[1] &&
-          object.constructor.name == 'Suite')[0].statistic = statistic;
+          object.path == './suite')[0].statistic = statistic;
       }
         this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     });
@@ -149,7 +149,7 @@ export class RunsComponent implements OnInit {
 
   suite_selected(filters) {
     const id = this.router.url.match(/suite\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.constructor.name === 'Suite' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === './suite' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
     }
