@@ -1,5 +1,7 @@
 # Changelog
 ## master (unreleased)
+## Fixed
+    * Fix product selecting after open products list
 
 ## [0.5.6] - 01.14.2019
 ## Fixed
