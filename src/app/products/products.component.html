@@ -1,6 +1,6 @@
 <div class="product-space">
   <div class="toolbar">
-    <div class="product-link"><a routerLink="/">Products</a></div>
+    <div class="product-link"><a routerLink="/" (click)="selected_product = null">Products</a></div>
     <div class="buttons">
       <div class="toolbar-element" (click)="get_products()" [ngClass]="{'disabled': !this.products.length}">
         <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': !this.products.length}"></i>
