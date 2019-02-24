@@ -1,11 +1,15 @@
 <mat-toolbar color="accent" class="header">
-  <div *ngIf="authorize">
-    <a mat-flat-button color="accent" (click)="Token.open()">Token</a>
-    <a mat-flat-button color="accent" (click)="Invite.open()">Invite</a>
-    <a mat-flat-button color="accent" (click)="Statuses.open()">Statuses</a>
-    <a mat-flat-button color="accent" (click)="About.open()">About</a>
-    <a mat-flat-button color="accent" (click)="logout()">Logout</a>
-  </div>
+    <div class="left-buttons" *ngIf="authorize">
+      <a mat-flat-button color="accent" (click)="product_list_open()">{{product_name}} <mat-icon class="md-light">chevron_right</mat-icon></a>
+    </div>
+
+    <div class="right-buttons" *ngIf="authorize">
+      <a mat-flat-button color="accent" (click)="Token.open()">Token</a>
+      <a mat-flat-button color="accent" (click)="Invite.open()">Invite</a>
+      <a mat-flat-button color="accent" (click)="Statuses.open()">Statuses</a>
+      <a mat-flat-button color="accent" (click)="About.open()">About</a>
+      <a mat-flat-button color="accent" (click)="logout()">Logout</a>
+    </div>
 </mat-toolbar>
 <app-status-settings #Statuses></app-status-settings>
 <app-about #About></app-about>
