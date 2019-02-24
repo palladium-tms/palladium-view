@@ -15,7 +15,6 @@ import {ProductSettingsComponent} from '../products/products.component';
   templateUrl: './runs.component.html',
   styleUrls: ['./runs.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [StatisticService]
 })
 export class RunsComponent implements OnInit {
   @ViewChild('Filter')
