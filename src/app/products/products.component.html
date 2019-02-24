@@ -1,29 +1,43 @@
-<div class="product-space">
-  <div class="toolbar">
-    <div class="product-link"><a routerLink="/" (click)="selected_product = null">Products</a></div>
-    <div class="buttons">
-      <div class="toolbar-element" (click)="get_products()" [ngClass]="{'disabled': !this.products.length}">
-        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': !this.products.length}"></i>
+<mat-sidenav-container class="sidebar-container">
+
+  <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true">
+    <div class="product-space">
+      <div class="toolbar">
+
+
+        <div class="left-buttons">
+          <button mat-icon-button (click)="open_settings()">
+            <mat-icon class="md-light">settings</mat-icon>
+          </button>
+          <button mat-icon-button (click)="get_products()">
+            <mat-icon class="md-light" >cached</mat-icon>
+          </button>
+          <button mat-icon-button (click)="pin_list()">
+            <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
+            <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
+          </button>
+        </div>
+
+        <div class="right-buttons">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon class="md-light">clear</mat-icon>
+          </button>
+        </div>
       </div>
-      <div class="toolbar-element" (click)="open_settings()"
-           [ngClass]="{'hidden': setting_is_visible(), 'disabled': !this.products.length}">
-        <i class="fa fa-cogs" aria-hidden="true"></i>
-      </div>
-      <div class="toolbar-element" (click)="pin_list()">
-        <i class="fa fa-thumb-tack" aria-hidden="true" [ngClass]="{'fa-rotate-270': !pinned}"></i>
+      <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
+        <mat-card class="product-item mat-elevation-z0" align="center"
+                  *ngFor="let product of products"
+                  matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
+                  cdkDrag [cdkDragDisabled]=pinned
+                  [ngClass]="{'mat-elevation-z8 product-selected': product_selected(product)}"
+                  (click)="select_product(product)">
+          {{product.name}}
+        </mat-card>
       </div>
     </div>
-  </div>
-  <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
-    <mat-card class="product-item mat-elevation-z0" align="center"
-              *ngFor="let product of products"
-              matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
-              cdkDrag [cdkDragDisabled]=pinned
-              [ngClass]="{'mat-elevation-z8 product-selected': product_selected(product)}"
-              (click)="select_product(product)">
-      {{product.name}}
-    </mat-card>
-  </div>
-</div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
 
-<router-outlet></router-outlet>
