@@ -1,10 +1,12 @@
-import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {Validators} from '@angular/forms';
-import { FormControl, FormGroup } from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {SidenavService} from '../../services/sidenav.service';
+import {MatSidenav} from '@angular/material';
 
 @Component({
   selector: 'app-products',
@@ -15,20 +17,36 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 })
 
 export class ProductsComponent implements OnInit {
+  @ViewChild('sidenav') sidenav: MatSidenav;
   products;
   pinned = true;
   product;
   selected_product;
 
-  constructor(private ApiService: PalladiumApiService, private router: Router, private dialog: MatDialog) {}
+  constructor(private ApiService: PalladiumApiService,
+              private router: Router, private dialog: MatDialog,
+              public sidenav_service: SidenavService) {
+  }
 
   ngOnInit() {
     this.get_products();
+    this.sidenav_service.close_product_subject$.subscribe(() => {
+      this.sidenav.open();
+    });
+  }
+
+  get_selected_product() {
+    const product_id = this.router.url.match(/product\/(\d+)/);
+    if (product_id) {
+      this.selected_product = this.products.filter(product => product.id == product_id[1])[0];
+      this.sidenav_service.set_product_name(this.selected_product.name);
+    }
   }
 
   async get_products() {
     this.products = [];
     this.products = await this.ApiService.products();
+    this.get_selected_product();
   }
 
   open_settings() {
@@ -43,10 +61,6 @@ export class ProductsComponent implements OnInit {
         this.products = result;
       }
     });
-  }
-
-  setting_is_visible() {
-    return (/product\/(\d+)/.exec(this.router.url) === null);
   }
 
   pin_list() {
@@ -64,6 +78,7 @@ export class ProductsComponent implements OnInit {
 
   select_product(product) {
     this.selected_product = product;
+    this.sidenav_service.set_product_name(this.selected_product.name);
     this.router.navigate(['/product', this.selected_product.id])
   }
 
@@ -80,12 +95,13 @@ export class ProductSettingsComponent implements OnInit {
   item;
   products;
   product_form = new FormGroup({
-    name: new FormControl('',  [Validators.required])
+    name: new FormControl('', [Validators.required])
   });
   errors = {};
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private ApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
+              private ApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
+  }
 
   ngOnInit(): void {
     this.products = this.data.products;
@@ -93,7 +109,9 @@ export class ProductSettingsComponent implements OnInit {
     this.product_form.patchValue({name: this.item.name});
   }
 
-  get name() { return this.product_form.get('name'); }
+  get name() {
+    return this.product_form.get('name');
+  }
 
   check_existing() {
     if (this.name_is_existed()) {
@@ -102,7 +120,9 @@ export class ProductSettingsComponent implements OnInit {
   }
 
   name_is_existed() {
-    if (this.name_not_changed()) { return false }
+    if (this.name_not_changed()) {
+      return false
+    }
     return this.products.some(product => product.name == this.name.value);
   }
 

@@ -2,13 +2,13 @@ import '../polyfills';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
 import {HttpClientModule} from '@angular/common/http';
 import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../services/authentication.service';
 import {LocalSettingsService} from '../services/local-settings.service';
 import {StatisticService} from '../services/statistic.service';
+import {SidenavService} from '../services/sidenav.service';
 import {PalladiumApiService} from '../services/palladium-api.service';
 import {HttpService} from '../services/http-request.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -82,6 +82,7 @@ import { SearchBarComponent } from './page-component/search-bar/search-bar.compo
 import { VirtualscrollPipe } from './pipes/virtual-scroll/virtualscroll.pipe';
 import { DropdownMenuComponent } from './page-component/dropdown-menu/dropdown-menu.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -222,7 +223,7 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule],
-  providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService,
+  providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, SidenavService,
     LocalSettingsService, {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],
   entryComponents: [TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,

@@ -1,9 +1,12 @@
 # Changelog
 ## master (unreleased)
+## [0.5.7] - 01.26.2019
 ## Fixed
     * Fix product selecting after open products list
     * Fix main height now not 100%
-
+## Added
+    * New products list
+    * New sidenav
 ## [0.5.6] - 01.14.2019
 ## Fixed
     * Errors after adding results(minification)

@@ -1,21 +1,26 @@
 import {Component, DoCheck, ViewChild} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
-import {PalladiumApiService} from '../../services/palladium-api.service';
+import {SidenavService} from '../../services/sidenav.service';
 
 @Component({
   selector: 'app-top-toolbar',
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.scss'],
-  providers: [PalladiumApiService]
 })
 export class TopToolbarComponent implements DoCheck {
   public authorize;
   public statuses = {};
+  product_name;
   @ViewChild('Modal') Modal;
 
   constructor(private router: Router,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService,
+               public sidenav_service: SidenavService) {
+    sidenav_service.get_product_subject$.subscribe( product_name => {
+      this.product_name = product_name;
+    });
+
   }
 
   ngDoCheck() {
@@ -26,5 +31,9 @@ export class TopToolbarComponent implements DoCheck {
     this.authenticationService.logout();
     this.authorize = (this.authenticationService.saved_token() != null);
     this.router.navigate(['/singin']);
+  }
+
+  product_list_open() {
+    this.sidenav_service.close_product_list();
   }
 }
