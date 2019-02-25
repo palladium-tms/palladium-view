@@ -1,16 +1,13 @@
 <mat-sidenav-container class="sidebar-container">
-
   <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true">
     <div class="product-space">
       <div class="toolbar">
-
-
         <div class="left-buttons">
           <button mat-icon-button (click)="open_settings()">
             <mat-icon class="md-light">settings</mat-icon>
           </button>
           <button mat-icon-button (click)="get_products()">
-            <mat-icon class="md-light" >cached</mat-icon>
+            <mat-icon class="md-light">cached</mat-icon>
           </button>
           <button mat-icon-button (click)="pin_list()">
             <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
@@ -40,4 +37,3 @@
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
