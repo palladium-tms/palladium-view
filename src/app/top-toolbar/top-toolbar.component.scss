@@ -7,3 +7,15 @@
   height: 2em;
   justify-content: space-between;
 }
+.product_name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar-multiple-rows{
+  min-height: 0;
+}
