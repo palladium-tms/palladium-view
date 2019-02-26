@@ -3,6 +3,7 @@
   flex-direction: row;
   overflow: hidden;
   z-index: 3;
+  height: inherit;
 }
 .dndPlaceholder{
   border: 2px solid  #246E6E;
@@ -57,8 +58,6 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: auto;
 }
 
 mat-sidenav {
@@ -70,4 +69,12 @@ mat-sidenav {
   flex-direction: row;
   justify-content: space-between;
   min-height: 0;
+}
+
+.mat-drawer-content {
+ position: relative;
+ z-index: 1;
+ display: flex;
+ height: 100%;
+ overflow: hidden;
 }
