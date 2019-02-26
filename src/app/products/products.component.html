@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidebar-container">
-  <mat-sidenav #sidenav mode="side" opened [fixedInViewport]="true">
+  <mat-sidenav #sidenav mode="push">
     <div class="product-space">
       <div class="toolbar">
         <div class="left-buttons">
@@ -12,12 +12,6 @@
           <button mat-icon-button (click)="pin_list()">
             <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
             <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
-          </button>
-        </div>
-
-        <div class="right-buttons">
-          <button mat-icon-button (click)="sidenav.toggle()">
-            <mat-icon class="md-light">clear</mat-icon>
           </button>
         </div>
       </div>

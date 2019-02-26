@@ -2,7 +2,8 @@
 ## master (unreleased)
 ## Fixed 
     * Fix product list collapsing if plan list is empty
-    
+## Changed
+    * Changed product sidenav behavior
 ## [0.5.7] - 01.26.2019
 ## Fixed
     * Fix product selecting after open products list
