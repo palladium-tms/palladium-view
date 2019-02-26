@@ -31,7 +31,7 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.get_products();
     this.sidenav_service.close_product_subject$.subscribe(() => {
-      this.sidenav.open();
+      this.sidenav.toggle();
     });
   }
 
@@ -79,6 +79,7 @@ export class ProductsComponent implements OnInit {
   select_product(product) {
     this.selected_product = product;
     this.sidenav_service.set_product_name(this.selected_product.name);
+    this.sidenav.toggle();
     this.router.navigate(['/product', this.selected_product.id])
   }
 

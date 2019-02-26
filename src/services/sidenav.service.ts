@@ -11,7 +11,7 @@ export class SidenavService {
   close_product_subject$ = this.close_product_subject.asObservable();
   get_product_subject$ = this.get_product_subject.asObservable();
 
-  close_product_list() {
+  toggle_product_list() {
     this.close_product_subject.next(Object);
   }
 
