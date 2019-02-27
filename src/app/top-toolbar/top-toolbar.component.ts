@@ -33,7 +33,7 @@ export class TopToolbarComponent implements DoCheck {
     this.router.navigate(['/singin']);
   }
 
-  product_list_open() {
-    this.sidenav_service.close_product_list();
+  product_list_toggle() {
+    this.sidenav_service.toggle_product_list();
   }
 }
