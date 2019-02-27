@@ -1,5 +1,5 @@
 <mat-sidenav-container class="sidebar-container">
-  <mat-sidenav #sidenav mode="push">
+  <mat-sidenav #sidenav mode="push" autoFocus="false">
     <div class="product-space">
       <div class="toolbar">
         <div class="left-buttons">
@@ -9,14 +9,14 @@
           <button mat-icon-button (click)="get_products()">
             <mat-icon class="md-light">cached</mat-icon>
           </button>
-          <button mat-icon-button (click)="pin_list()">
+          <button mat-icon-button (click)="pin_list()" >
             <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
             <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
           </button>
         </div>
       </div>
       <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
-        <mat-card class="product-item mat-elevation-z0" align="center"
+        <mat-card class="product-item mat-elevation-z0" align="center" tabindex="0"
                   *ngFor="let product of products"
                   matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
                   cdkDrag [cdkDragDisabled]=pinned
