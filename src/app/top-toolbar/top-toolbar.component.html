@@ -1,6 +1,8 @@
 <mat-toolbar color="accent">
   <mat-toolbar-row  class="header">
-    <a mat-button (click)="product_list_toggle()"><mat-icon class="md-light">menu</mat-icon></a>
+    <button mat-icon-button (click)="product_list_toggle()">
+      <mat-icon class="md-light">menu</mat-icon>
+    </button>
     <div class="product_name">{{product_name}}</div>
     <span class="spacer"></span>
     <a mat-button (click)="Token.open()" tabindex="0">Token</a>
