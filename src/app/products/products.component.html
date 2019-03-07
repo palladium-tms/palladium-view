@@ -1,20 +1,22 @@
 <mat-sidenav-container class="sidebar-container">
   <mat-sidenav #sidenav mode="push" autoFocus="false">
     <div class="product-space">
-      <div class="toolbar">
-        <div class="left-buttons">
-          <button mat-icon-button (click)="open_settings()">
-            <mat-icon class="md-light">settings</mat-icon>
-          </button>
-          <button mat-icon-button (click)="get_products()">
-            <mat-icon class="md-light">cached</mat-icon>
-          </button>
-          <button mat-icon-button (click)="pin_list()" >
-            <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
-            <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
-          </button>
-        </div>
-      </div>
+      <mat-toolbar color="accent" class="product-toolbar">
+        <mat-toolbar-row>
+          <div class="left-buttons">
+            <button mat-icon-button (click)="open_settings()">
+              <mat-icon class="md-light">settings</mat-icon>
+            </button>
+            <button mat-icon-button (click)="get_products()">
+              <mat-icon class="md-light">cached</mat-icon>
+            </button>
+            <button mat-icon-button (click)="pin_list()" >
+              <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
+              <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
+            </button>
+          </div>
+        </mat-toolbar-row>
+      </mat-toolbar>
       <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
         <mat-card class="product-item mat-elevation-z0" align="center" tabindex="0"
                   *ngFor="let product of products"
