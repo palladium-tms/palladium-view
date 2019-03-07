@@ -101,7 +101,8 @@ export class ProductSettingsComponent implements OnInit {
   errors = {};
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private ApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
+              private ApiService: PalladiumApiService, private router: Router,
+              @Inject(MAT_DIALOG_DATA) public data,  public sidenav_service: SidenavService) {
   }
 
   ngOnInit(): void {
@@ -136,6 +137,7 @@ export class ProductSettingsComponent implements OnInit {
       this.item = await this.ApiService.edit_product(this.item.id, this.name.value);
       this.products[this.products.findIndex(x => x.id === this.item.id)] = this.item;
     }
+    this.sidenav_service.set_product_name(this.name.value);
     this.dialogRef.close(this.products);
   }
 
