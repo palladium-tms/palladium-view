@@ -10,6 +10,7 @@
     * Restyle product top toolbar
     * Default empty status color is transperancy
     * Delete custom borders from element because need to use materiad elements
+    * Redisign plans list for using angular material
 ## [0.5.7] - 01.26.2019
 ## Fixed
     * Fix product selecting after open products list

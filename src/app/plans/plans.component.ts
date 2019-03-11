@@ -14,7 +14,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   providers: [PalladiumApiService]
 })
 export class PlansComponent implements OnInit {
-  product_id = null;
+  selected_plan = {id: 0};
+  product_id;
   plans = [];
   plan;
   RunComponent;
@@ -46,6 +47,14 @@ export class PlansComponent implements OnInit {
     this.ApiService.get_statuses().then(res => {
       this.statuses = res;
     });
+  }
+
+  clicked(event, plan) {
+    if (!(event.target.classList.contains('mat-button-wrapper') || event.target.classList.contains('mat-icon'))) {
+      this.selected_plan = plan;
+      this.router.navigate(['plan', this.selected_plan.id], {relativeTo: this.activatedRoute});
+    }
+    console.log(event.target.classList)
   }
 
   count_of_cases(suites) {
@@ -93,10 +102,11 @@ export class PlansComponent implements OnInit {
     return (Math.floor(data * 100) / 100);
   }
 
-  open_settings() {
+  open_settings(plan) {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
         plans: this.plans,
+        plan: plan
       }
     });
 
@@ -123,6 +133,7 @@ export class PlansComponent implements OnInit {
 })
 
 export class PlansSettingsComponent implements OnInit {
+  plan;
   item;
   plans;
   plan_form = new FormGroup({
@@ -133,7 +144,7 @@ export class PlansSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.plans = this.data.plans;
-    this.item = this.plans.filter(plan => plan.id === +/plan\/(\d+)/.exec(this.router.url)[1])[0];
+    this.item = this.data.plan;
     this.plan_form.patchValue({name: this.item.name});
   }
 

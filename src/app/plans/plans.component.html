@@ -1,32 +1,26 @@
 <div class="plan-space">
-  <div class="toolbar">
-    <div class="buttons">
-      <div class="toolbar-element" (click)="update_click()" [ngClass]="{'disabled': this.loading}">
-        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
-      </div>
-      <div class="toolbar-element" (click)="open_settings()" *ngIf="toolbar_opened()" [ngClass]="{'disabled': this.loading}">
-        <i class="fa fa-cogs" aria-hidden="true"></i>
-      </div>
-    </div>
-  </div>
   <div class="item-list">
-    <div class="item hoverer" routerLinkActive="activated" *ngFor="let plan of plans | sortByCreatedAt:'desc'">
-      <div class="item-name">
-        <a [routerLink]="['./plan', plan.id]">{{plan.name}}</a>
-        <span class="count" title="{{plan.all_statistic['attitude'] || 0 | percent:'2.2-3'}}"><b>/ {{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</b></span>
-      </div>
-      <div class="statistic status-name" *ngIf="this.statuses">
-        <span *ngFor="let status of plan.statistic" class="status-position"
-              [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}" (value)=status>
-        </span>
-      </div>
+    <mat-card class="plan-item mat-elevation-z1"
+              *ngFor="let plan of plans | sortByCreatedAt:'desc'"
+              [ngClass]="{'mat-elevation-z24 selected-plan': selected_plan.id == plan.id}"
+              (click)="clicked($event, plan)">
+      <span>{{plan.name}}</span>
       <div class="item-statistic">
         <ng-container *ngIf="plan.statistic && this.statuses">
-        <span *ngFor="let status of plan.statistic" [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}" (value)=status>
-        </span>
+          <div class="statistic-bar">
+            <div *ngFor="let status of plan.statistic" class="status-element"
+                 [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}">
+            </div>
+          </div>
+          <div>{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</div>
         </ng-container>
       </div>
-    </div>
+      <div class="settings-button">
+        <button mat-icon-button (click)="open_settings(plan)">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </div>
+    </mat-card>
   </div>
 </div>
 
