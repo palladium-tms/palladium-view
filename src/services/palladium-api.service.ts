@@ -36,7 +36,7 @@ export class PalladiumApiService {
       Object.keys(resp['statuses']).forEach(key => {
         statuses.push(new Status(resp['statuses'][key]));
       });
-      statuses.push(new Status({name: 'Untested', color: '#ffffff', id: 0, 'blocked': true}));
+      statuses.push(new Status({name: 'Untested', color: 'transparent', id: 0, 'blocked': true}));
       return statuses;
     });
   }

@@ -22,10 +22,16 @@
 }
 .product-item {
   background-color: transparent;
+  outline: none;
 }
 
 .product-selected {
   background-color: white;
+}
+
+.product-toolbar {
+  height: 2em;
+  min-height: 2em;
 }
 
 .cdk-drag-preview {
@@ -43,10 +49,6 @@
 
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.product-item:last-child {
-  border: none;
 }
 
 .item-list.cdk-drop-list-dragging .product-item:not(.cdk-drag-placeholder) {

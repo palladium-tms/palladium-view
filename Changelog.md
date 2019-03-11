@@ -1,11 +1,17 @@
 # Changelog
 ## master (unreleased)
+## [0.5.8] - 03.11.2019
 ## Fixed 
     * Fix product list collapsing if plan list is empty
+    * Fix: plan not selected if url is long
 ## Changed
     * Changed product sidenav behavior
     * Menu button can close/open sidenav.
     * Sidenav close after product pick
+    * Restyle product top toolbar
+    * Default empty status color is transperancy
+    * Delete custom borders from element because need to use materiad elements
+    * Redisign plans list for using angular material
 ## [0.5.7] - 01.26.2019
 ## Fixed
     * Fix product selecting after open products list
