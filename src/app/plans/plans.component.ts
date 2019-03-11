@@ -72,6 +72,10 @@ export class PlansComponent implements OnInit {
       this.plans.forEach(plan => {
         this.update_statistic(plan, this.count_of_cases(res[1][this.product_id]));
       });
+      const plan_id = this.router.url.match(/plan\/(\d+)/i);
+      if (plan_id) {
+        this.selected_plan = this.plans.find(plan => plan.id == plan_id[1])
+      }
       this.loading = false;
     });
   }

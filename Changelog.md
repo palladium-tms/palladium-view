@@ -2,6 +2,7 @@
 ## master (unreleased)
 ## Fixed 
     * Fix product list collapsing if plan list is empty
+    * Fix: plan not selected if url is long
     
 ## Changed
     * Changed product sidenav behavior
