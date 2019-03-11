@@ -54,7 +54,6 @@ export class PlansComponent implements OnInit {
       this.selected_plan = plan;
       this.router.navigate(['plan', this.selected_plan.id], {relativeTo: this.activatedRoute});
     }
-    console.log(event.target.classList)
   }
 
   count_of_cases(suites) {
