@@ -1,9 +1,9 @@
 # Changelog
 ## master (unreleased)
+## [0.5.8] - 03.11.2019
 ## Fixed 
     * Fix product list collapsing if plan list is empty
     * Fix: plan not selected if url is long
-    
 ## Changed
     * Changed product sidenav behavior
     * Menu button can close/open sidenav.
