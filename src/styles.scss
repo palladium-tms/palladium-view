@@ -9,8 +9,9 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$palladium-primary: mat-palette($mat-yellow, 200, A100, A400);
-$palladium-accent: mat-palette($mat-teal, 800, A100, A400);
+$palladium-primary: mat-palette($mat-yellow, 50);
+$palladium-primary-active: mat-palette($mat-yellow, 100);
+$palladium-accent: mat-palette($mat-cyan, 800);
 
 // The warn palette is optional (defaults to red).
 $palladium-warn: mat-palette($mat-red);
@@ -92,12 +93,20 @@ input[type=checkbox] {
   flex-direction: column;
   overflow: hidden;
 }
+
+.plan-item {
+  margin: 1em;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.selected-plan {
+  background: mat-color($palladium-primary-active);
+}
+
 .item-list {
   overflow: auto;
   flex: 1;
 }
-
-
 
 .result-set-space, .case_space {
   max-width: 60em;
@@ -110,23 +119,12 @@ input[type=checkbox] {
 
 .toolbar {
   display: flex;
-  flex-direction: column;
-  background-color: #bfe6e9;
-  width: 100%;
-  min-height: 5em;
-  border: 1px solid #848484;
 }
 
 .filters {
   flex: 1;
 }
 
-.buttons {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-}
 .button{
   outline: 1px solid #848484;
   flex: 1;
