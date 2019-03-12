@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * New componens: status filter. It is status with count of elements
+
 ## [0.5.8] - 03.11.2019
 ## Fixed 
     * Fix product list collapsing if plan list is empty

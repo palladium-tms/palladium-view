@@ -1,0 +1,5 @@
+<mat-card class="status-wrapper mat-elevation-z1" (click)="select_status()"
+     [ngStyle]="{'background-color': get_background_color(), 'border-right': 'solid 4px ' + get_border_color()}"
+     [ngClass]="{'mat-elevation-z7': selected, 'hidden': !count}">
+  <span class="status-text">{{count}} {{status.name}}</span>
+</mat-card>
