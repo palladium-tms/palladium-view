@@ -26,7 +26,6 @@ import {SortByUpdatedAtPipe} from './pipes/sort-by-created-at/sort-by-updated-at
 import {TokenComponent, TokenDialogComponent} from './top-toolbar/token/token.component';
 import {CasesComponent} from './cases/cases.component';
 import {FiltersComponent} from './page-component/filters/filters.component';
-import {StatusComponent} from './page-component/status/status.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
 import {AboutComponent, AboutDialogComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent, StatusSettingsDialogComponent} from './top-toolbar/status-settings/status-settings.component';
@@ -83,6 +82,7 @@ import { VirtualscrollPipe } from './pipes/virtual-scroll/virtualscroll.pipe';
 import { DropdownMenuComponent } from './page-component/dropdown-menu/dropdown-menu.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
+import { StatusFilterComponent } from './page-component/status-filter/status-filter.component';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -166,7 +166,6 @@ const appRoutes: Routes = [
     TokenDialogComponent,
     CasesComponent,
     FiltersComponent,
-    StatusComponent,
     StatisticFilterPipe,
     AboutComponent,
     AboutDialogComponent,
@@ -186,7 +185,8 @@ const appRoutes: Routes = [
     SearchBarComponent,
     VirtualscrollPipe,
     DropdownMenuComponent,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    StatusFilterComponent
   ],
   imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
