@@ -9,6 +9,7 @@ import {FiltersComponent} from '../page-component/filters/filters.component';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {ProductSettingsComponent} from '../products/products.component';
+import {Run} from '../models/run';
 
 @Component({
   selector: 'app-runs',
@@ -35,6 +36,7 @@ export class RunsComponent implements OnInit {
   existed_statuses = {};
   all_statistic = {};
   scrollPos = 0;
+  selected_object: Run = new Run(null);
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
@@ -50,10 +52,10 @@ export class RunsComponent implements OnInit {
       if (this.runs_and_suites.length == 0) {return}
       if (this.router.url.match(/run\/(\d+)/i)) {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
-          object.path == './run')[0].statistic = statistic;
+          object.path == 'run')[0].statistic = statistic;
       } else {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/suite\/(\d+)/i)[1] &&
-          object.path == './suite')[0].statistic = statistic;
+          object.path == 'suite')[0].statistic = statistic;
       }
         this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
     });
@@ -148,7 +150,7 @@ export class RunsComponent implements OnInit {
 
   suite_selected(filters) {
     const id = this.router.url.match(/suite\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.path === './suite' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === 'suite' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
     }
@@ -156,26 +158,24 @@ export class RunsComponent implements OnInit {
 
   run_selected(filters) {
     const id = this.router.url.match(/run\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.path === './run' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === 'run' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }
   }
 
 
-  open_settings() {
-    this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
-      current_object.path === this.opened_item())[0];
+  open_settings(object) {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
       data: {
-        object: this.object,
+        object: object,
         suites: this.suites,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.path == './run') {
+        if (result.path == 'run') {
           this.runs = this.runs.filter(current_run => current_run.id !== result.id);
           const path = this.router.url.replace(/run.*/, 'suite/');
           this.router.navigate([ path + this.suites.find(suite => suite.name == result.name).id]);
@@ -203,9 +203,9 @@ export class RunsComponent implements OnInit {
 
   opened_item() {
     if (this.run_opened()) {
-      return ('./run');
+      return ('.run');
     } else {
-      return ('./suite');
+      return ('suite');
     }
   }
 
@@ -237,6 +237,23 @@ export class RunsComponent implements OnInit {
   colScroll(event) {
     this.scrollPos = Math.floor(event.target.scrollTop / 53.5);
   }
+
+  clicked(event, object) {
+    if (event.target.classList.contains('settings')) {
+      this.open_settings(object)
+    } else {
+      this.select_object(object)
+    }
+  }
+
+  select_object(object) {
+    this.selected_object = object;
+    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
+  }
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === +id);
+  }
+
 }
 
 @Component({

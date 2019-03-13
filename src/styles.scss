@@ -98,9 +98,21 @@ input[type=checkbox] {
   margin: 1em;
   text-overflow: ellipsis;
   cursor: pointer;
+  border: solid 3px transparent;
 }
-.selected-plan {
-  background: mat-color($palladium-primary-active);
+
+.item {
+  padding: 0.5em 0.7em 0.5em 0.5em;
+  //max-height: 6em;
+  //max-width: 100%;
+  margin: 0.5em;
+  cursor: pointer;
+  border: solid 3px transparent;
+}
+
+.selected {
+  border: solid 3px #00838f;
+  transition: border-color 300ms ease-out;
 }
 
 .item-list {
@@ -156,12 +168,6 @@ input[type=checkbox] {
   font-size: 1.7em;
 }
 
-.item {
-  border: 1px solid #848484;
-  padding: 0.5em 0.7em 0.5em 0.5em;
-  max-height: 6em;
-  max-width: 100%;
-}
 
 .copy-button{
   display: none;
@@ -169,16 +175,12 @@ input[type=checkbox] {
 .copy-button:active {
  color: #5f9ea0;
 }
-.item:hover .copy-button {
+.copy-button {
   color: #2e4b4c;
   cursor: pointer;
   display: inline;
   margin-right: 0.5em;
   margin-left: 0.5em;
-}
-
-.hoverer:hover {
-  background-color: #e6e6e6;
 }
 
 .pointer {
@@ -191,7 +193,6 @@ input[type=checkbox] {
   max-height: 4em;
   flex: 4;
   align-items: center;
-  padding-bottom: 0.2em;
 }
 
 .item-status {
@@ -202,6 +203,9 @@ input[type=checkbox] {
 
 .item-statistic {
   display: flex;
+  min-height: 0.3em;
+  padding-top: 0.2em;
+  margin-bottom: 0;
 }
 
 .item-wrapper {
@@ -361,6 +365,14 @@ a.link:hover {
   flex-direction: row;
   overflow: hidden;
   max-height: 20em;
+}
+
+.settings {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 .item-description {
