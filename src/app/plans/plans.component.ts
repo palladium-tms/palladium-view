@@ -50,7 +50,9 @@ export class PlansComponent implements OnInit {
   }
 
   clicked(event, plan) {
-    if (!(event.target.classList.contains('mat-button-wrapper') || event.target.classList.contains('mat-icon'))) {
+    if (event.target.classList.contains('settings')) {
+      this.open_settings(plan);
+    } else {
       this.selected_plan = plan;
       this.router.navigate(['plan', this.selected_plan.id], {relativeTo: this.activatedRoute});
     }

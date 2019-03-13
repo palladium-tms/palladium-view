@@ -3,6 +3,7 @@
 ## Added
     * New componens: status filter. It is status with count of elements
     * Return default untested status color to transparent
+    * New settings button to plans (need to hover item for see it)
 
 ## [0.5.8] - 03.11.2019
 ## Fixed 

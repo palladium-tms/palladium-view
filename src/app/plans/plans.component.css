@@ -25,7 +25,6 @@
   margin: auto;
 }
 
-.settings-button {
-  display: flex;
-  flex-direction: row-reverse;
+.plan-item:hover .settings {
+  display: block;
 }
