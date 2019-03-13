@@ -12,7 +12,7 @@
   background: inherit;
   -webkit-background-clip: text;
   color: transparent;
-  filter: invert(1);
+  filter: invert(1) grayscale(1) contrast(9)
 }
 
 .hidden {
