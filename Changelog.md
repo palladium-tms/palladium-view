@@ -1,11 +1,11 @@
 # Changelog
 ## master (unreleased)
+## [0.5.9] - 03.18.2019
 ## Added
     * New componens: status filter. It is status with count of elements
     * Return default untested status color to transparent
     * New settings button to plans (need to hover item for see it)
     * Add new runs and suites list (redisign for using material)
-
 ## [0.5.8] - 03.11.2019
 ## Fixed 
     * Fix product list collapsing if plan list is empty
