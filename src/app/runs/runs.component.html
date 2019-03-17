@@ -13,7 +13,7 @@
 
   <div class="item-list">
     <mat-card class="item mat-elevation-z1"
-              *ngFor="let object of runs_and_suites| statisticFilter:filter| virtualscroll:scrollPos:20"
+              *ngFor="let object of runs_and_suites| statisticFilter:filter"
               (click)="clicked($event, object)"
               [ngClass]="{'mat-elevation-z12 selected': selected_object.id == object.id}">
       <div class="item-name">{{object.name}}</div>
