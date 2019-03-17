@@ -9,6 +9,7 @@ import {FiltersComponent} from '../page-component/filters/filters.component';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {ProductSettingsComponent} from '../products/products.component';
+import {Run} from '../models/run';
 
 @Component({
   selector: 'app-runs',
@@ -29,33 +30,33 @@ export class RunsComponent implements OnInit {
   object;
   ResultSetComponent;
   statistic: Statistic;
-  filter = [];
+  filter: number[] = []; // ids of active statuses
   loading = false;
   errors = {};
   existed_statuses = {};
   all_statistic = {};
   scrollPos = 0;
+  selected_object: Run;
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private StatisticService: StatisticService, private dialog: MatDialog) {
-  }
+              private router: Router, private statistic_service: StatisticService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
       this.get_runs_and_suites();
     });
-    this.StatisticService.statistic_has_changed().subscribe(statistic => {
+    this.statistic_service.statistic_has_changed().subscribe(statistic => {
       if (this.runs_and_suites.length == 0) {return}
       if (this.router.url.match(/run\/(\d+)/i)) {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
-          object.path == './run')[0].statistic = statistic;
+          object.path == 'run')[0].statistic = statistic;
       } else {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/suite\/(\d+)/i)[1] &&
-          object.path == './suite')[0].statistic = statistic;
+          object.path == 'suite')[0].statistic = statistic;
       }
-        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+        this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
     });
   }
 
@@ -86,17 +87,15 @@ export class RunsComponent implements OnInit {
       this.suites = res[1];
       this.runs = res[0];
       this.merge_suites_and_runs();
-      this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.all_statistic = this.statistic.extended;
       this.loading = false;
+      this.get_selected_object();
       this.get_filters();
     });
   }
 
   update_click() {
-    if (this.loading) {
-      return
-    }
     this.get_runs_and_suites();
     if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
@@ -117,8 +116,8 @@ export class RunsComponent implements OnInit {
     this.runs_and_suites = this.runs.concat(suite_for_add);
   }
 
-  select_filter(filter) {
-    filter.active = !filter.active;
+  select_filter(status) {
+    status.active = !status.active;
     this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
   }
@@ -131,13 +130,6 @@ export class RunsComponent implements OnInit {
     });
   }
 
-  hide_element(element, status) {
-    if (element) {
-      return !(element.extended[status.id] || status.active);
-    }
-    return true;
-  }
-
   check_selected_is_hidden() {
     if (this.router.url.indexOf('/suite/') >= 0) {
       this.suite_selected(this.filter);
@@ -148,7 +140,7 @@ export class RunsComponent implements OnInit {
 
   suite_selected(filters) {
     const id = this.router.url.match(/suite\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.path === './suite' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === 'suite' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0]]);
     }
@@ -156,26 +148,24 @@ export class RunsComponent implements OnInit {
 
   run_selected(filters) {
     const id = this.router.url.match(/run\/(\d+)/i)[1];
-    const object = this.runs_and_suites.filter(obj => obj.path === './run' && obj.id === +id)[0];
+    const object = this.runs_and_suites.filter(obj => obj.path === 'run' && obj.id === +id)[0];
     if (!object.statistic.has_statuses(filters)) {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }
   }
 
 
-  open_settings() {
-    this.object = this.runs_and_suites.filter(current_object => current_object.id === this.get_items_id() &&
-      current_object.path === this.opened_item())[0];
+  open_settings(object) {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
       data: {
-        object: this.object,
+        object: object,
         suites: this.suites,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.path == './run') {
+        if (result.path == 'run') {
           this.runs = this.runs.filter(current_run => current_run.id !== result.id);
           const path = this.router.url.replace(/run.*/, 'suite/');
           this.router.navigate([ path + this.suites.find(suite => suite.name == result.name).id]);
@@ -184,14 +174,10 @@ export class RunsComponent implements OnInit {
           this.router.navigate([ this.router.url.replace(/\/suite.*/, '')]);
         }
         this.merge_suites_and_runs();
-        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+        this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       }
     });
   };
-
-  toolbar_opened() {
-    return (this.run_opened() || this.suite_opened());
-  }
 
   run_opened() {
     return this.router.url.indexOf('run') >= 0;
@@ -201,22 +187,6 @@ export class RunsComponent implements OnInit {
     return this.router.url.indexOf('suite') >= 0;
   }
 
-  opened_item() {
-    if (this.run_opened()) {
-      return ('./run');
-    } else {
-      return ('./suite');
-    }
-  }
-
-  get_items_id() {
-    if (this.run_opened()) {
-      return (+/run\/(\d+)/.exec(this.router.url)[1]);
-    } else {
-      return (+/suite\/(\d+)/.exec(this.router.url)[1]);
-    }
-  }
-
   onActivate(componentRef) {
     this.ResultSetComponent = componentRef;
   }
@@ -224,19 +194,38 @@ export class RunsComponent implements OnInit {
   replace_to_run($event) {
     this.runs.push($event[1]);
     this.merge_suites_and_runs();
-    this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+    this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
     if (this.router.url.indexOf('/suite/' + $event[0].id) >= 0) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0] + 'run/' + $event[1].id]);
     }
   }
 
-  clear_errors() {
-    this.errors = {};
+  clicked(event, object) {
+    if (event.target.classList.contains('settings')) {
+      this.open_settings(object)
+    } else {
+      this.select_object(object)
+    }
   }
 
-  colScroll(event) {
-    this.scrollPos = Math.floor(event.target.scrollTop / 53.5);
+  select_object(object) {
+    this.selected_object = object;
+    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
   }
+
+  get_status_by_id(id) {
+    return this.statuses.find(status => status.id === +id);
+  }
+
+  get_selected_object() {
+    const part_of_url = /(run|suite)\/(\d+)/.exec(this.router.url);
+    if (part_of_url) {
+      this.selected_object = this.runs_and_suites.find(element => element.path == part_of_url[1] && element.id == part_of_url[2]);
+    } else {
+      this.selected_object = new Run(null)
+    }
+  }
+
 }
 
 @Component({

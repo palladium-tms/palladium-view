@@ -7,7 +7,7 @@ export class Run {
   created_at: number;
   updated_at: number;
   statistic: Statistic;
-  path = './run';
+  path = 'run';
   constructor (run) {
     if (run === null) {
       this.create_default_run();
@@ -20,6 +20,7 @@ export class Run {
       this.statistic = this.get_statistic(run);
     }
   }
+
   create_default_run() {
     this.id = 0;
     this.name = 'name_loading';
@@ -28,6 +29,7 @@ export class Run {
     this.updated_at = 0;
     this.statistic = new Statistic(null);
   }
+
   get_statistic(data) {
     const stat_data = {};
     data.statistic.forEach(object => {

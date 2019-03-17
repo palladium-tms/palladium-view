@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SuiteComponent } from './suite.component';
+import { StatusFilterComponent } from './status-filter.component';
 
-describe('SuiteComponent', () => {
-  let component: SuiteComponent;
-  let fixture: ComponentFixture<SuiteComponent>;
+describe('StatusFilterComponent', () => {
+  let component: StatusFilterComponent;
+  let fixture: ComponentFixture<StatusFilterComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SuiteComponent ]
+      declarations: [ StatusFilterComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SuiteComponent);
+    fixture = TestBed.createComponent(StatusFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

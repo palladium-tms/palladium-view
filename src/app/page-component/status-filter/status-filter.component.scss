@@ -1,0 +1,20 @@
+.status-wrapper {
+  margin: 0.2em;
+  padding: 0.3em 0.7em 0.3em 0.7em;
+  display: inline-block;
+  background-color: #fafafa;
+  cursor: pointer;
+  user-select: none;
+  border-right: solid 4px transparent;
+}
+
+.status-text {
+  background: inherit;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: invert(1) grayscale(1) contrast(9)
+}
+
+.hidden {
+  display: none;
+}

@@ -2,7 +2,7 @@
   <div class="item-list">
     <mat-card class="plan-item mat-elevation-z1"
               *ngFor="let plan of plans | sortByCreatedAt:'desc'"
-              [ngClass]="{'mat-elevation-z12 selected-plan': selected_plan.id == plan.id}"
+              [ngClass]="{'mat-elevation-z12 selected': selected_plan.id == plan.id}"
               (click)="clicked($event, plan)">
       <span>{{plan.name}}</span>
       <div class="item-statistic">
@@ -15,11 +15,7 @@
           <div>{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</div>
         </ng-container>
       </div>
-      <div class="settings-button">
-        <button mat-icon-button (click)="open_settings(plan)">
-          <mat-icon>settings</mat-icon>
-        </button>
-      </div>
+      <i class="fa fa-cogs settings" aria-hidden="true"></i>
     </mat-card>
   </div>
 </div>

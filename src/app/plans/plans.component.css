@@ -10,16 +10,6 @@
   flex: 2;
 }
 
-.plan-item {
-  margin: 1em;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  background: transparent;
-}
-.selected-plan {
-  background: white;
-}
-
 .status-element {
   height: 0.3em;
 }
@@ -35,7 +25,6 @@
   margin: auto;
 }
 
-.settings-button {
-  display: flex;
-  flex-direction: row-reverse;
+.plan-item:hover .settings {
+  display: block;
 }

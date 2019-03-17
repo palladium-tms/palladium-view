@@ -8,3 +8,25 @@
   flex: 3;
   max-width: 50em;
 }
+
+.buttons {
+  flex-direction: column-reverse;
+  display: flex;
+  justify-content: space-around;
+}
+
+.toolbar {
+  margin: 0.5em;
+}
+
+.item:hover .settings {
+  display: block;
+}
+
+.item-statistic {
+  margin-bottom: 0;
+  display: flex;
+}
+.status-small {
+  margin-right: 0.4em;
+}
