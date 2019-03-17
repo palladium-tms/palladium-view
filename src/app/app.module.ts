@@ -29,8 +29,6 @@ import {FiltersComponent} from './page-component/filters/filters.component';
 import {StatisticFilterPipe} from './pipes/statistic-filter/statistic-filter.pipe';
 import {AboutComponent, AboutDialogComponent} from './top-toolbar/about/about.component';
 import {StatusSettingsComponent, StatusSettingsDialogComponent} from './top-toolbar/status-settings/status-settings.component';
-import {RunComponent} from './runs/run/run.component';
-import {SuiteComponent} from './runs/suite/suite.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {CaseHistoryComponent} from './case-history/case-history.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -171,8 +169,6 @@ const appRoutes: Routes = [
     AboutDialogComponent,
     StatusSettingsComponent,
     StatusSettingsDialogComponent,
-    RunComponent,
-    SuiteComponent,
     DetailResultComponent,
     CaseHistoryComponent,
     ProductSettingsComponent,
