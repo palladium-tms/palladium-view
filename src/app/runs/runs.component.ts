@@ -30,7 +30,7 @@ export class RunsComponent implements OnInit {
   object;
   ResultSetComponent;
   statistic: Statistic;
-  filter = [];
+  filter: number[] = []; // ids of active statuses
   loading = false;
   errors = {};
   existed_statuses = {};
@@ -40,15 +40,14 @@ export class RunsComponent implements OnInit {
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private StatisticService: StatisticService, private dialog: MatDialog) {
-  }
+              private router: Router, private statistic_service: StatisticService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
       this.get_runs_and_suites();
     });
-    this.StatisticService.statistic_has_changed().subscribe(statistic => {
+    this.statistic_service.statistic_has_changed().subscribe(statistic => {
       if (this.runs_and_suites.length == 0) {return}
       if (this.router.url.match(/run\/(\d+)/i)) {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/run\/(\d+)/i)[1] &&
@@ -57,7 +56,7 @@ export class RunsComponent implements OnInit {
         this.runs_and_suites.filter(object => object.id == this.router.url.match(/suite\/(\d+)/i)[1] &&
           object.path == 'suite')[0].statistic = statistic;
       }
-        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+        this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
     });
   }
 
@@ -88,7 +87,7 @@ export class RunsComponent implements OnInit {
       this.suites = res[1];
       this.runs = res[0];
       this.merge_suites_and_runs();
-      this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.all_statistic = this.statistic.extended;
       this.loading = false;
       this.get_filters();
@@ -96,9 +95,6 @@ export class RunsComponent implements OnInit {
   }
 
   update_click() {
-    if (this.loading) {
-      return
-    }
     this.get_runs_and_suites();
     if (this.ResultSetComponent && this.router.url.match(/run\/(\d+)/i) !== null) {
       this.ResultSetComponent.update_click();
@@ -119,25 +115,14 @@ export class RunsComponent implements OnInit {
     this.runs_and_suites = this.runs.concat(suite_for_add);
   }
 
-  select_filter(filter) {
-    filter.active = !filter.active;
+  select_filter(status) {
+    status.active = !status.active;
     this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
   }
 
   get_filters() {
-    this.statuses.forEach(elem => {
-      if (this.filter.includes(elem.id)) {
-        elem.active = true;
-      }
-    });
-  }
-
-  hide_element(element, status) {
-    if (element) {
-      return !(element.extended[status.id] || status.active);
-    }
-    return true;
+    this.statuses.filter(elem => elem.active);
   }
 
   check_selected_is_hidden() {
@@ -184,14 +169,10 @@ export class RunsComponent implements OnInit {
           this.router.navigate([ this.router.url.replace(/\/suite.*/, '')]);
         }
         this.merge_suites_and_runs();
-        this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+        this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       }
     });
   };
-
-  toolbar_opened() {
-    return (this.run_opened() || this.suite_opened());
-  }
 
   run_opened() {
     return this.router.url.indexOf('run') >= 0;
@@ -201,22 +182,6 @@ export class RunsComponent implements OnInit {
     return this.router.url.indexOf('suite') >= 0;
   }
 
-  opened_item() {
-    if (this.run_opened()) {
-      return ('.run');
-    } else {
-      return ('suite');
-    }
-  }
-
-  get_items_id() {
-    if (this.run_opened()) {
-      return (+/run\/(\d+)/.exec(this.router.url)[1]);
-    } else {
-      return (+/suite\/(\d+)/.exec(this.router.url)[1]);
-    }
-  }
-
   onActivate(componentRef) {
     this.ResultSetComponent = componentRef;
   }
@@ -224,18 +189,10 @@ export class RunsComponent implements OnInit {
   replace_to_run($event) {
     this.runs.push($event[1]);
     this.merge_suites_and_runs();
-    this.statistic = this.StatisticService.runs_and_suites_statistic(this.runs_and_suites);
+    this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
     if (this.router.url.indexOf('/suite/' + $event[0].id) >= 0) {
       this.router.navigate([/(.*?)(?=suite|$)/.exec(this.router.url)[0] + 'run/' + $event[1].id]);
     }
-  }
-
-  clear_errors() {
-    this.errors = {};
-  }
-
-  colScroll(event) {
-    this.scrollPos = Math.floor(event.target.scrollTop / 53.5);
   }
 
   clicked(event, object) {
@@ -250,6 +207,7 @@ export class RunsComponent implements OnInit {
     this.selected_object = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
   }
+
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
   }
