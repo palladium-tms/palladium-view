@@ -8,6 +8,7 @@ export class Statistic {
   constructor(data) {
     this.extended = data;
     if (data === null) {
+      this.extended = {};
     } else {
       this.existed_statuses = Object.keys(this.extended);
       this.existed_statuses.forEach(status_id => {
