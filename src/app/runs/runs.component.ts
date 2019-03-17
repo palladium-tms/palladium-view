@@ -30,7 +30,6 @@ export class RunsComponent implements OnInit {
   errors = {};
   existed_statuses = {};
   all_statistic = {};
-  scrollPos = 0;
   selected_object: Run;
   public Math: Math = Math;
 
@@ -115,6 +114,7 @@ export class RunsComponent implements OnInit {
     status.active = !status.active;
     this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
+    this.get_selected_object();
   }
 
   get_filters() {
@@ -148,7 +148,6 @@ export class RunsComponent implements OnInit {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }
   }
-
 
   open_settings(object) {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
