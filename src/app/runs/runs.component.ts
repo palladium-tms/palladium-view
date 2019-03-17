@@ -123,7 +123,11 @@ export class RunsComponent implements OnInit {
   }
 
   get_filters() {
-    this.statuses.filter(elem => elem.active);
+    this.statuses.forEach(elem => {
+      if (this.filter.includes(elem.id)) {
+        elem.active = true;
+      }
+    });
   }
 
   check_selected_is_hidden() {
