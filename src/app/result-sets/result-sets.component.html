@@ -2,7 +2,8 @@
 
   <div class="toolbar">
     <div class="filters">
-      <app-filters [statuses]=statuses [statistic]=statistic (selected_statuses_emmit)="show_all()"></app-filters>
+      <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="show_all(status)"
+                         *ngFor="let status of statuses"></app-status-filter>
     </div>
     <div class="buttons">
       <div class="button check_button">
@@ -40,9 +41,9 @@
   </div>
   <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)"
        (dblclick)="copy_result_set_name($event)">
-    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
+    <!--<div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>-->
     <div class="item hoverer bipolar-item"
-         *ngFor="let object of show_all_elements | sortByCreatedAt:'asc'| virtualscroll:scrollPos:30"
+         *ngFor="let object of show_all_elements | sortByCreatedAt:'asc'"
          [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
       <mat-checkbox [(ngModel)]="object.selected" class="result-set-checkbox"></mat-checkbox>
       <div class="result-set-discriber centered-data">
@@ -58,7 +59,7 @@
         </div>
       </div>
     </div>
-    <div [style.height.px]="Math.max(0, (show_all_elements.length - scrollPos - 30)  * 33)"></div>
+    <!--<div [style.height.px]="Math.max(0, (show_all_elements.length - scrollPos - 30)  * 33)"></div>-->
     <div class="empty_list_message" [ngClass]="{'hidden': result_sets_and_cases.length > 0}">
       <p>Result set list is empty</p>
     </div>

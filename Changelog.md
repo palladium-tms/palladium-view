@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+
+## Added
+    * New filter to result_set
 ## [0.5.9] - 03.18.2019
 ## Added
     * New componens: status filter. It is status with count of elements

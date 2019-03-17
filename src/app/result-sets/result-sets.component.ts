@@ -28,6 +28,7 @@ export class ResultSetsComponent implements OnInit {
   add_result_open = false;
   selected_status;
   result_sets = [];
+  statistic: Statistic = new Statistic(null);
   search_input = false;
   loading = false;
   cases;
@@ -38,7 +39,6 @@ export class ResultSetsComponent implements OnInit {
   statuses_array = [];
   result_sets_and_cases = [];
   show_all_elements = [];
-  statistic: Statistic;
   filter: any[] = [];
   select_all_flag = false;
   settings = new LocalSettingsService;
@@ -131,7 +131,6 @@ export class ResultSetsComponent implements OnInit {
 
   get_result_sets_and_cases() {
     this.result_sets = [];
-    this.statistic = new Statistic(null);
     this.result_sets_and_cases = [];
     this.loading = true;
     Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
