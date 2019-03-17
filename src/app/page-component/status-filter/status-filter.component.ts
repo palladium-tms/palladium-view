@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Status} from 'app/models/status'
 
 @Component({
   selector: 'app-status-filter',
@@ -6,10 +7,10 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
   styleUrls: ['./status-filter.component.scss']
 })
 export class StatusFilterComponent implements OnInit {
-  @Input() status;
-  @Input() count;
+  @Input() status: Status;
+  @Input() count: number;
   @Output() select = new EventEmitter();
-  selected;
+  selected: boolean;
   constructor() { }
 
   ngOnInit() {
