@@ -1,11 +1,10 @@
-import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
-import {FiltersComponent} from '../page-component/filters/filters.component';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {ProductSettingsComponent} from '../products/products.component';
@@ -18,10 +17,6 @@ import {Run} from '../models/run';
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class RunsComponent implements OnInit {
-  @ViewChild('Filter')
-  @ViewChild('Modal') Modal;
-  @ViewChild('form') form;
-  Filter: FiltersComponent;
   suites = [];
   runs = [];
   runs_and_suites = [];
