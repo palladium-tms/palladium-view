@@ -36,7 +36,7 @@ export class RunsComponent implements OnInit {
   existed_statuses = {};
   all_statistic = {};
   scrollPos = 0;
-  selected_object: Run = new Run(null);
+  selected_object: Run;
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
@@ -90,6 +90,7 @@ export class RunsComponent implements OnInit {
       this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.all_statistic = this.statistic.extended;
       this.loading = false;
+      this.get_selected_object();
       this.get_filters();
     });
   }
@@ -210,6 +211,15 @@ export class RunsComponent implements OnInit {
 
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
+  }
+
+  get_selected_object() {
+    const part_of_url = /(run|suite)\/(\d+)/.exec(this.router.url);
+    if (part_of_url) {
+      this.selected_object = this.runs_and_suites.find(element => element.path == part_of_url[1] && element.id == part_of_url[2]);
+    } else {
+      this.selected_object = new Run(null)
+    }
   }
 
 }
