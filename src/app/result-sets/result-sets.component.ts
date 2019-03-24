@@ -97,6 +97,11 @@ export class ResultSetsComponent implements OnInit {
     this.show_all_elements = this.filter_by_search(filtered_by_status);
   }
 
+  select_filter(status) {
+    status.active = !status.active
+    this.show_all()
+  }
+
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === id);
   }

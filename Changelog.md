@@ -4,6 +4,8 @@
 ## Added
     * New filter to result_set
     * New new copy and settings buttons for result set
+## Fixed
+    * Filter inverting
 ## [0.5.9] - 03.18.2019
 ## Added
     * New componens: status filter. It is status with count of elements

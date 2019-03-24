@@ -2,7 +2,7 @@
 
   <div class="toolbar">
     <div class="filters">
-      <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="show_all(status)"
+      <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="select_filter(status)"
                          *ngFor="let status of statuses"></app-status-filter>
     </div>
     <div class="buttons">
@@ -16,39 +16,6 @@
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
         <mat-icon>refresh</mat-icon>
       </button>
-      <!---->
-      <!---->
-      <!--<div class="button check_button">-->
-      <!--<mat-checkbox-->
-      <!--class="select_all_checkbox"-->
-      <!--(change)="select()"-->
-      <!--[(ngModel)]="this.select_all_flag"-->
-      <!--[disabled]="this.loading">-->
-      <!--</mat-checkbox>-->
-      <!--</div>-->
-      <!--<div class="button add_result_button" (click)="add_result_open_menu()"-->
-      <!--[ngClass]="{'disabled': this.loading || get_selected_count() === 0}">-->
-      <!--<i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}-->
-      <!--</div>-->
-      <!--<input class="search-input" type="text" (keydown.esc)="search_open()" placeholder="Search"-->
-      <!--(keyup)="write_to_search($event)" *ngIf="search_input" #search_input_element>-->
-      <!--<div class="button" (click)="update_click()" *ngIf="!search_input"-->
-      <!--[ngClass]="{'disabled': this.loading}">-->
-      <!--<i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>-->
-      <!--</div>-->
-      <!--<div class="button" (click)="open_history_page()" [ngClass]="{'disabled': this.loading}"-->
-      <!--*ngIf="object && !search_input">-->
-      <!--<i class="fa fa-history" aria-hidden="true"></i>-->
-      <!--</div>-->
-
-      <!--<div class="button" (click)="open_settings()" [ngClass]="{'disabled': this.loading}"-->
-      <!--*ngIf="object && !search_input">-->
-      <!--<i class="fa fa-cogs" aria-hidden="true"></i>-->
-      <!--</div>-->
-      <!--<div class="button search_button" (click)="search_open()"-->
-      <!--[ngClass]="{'disabled': this.loading, 'long-search': search_input}">-->
-      <!--<i class="fa fa-search" aria-hidden="true"></i>-->
-      <!--</div>-->
     </div>
   </div>
   <div class="item-list">
@@ -90,8 +57,6 @@
     </mat-menu>
   </div>
 </div>
-
-
 
 <div class="new-result-space" *ngIf="add_result_open">
   <mat-card class="new-result-form-card mat-elevation-z1">
@@ -141,24 +106,6 @@
         </div>
       </div>
     </mat-card>
-
-
-    <!--<div class="item hoverer bipolar-item"-->
-         <!--*ngFor="let object of get_selected_for_add_result()" [ngClass]="{'activated': object.active}"-->
-         <!--[ngStyle]="getStyles(object)">-->
-      <!--<div class="result-set-discriber centered-data">-->
-        <!--<div class="centered-data delete-item">-->
-          <!--<i class="fa fa-times" aria-hidden="true" (click)="unselect(object)"></i>-->
-        <!--</div>-->
-        <!--<div class="item-name">-->
-          <!--<a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}"-->
-             <!--attr.data-path="{{object.path}}">{{object.name}}</a>-->
-        <!--</div>-->
-        <!--<div *ngIf="this.statuses && !object.deleting" class="status-name">-->
-          <!--<b>{{get_status_by_id(object['status']).name}}</b>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
   </div>
 </div>
 
