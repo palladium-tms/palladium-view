@@ -405,22 +405,13 @@ export class ResultSetsComponent implements OnInit {
     this.add_result_open = false;
   }
 
-  unselect(object) {
-    object.selected = false;
-    if (this.get_selected_count() == 0) {
-      this.cancel_result_custom()
-    }
-  }
-
   add_result_open_menu() {
     const selected = this.result_sets_and_cases.filter(obj => obj.selected);
-    if (!this.loading && selected.length != 0) {
-      this.add_result_open = true;
-      if (selected.length == 1) {
-        this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
-      } else {
-        this.new_result_form.reset('status');
-      }
+    this.add_result_open = true;
+    if (selected.length == 1) {
+      this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
+    } else {
+      this.new_result_form.reset('status');
     }
   }
 }
