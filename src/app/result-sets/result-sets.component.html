@@ -9,6 +9,8 @@
       <div class="select_all_checkbox">
         <mat-checkbox (change)="select()" [(ngModel)]="select_all_flag"></mat-checkbox>
       </div>
+      <button mat-button  (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
+        <mat-icon>library_add</mat-icon> {{get_selected_count()}}</button>
       <div class="divider"></div>
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
         <mat-icon>refresh</mat-icon>
