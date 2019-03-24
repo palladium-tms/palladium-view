@@ -217,12 +217,11 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_history_page() {
-    if (this.loading) { return }
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
-      this.router.navigate([path, this.object.id]);
+      this.router.navigate([path, this.dropdown_menu_item_select.id]);
     } else {
-      const case_id = this.get_case_id_by_result_set(this.object);
+      const case_id = this.get_case_id_by_result_set(this.dropdown_menu_item_select);
       this.router.navigate([path, case_id]);
     }
   }

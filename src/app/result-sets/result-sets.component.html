@@ -10,7 +10,8 @@
         <mat-checkbox (change)="select()" [(ngModel)]="select_all_flag"></mat-checkbox>
       </div>
       <button mat-button  (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
-        <mat-icon>library_add</mat-icon> {{get_selected_count()}}</button>
+        <mat-icon>library_add</mat-icon> {{get_selected_count()}}
+      </button>
       <div class="divider"></div>
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
         <mat-icon>refresh</mat-icon>
@@ -78,6 +79,10 @@
       <button mat-menu-item (click)="copy_result_set_name()">
         <mat-icon>content_copy</mat-icon>
         <span>Copy</span>
+      </button>
+      <button mat-menu-item (click)="open_history_page()">
+        <mat-icon>date_range</mat-icon>
+        <span>History</span>
       </button>
       <button mat-menu-item (click)="open_settings()">
         <mat-icon>settings</mat-icon>
