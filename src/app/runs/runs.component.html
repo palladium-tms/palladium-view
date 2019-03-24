@@ -15,7 +15,7 @@
     <mat-card class="item mat-elevation-z1"
               *ngFor="let object of runs_and_suites| statisticFilter:filter"
               (click)="clicked($event, object)"
-              [ngClass]="{'mat-elevation-z12 selected': selected_object.id == object.id}">
+              [ngClass]="{'mat-elevation-z5 selected': selected_object.id == object.id}">
       <div class="item-name">{{object.name}}</div>
       <div class="item-statistic" *ngIf="object.statistic.existed_statuses">
         <div *ngFor="let status of object.statistic.existed_statuses"
