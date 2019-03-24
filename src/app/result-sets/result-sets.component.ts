@@ -45,6 +45,7 @@ export class ResultSetsComponent implements OnInit {
   search_data = '';
   scrollPos = 0;
   run_id;
+  dropdown_menu_item_select;
   public Math: Math = Math;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router,
@@ -163,10 +164,10 @@ export class ResultSetsComponent implements OnInit {
     this.result_sets_and_cases = this.result_sets.concat(this.result_sets_and_cases);
   }
 
-  open_settings(object) {
+  open_settings() {
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
-        object: object,
+        object: this.dropdown_menu_item_select,
         cases: this.cases,
         result_sets: this.result_sets,
       }
@@ -295,25 +296,22 @@ export class ResultSetsComponent implements OnInit {
   }
 
   clicked(event, object) {
-    if (event.target.classList.contains('settings')) {
-      this.open_settings(object)
-      } else if (event.target.classList.contains('copy')) {
-      this.copy_result_set_name(object.name)
-      } else if (!(event.target.classList.contains('result-set-checkbox') ||
+   if (!(event.target.classList.contains('result-set-checkbox') ||
       event.target.classList.contains('mat-checkbox-inner-container') ||
+      event.target.classList.contains('menu') ||
       event.target.classList.contains('mat-checkbox'))) {
       this.open_results(object)
     }
   }
 
-  copy_result_set_name(name) {
+  copy_result_set_name() {
     const txtArea = document.createElement('textarea');
     txtArea.id = 'txt';
     txtArea.style.position = 'fixed';
     txtArea.style.top = '0';
     txtArea.style.left = '0';
     txtArea.style.opacity = '0';
-    txtArea.value = name;
+    txtArea.value = this.dropdown_menu_item_select.name;
     document.body.appendChild(txtArea);
     txtArea.select();
     try {

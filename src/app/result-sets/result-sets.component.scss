@@ -80,6 +80,9 @@
   padding-left: 1px;
   padding-right: 1em;
 }
+.menu-button {
+  margin: auto;
+}
 
 .select_all_checkbox {
   margin: 0.5em 0.5em 0.5em 1.1em;
@@ -94,4 +97,8 @@
 }
 .divider {
   flex: 1;
+}
+
+.status-name {
+  padding-top: 2px;
 }

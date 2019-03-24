@@ -59,16 +59,29 @@
           <mat-checkbox [(ngModel)]="object.selected" aria-label></mat-checkbox>
         </div>
         <div class="item-name">{{object.name}}</div>
-        <div *ngIf="this.statuses && !object.deleting" class="status-name">
+        <div class="status-name" *ngIf="this.statuses && !object.deleting">
           <b>{{get_status_by_id(object['status']).name}}</b>
+        </div>
+        <div class="menu-button menu">
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="menu" (click)="dropdown_menu_item_select = object">
+            <mat-icon class="menu">more_vert</mat-icon>
+          </button>
         </div>
         <div *ngIf="object.deleting">
           <b style="color: #ca0a0a">Deleting...</b>
         </div>
-        <i class="fa fa-cogs settings" aria-hidden="true"></i>
-        <i class="fa fa-copy copy" aria-hidden="true"></i>
       </div>
     </mat-card>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="copy_result_set_name()">
+        <mat-icon>content_copy</mat-icon>
+        <span>Copy</span>
+      </button>
+      <button mat-menu-item (click)="open_settings()">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
     <!--<div class="item hoverer bipolar-item"-->
          <!--*ngFor="let object of show_all_elements | sortByCreatedAt:'asc'"-->
          <!--[ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">-->
