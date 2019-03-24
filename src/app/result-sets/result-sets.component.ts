@@ -110,7 +110,7 @@ export class ResultSetsComponent implements OnInit {
 
   getStyles(object) {
     if (this.statuses && object['status']) {
-      return {'border-right': '7px solid ' + this.get_status_by_id(object.status).color};
+      return {'border-right': '3px solid ' + this.get_status_by_id(object.status).color};
     }
   }
 
@@ -163,10 +163,10 @@ export class ResultSetsComponent implements OnInit {
     this.result_sets_and_cases = this.result_sets.concat(this.result_sets_and_cases);
   }
 
-  open_settings() {
+  open_settings(object) {
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
-        object: this.object,
+        object: object,
         cases: this.cases,
         result_sets: this.result_sets,
       }
@@ -283,7 +283,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_click() {
-    if (this.loading) { return }
     this.get_result_sets_and_cases();
     this.select_all_flag = false;
     if (this.ResultComponent) {
@@ -295,22 +294,26 @@ export class ResultSetsComponent implements OnInit {
     this.ResultComponent = componentRef;
   }
 
-  clicked(event) {
-    if (event.target.classList.contains('result_set_link')) {
-      const object = this.result_sets_and_cases.filter(obj => obj.id == event.target.dataset.id &&
-        obj.path == event.target.dataset.path)[0];
+  clicked(event, object) {
+    if (event.target.classList.contains('settings')) {
+      this.open_settings(object)
+      } else if (event.target.classList.contains('copy')) {
+      this.copy_result_set_name(object.name)
+      } else if (!(event.target.classList.contains('result-set-checkbox') ||
+      event.target.classList.contains('mat-checkbox-inner-container') ||
+      event.target.classList.contains('mat-checkbox'))) {
       this.open_results(object)
     }
   }
 
-  copy_result_set_name($event) {
+  copy_result_set_name(name) {
     const txtArea = document.createElement('textarea');
     txtArea.id = 'txt';
     txtArea.style.position = 'fixed';
     txtArea.style.top = '0';
     txtArea.style.left = '0';
     txtArea.style.opacity = '0';
-    txtArea.value = $event.target.closest('.item').querySelector('.result_set_link').title;
+    txtArea.value = name;
     document.body.appendChild(txtArea);
     txtArea.select();
     try {

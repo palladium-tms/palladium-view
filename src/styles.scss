@@ -98,20 +98,19 @@ input[type=checkbox] {
   margin: 1em;
   text-overflow: ellipsis;
   cursor: pointer;
-  border: solid 3px transparent;
+  border: solid 2px transparent;
 }
 
 .item {
   padding: 0.5em 0.7em 0.5em 0.5em;
-  //max-height: 6em;
-  //max-width: 100%;
   margin: 0.5em;
   cursor: pointer;
-  border: solid 3px transparent;
+  border: solid 2px transparent;
 }
 
 .selected {
-  border: solid 3px #00838f;
+  border: solid 2px mat-color($palladium-accent);
+  //border-left: solid 3px mat-color($palladium-accent);
   transition: border-color 300ms ease-out;
 }
 
@@ -191,6 +190,7 @@ input[type=checkbox] {
 .item-name {
   text-overflow: ellipsis;
   overflow: hidden;
+  margin: auto;
   max-height: 4em;
   flex: 4;
   align-items: center;
@@ -242,6 +242,8 @@ input[type=checkbox] {
 .status-name {
   user-select: none;
   overflow: hidden;
+  margin: auto;
+  padding-right: 0.5em;
   max-width: 5em;
   text-overflow: ellipsis;
 }
@@ -250,14 +252,6 @@ input[type=checkbox] {
   max-width: 4em;
   overflow: hidden;
   margin-right: 0.2em;
-}
-
-.status-passed {
-  border-right: 7px solid #afa;
-}
-
-.status-failed {
-  border-right: 7px solid #ff989d;
 }
 
 .small-block {
@@ -374,6 +368,31 @@ a.link:hover {
   top: 0;
   right: 0;
   color: rgba(0, 0, 0, 0.54);
+}
+
+.copy {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 1.5em;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.copy:hover {
+  color: rgba(0, 0, 0, 0.70);
+}
+
+.settings:hover {
+  color: rgba(0, 0, 0, 0.70);
+}
+
+
+.item:hover .settings  {
+  display: block;
+}
+
+.item:hover .copy {
+  display: block;
 }
 
 .item-description {
