@@ -4,6 +4,7 @@
 ## Added
     * New filter to result_set
     * New new copy and settings buttons for result set
+    * Material for new_result result set items
 ## Fixed
     * Filter inverting
 ## [0.5.9] - 03.18.2019

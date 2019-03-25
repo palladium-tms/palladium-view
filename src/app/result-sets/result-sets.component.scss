@@ -65,7 +65,12 @@
 }
 
 .result-set-checkbox {
-  padding: 16px;
+  padding: 1em 0.5em 1em 1em;
+  cursor: auto;
+}
+
+.result-set-delete {
+  padding: 0;
   cursor: auto;
 }
 
@@ -90,6 +95,14 @@
 .item {
   padding: 0;
   cursor: auto;
+}
+
+.item-name {
+  padding-top: 4px;
+}
+
+.item-name-for-deleting {
+  padding-top: 0;
 }
 .result-set {
   display: flex;

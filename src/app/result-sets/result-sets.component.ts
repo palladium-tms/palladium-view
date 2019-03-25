@@ -342,6 +342,13 @@ export class ResultSetsComponent implements OnInit {
     }
   }
 
+  unselect(object) {
+    object.selected = false;
+    if (this.get_selected_count() == 0) {
+      this.cancel_result_custom()
+    }
+  }
+
   colScroll(event) {
     this.scrollPos = Math.floor(event.target.scrollTop / 33);
   }

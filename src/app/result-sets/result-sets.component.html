@@ -25,7 +25,7 @@
               [ngClass]="{'mat-elevation-z5 selected': object.active}">
       <div class="result-set pointer" (click)="clicked($event, object)">
         <div class="result-set-checkbox">
-          <mat-checkbox [(ngModel)]="object.selected" aria-label></mat-checkbox>
+          <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
         </div>
         <div class="item-name">{{object.name}}</div>
         <div class="status-name" *ngIf="this.statuses && !object.deleting">
@@ -90,17 +90,17 @@
     </mat-card-actions>
   </mat-card>
 
-  <div class="item-list" (scroll)="colScroll($event)"
-       (dblclick)="copy_result_set_name($event)">
-
+  <div class="item-list" (scroll)="colScroll($event)">
     <mat-card class="item mat-elevation-z1"
               *ngFor="let object of get_selected_for_add_result()"
               [ngStyle]="getStyles(object)">
       <div class="result-set">
-        <div class="result-set-checkbox">
-          <mat-checkbox [(ngModel)]="object.selected" aria-label></mat-checkbox>
+        <div class="result-set-delete">
+          <button mat-icon-button (click)="unselect(object)">
+            <mat-icon>clear</mat-icon>
+          </button>
         </div>
-        <div class="item-name">{{object.name}}</div>
+        <div class="item-name item-name-for-deleting">{{object.name}}</div>
         <div class="status-name status-padding" *ngIf="this.statuses && !object.deleting">
           <b>{{get_status_by_id(object['status']).name}}</b>
         </div>
