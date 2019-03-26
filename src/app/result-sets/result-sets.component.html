@@ -2,71 +2,64 @@
 
   <div class="toolbar">
     <div class="filters">
-      <app-filters [statuses]=statuses [statistic]=statistic (selected_statuses_emmit)="show_all()"></app-filters>
+      <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="select_filter(status)"
+                         *ngFor="let status of statuses"></app-status-filter>
     </div>
     <div class="buttons">
-      <div class="button check_button">
-        <mat-checkbox
-          class="select_all_checkbox"
-          (change)="select()"
-          [(ngModel)]="this.select_all_flag"
-          [disabled]="this.loading">
-        </mat-checkbox>
+      <div class="select_all_checkbox">
+        <mat-checkbox (change)="select()" [(ngModel)]="select_all_flag"></mat-checkbox>
       </div>
-      <div class="button add_result_button" (click)="add_result_open_menu()"
-           [ngClass]="{'disabled': this.loading || get_selected_count() === 0}">
-        <i class="fa fa-plus-circle" aria-hidden="true"></i> {{get_selected_count()}}
-      </div>
-      <input class="search-input" type="text" (keydown.esc)="search_open()" placeholder="Search"
-             (keyup)="write_to_search($event)" *ngIf="search_input" #search_input_element>
-      <div class="button" (click)="update_click()" *ngIf="!search_input"
-           [ngClass]="{'disabled': this.loading}">
-        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
-      </div>
-      <div class="button" (click)="open_history_page()" [ngClass]="{'disabled': this.loading}"
-           *ngIf="object && !search_input">
-        <i class="fa fa-history" aria-hidden="true"></i>
-      </div>
-
-      <div class="button" (click)="open_settings()" [ngClass]="{'disabled': this.loading}"
-           *ngIf="object && !search_input">
-        <i class="fa fa-cogs" aria-hidden="true"></i>
-      </div>
-      <div class="button search_button" (click)="search_open()"
-           [ngClass]="{'disabled': this.loading, 'long-search': search_input}">
-        <i class="fa fa-search" aria-hidden="true"></i>
-      </div>
+      <button mat-button  (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
+        <mat-icon>library_add</mat-icon> {{get_selected_count()}}
+      </button>
+      <div class="divider"></div>
+      <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
+        <mat-icon>refresh</mat-icon>
+      </button>
     </div>
   </div>
-  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)"
-       (dblclick)="copy_result_set_name($event)">
-    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
-    <div class="item hoverer bipolar-item"
-         *ngFor="let object of show_all_elements | sortByCreatedAt:'asc'| virtualscroll:scrollPos:30"
-         [ngClass]="{'activated': object.active}" [ngStyle]="getStyles(object)">
-      <mat-checkbox [(ngModel)]="object.selected" class="result-set-checkbox"></mat-checkbox>
-      <div class="result-set-discriber centered-data">
-        <div class="item-name">
-          <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}"
-             attr.data-path="{{object.path}}">{{object.name}}</a>
+  <div class="item-list">
+    <mat-card class="item mat-elevation-z1"
+              *ngFor="let object of show_all_elements| statisticFilter:filter"
+              [ngStyle]="getStyles(object)"
+              [ngClass]="{'mat-elevation-z5 selected': object.active}">
+      <div class="result-set pointer" (click)="clicked($event, object)">
+        <div class="result-set-checkbox">
+          <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
         </div>
-        <div *ngIf="this.statuses && !object.deleting" class="status-name">
+        <div class="item-name">{{object.name}}</div>
+        <div class="status-name" *ngIf="this.statuses && !object.deleting">
           <b>{{get_status_by_id(object['status']).name}}</b>
+        </div>
+        <div class="menu-button menu">
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="menu" (click)="dropdown_menu_item_select = object">
+            <mat-icon class="menu">more_vert</mat-icon>
+          </button>
         </div>
         <div *ngIf="object.deleting">
           <b style="color: #ca0a0a">Deleting...</b>
         </div>
       </div>
-    </div>
-    <div [style.height.px]="Math.max(0, (show_all_elements.length - scrollPos - 30)  * 33)"></div>
-    <div class="empty_list_message" [ngClass]="{'hidden': result_sets_and_cases.length > 0}">
-      <p>Result set list is empty</p>
-    </div>
+    </mat-card>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="copy_result_set_name()">
+        <mat-icon>content_copy</mat-icon>
+        <span>Copy</span>
+      </button>
+      <button mat-menu-item (click)="open_history_page()">
+        <mat-icon>date_range</mat-icon>
+        <span>History</span>
+      </button>
+      <button mat-menu-item (click)="open_settings()">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
   </div>
-
 </div>
+
 <div class="new-result-space" *ngIf="add_result_open">
-  <mat-card>
+  <mat-card class="new-result-form-card mat-elevation-z1">
     <mat-card-content>
       <form [formGroup]="new_result_form">
         <div class="new_result_form">
@@ -78,7 +71,8 @@
                 {{status.name}}
               </mat-option>
             </mat-select>
-            <mat-icon matSuffix [ngStyle]="{'color': this.status ? this.status.color: '#ffffff'}">brightness_1</mat-icon>
+            <mat-icon matSuffix [ngStyle]="{'color': this.status ? this.status.color: '#ffffff'}">brightness_1
+            </mat-icon>
           </mat-form-field>
           <mat-form-field color="accent">
             <textarea cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" matInput
@@ -87,7 +81,7 @@
         </div>
       </form>
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions class="new-result-buttons">
       <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
       <button mat-raised-button color="accent" [disabled]="!new_result_form.valid"
               matBadge="{{get_selected_count()}}" matBadgePosition="after"
@@ -96,29 +90,24 @@
     </mat-card-actions>
   </mat-card>
 
-  <div class="item-list" (click)="clicked($event)" (scroll)="colScroll($event)"
-       (dblclick)="copy_result_set_name($event)">
-    <div [style.height.px]="Math.max(0, Math.max(0, scrollPos - 10) * 33 )"></div>
-    <div class="item hoverer bipolar-item"
-         *ngFor="let object of get_selected_for_add_result()" [ngClass]="{'activated': object.active}"
-         [ngStyle]="getStyles(object)">
-      <div class="result-set-discriber centered-data">
-        <div class="centered-data delete-item">
-          <i class="fa fa-times" aria-hidden="true" (click)="unselect(object)"></i>
+  <div class="item-list" (scroll)="colScroll($event)">
+    <mat-card class="item mat-elevation-z1"
+              *ngFor="let object of get_selected_for_add_result()"
+              [ngStyle]="getStyles(object)">
+      <div class="result-set">
+        <div class="result-set-delete">
+          <button mat-icon-button (click)="unselect(object)">
+            <mat-icon>clear</mat-icon>
+          </button>
         </div>
-        <div class="item-name">
-          <a title={{object.name}} class="result_set_link pointer" attr.data-id="{{object.id}}"
-             attr.data-path="{{object.path}}">{{object.name}}</a>
-        </div>
-        <div *ngIf="this.statuses && !object.deleting" class="status-name">
+        <div class="item-name item-name-for-deleting">{{object.name}}</div>
+        <div class="status-name status-padding" *ngIf="this.statuses && !object.deleting">
           <b>{{get_status_by_id(object['status']).name}}</b>
         </div>
       </div>
-    </div>
-    <div [style.height.px]="Math.max(0, (get_selected_for_add_result().length - scrollPos - 30)  * 33)"></div>
+    </mat-card>
   </div>
 </div>
-
 
 
 <router-outlet (activate)="onActivate($event)"></router-outlet>

@@ -51,12 +51,10 @@
   background-color: #f9f9f9;
   cursor: not-allowed;
 }
-.add_result_cancel_button {
-  float: left;
-  padding: 1em;
-  width: 3em;
-}
 
+.new-result-buttons {
+  margin-left: 0px;
+}
 .add_result_ok_button {
   float: right;
   padding: 1em;
@@ -67,10 +65,65 @@
 }
 
 .result-set-checkbox {
-  padding-right: 0.5em;
-  padding-left: 0.3em;
+  padding: 1em 0.5em 1em 1em;
+  cursor: auto;
+}
+
+.result-set-delete {
+  padding: 0;
+  cursor: auto;
+}
+
+.toolbar {
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.buttons {
+  display: flex;
+  padding-left: 1px;
+  padding-right: 1em;
+}
+.menu-button {
+  margin: auto;
 }
 
 .select_all_checkbox {
-  margin: auto;
+  margin: 0.5em 0.5em 0.5em 1.1em;
+}
+
+.item {
+  padding: 0;
+  cursor: auto;
+}
+
+.item-name {
+  padding-top: 4px;
+}
+
+.item-name-for-deleting {
+  padding-top: 0;
+}
+.result-set {
+  display: flex;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.divider {
+  flex: 1;
+}
+
+.status-name {
+  padding-top: 2px;
+}
+
+.status-padding {
+  padding-right: 1em;
+}
+
+.new-result-form-card {
+  margin: 0.5em;
 }

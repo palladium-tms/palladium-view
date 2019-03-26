@@ -28,6 +28,7 @@ export class ResultSetsComponent implements OnInit {
   add_result_open = false;
   selected_status;
   result_sets = [];
+  statistic: Statistic = new Statistic(null);
   search_input = false;
   loading = false;
   cases;
@@ -38,13 +39,13 @@ export class ResultSetsComponent implements OnInit {
   statuses_array = [];
   result_sets_and_cases = [];
   show_all_elements = [];
-  statistic: Statistic;
   filter: any[] = [];
   select_all_flag = false;
   settings = new LocalSettingsService;
   search_data = '';
   scrollPos = 0;
   run_id;
+  dropdown_menu_item_select;
   public Math: Math = Math;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router,
@@ -96,6 +97,11 @@ export class ResultSetsComponent implements OnInit {
     this.show_all_elements = this.filter_by_search(filtered_by_status);
   }
 
+  select_filter(status) {
+    status.active = !status.active
+    this.show_all()
+  }
+
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === id);
   }
@@ -110,7 +116,7 @@ export class ResultSetsComponent implements OnInit {
 
   getStyles(object) {
     if (this.statuses && object['status']) {
-      return {'border-right': '7px solid ' + this.get_status_by_id(object.status).color};
+      return {'border-right': '3px solid ' + this.get_status_by_id(object.status).color};
     }
   }
 
@@ -131,7 +137,6 @@ export class ResultSetsComponent implements OnInit {
 
   get_result_sets_and_cases() {
     this.result_sets = [];
-    this.statistic = new Statistic(null);
     this.result_sets_and_cases = [];
     this.loading = true;
     Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
@@ -167,7 +172,7 @@ export class ResultSetsComponent implements OnInit {
   open_settings() {
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
-        object: this.object,
+        object: this.dropdown_menu_item_select,
         cases: this.cases,
         result_sets: this.result_sets,
       }
@@ -217,12 +222,11 @@ export class ResultSetsComponent implements OnInit {
   }
 
   open_history_page() {
-    if (this.loading) { return }
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
-      this.router.navigate([path, this.object.id]);
+      this.router.navigate([path, this.dropdown_menu_item_select.id]);
     } else {
-      const case_id = this.get_case_id_by_result_set(this.object);
+      const case_id = this.get_case_id_by_result_set(this.dropdown_menu_item_select);
       this.router.navigate([path, case_id]);
     }
   }
@@ -284,7 +288,6 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_click() {
-    if (this.loading) { return }
     this.get_result_sets_and_cases();
     this.select_all_flag = false;
     if (this.ResultComponent) {
@@ -296,22 +299,23 @@ export class ResultSetsComponent implements OnInit {
     this.ResultComponent = componentRef;
   }
 
-  clicked(event) {
-    if (event.target.classList.contains('result_set_link')) {
-      const object = this.result_sets_and_cases.filter(obj => obj.id == event.target.dataset.id &&
-        obj.path == event.target.dataset.path)[0];
+  clicked(event, object) {
+   if (!(event.target.classList.contains('result-set-checkbox') ||
+      event.target.classList.contains('mat-checkbox-inner-container') ||
+      event.target.classList.contains('menu') ||
+      event.target.classList.contains('mat-checkbox'))) {
       this.open_results(object)
     }
   }
 
-  copy_result_set_name($event) {
+  copy_result_set_name() {
     const txtArea = document.createElement('textarea');
     txtArea.id = 'txt';
     txtArea.style.position = 'fixed';
     txtArea.style.top = '0';
     txtArea.style.left = '0';
     txtArea.style.opacity = '0';
-    txtArea.value = $event.target.closest('.item').querySelector('.result_set_link').title;
+    txtArea.value = this.dropdown_menu_item_select.name;
     document.body.appendChild(txtArea);
     txtArea.select();
     try {
@@ -335,6 +339,13 @@ export class ResultSetsComponent implements OnInit {
       setTimeout(() => {
         this.search_input_element.nativeElement.focus();
       }, 100);
+    }
+  }
+
+  unselect(object) {
+    object.selected = false;
+    if (this.get_selected_count() == 0) {
+      this.cancel_result_custom()
     }
   }
 
@@ -406,22 +417,13 @@ export class ResultSetsComponent implements OnInit {
     this.add_result_open = false;
   }
 
-  unselect(object) {
-    object.selected = false;
-    if (this.get_selected_count() == 0) {
-      this.cancel_result_custom()
-    }
-  }
-
   add_result_open_menu() {
     const selected = this.result_sets_and_cases.filter(obj => obj.selected);
-    if (!this.loading && selected.length != 0) {
-      this.add_result_open = true;
-      if (selected.length == 1) {
-        this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
-      } else {
-        this.new_result_form.reset('status');
-      }
+    this.add_result_open = true;
+    if (selected.length == 1) {
+      this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
+    } else {
+      this.new_result_form.reset('status');
     }
   }
 }

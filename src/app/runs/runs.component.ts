@@ -1,11 +1,10 @@
-import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';
-import {FiltersComponent} from '../page-component/filters/filters.component';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {ProductSettingsComponent} from '../products/products.component';
@@ -18,10 +17,6 @@ import {Run} from '../models/run';
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class RunsComponent implements OnInit {
-  @ViewChild('Filter')
-  @ViewChild('Modal') Modal;
-  @ViewChild('form') form;
-  Filter: FiltersComponent;
   suites = [];
   runs = [];
   runs_and_suites = [];
@@ -35,7 +30,6 @@ export class RunsComponent implements OnInit {
   errors = {};
   existed_statuses = {};
   all_statistic = {};
-  scrollPos = 0;
   selected_object: Run;
   public Math: Math = Math;
 
@@ -120,6 +114,7 @@ export class RunsComponent implements OnInit {
     status.active = !status.active;
     this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
+    this.get_selected_object();
   }
 
   get_filters() {
@@ -153,7 +148,6 @@ export class RunsComponent implements OnInit {
       this.router.navigate([/(.*?)(?=run|$)/.exec(this.router.url)[0]]);
     }
   }
-
 
   open_settings(object) {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
