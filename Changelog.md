@@ -1,6 +1,7 @@
 # Changelog
 ## master (unreleased)
 
+## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set
     * New new copy and settings buttons for result set
