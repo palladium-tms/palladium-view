@@ -81,6 +81,7 @@ import { DropdownMenuComponent } from './page-component/dropdown-menu/dropdown-m
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
 import { StatusFilterComponent } from './page-component/status-filter/status-filter.component';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -109,6 +110,7 @@ const appRoutes: Routes = [
   {path: '**', redirectTo: '/404'},
 ];
 @NgModule({  exports: [
+    ScrollingModule,
     DragDropModule,
     CdkTableModule,
     MatAutocompleteModule, MatBadgeModule,
@@ -218,7 +220,8 @@ const appRoutes: Routes = [
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule],
+    MatTooltipModule,
+    ScrollingModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, SidenavService,
     LocalSettingsService, {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],

@@ -9,8 +9,9 @@
       <div class="select_all_checkbox">
         <mat-checkbox (change)="select()" [(ngModel)]="select_all_flag"></mat-checkbox>
       </div>
-      <button mat-button  (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
-        <mat-icon>library_add</mat-icon> {{get_selected_count()}}
+      <button mat-button (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
+        <mat-icon>library_add</mat-icon>
+        {{get_selected_count()}}
       </button>
       <div class="divider"></div>
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
@@ -19,28 +20,31 @@
     </div>
   </div>
   <div class="item-list">
-    <mat-card class="item mat-elevation-z1"
-              *ngFor="let object of show_all_elements| statisticFilter:filter"
-              [ngStyle]="getStyles(object)"
-              [ngClass]="{'mat-elevation-z5 selected': object.active}">
-      <div class="result-set pointer" (click)="clicked($event, object)">
-        <div class="result-set-checkbox">
-          <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
+    <cdk-virtual-scroll-viewport [itemSize]="53"  style="height: 100%; width: 100%">
+      <mat-card class="item mat-elevation-z1"
+                *cdkVirtualFor="let object of show_all_elements| statisticFilter:filter"
+                [ngStyle]="{'border-right': '2px solid ' + statuses_formated[object.status]}"
+                [ngClass]="{'mat-elevation-z5 selected': object.active}" style="height: 53px">
+        <div class="result-set pointer" (click)="clicked($event, object)">
+          <div class="result-set-checkbox">
+            <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
+          </div>
+          <div class="item-name">{{object.name}}</div>
+          <div class="status-name" *ngIf="this.statuses && !object.deleting">
+            <b>{{get_status_by_id(object['status']).name}}</b>
+          </div>
+          <div class="menu-button menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
+                    (click)="dropdown_menu_item_select = object">
+              <mat-icon class="menu">more_vert</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="object.deleting">
+            <b style="color: #ca0a0a">Deleting...</b>
+          </div>
         </div>
-        <div class="item-name">{{object.name}}</div>
-        <div class="status-name" *ngIf="this.statuses && !object.deleting">
-          <b>{{get_status_by_id(object['status']).name}}</b>
-        </div>
-        <div class="menu-button menu">
-          <button mat-icon-button [matMenuTriggerFor]="menu" class="menu" (click)="dropdown_menu_item_select = object">
-            <mat-icon class="menu">more_vert</mat-icon>
-          </button>
-        </div>
-        <div *ngIf="object.deleting">
-          <b style="color: #ca0a0a">Deleting...</b>
-        </div>
-      </div>
-    </mat-card>
+      </mat-card>
+    </cdk-virtual-scroll-viewport>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="copy_result_set_name()">
         <mat-icon>content_copy</mat-icon>
@@ -89,11 +93,11 @@
       </button>
     </mat-card-actions>
   </mat-card>
-
-  <div class="item-list" (scroll)="colScroll($event)">
+  <div class="item-list">
+    <cdk-virtual-scroll-viewport [itemSize]="53"  style="height: 100%; width: 100%">
     <mat-card class="item mat-elevation-z1"
-              *ngFor="let object of get_selected_for_add_result()"
-              [ngStyle]="getStyles(object)">
+              *cdkVirtualFor="let object of get_selected_for_add_result()"
+              [ngStyle]="{'border-right': '2px solid ' + statuses_formated[object.status]}">
       <div class="result-set">
         <div class="result-set-delete">
           <button mat-icon-button (click)="unselect(object)">
@@ -106,6 +110,7 @@
         </div>
       </div>
     </mat-card>
+    </cdk-virtual-scroll-viewport>
   </div>
 </div>
 

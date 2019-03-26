@@ -1,6 +1,7 @@
 # Changelog
 ## master (unreleased)
-
+## Added
+    * Live scrolling to result set and new_result lists
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set

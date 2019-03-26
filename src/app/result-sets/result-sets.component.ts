@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
@@ -16,7 +16,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
   styleUrls: ['./result-sets.component.scss'],
-  providers: [PalladiumApiService, StatusFilterPipe, ResultService]
+  providers: [PalladiumApiService, StatusFilterPipe, ResultService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ResultSetsComponent implements OnInit {
@@ -36,7 +37,7 @@ export class ResultSetsComponent implements OnInit {
   ResultComponent;
   statuses = [];
   not_blocked_status = [];
-  statuses_array = [];
+  statuses_formated = {};
   result_sets_and_cases = [];
   show_all_elements = [];
   filter: any[] = [];
@@ -49,7 +50,7 @@ export class ResultSetsComponent implements OnInit {
   public Math: Math = Math;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private ApiService: PalladiumApiService, private router: Router,
-              private resultservice: ResultService, private dialog: MatDialog) {
+              private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -95,6 +96,7 @@ export class ResultSetsComponent implements OnInit {
   show_all() {
     const filtered_by_status = this.filter_by_status();
     this.show_all_elements = this.filter_by_search(filtered_by_status);
+    this.cd.detectChanges();
   }
 
   select_filter(status) {
@@ -110,7 +112,9 @@ export class ResultSetsComponent implements OnInit {
     this.ApiService.get_statuses().then(res => {
       this.statuses = res;
       this.not_blocked_status = this.statuses.filter(status => status.block === false);
-      this.statuses_array = Object.keys(this.statuses);
+      this.statuses.forEach(status => {
+        this.statuses_formated[status.id] = status.color
+      })
     });
   }
 
