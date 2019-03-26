@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {Result} from '../models/result';
 import {Params, Router, ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -17,7 +17,7 @@ export class ResultsComponent implements OnInit {
   loading = false;
 
   constructor(private ApiService: PalladiumApiService, private resultservice: ResultService,
-              private activatedRoute: ActivatedRoute, private router: Router) {}
+              private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
@@ -36,6 +36,7 @@ export class ResultsComponent implements OnInit {
       this.results = res[1];
       this.statuses = res[0];
       this.loading = false;
+      this.cd.detectChanges();
     });
   }
 
