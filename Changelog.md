@@ -5,6 +5,7 @@
     * Add new button for showing current result set
  ## Fixed
     * Fix: result list not rendered. 
+    * Fix: selecting run and suile it it has same id. 
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set
