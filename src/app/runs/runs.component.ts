@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
@@ -15,6 +15,7 @@ import {Run} from '../models/run';
   templateUrl: './runs.component.html',
   styleUrls: ['./runs.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RunsComponent implements OnInit {
   suites = [];
@@ -34,7 +35,8 @@ export class RunsComponent implements OnInit {
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private statistic_service: StatisticService, private dialog: MatDialog) {}
+              private router: Router, private statistic_service: StatisticService, private dialog: MatDialog,
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
@@ -170,6 +172,7 @@ export class RunsComponent implements OnInit {
         this.merge_suites_and_runs();
         this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       }
+      this.cd.detectChanges();
     });
   };
 
