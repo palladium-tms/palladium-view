@@ -17,10 +17,13 @@
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
         <mat-icon>refresh</mat-icon>
       </button>
+      <button mat-icon-button (click)="scroll.scrollToIndex(show_all_elements.indexOf(object) - 3, 'auto')" [disabled]=this.loading>
+        <mat-icon>my_location</mat-icon>
+      </button>
     </div>
   </div>
   <div class="item-list">
-    <cdk-virtual-scroll-viewport [itemSize]="53"  style="height: 100%; width: 100%">
+    <cdk-virtual-scroll-viewport [itemSize]="53"  style="height: 100%; width: 100%" id="scroll" #scroll>
       <mat-card class="item mat-elevation-z1"
                 *cdkVirtualFor="let object of show_all_elements| statisticFilter:filter"
                 [ngStyle]="{'border-right': '2px solid ' + statuses_formated[object.status]}"
@@ -45,6 +48,7 @@
         </div>
       </mat-card>
     </cdk-virtual-scroll-viewport>
+
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="copy_result_set_name()">
         <mat-icon>content_copy</mat-icon>

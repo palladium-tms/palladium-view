@@ -2,6 +2,7 @@
 ## master (unreleased)
 ## Added
     * Live scrolling to result set and new_result lists
+    * Add new button for showing current result set
  ## Fixed
     * Fix: result list not rendered. 
 ## [0.5.10] - 03.26.2019
