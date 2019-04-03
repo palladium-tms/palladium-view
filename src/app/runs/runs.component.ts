@@ -88,6 +88,7 @@ export class RunsComponent implements OnInit {
       this.loading = false;
       this.get_selected_object();
       this.get_filters();
+      this.cd.detectChanges();
     });
   }
 
