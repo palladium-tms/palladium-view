@@ -249,10 +249,8 @@ figure {
 .small-block {
   overflow: hidden;
   flex: 1;
-}
-
-.sub-blocks-holder {
-  margin: 0.5em;
+  flex-direction: column;
+  display: flex;
 }
 
 .big-block {
@@ -450,4 +448,7 @@ a.link:hover {
   color: #2e4b4c;
   font-size: 1.7em;
   text-align: center;
+}
+.cdk-virtual-scroll-content-wrapper {
+  width: 100%;
 }

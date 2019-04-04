@@ -4,6 +4,7 @@ export class Result {
   created_at: number;
   subdescriber = [];
   describer;
+  expanded = false;
 
   constructor(data) {
     this.id = data.id;

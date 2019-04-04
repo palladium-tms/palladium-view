@@ -6,3 +6,27 @@
 .message{
   margin-bottom: 0.5em;
 }
+.result-item {
+  padding: 0;
+  margin: 0.5em;
+  border: solid 2px transparent;
+}
+
+.result_content {
+  max-height: 15em;
+  overflow: hidden;
+  display: flex;
+}
+.expand-more-button {
+  float: right;
+}
+.sub-blocks-holder {
+  margin: 0.5em;
+}
+.divider {
+  flex: 1;
+}
+
+.expanded {
+  max-height: fit-content;
+}
