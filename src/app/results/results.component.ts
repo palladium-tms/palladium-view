@@ -10,10 +10,10 @@ import {ResultService} from '../../services/result.service';
   styleUrls: ['./results.component.css']
 })
 
-
 export class ResultsComponent implements OnInit {
   results: Result[] = [];
   statuses;
+  statuses_formated = {};
   loading = false;
 
   constructor(private ApiService: PalladiumApiService, private resultservice: ResultService,
@@ -35,6 +35,9 @@ export class ResultsComponent implements OnInit {
     Promise.all([this.get_statuses(), this.get_results()]).then(res => {
       this.results = res[1];
       this.statuses = res[0];
+      this.statuses.forEach(status => {
+        this.statuses_formated[status.id] = {color: status.color, name: status.name};
+      });
       this.loading = false;
       this.cd.detectChanges();
     });
@@ -47,19 +50,5 @@ export class ResultsComponent implements OnInit {
   async get_results() {
     const result_set_id = this.router.url.match(/result_set\/(\d+)/i)[1];
     return await this.ApiService.results(result_set_id)
-  }
-
-  getStyles(id) {
-    if (this.statuses) {
-      return {'border-right': '7px solid ' +  this.get_status_by_id(id.status_id).color};
-    }
-  }
-
-  get_status_by_id(id) {
-    return this.statuses.find(status => status.id === id);
-  }
-
-  update_click() {
-    this.init_results();
   }
 }

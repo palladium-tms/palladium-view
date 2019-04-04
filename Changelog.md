@@ -3,6 +3,7 @@
 ## Added
     * Live scrolling to result set and new_result lists
     * Add new button for showing current result set
+    * Add material to results. 
  ## Fixed
     * Fix: result list not rendered. 
     * Fix: selecting run and suile it it has same id. 

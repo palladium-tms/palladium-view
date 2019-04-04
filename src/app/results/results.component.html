@@ -1,21 +1,30 @@
 <div class="result-space" [ngClass]="{'full_centered_data': loading}">
   <div class="item-list" *ngIf="!loading">
-    <div class="item bipolar-item big-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
-      <div class="small-block" [ngStyle]="getStyles(result)">
-        <div class="sub-blocks-holder">
-          <div class="sub-block"><b>{{get_status_by_id(result.status_id).name}}</b></div>
-          <div class="sub-block">{{result.created_at | date:'medium' }}</div>
-            <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
-          <div class="sub-block"><a routerLink="/result/{{result.id}}" target="_blank">Details</a></div>
+      <mat-card class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
+        <div class="result_content" [ngClass]="{'expanded': result.expanded}">
+          <div class="small-block" [ngStyle]="{'border-right': '2px solid ' + statuses_formated[result.status_id].color}">
+            <div class="sub-blocks-holder">
+              <div class="sub-block"><b>{{statuses_formated[result.status_id].name}}</b></div>
+              <div class="sub-block">{{result.created_at | date:'MMMM d, y' }}</div>
+              <div class="sub-block">{{result.created_at | date:'HH:MM:SS' }}</div>
+              <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
+            </div>
+            <div class="divider"></div>
+            <button mat-icon-button
+                    class="expand-more-button"
+                    (click)="result.expanded = !result.expanded">
+              <mat-icon *ngIf="!result.expanded">expand_more</mat-icon>
+              <mat-icon *ngIf="result.expanded">expand_less</mat-icon>
+            </button>
+          </div>
+          <div class="big-block">
+            <div class="message" *ngFor="let data of result.describer">
+              <span><b>{{data["title"]}}:</b></span>
+              <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' [note] = 'data["note"]'></app-result-value>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="big-block">
-        <div class="message" *ngFor="let data of result.describer">
-          <span><b>{{data["title"]}}:</b></span>
-          <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' [note] = 'data["note"]'></app-result-value>
-        </div>
-      </div>
-    </div>
+      </mat-card>
   </div>
   <div class="loader" *ngIf="loading"></div>
 </div>
