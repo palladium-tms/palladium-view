@@ -1,4 +1,4 @@
-import {Component, DoCheck, ViewChild} from '@angular/core';
+import {Component, DoCheck} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {SidenavService} from '../../services/sidenav.service';
@@ -9,18 +9,15 @@ import {SidenavService} from '../../services/sidenav.service';
   styleUrls: ['./top-toolbar.component.scss'],
 })
 export class TopToolbarComponent implements DoCheck {
-  public authorize;
-  public statuses = {};
-  product_name;
-  @ViewChild('Modal') Modal;
+  private authorize;
+  productName;
 
   constructor(private router: Router,
               private authenticationService: AuthenticationService,
-               public sidenav_service: SidenavService) {
-    sidenav_service.get_product_subject$.subscribe( product_name => {
-      this.product_name = product_name;
+               public sidenavService: SidenavService) {
+    sidenavService.get_product_subject$.subscribe(productName => {
+      this.productName = productName;
     });
-
   }
 
   ngDoCheck() {
@@ -34,6 +31,6 @@ export class TopToolbarComponent implements DoCheck {
   }
 
   product_list_toggle() {
-    this.sidenav_service.toggle_product_list();
+    this.sidenavService.toggle_product_list();
   }
 }
