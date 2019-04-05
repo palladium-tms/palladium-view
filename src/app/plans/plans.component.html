@@ -2,7 +2,7 @@
   <div class="item-list">
     <mat-card class="plan-item mat-elevation-z1"
               *ngFor="let plan of plans | sortByCreatedAt:'desc'"
-              [ngClass]="{'mat-elevation-z5 selected': selected_plan.id == plan.id}"
+              [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
               (click)="clicked($event, plan)">
       <span>{{plan.name}}</span>
       <div class="item-statistic">
