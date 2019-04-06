@@ -76,7 +76,7 @@ export class PlansComponent implements OnInit {
       });
       const planId = this.router.url.match(/plan\/(\d+)/i);
       if (planId) {
-        this.selectedPlan = this.plans.find(plan => plan.id === planId[1]);
+        this.selectedPlan = this.plans.find(plan => plan.id === +planId[1]);
       }
       this.loading = false;
     });
