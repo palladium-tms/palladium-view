@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Case settings</h1>
 <mat-dialog-content>
-  <form autocomplete="off" [formGroup]="object_form">
+  <form autocomplete="off" [formGroup]="objectForm">
     <mat-form-field color="accent" style="width: 100%">
       <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Case name"
              autocomplete="off" [value]="object.name">
@@ -22,7 +22,7 @@
 
 <mat-dialog-actions>
   <button mat-raised-button color="warn" (click)="delete_object()">Delete</button>
-  <button mat-raised-button color="accent" (click)="edit_object()" [disabled]="!object_form.valid">Save
+  <button mat-raised-button color="accent" (click)="edit_object()" [disabled]="!objectForm.valid">Save
   </button>
 </mat-dialog-actions>
 

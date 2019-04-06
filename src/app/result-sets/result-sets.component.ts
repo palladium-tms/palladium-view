@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import {Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
@@ -7,7 +7,6 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
-import {LocalSettingsService} from '../../services/local-settings.service';
 import {ResultSet} from '../models/result_set';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
@@ -21,87 +20,66 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 })
 
 export class ResultSetsComponent implements OnInit {
-  new_result_form = new FormGroup({
+  newResultForm = new FormGroup({
     status: new FormControl('', [Validators.required]),
     message: new FormControl('')
   });
-  @ViewChild('search_input_element') search_input_element;
-  add_result_open = false;
-  selected_status;
-  result_sets = [];
+  loading = true;
+  addResultOpen = false;
+  selectedStatus;
+  resultSets = [];
   statistic: Statistic = new Statistic(null);
-  search_input = false;
-  loading = false;
   cases;
   object;
-  ResultComponent;
+  RESULT_COMPONENT;
   statuses = [];
-  not_blocked_status = [];
-  statuses_formated = {};
-  result_sets_and_cases = [];
-  show_all_elements = [];
-  filter: any[] = [];
-  select_all_flag = false;
-  settings = new LocalSettingsService;
-  search_data = '';
-  scrollPos = 0;
-  run_id;
-  dropdown_menu_item_select;
-  public Math: Math = Math;
+  notBlockedStatus = [];
+  statusesFormated = {};
+  resultSetsAndCases = [];
+  showAllElements = [];
+  filter = [];
+  selectAllFlag = false;
+  dropdownMenuItemSelect;
+  runId;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
-              private ApiService: PalladiumApiService, private router: Router,
+              private palladiumApiService: PalladiumApiService, private router: Router,
               private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(() => {
       this.object = null;
+      this.runId = this.router.url.match(/run\/(\d+)/i)[1];
       this.get_result_sets_and_cases();
-      this.run_id = this.router.url.match(/run\/(\d+)/i)[1];
     });
   }
 
   get_used_statuses_id() {
     return this.statuses.filter(x => {
-      return x.active
+      return x.active;
     }).map(x => {
-      return x.id
+      return x.id;
     });
   }
 
   filter_by_status() {
-    const statuses_id = this.get_used_statuses_id();
-    if (statuses_id.length == 0) {
-      return this.result_sets_and_cases
+    const statusesId = this.get_used_statuses_id();
+    if (statusesId.length === 0) {
+      return this.resultSetsAndCases;
     }
-    return this.result_sets_and_cases.filter(x => {
-      return statuses_id.includes(x.status)
+    return this.resultSetsAndCases.filter(x => {
+      return statusesId.includes(x.status);
     });
-  }
-
-  filter_by_search(data) {
-    if (this.search_data == '') {
-      return data;
-    }
-    return data.filter(item => {
-      return item.name.toLowerCase().includes(this.search_data);
-    });
-  }
-
-  write_to_search($event) {
-    this.search_data = $event.target.value.toLowerCase();
-    this.show_all()
   }
 
   show_all() {
-    const filtered_by_status = this.filter_by_status();
-    this.show_all_elements = this.filter_by_search(filtered_by_status);
+    this.showAllElements = this.filter_by_status();
     this.cd.detectChanges();
   }
 
   select_filter(status) {
-    status.active = !status.active
-    this.show_all()
+    status.active = !status.active;
+    this.show_all();
   }
 
   get_status_by_id(id) {
@@ -109,50 +87,42 @@ export class ResultSetsComponent implements OnInit {
   }
 
   get_statuses() {
-    this.ApiService.get_statuses().then(res => {
+    this.palladiumApiService.get_statuses().then(res => {
       this.statuses = res;
-      this.not_blocked_status = this.statuses.filter(status => status.block === false);
+      this.notBlockedStatus = this.statuses.filter(status => status.block === false);
       this.statuses.forEach(status => {
-        this.statuses_formated[status.id] = status.color
-      })
+        this.statusesFormated[status.id] = status.color;
+      });
     });
   }
 
-  getStyles(object) {
-    if (this.statuses && object['status']) {
-      return {'border-right': '3px solid ' + this.get_status_by_id(object.status).color};
-    }
-  }
-
   get_result_sets() {
-    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
-    return this.ApiService.get_result_sets(run_id).then(result_sets => {
-      return result_sets;
+    return this.palladiumApiService.get_result_sets(this.runId).then(resultSets => {
+      return resultSets;
     });
   }
 
   get_cases() {
-    const run_id = this.router.url.match(/run\/(\d+)/i)[1];
-    const product_id = this.router.url.match(/product\/(\d+)/i)[1];
-    return this.ApiService.get_cases_by_run_id(run_id, product_id).then(all_cases => {
-      return all_cases;
+    const productId = this.router.url.match(/product\/(\d+)/i)[1];
+    return this.palladiumApiService.get_cases_by_run_id(this.runId, productId).then(allCases => {
+      return allCases;
     });
   }
 
   get_result_sets_and_cases() {
-    this.result_sets = [];
-    this.result_sets_and_cases = [];
+    this.resultSets = [];
+    this.resultSetsAndCases = [];
     this.loading = true;
     Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
-      this.result_sets = res[0];
+      this.resultSets = res[0];
       this.cases = res[1];
       const cases = [];
-      Object(res[1]).forEach(current_case => {
-        if (res[0].filter(result_set => result_set.name === current_case.name).length === 0) {
-          cases.push(current_case);
+      Object(res[1]).forEach(currentCase => {
+        if (res[0].filter(resultSet => resultSet.name === currentCase.name).length === 0) {
+          cases.push(currentCase);
         }
       });
-      this.result_sets_and_cases = res[0].concat(cases);
+      this.resultSetsAndCases = res[0].concat(cases);
       this.select_object();
       this.update_statistic();
       this.loading = false;
@@ -164,32 +134,32 @@ export class ResultSetsComponent implements OnInit {
   }
 
   merge_result_sets_and_cases() {
-    this.result_sets_and_cases = [];
-    this.cases.forEach(current_case => {
-      if (this.result_sets.filter(result_set => result_set.name === current_case.name).length === 0) {
-        this.result_sets_and_cases.push(current_case);
+    this.resultSetsAndCases = [];
+    this.cases.forEach(currentCase => {
+      if (this.resultSets.filter(resultSet => resultSet.name === currentCase.name).length === 0) {
+        this.resultSetsAndCases.push(currentCase);
       }
     });
-    this.result_sets_and_cases = this.result_sets.concat(this.result_sets_and_cases);
+    this.resultSetsAndCases = this.resultSets.concat(this.resultSetsAndCases);
   }
 
   open_settings() {
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
-        object: this.dropdown_menu_item_select,
+        object: this.dropdownMenuItemSelect,
         cases: this.cases,
-        result_sets: this.result_sets,
+        result_sets: this.resultSets,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.path == 'case') {
+        if (result.path === 'case') {
           this.cases = this.cases.filter(obj => (obj.id !== result.id));
           this.navigate_to_run_show();
         } else {
-          this.result_sets = this.result_sets.filter(obj => (obj.id !== result.id));
-          this.object = this.cases.find(obj => (obj.name == result.name));
+          this.resultSets = this.resultSets.filter(obj => (obj.id !== result.id));
+          this.object = this.cases.find(obj => (obj.name === result.name));
           this.object.active = true;
           this.router.navigate([this.router.url.replace(/\/result_set.*/, '/case/' +  this.object.id)]);
         }
@@ -198,7 +168,7 @@ export class ResultSetsComponent implements OnInit {
         this.show_all();
       }
     });
-  };
+  }
 
   set_filters() {
     this.statuses.forEach(status => {
@@ -213,43 +183,43 @@ export class ResultSetsComponent implements OnInit {
   }
 
   unselect_all() {
-    this.select_all_flag = false;
-    this.result_sets_and_cases.forEach(obj => {
+    this.selectAllFlag = false;
+    this.resultSetsAndCases.forEach(obj => {
       obj.selected = false;
     });
   }
 
   select() {
-    this.show_all_elements.forEach(obj => {
-      obj.selected = this.select_all_flag;
+    this.showAllElements.forEach(obj => {
+      obj.selected = this.selectAllFlag;
     });
   }
 
   open_history_page() {
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
     if (this.object.path === 'case') {
-      this.router.navigate([path, this.dropdown_menu_item_select.id]);
+      this.router.navigate([path, this.dropdownMenuItemSelect.id]);
     } else {
-      const case_id = this.get_case_id_by_result_set(this.dropdown_menu_item_select);
-      this.router.navigate([path, case_id]);
+      const caseId = this.get_case_id_by_result_set(this.dropdownMenuItemSelect);
+      this.router.navigate([path, caseId]);
     }
   }
 
   update_statistic() {
-    const stat_data = {};
-    this.result_sets_and_cases.forEach(object => {
-      if (object['status'] in stat_data) {
-        stat_data[object['status']] += 1;
+    const statData = {};
+    this.resultSetsAndCases.forEach(object => {
+      if (object['status'] in statData) {
+        statData[object['status']] += 1;
       } else {
-        stat_data[object['status']] = 1;
+        statData[object['status']] = 1;
       }
     });
-    this.statistic = new Statistic(stat_data);
+    this.statistic = new Statistic(statData);
     this.stat.update_parant_statistic(this.statistic);
   }
 
-  get_case_id_by_result_set(result_set) {
-    return this.cases.filter(obj => obj.name === result_set.name)[0].id;
+  get_case_id_by_result_set(resultSet) {
+    return this.cases.filter(obj => obj.name === resultSet.name)[0].id;
   }
 
   open_results(object) {
@@ -264,43 +234,40 @@ export class ResultSetsComponent implements OnInit {
   }
 
   reset_active() {
-    const active_element = this.result_sets_and_cases.filter(obj => obj.active);
-    if (active_element.length !== 0) {
-      active_element[0].active = false;
+    const activeElement = this.resultSetsAndCases.filter(obj => obj.active);
+    if (activeElement.length !== 0) {
+      activeElement[0].active = false;
     }
   }
 
   select_object() {
     if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/result_set\/(\d+)/.exec(this.router.url)[1];
-      this.object = this.result_sets_and_cases.filter(obj => obj.id === id && obj.path === 'result_set')[0];
+      this.object = this.resultSetsAndCases.filter(obj => obj.id === id && obj.path === 'result_set')[0];
       this.object.active = true;
     } else if (/case\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/case\/(\d+)/.exec(this.router.url)[1];
-      this.object = this.result_sets_and_cases.filter(obj => obj.id === id && obj.path === 'case')[0];
+      this.object = this.resultSetsAndCases.filter(obj => obj.id === id && obj.path === 'case')[0];
       this.object.active = true;
     } else if (/case_history\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/case_history\/(\d+)/.exec(this.router.url)[1];
-      const this_case = this.cases.filter(object => object.id === id)[0];
-      this.object = this.result_sets_and_cases.filter(obj => obj.name === this_case.name)[0];
+      const thisCase = this.cases.filter(object => object.id === id)[0];
+      this.object = this.resultSetsAndCases.filter(obj => obj.name === thisCase.name)[0];
       this.object.active = true;
     }
   }
 
   get_selected_count() {
-    return this.result_sets_and_cases.filter(obj => obj.selected).length;
+    return this.resultSetsAndCases.filter(obj => obj.selected).length;
   }
 
   update_click() {
     this.get_result_sets_and_cases();
-    this.select_all_flag = false;
-    if (this.ResultComponent) {
-      this.ResultComponent.update_click();
-    }
+    this.selectAllFlag = false;
   }
 
   onActivate(componentRef) {
-    this.ResultComponent = componentRef;
+    this.RESULT_COMPONENT = componentRef;
   }
 
   clicked(event, object) {
@@ -308,7 +275,7 @@ export class ResultSetsComponent implements OnInit {
       event.target.classList.contains('mat-checkbox-inner-container') ||
       event.target.classList.contains('menu') ||
       event.target.classList.contains('mat-checkbox'))) {
-      this.open_results(object)
+      this.open_results(object);
     }
   }
 
@@ -319,7 +286,7 @@ export class ResultSetsComponent implements OnInit {
     txtArea.style.top = '0';
     txtArea.style.left = '0';
     txtArea.style.opacity = '0';
-    txtArea.value = this.dropdown_menu_item_select.name;
+    txtArea.value = this.dropdownMenuItemSelect.name;
     document.body.appendChild(txtArea);
     txtArea.select();
     try {
@@ -334,100 +301,83 @@ export class ResultSetsComponent implements OnInit {
     return false;
   }
 
-  search_open() {
-    this.search_data = '';
-    this.show_all();
-    this.search_input = !this.search_input;
-    if (this.search_input) {
-      // FIXME
-      setTimeout(() => {
-        this.search_input_element.nativeElement.focus();
-      }, 100);
-    }
-  }
-
   unselect(object) {
     object.selected = false;
-    if (this.get_selected_count() == 0) {
-      this.cancel_result_custom()
+    if (this.get_selected_count() === 0) {
+      this.cancel_result_custom();
     }
   }
 
-  colScroll(event) {
-    this.scrollPos = Math.floor(event.target.scrollTop / 33);
-  }
-
-
   get_selected_for_add_result() {
-    return this.result_sets_and_cases.filter(x => x.selected);
+    return this.resultSetsAndCases.filter(x => x.selected);
   }
 
   selected_result_sets() {
-    return this.result_sets_and_cases.filter(obj => obj.path === 'result_set' && obj.selected);
+    return this.resultSetsAndCases.filter(obj => obj.path === 'result_set' && obj.selected);
   }
 
   selected_cases() {
-    return this.result_sets_and_cases.filter(obj => obj.path === 'case' && obj.selected);
+    return this.resultSetsAndCases.filter(obj => obj.path === 'case' && obj.selected);
   }
 
   get status() {
-    return this.new_result_form.get('status').value;
+    return this.newResultForm.get('status').value;
   }
 
   get message() {
-    return this.new_result_form.get('message').value;
+    return this.newResultForm.get('message').value;
   }
 
   async add_result() {
-    const result_sets_result_promise = this.ApiService.result_new(this.selected_result_sets(), this.message, this.status);
-    const cases_result_promise = this.ApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.run_id);
-    const result_sets_result = await result_sets_result_promise;
-    const cases_result = await cases_result_promise;
-    this.update_result_sets(result_sets_result);
-    this.update_cases(cases_result);
+    const resultSetsResultPromise = this.palladiumApiService.result_new(this.selected_result_sets(), this.message, this.status);
+    const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.runId);
+    const resultSetsResult = await resultSetsResultPromise;
+    const casesResult = await casesResultPromise;
+    this.update_result_sets(resultSetsResult);
+    this.update_cases(casesResult);
     this.show_all();
     if (this.object && this.object.selected) {
-      this.resultservice.update_results(result_sets_result || cases_result);
+      this.resultservice.update_results(resultSetsResult || casesResult);
     }
     this.update_statistic();
     this.unselect_all();
-    this.new_result_form.reset(['name', 'status']);
-    this.add_result_open = false;
+    this.newResultForm.reset(['name', 'status']);
+    this.addResultOpen = false;
   }
 
-  update_result_sets(result_sets) {
-    if (!result_sets['result_sets']) { return }
-    result_sets['result_sets'].forEach(element => {
-      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.path == 'result_set');
-      this.result_sets_and_cases[index].status = element.status;
+  update_result_sets(resultSets) {
+    if (!resultSets['resultSets']) { return; }
+    resultSets['resultSets'].forEach(element => {
+      const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'result_set');
+      this.resultSetsAndCases[index].status = element.status;
     });
   }
 
   update_cases(cases) {
-    if ( !cases['result_sets'] ) { return }
-    cases['result_sets'].forEach(element => {
-      const new_result_set = new ResultSet(element);
-      const index = this.result_sets_and_cases.findIndex(object => object.name == element.name && object.path == 'case');
-      if (this.result_sets_and_cases[index].active) {
-        new_result_set.active = true;
-        this.open_results(new_result_set);
+    if ( !cases['resultSets'] ) { return; }
+    cases['resultSets'].forEach(element => {
+      const newResultSet = new ResultSet(element);
+      const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'case');
+      if (this.resultSetsAndCases[index].active) {
+        newResultSet.active = true;
+        this.open_results(newResultSet);
       }
-      this.result_sets_and_cases[index] = new_result_set;
+      this.resultSetsAndCases[index] = newResultSet;
     });
   }
 
   cancel_result_custom() {
-    this.selected_status = '';
-    this.add_result_open = false;
+    this.selectedStatus = '';
+    this.addResultOpen = false;
   }
 
   add_result_open_menu() {
-    const selected = this.result_sets_and_cases.filter(obj => obj.selected);
-    this.add_result_open = true;
-    if (selected.length == 1) {
-      this.new_result_form.patchValue({status: this.get_status_by_id(selected[0].status)});
+    const selected = this.resultSetsAndCases.filter(obj => obj.selected);
+    this.addResultOpen = true;
+    if (selected.length === 1) {
+      this.newResultForm.patchValue({status: this.get_status_by_id(selected[0].status)});
     } else {
-      this.new_result_form.reset('status');
+      this.newResultForm.reset('status');
     }
   }
 }
@@ -441,31 +391,31 @@ export class ResultSetsComponent implements OnInit {
 export class ResultSetsSettingsComponent implements OnInit {
   object;
   cases;
-  object_form = new FormGroup({
+  objectForm = new FormGroup({
     name: new FormControl('', [Validators.required])
   });
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private ApiService: PalladiumApiService, @Inject(MAT_DIALOG_DATA) public data) {
+              private palladiumApiService: PalladiumApiService, @Inject(MAT_DIALOG_DATA) public data) {
   }
 
   ngOnInit() {
     this.object = this.data.object;
     this.cases = this.data.cases;
-    this.object_form.patchValue({name: this.object.name});
+    this.objectForm.patchValue({name: this.object.name});
   }
 
   get name() {
-    return this.object_form.get('name');
+    return this.objectForm.get('name');
   }
 
   async edit_object() {
     if (this.object.path === 'result_set') {
-      await this.ApiService.edit_case_by_result_set_id(this.object.id, this.name.value);
-      const case_for_edit = this.cases.find(current_case => current_case.name == this.object.name);
-      case_for_edit.name = this.name.value;
+      await this.palladiumApiService.edit_case_by_result_set_id(this.object.id, this.name.value);
+      const caseForEdit = this.cases.find(currentCase => currentCase.name === this.object.name);
+      caseForEdit.name = this.name.value;
     } else {
-      await this.ApiService.edit_case(this.object.id, this.name.value);
+      await this.palladiumApiService.edit_case(this.object.id, this.name.value);
     }
     this.object.name = this.name.value;
     this.dialogRef.close();
@@ -474,9 +424,9 @@ export class ResultSetsSettingsComponent implements OnInit {
   async delete_object() {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'result_set') {
-        await this.ApiService.delete_result_set(this.object.id);
+        await this.palladiumApiService.delete_result_set(this.object.id);
       } else {
-        await this.ApiService.delete_case(this.object.id);
+        await this.palladiumApiService.delete_case(this.object.id);
       }
       this.dialogRef.close(this.object);
     }
@@ -484,18 +434,18 @@ export class ResultSetsSettingsComponent implements OnInit {
 
   name_is_existed() {
     if (this.name_is_not_changed()) {
-      return false
+      return false;
     }
-    return this.data.cases.some(suite => suite.name == this.name.value)
+    return this.data.cases.some(suite => suite.name === this.name.value);
   }
 
   name_is_not_changed() {
-    return this.object.name == this.name.value;
+    return this.object.name === this.name.value;
   }
 
   check_existing() {
     if (this.name_is_existed()) {
-      this.object_form.controls['name'].setErrors({'is_exist': true});
+      this.objectForm.controls['name'].setErrors({'is_exist': true});
     }
   }
 }
