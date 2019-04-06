@@ -20,7 +20,7 @@ export class PalladiumApiService {
   response_plan_data = {};
   response_suite_data = {};
   response_results_data = {};
-  runs: Run[] = [];
+  response_runs_data = {};
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
   histories: ResultSet[] = [];
@@ -199,11 +199,11 @@ export class PalladiumApiService {
     return this.httpService.postData('/runs', {run_data: {plan_id: plan_id}})
       .then(
         (resp: any) => {
-          this.runs = [];
-          Object(resp['runs']).forEach(run => {
-            this.runs.push(new Run(run));
+          this.response_runs_data[plan_id] = [];
+          resp['runs'].forEach(run => {
+            this.response_runs_data[plan_id].push(new Run(run));
           });
-          return this.runs;
+          return this.response_runs_data;
         }, (errors: any) => {
           console.log(errors);
         });

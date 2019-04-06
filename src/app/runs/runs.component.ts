@@ -78,10 +78,11 @@ export class RunsComponent implements OnInit {
   get_runs_and_suites() {
     this.runs_and_suites = [];
     this.loading = true;
+    this.cd.detectChanges();
     Promise.all([this.get_runs(this.plan_id), this.get_suites(), this.get_statuses()]).then(res => {
       this.statuses = res[2];
       this.suites = res[1];
-      this.runs = res[0];
+      this.runs = res[0][this.plan_id];
       this.merge_suites_and_runs();
       this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.all_statistic = this.statistic.extended;
