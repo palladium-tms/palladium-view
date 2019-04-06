@@ -14,37 +14,37 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   providers: [PalladiumApiService]
 })
 export class PlansComponent implements OnInit {
-  selected_plan = {id: 0};
-  product_id;
+  selectedPlan = {id: 0};
+  productId;
   plans = [];
   plan;
-  RunComponent;
+  RUN_COMPONENT;
   statuses;
   loading = false;
-  errors = {};
-  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+
+  constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog) {
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
-      this.product_id = params.id;
+      this.productId = params.id;
       this.init_data();
     });
   }
 
-  async get_plans(product_id) {
-    return await this.ApiService.get_plans(product_id)
+  async get_plans(id) {
+    return this.palladiumApiService.get_plans(id);
   }
 
-  get_suites(product_id) {
-    return this.ApiService.get_suites(product_id).then(suites => {
+  get_suites(id) {
+    return this.palladiumApiService.get_suites(id).then(suites => {
       return suites;
     });
   }
 
   get_statuses() {
-    this.ApiService.get_statuses().then(res => {
+    this.palladiumApiService.get_statuses().then(res => {
       this.statuses = res;
     });
   }
@@ -53,50 +53,50 @@ export class PlansComponent implements OnInit {
     if (event.target.classList.contains('settings')) {
       this.open_settings(plan);
     } else {
-      this.selected_plan = plan;
-      this.router.navigate(['plan', this.selected_plan.id], {relativeTo: this.activatedRoute});
+      this.selectedPlan = plan;
+      this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
     }
   }
 
   count_of_cases(suites) {
-    let cases_count = 0;
+    let casesCount = 0;
     suites.forEach(suite => {
-      cases_count += suite.statistic.all;
+      casesCount += suite.statistic.all;
     });
-    return cases_count;
+    return casesCount;
   }
 
   init_data() {
     this.plans = [];
     this.loading = true;
-    Promise.all([this.get_plans(this.product_id), this.get_suites(this.product_id), this.get_statuses()]).then(res => {
-      this.plans = res[0][this.product_id] || [];
+    Promise.all([this.get_plans(this.productId), this.get_suites(this.productId), this.get_statuses()]).then(res => {
+      this.plans = res[0][this.productId] || [];
       this.plans.forEach(plan => {
-        this.update_statistic(plan, this.count_of_cases(res[1][this.product_id]));
+        this.update_statistic(plan, this.count_of_cases(res[1][this.productId]));
       });
-      const plan_id = this.router.url.match(/plan\/(\d+)/i);
-      if (plan_id) {
-        this.selected_plan = this.plans.find(plan => plan.id == plan_id[1])
+      const planId = this.router.url.match(/plan\/(\d+)/i);
+      if (planId) {
+        this.selectedPlan = this.plans.find(plan => plan.id === +planId[1]);
       }
       this.loading = false;
     });
   }
 
   update_click() {
-    if (this.loading) {return}
+    if (this.loading) {return;}
     this.init_data();
-    if (this.RunComponent) {
-      this.RunComponent.update_click();
+    if (this.RUN_COMPONENT) {
+      this.RUN_COMPONENT.update_click();
     }
   }
 
   onActivate(componentRef) {
-    this.RunComponent = componentRef;
+    this.RUN_COMPONENT = componentRef;
   }
 
-  update_statistic(plan, count_of_cases) {
-    if (plan.all_statistic['all'] < count_of_cases) {
-      const untested = count_of_cases - plan.all_statistic['all'];
+  update_statistic(plan, casesCount) {
+    if (plan.all_statistic['all'] < casesCount) {
+      const untested = casesCount - plan.all_statistic['all'];
       plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
       plan.get_statistic();
     }
@@ -111,7 +111,7 @@ export class PlansComponent implements OnInit {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
         plans: this.plans,
-        plan: plan
+        plan
       }
     });
 
@@ -120,7 +120,7 @@ export class PlansComponent implements OnInit {
         this.plans = result;
       }
     });
-  };
+  }
 
   toolbar_opened() {
     return this.router.url.indexOf('plan') >= 0;
@@ -141,49 +141,49 @@ export class PlansSettingsComponent implements OnInit {
   plan;
   item;
   plans;
-  plan_form = new FormGroup({
+  planForm = new FormGroup({
     name: new FormControl('',  [Validators.required])
   });
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private ApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
+              private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
 
   ngOnInit(): void {
     this.plans = this.data.plans;
     this.item = this.data.plan;
-    this.plan_form.patchValue({name: this.item.name});
+    this.planForm.patchValue({name: this.item.name});
   }
 
-  get name() { return this.plan_form.get('name'); }
+  get name() { return this.planForm.get('name'); }
 
   async edit_plan() {
     if (!this.name_is_not_changed()) {
-      const plan = await this.ApiService.edit_plan(this.item.id, this.name.value);
-      this.plans.filter(x => x.id == plan.id)[0].name = plan.name;
+      const plan = await this.palladiumApiService.edit_plan(this.item.id, this.name.value);
+      this.plans.filter(x => x.id === plan.id)[0].name = plan.name;
     }
     this.dialogRef.close(this.plans);
   }
 
   name_is_existed() {
     if (this.item) {
-      if (this.name_is_not_changed()) { return false }
-      return this.plans.some(product => product.name == this.name.value);
+      if (this.name_is_not_changed()) { return false; }
+      return this.plans.some(product => product.name === this.name.value);
     }
   }
 
   name_is_not_changed() {
-    return this.item.name == this.name.value;
+    return this.item.name === this.name.value;
   }
 
   check_existing() {
     if (this.name_is_existed()) {
-      this.plan_form.controls['name'].setErrors({'incorrect': true});
+      this.planForm.controls['name'].setErrors({'incorrect': true});
     }
   }
 
   async delete_plan() {
     if (confirm('A u shuare?')) {
-      await this.ApiService.delete_plan(this.item.id);
-      this.plans = this.plans.filter(current_plan => current_plan.id !== this.item.id);
+      await this.palladiumApiService.delete_plan(this.item.id);
+      this.plans = this.plans.filter(currentPlan => currentPlan.id !== this.item.id);
       this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
       this.dialogRef.close(this.plans);
     }

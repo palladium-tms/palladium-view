@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <div class="item-list">
+  <div class="item-list" [hidden]="loading">
     <mat-card class="item mat-elevation-z1"
               *ngFor="let object of runs_and_suites| statisticFilter:filter"
               (click)="clicked($event, object)"
@@ -29,6 +29,10 @@
         </mat-card-subtitle>
       <i class="fa fa-cogs settings" aria-hidden="true"></i>
     </mat-card>
+  </div>
+
+  <div [hidden]="!loading" class="loader">
+    <mat-spinner color="accent" ></mat-spinner>
   </div>
 </div>
 <router-outlet (activate)="onActivate($event)"></router-outlet>

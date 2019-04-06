@@ -4,9 +4,11 @@
     * Live scrolling to result set and new_result lists
     * Add new button for showing current result set
     * Add material to results. 
+    * Add loaders for some place
  ## Fixed
     * Fix: result list not rendered. 
     * Fix: selecting run and suile it it has same id. 
+    * Fix: console error after select plan and refresh.
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set
