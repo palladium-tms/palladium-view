@@ -1,4 +1,4 @@
-import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 import {Result} from '../models/result';
 import {Params, Router, ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -7,7 +7,8 @@ import {ResultService} from '../../services/result.service';
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']
+  styleUrls: ['./results.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ResultsComponent implements OnInit {

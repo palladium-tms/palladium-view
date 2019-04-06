@@ -9,6 +9,7 @@
     * Fix: result list not rendered. 
     * Fix: selecting run and suile it it has same id. 
     * Fix: console error after select plan and refresh.
+    * Fix: results can't be updated.
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set
