@@ -12,6 +12,7 @@
     * Fix: console error after select plan and refresh.
     * Fix: results can't be updated.
     * Fix: optimize run loading. Now, you cant see runs while runs for other plan in loading
+    * Fix: header buttons is visible after logout
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set
