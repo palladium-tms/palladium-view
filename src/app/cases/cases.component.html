@@ -1,22 +1,46 @@
-<div class="case_space">
-  <div class="toolbar">
-    <div class="filter"></div>
-    <div class="buttons">
-      <div class="button" (click)="open_settings()" [ngClass]="{'disabled': this.loading}"
-           *ngIf="object">
-        <i class="fa fa-cogs" aria-hidden="true"></i>
+<ng-container *ngIf="!loading">
+  <div class="case_space">
+    <div class="toolbar">
+      <div class="filters">
+      <div class="buttons">
+        <div class="divider"></div>
+        <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
-  </div>
-  <div class="item-list">
-    <div class="item hoverer bipolar-item" routerLinkActive="activated" *ngFor="let this_case of cases"  [ngClass]="{'activated': object && object.id == this_case.id}">
-      <div class="result-set-discriber centered-data">
-        <div class="item-name">
-          <div class="item-name">
-            <a title={{this_case.name}} class="result_set_link pointer" (click)="object = this_case">{{this_case.name}}</a>
+    </div>
+
+    <div class="item-list">
+      <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
+        <mat-card class="item mat-elevation-z1"
+                  *cdkVirtualFor="let object of cases" style="height: 53px">
+          <div class="case">
+            <div class="item-name">{{object.name}}</div>
+            <div class="menu-button menu">
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
+                      (click)="dropdownMenuItemSelect = object">
+                <mat-icon class="menu">more_vert</mat-icon>
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="copy_name()">
+          <mat-icon>content_copy</mat-icon>
+          <span>Copy</span>
+        </button>
+        <button mat-menu-item (click)="open_settings()">
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
+
+</ng-container>
+
+<div [hidden]="!loading" class="loader">
+  <mat-spinner color="accent"></mat-spinner>
 </div>
