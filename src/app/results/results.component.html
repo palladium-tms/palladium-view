@@ -26,5 +26,7 @@
         </div>
       </mat-card>
   </div>
-  <div class="loader" *ngIf="loading"></div>
+  <div [hidden]="!loading" class="loader">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
 </div>

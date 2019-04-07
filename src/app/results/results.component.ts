@@ -34,6 +34,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
 
   init_results() {
     this.loading = true;
+    this.cd.detectChanges();
     Promise.all([this.get_statuses(), this.get_results()]).then(res => {
       this.results = res[1];
       this.statuses = res[0];
