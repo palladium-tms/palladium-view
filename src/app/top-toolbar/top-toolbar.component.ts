@@ -11,13 +11,16 @@ import {SidenavService} from '../../services/sidenav.service';
 export class TopToolbarComponent implements DoCheck {
   private authorize;
   productName;
+  username;
 
   constructor(private router: Router,
               private authenticationService: AuthenticationService,
-               public sidenavService: SidenavService) {
+              public sidenavService: SidenavService) {
     sidenavService.get_product_subject$.subscribe(productName => {
       this.productName = productName;
     });
+
+    this.username = JSON.parse(localStorage.getItem('auth_data'))['username'];
   }
 
   ngDoCheck() {
