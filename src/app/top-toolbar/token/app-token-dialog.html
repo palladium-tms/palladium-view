@@ -1,9 +1,9 @@
-<h2 cdkFocusInitial>Tokens</h2>
+<h2>Tokens</h2>
 <mat-card-content *ngIf="mode == 'loading'"><mat-spinner color="accent"></mat-spinner></mat-card-content>
 
 <mat-dialog-content *ngIf="mode != 'loading'">
   <form [formGroup]="token_form" (ngSubmit)="create_token()">
-    <mat-form-field>
+    <mat-form-field color="accent">
       <input formControlName="name" matInput placeholder="Token name">
     </mat-form-field>
     <button mat-raised-button type="submit" [disabled]="!token_form.valid">Create new</button>
