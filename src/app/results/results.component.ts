@@ -14,7 +14,7 @@ import {ResultService} from '../../services/result.service';
 export class ResultsComponent implements OnInit, OnDestroy {
   results: Result[] = [];
   statuses;
-  statuses_formated = {};
+  statusesFormated = {};
   loading = false;
   news;
   params;
@@ -39,7 +39,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
       this.results = res[1];
       this.statuses = res[0];
       this.statuses.forEach(status => {
-        this.statuses_formated[status.id] = {color: status.color, name: status.name};
+        this.statusesFormated[status.id] = {color: status.color, name: status.name};
       });
       this.loading = false;
       this.cd.detectChanges();
@@ -47,12 +47,12 @@ export class ResultsComponent implements OnInit, OnDestroy {
   }
 
   get_statuses() {
-    return this.palladiumApiService.get_statuses().then(res => { return res; });
+    return this.palladiumApiService.get_statuses().then(res => res);
   }
 
   async get_results() {
-    const result_set_id = this.router.url.match(/result_set\/(\d+)/i)[1];
-    return await this.palladiumApiService.results(result_set_id);
+    const resultSetId = this.router.url.match(/result_set\/(\d+)/i)[1];
+    return this.palladiumApiService.results(resultSetId);
   }
 
   ngOnDestroy() {
