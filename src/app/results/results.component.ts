@@ -1,4 +1,4 @@
-import {Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 import {Result} from '../models/result';
 import {Params, Router, ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -11,18 +11,19 @@ import {ResultService} from '../../services/result.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ResultsComponent implements OnInit {
+export class ResultsComponent implements OnInit, OnDestroy {
   results: Result[] = [];
   statuses;
   statuses_formated = {};
   loading = false;
-
-  constructor(private ApiService: PalladiumApiService, private resultservice: ResultService,
+  news;
+  params;
+  constructor(private palladiumApiService: PalladiumApiService, private resultservice: ResultService,
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
-    this.resultservice.news().subscribe(data => {
+    this.params = this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
+    this.news = this.resultservice.news().subscribe(data => {
       this.add_result(data['result']);
     });
   }
@@ -45,11 +46,17 @@ export class ResultsComponent implements OnInit {
   }
 
   get_statuses() {
-    return this.ApiService.get_statuses().then(res => { return res; });
+    return this.palladiumApiService.get_statuses().then(res => { return res; });
   }
 
   async get_results() {
     const result_set_id = this.router.url.match(/result_set\/(\d+)/i)[1];
-    return await this.ApiService.results(result_set_id)
+    return await this.palladiumApiService.results(result_set_id);
+  }
+
+  ngOnDestroy() {
+    this.cd.detach();
+    this.news.unsubscribe();
+    this.params.unsubscribe();
   }
 }

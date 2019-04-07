@@ -346,8 +346,8 @@ export class ResultSetsComponent implements OnInit {
   }
 
   update_result_sets(resultSets) {
-    if (!resultSets['resultSets']) { return; }
-    resultSets['resultSets'].forEach(element => {
+    if (!resultSets['result_sets']) { return; }
+    resultSets['result_sets'].forEach(element => {
       const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'result_set');
       this.resultSetsAndCases[index].status = element.status;
     });
