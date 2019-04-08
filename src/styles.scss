@@ -251,10 +251,10 @@ figure {
   flex: 1;
   flex-direction: column;
   display: flex;
+  margin-right: 0.5em;
 }
 
 .big-block {
-  margin: 0.2em;
   overflow: hidden;
   word-wrap: break-word;
   flex: 3;
