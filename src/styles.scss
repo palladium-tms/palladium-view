@@ -120,6 +120,12 @@ figure {
   flex: 5;
 }
 
+.result-item {
+  padding: 0;
+  border: solid transparent;
+  border-width: 0 1px 0 1px;
+}
+
 .toolbar {
   display: flex;
   margin: 0.5em;
