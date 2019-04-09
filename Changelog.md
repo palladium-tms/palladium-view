@@ -6,6 +6,7 @@
     * Add material to results. 
     * Add loaders for some place
     * Change design for case list
+    * Change result list for using expandable elements
  ## Fixed
     * Fix: result list not rendered. 
     * Fix: selecting run and suile it it has same id. 

@@ -1,53 +1,55 @@
-<div class="history-space" [ngClass]="{'full_centered_data': loading}">
-  <div class="toolbar">
-    <div class="buttons">
-      <div class="toolbar-element" (click)="close_all()" [ngClass]="{'disabled': this.loading}">
-        <i class="fa fa-refresh" aria-hidden="true" [ngClass]="{'fa-spin': this.loading}"></i>
-      </div>
-    </div>
-  </div>
-  <div class="item-list">
-    <ng-container *ngIf="history">
-      <div class="history" *ngFor="let result_set of history | SortByUpdatedAt:'desc'">
+<div class="history-space">
+  <div class="item-list" *ngIf="history">
+      <mat-card class="history" *ngFor="let result_set of history | SortByUpdatedAt:'desc'">
         <div class="history-item">
-          <div class="history-status" [ngStyle]="getStyles(result_set.status)">
-            <div class="history-status-name"><b>{{get_status_by_id(result_set.status).name}}</b></div>
-          </div>
-          <div class="show-all" (click)="get_results(result_set)" *ngIf="result_set.object_status == 'closed'">
-           <span>Show_all</span>
-          </div>
-          <div class="loader_wrapper" *ngIf="result_set.object_status == 'loading'">
-            <div class="loader"></div>
-          </div>
-          <div class="show-all" (click)="get_results(result_set)" *ngIf="result_set.object_status == 'opened'">
-            <span>Hide</span>
+          <div class="history-status"
+               [ngStyle]="{'border-right': '2px solid ' + statusesFormated[result_set.status].color}">
+            <div class="history-status-name"><b>{{statusesFormated[result_set.status].name}}</b></div>
           </div>
           <div class="plan-name">
             {{result_set.plan.name}}
           </div>
+          <button mat-icon-button (click)="get_results(result_set)">
+            <mat-icon>{{result_set.object_status === 'closed' ? 'expand_more' : 'expand_less'}}</mat-icon>
+          </button>
         </div>
-        <div class="results-item" *ngIf="result_set.object_status == 'opened'">
-          <div class="item bipolar-item big-item" *ngFor="let result of results_data[result_set.id].results | sortByCreatedAt:'desc'">
-            <div class="small-block" [ngStyle]="getStyles(result.status_id)">
-              <div class="sub-blocks-holder">
-                <div class="sub-block"><b>{{get_status_by_id(result.status_id).name}}</b></div>
-                <div class="sub-block">{{result.created_at | date:'medium' }}</div>
-                <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
-                <!--<div class="sub-block"><a routerLink="/result/{{result.id}}" target="_blank">Details</a></div>-->
+        <mat-progress-bar mode="indeterminate" color="accent" *ngIf="result_set.object_status === 'loading'"></mat-progress-bar>
+        <div class="loaded-results" *ngIf="resultsData[result_set.id] && result_set.object_status === 'opened'">
+          <mat-accordion>
+            <mat-expansion-panel class="result-item"
+                                 *ngFor="let result of resultsData[result_set.id].results | sortByCreatedAt:'desc'"
+                                 [ngStyle]="{'border-color': statusesFormated[result.status_id].color}">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <b>{{statusesFormated[result.status_id].name}}</b>
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{result.created_at | date:'HH:MM:SS' }} {{result.created_at | date:'MMMM d, y' }}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="result_content">
+                <div class="small-block" [ngClass]="{'hidden': !result.subdescriber.length}">
+                  <div class="sub-blocks-holder">
+                    <div class="sub-block" *ngFor="let element of result.subdescriber">
+                      <b>{{element.title}}</b><br>{{element.value}}</div>
+                  </div>
+                  <div class="divider"></div>
+                </div>
+                <div class="big-block">
+                  <div class="message" *ngFor="let data of result.describer">
+                    <span><b>{{data["title"]}}:</b></span>
+                    <app-result-value [value]='data["value"]' [type]='data["type"]'
+                                      [note]='data["note"]'></app-result-value>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="big-block">
-              <div class="message" *ngFor="let data of result.describer">
-                <span><b>{{data["title"]}}:</b></span>
-                <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' [note] = 'data["note"]'></app-result-value>
-              </div>
-            </div>
-          </div>
-
-
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
-      </div>
-    </ng-container>
+      </mat-card>
+  </div>
+  <div [hidden]="!loading" class="loader">
+    <mat-spinner color="accent"></mat-spinner>
   </div>
 </div>
 

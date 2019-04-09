@@ -87,7 +87,7 @@ figure {
 }
 
 .plan-item {
-  margin: 1em;
+  margin: 0.5em;
   text-overflow: ellipsis;
   cursor: pointer;
   border: solid 2px transparent;
@@ -118,6 +118,12 @@ figure {
 
 .result-space, .history-space, .one-case_space {
   flex: 5;
+}
+
+.result-item {
+  padding: 0;
+  border: solid transparent;
+  border-width: 0 1px 0 1px;
 }
 
 .toolbar {
@@ -251,10 +257,10 @@ figure {
   flex: 1;
   flex-direction: column;
   display: flex;
+  margin-right: 0.5em;
 }
 
 .big-block {
-  margin: 0.2em;
   overflow: hidden;
   word-wrap: break-word;
   flex: 3;

@@ -1,21 +1,23 @@
-<div class="result-space" [ngClass]="{'full_centered_data': loading}">
-  <div class="item-list" *ngIf="!loading">
-      <mat-card class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc';">
-        <div class="result_content" [ngClass]="{'expanded': result.expanded}">
-          <div class="small-block" [ngStyle]="{'border-right': '2px solid ' + statusesFormated[result.status_id].color}">
+<div class="result-space">
+  <div class="result-list" *ngIf="!loading">
+    <mat-accordion>
+      <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
+                           [expanded]="isFirst"
+                           [ngStyle]="{'border-color': statusesFormated[result.status_id].color}">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <b>{{statusesFormated[result.status_id].name}}</b>
+          </mat-panel-title>
+          <mat-panel-description>
+            {{result.created_at | date:'HH:MM:SS' }} {{result.created_at | date:'MMMM d, y' }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="result_content">
+          <div class="small-block" [ngClass]="{'hidden': !result.subdescriber.length}">
             <div class="sub-blocks-holder">
-              <div class="sub-block"><b>{{statusesFormated[result.status_id].name}}</b></div>
-              <div class="sub-block">{{result.created_at | date:'MMMM d, y' }}</div>
-              <div class="sub-block">{{result.created_at | date:'HH:MM:SS' }}</div>
               <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
             </div>
             <div class="divider"></div>
-            <button mat-icon-button
-                    class="expand-more-button"
-                    (click)="result.expanded = !result.expanded">
-              <mat-icon *ngIf="!result.expanded">expand_more</mat-icon>
-              <mat-icon *ngIf="result.expanded">expand_less</mat-icon>
-            </button>
           </div>
           <div class="big-block">
             <div class="message" *ngFor="let data of result.describer">
@@ -24,7 +26,8 @@
             </div>
           </div>
         </div>
-      </mat-card>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
   <div [hidden]="!loading" class="loader">
     <mat-spinner color="accent"></mat-spinner>

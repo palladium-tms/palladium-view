@@ -6,27 +6,31 @@
 .message{
   margin-bottom: 0.5em;
 }
-.result-item {
-  padding: 0;
-  margin: 0.5em;
-  border: solid 2px transparent;
-}
-
 .result_content {
-  max-height: 15em;
   overflow: hidden;
   display: flex;
 }
 .expand-more-button {
   float: right;
 }
-.sub-blocks-holder {
-  margin: 0.5em;
+.panel-height {
+  height: 100%;
 }
 .divider {
   flex: 1;
 }
 
-.expanded {
-  max-height: fit-content;
+.mat-expansion-panel-header-description {
+  flex-grow: 0;
+}
+.mat-expansion-panel-header-title {
+  flex: 3
+}
+.result-list {
+  overflow: auto;
+  flex: 1;
+  padding: 0.5em;
+}
+.hidden {
+  display: none;
 }
