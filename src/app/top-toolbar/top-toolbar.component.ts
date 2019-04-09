@@ -9,7 +9,7 @@ import {SidenavService} from '../../services/sidenav.service';
   styleUrls: ['./top-toolbar.component.scss'],
 })
 export class TopToolbarComponent implements DoCheck {
-  private authorize;
+  authorize;
   productName;
   username;
 
