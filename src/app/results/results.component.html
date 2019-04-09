@@ -1,4 +1,4 @@
-<div class="result-space" [ngClass]="{'full_centered_data': loading}">
+<div class="result-space">
   <div class="result-list" *ngIf="!loading">
     <mat-accordion>
       <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
