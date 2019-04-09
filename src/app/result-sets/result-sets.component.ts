@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import {Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {Router} from '@angular/router';
@@ -19,7 +19,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ResultSetsComponent implements OnInit {
+export class ResultSetsComponent implements OnInit, OnDestroy {
   newResultForm = new FormGroup({
     status: new FormControl('', [Validators.required]),
     message: new FormControl('')
@@ -41,13 +41,14 @@ export class ResultSetsComponent implements OnInit {
   selectAllFlag = false;
   dropdownMenuItemSelect;
   runId;
+  params;
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private palladiumApiService: PalladiumApiService, private router: Router,
               private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(() => {
+    this.params = this.activatedRoute.params.subscribe(() => {
       this.object = null;
       this.runId = this.router.url.match(/run\/(\d+)/i)[1];
       this.get_result_sets_and_cases();
@@ -113,6 +114,7 @@ export class ResultSetsComponent implements OnInit {
     this.resultSets = [];
     this.resultSetsAndCases = [];
     this.loading = true;
+    this.cd.detectChanges();
     Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
       this.resultSets = res[0];
       this.cases = res[1];
@@ -379,6 +381,11 @@ export class ResultSetsComponent implements OnInit {
     } else {
       this.newResultForm.reset('status');
     }
+  }
+
+  ngOnDestroy() {
+    this.cd.detach();
+    this.params.unsubscribe();
   }
 }
 
