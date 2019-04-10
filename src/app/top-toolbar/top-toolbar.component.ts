@@ -19,8 +19,10 @@ export class TopToolbarComponent implements DoCheck {
     sidenavService.get_product_subject$.subscribe(productName => {
       this.productName = productName;
     });
-
-    this.username = JSON.parse(localStorage.getItem('auth_data'))['username'];
+    const authData = localStorage.getItem('auth_data');
+    if (authData) {
+      this.username = JSON.parse(localStorage.getItem('auth_data'))['username'];
+    }
   }
 
   ngDoCheck() {
