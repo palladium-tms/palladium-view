@@ -15,6 +15,7 @@
     * Fix: optimize run loading. Now, you cant see runs while runs for other plan in loading
     * Fix: header buttons is visible after logout
     * Fix: result anf result set can't be updated after adding new result
+    * Fix: trying to load results after run click
 ## [0.5.10] - 03.26.2019
 ## Added
     * New filter to result_set

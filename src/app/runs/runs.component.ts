@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
@@ -17,12 +17,13 @@ import {Run} from '../models/run';
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RunsComponent implements OnInit {
+export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   runs = [];
   runs_and_suites = [];
   plan_id;
   statuses;
+  params;
   object;
   ResultSetComponent;
   statistic: Statistic;
@@ -39,7 +40,7 @@ export class RunsComponent implements OnInit {
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
+    this.params = this.activatedRoute.params.subscribe((params: Params) => {
       this.plan_id = params['id'];
       this.get_runs_and_suites();
     });
@@ -225,6 +226,10 @@ export class RunsComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.cd.detach();
+    this.params.unsubscribe();
+  }
 }
 
 @Component({
