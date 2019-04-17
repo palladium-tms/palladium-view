@@ -19,10 +19,11 @@
 }
 
 .statistic-bar {
+  outline: solid 1px #a4a4a4;
   display: flex;
   height: 0.3em;
   flex: 1;
-  margin: auto;
+  margin: auto 0.3em auto auto;
 }
 
 .plan-item:hover .settings {
