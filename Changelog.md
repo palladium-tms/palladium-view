@@ -1,5 +1,6 @@
 # Changelog
 ## master (unreleased)
+## [0.6.0] - 03.26.2019
 ## Added
     * Live scrolling to result set and new_result lists
     * Add new button for showing current result set
