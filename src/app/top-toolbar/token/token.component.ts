@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 import {MatDialog} from '@angular/material';
@@ -8,6 +8,7 @@ import {MatDialog} from '@angular/material';
   selector: 'app-token',
   templateUrl: './token.component.html',
   styleUrls: ['./token.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TokenComponent {
 
@@ -20,6 +21,7 @@ export class TokenComponent {
 @Component({
   selector: 'app-token-dialog',
   templateUrl: 'app-token-dialog.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class TokenDialogComponent implements OnInit {

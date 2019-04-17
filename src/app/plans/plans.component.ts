@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -11,7 +11,8 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [PalladiumApiService]
+  providers: [PalladiumApiService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
@@ -23,7 +24,7 @@ export class PlansComponent implements OnInit {
   loading = false;
 
   constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private dialog: MatDialog) {
+              private router: Router, private dialog: MatDialog, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -79,6 +80,7 @@ export class PlansComponent implements OnInit {
         this.selectedPlan = this.plans.find(plan => plan.id === +planId[1]);
       }
       this.loading = false;
+      this.cd.detectChanges();
     });
   }
 
@@ -122,10 +124,6 @@ export class PlansComponent implements OnInit {
     });
   }
 
-  toolbar_opened() {
-    return this.router.url.indexOf('plan') >= 0;
-  }
-
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
   }
@@ -135,6 +133,7 @@ export class PlansComponent implements OnInit {
 @Component({
   selector: 'app-plan-settings',
   templateUrl: 'plans-settings.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PlansSettingsComponent implements OnInit {

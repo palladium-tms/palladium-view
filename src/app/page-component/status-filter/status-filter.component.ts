@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Status} from 'app/models/status'
 
 @Component({
   selector: 'app-status-filter',
   templateUrl: './status-filter.component.html',
-  styleUrls: ['./status-filter.component.scss']
+  styleUrls: ['./status-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent implements OnInit {
   @Input() status: Status;

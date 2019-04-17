@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
@@ -13,7 +13,8 @@ import {MatSidenav} from '@angular/material';
   templateUrl: 'products.component.html',
   styleUrls: ['products.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [PalladiumApiService]
+  providers: [PalladiumApiService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ProductsComponent implements OnInit {
@@ -25,13 +26,14 @@ export class ProductsComponent implements OnInit {
 
   constructor(private ApiService: PalladiumApiService,
               private router: Router, private dialog: MatDialog,
-              public sidenav_service: SidenavService) {
+              public sidenav_service: SidenavService, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.get_products();
     this.sidenav_service.close_product_subject$.subscribe(() => {
       this.sidenav.toggle();
+      this.cd.detectChanges();
     });
   }
 
@@ -91,6 +93,7 @@ export class ProductsComponent implements OnInit {
 @Component({
   selector: 'app-product-settings',
   templateUrl: 'product-settings.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductSettingsComponent implements OnInit {
   item;

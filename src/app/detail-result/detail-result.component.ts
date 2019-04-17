@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 
 @Component({
   selector: 'app-detail-result',
   templateUrl: './detail-result.component.html',
-  styleUrls: ['./detail-result.component.css']
+  styleUrls: ['./detail-result.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DetailResultComponent implements OnInit {
   statuses;

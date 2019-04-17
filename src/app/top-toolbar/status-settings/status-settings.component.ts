@@ -1,12 +1,12 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
-import {Status} from '../../models/status';
 import {MatDialog} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-status-settings',
   templateUrl: './status-settings.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusSettingsComponent {
   constructor(private dialog: MatDialog) {}
@@ -20,6 +20,7 @@ export class StatusSettingsComponent {
 @Component({
   selector: 'app-status-dialog-settings',
   templateUrl: './status-settings-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusSettingsDialogComponent implements OnInit {
   mode: 'editing' | 'creating' | 'list_show' | 'empty' | 'loading' = 'loading';

@@ -392,7 +392,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-result-sets',
   templateUrl: 'result-sets.settings.component.html',
-  providers: [PalladiumApiService, StatusFilterPipe, ResultService]
+  providers: [PalladiumApiService, StatusFilterPipe, ResultService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class ResultSetsSettingsComponent implements OnInit {

@@ -235,6 +235,7 @@ export class RunsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-runs-settings',
   templateUrl: 'runs-settings.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RunsSettingsComponent implements OnInit {
   object;

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {SidenavService} from '../../services/sidenav.service';
@@ -7,6 +7,7 @@ import {SidenavService} from '../../services/sidenav.service';
   selector: 'app-top-toolbar',
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TopToolbarComponent {
   authorize;

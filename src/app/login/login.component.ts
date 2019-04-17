@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FormControl, Validators, FormGroup} from '@angular/forms';
@@ -6,7 +6,8 @@ import {FormControl, Validators, FormGroup} from '@angular/forms';
 @Component({
   moduleId: module.id,
   styleUrls: ['./login.component.css'],
-  templateUrl: 'login.component.html'
+  templateUrl: 'login.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class LoginComponent implements OnInit {

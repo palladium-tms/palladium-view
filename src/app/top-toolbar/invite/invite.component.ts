@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 import {MatDialog} from '@angular/material';
 
 @Component({
   selector: 'app-invite',
-  templateUrl: './invite.component.html'
+  templateUrl: './invite.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InviteComponent {
   constructor(private dialog: MatDialog) {}
@@ -17,6 +18,7 @@ export class InviteComponent {
 @Component({
   selector: 'app-invite-dialog',
   templateUrl: './invite.component.dialog.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteDialogComponent implements OnInit {
   mode: 'empty' | 'exist' | 'loading' | 'generating' = 'loading';
