@@ -3,10 +3,13 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import {environment} from '../environments/environment';
+import {Subject} from 'rxjs';
 
 @Injectable()
 export class AuthenticationService {
-  public token: string;
+  token: string;
+  isAuthorized = new Subject<boolean>();
+  isAuthorized$ = this.isAuthorized.asObservable();
 
   constructor(private http: HttpClient) {
     // set token if saved in local storage
@@ -22,12 +25,13 @@ export class AuthenticationService {
       .set(`user_data[password]`, password);
       return this.http.post(environment.host + '/public/login', params, options).toPromise().then((response: JSON) => {
       localStorage.setItem('auth_data', JSON.stringify({ username: username, token: response['token'] }));
-      return Promise.resolve(true);
+        this.isAuthorized.next(true);
+        return Promise.resolve(true);
     }, response => {
       console.log(response);
       return Promise.reject(false);
     });
-  };
+  }
 
   registration(username: string, password: string, invite: string): Promise<any>  {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
@@ -59,6 +63,7 @@ export class AuthenticationService {
     // clear token remove user from local storage to log user out
     this.token = null;
     localStorage.removeItem('auth_data');
+    this.isAuthorized.next(false);
   }
 
   saved_token() {

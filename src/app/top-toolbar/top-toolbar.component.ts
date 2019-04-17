@@ -1,4 +1,4 @@
-import {Component, DoCheck} from '@angular/core';
+import {Component} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {SidenavService} from '../../services/sidenav.service';
@@ -8,7 +8,7 @@ import {SidenavService} from '../../services/sidenav.service';
   templateUrl: './top-toolbar.component.html',
   styleUrls: ['./top-toolbar.component.scss'],
 })
-export class TopToolbarComponent implements DoCheck {
+export class TopToolbarComponent {
   authorize;
   productName;
   username;
@@ -19,14 +19,13 @@ export class TopToolbarComponent implements DoCheck {
     sidenavService.get_product_subject$.subscribe(productName => {
       this.productName = productName;
     });
+    authenticationService.isAuthorized$.subscribe(status => {
+      this.authorize = status;
+    });
     const authData = localStorage.getItem('auth_data');
     if (authData) {
       this.username = JSON.parse(localStorage.getItem('auth_data'))['username'];
     }
-  }
-
-  ngDoCheck() {
-    this.authorize = (this.authenticationService.saved_token() != null);
   }
 
   logout() {
