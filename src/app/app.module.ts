@@ -37,7 +37,6 @@ import { CaseComponent } from './case/case.component';
 import {InviteComponent, InviteDialogComponent} from './top-toolbar/invite/invite.component';
 import { SortByNamePipe } from './pipes/sort-by-name/sort-by-name.pipe';
 import { ResultValueComponent } from './page-component/result-value/result-value.component';
-import { DndListModule } from 'ngx-drag-and-drop-lists';
 import {CdkTableModule} from '@angular/cdk/table';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {
@@ -187,7 +186,7 @@ const appRoutes: Routes = [
     StatusFilterComponent
   ],
   imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
-    Angular2FontawesomeModule, BrowserAnimationsModule, DndListModule, ReactiveFormsModule,
+    Angular2FontawesomeModule, BrowserAnimationsModule, ReactiveFormsModule,
     CdkTableModule,
     DragDropModule,
     MatAutocompleteModule, MatBadgeModule,
