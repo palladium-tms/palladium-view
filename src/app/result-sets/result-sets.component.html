@@ -118,8 +118,8 @@
       </cdk-virtual-scroll-viewport>
     </div>
   </div>
-  <router-outlet (activate)="onActivate($event)"></router-outlet>
 </ng-container>
 <div [hidden]="!loading" class="loader">
   <mat-spinner color="accent"></mat-spinner>
 </div>
+<router-outlet (activate)="onActivate($event)"></router-outlet>

@@ -18,11 +18,15 @@ export class ResultsComponent implements OnInit, OnDestroy {
   loading = false;
   news;
   params;
+  resultSetId;
   constructor(private palladiumApiService: PalladiumApiService, private resultservice: ResultService,
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe((params: Params) => { this.init_results(); });
+    this.params = this.activatedRoute.url.subscribe((params: Params) => {
+      this.resultSetId = params[1].path;
+      this.init_results();
+    });
     this.news = this.resultservice.news().subscribe(data => {
       this.add_result(data['result']);
     });
@@ -51,8 +55,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
   }
 
   async get_results() {
-    const resultSetId = this.router.url.match(/result_set\/(\d+)/i)[1];
-    return this.palladiumApiService.results(resultSetId);
+    return this.palladiumApiService.results(this.resultSetId);
   }
 
   ngOnDestroy() {

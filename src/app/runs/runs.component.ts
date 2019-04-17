@@ -202,9 +202,9 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   clicked(event, object) {
     if (event.target.classList.contains('settings')) {
-      this.open_settings(object)
+      this.open_settings(object);
     } else {
-      this.select_object(object)
+      this.select_object(object);
     }
   }
 

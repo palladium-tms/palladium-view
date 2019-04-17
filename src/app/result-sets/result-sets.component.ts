@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
-import {Router} from '@angular/router';
+import {Params, Router} from '@angular/router';
 import {ActivatedRoute} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
@@ -48,9 +48,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe(() => {
+    this.params = this.activatedRoute.url.subscribe((params: Params) => {
+      this.runId = params[1].path;
       this.object = null;
-      this.runId = this.router.url.match(/run\/(\d+)/i)[1];
       this.get_result_sets_and_cases();
     });
   }
