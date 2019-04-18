@@ -18,7 +18,6 @@ export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
   plans = [];
-  plan;
   RUN_COMPONENT;
   statuses;
   loading = false;
