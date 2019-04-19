@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {SidenavService} from '../../services/sidenav.service';
@@ -16,12 +16,14 @@ export class TopToolbarComponent {
 
   constructor(private router: Router,
               private authenticationService: AuthenticationService,
-              public sidenavService: SidenavService) {
+              public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
     sidenavService.get_product_subject$.subscribe(productName => {
       this.productName = productName;
+      this.cd.detectChanges();
     });
     authenticationService.isAuthorized$.subscribe(status => {
       this.authorize = status;
+      this.cd.detectChanges();
     });
     const authData = localStorage.getItem('auth_data');
     if (authData) {

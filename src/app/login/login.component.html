@@ -1,9 +1,9 @@
-<mat-card class="login-box" *ngIf="load_form">
+<mat-card class="login-box">
   <div class="sing-in">
     <h2>SING IN</h2>
   </div>
 
-  <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" [formGroup]="login_form">
+  <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" [formGroup]="loginForm">
     <div class="container">
       <mat-form-field class="form-field" color="accent">
         <input matInput placeholder="Email" formControlName="email" name="username">

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav} from '@angular/material';
@@ -14,7 +14,7 @@ import {SidenavService} from '../../services/sidenav.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav: MatSidenav;
   products;
   pinned = true;
@@ -22,12 +22,16 @@ export class ProductsComponent implements OnInit {
 
   constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
-              public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
-    this.selectedProduct.id = +this.router.url.match(/product\/(\d+)/)[1];
-  }
+              public sidenavService: SidenavService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.get_products();
+    this.activatedRoute.params.subscribe(() => {
+      if(this.router.url.match(/product\/(\d+)/)) {
+        this.selectedProduct.id = +this.router.url.match(/product\/(\d+)/)[1];
+      }
+      this.get_products();
+      this.cd.detectChanges();
+    });
     this.sidenavService.close_product_subject$.subscribe(() => {
       this.sidenav.toggle();
       this.cd.detectChanges();
@@ -74,6 +78,10 @@ export class ProductsComponent implements OnInit {
     this.cd.detectChanges();
     this.router.navigate(['/product', product.id]);
   }
+
+  ngOnDestroy() {
+    this.cd.detach();
+  }
 }
 
 @Component({
@@ -81,7 +89,7 @@ export class ProductsComponent implements OnInit {
   templateUrl: 'product-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductSettingsComponent implements OnInit {
+export class ProductSettingsComponent implements OnInit, OnDestroy {
   item;
   products;
   formGroup = new FormGroup({
@@ -90,7 +98,7 @@ export class ProductSettingsComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
               private palladiumApiService: PalladiumApiService, private router: Router,
-              @Inject(MAT_DIALOG_DATA) public data, public sidenavService: SidenavService) {
+              @Inject(MAT_DIALOG_DATA) public data, public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -136,5 +144,9 @@ export class ProductSettingsComponent implements OnInit {
       this.router.navigate(['/']);
       this.dialogRef.close(this.products);
     }
+  }
+
+  ngOnDestroy() {
+    this.cd.detach();
   }
 }
