@@ -1,4 +1,4 @@
-<mat-card-title cdkFocusInitial>Statuses</mat-card-title>
+<mat-card-title>Statuses</mat-card-title>
 <mat-card-content *ngIf="mode == 'loading'">
   <mat-spinner color="accent"></mat-spinner>
 </mat-card-content>
@@ -20,7 +20,7 @@
 </mat-dialog-content>
 
 <mat-dialog-content *ngIf="mode != 'list_show' && mode != 'loading'">
-  <form #StatusForm [formGroup]="status_form" (ngSubmit)="save()" id="status_form">
+  <form #StatusForm [formGroup]="statusForm" (ngSubmit)="save()" id="status_form">
     <mat-form-field color="accent" style="width: 100%">
       <input matInput formControlName="name" placeholder="Status name" autocomplete="off">
       <mat-error [hidden]="!name.hasError('maxlength')">
@@ -29,7 +29,7 @@
     </mat-form-field>
     <div></div>
     <mat-form-field color="accent" style="width: 100%">
-      <input color="accent" matInput formControlName="color" placeholder="Status color" #Color autocomplete="off">
+      <input matInput formControlName="color" placeholder="Status color" #Color autocomplete="off">
       <mat-icon matSuffix [ngStyle]="{'color': Color.value}">brightness_1</mat-icon>
     </mat-form-field>
   </form>
@@ -38,7 +38,7 @@
   <button mat-raised-button (click)="back_to_show_all()" *ngIf="mode == 'editing' || mode == 'creating'">Back</button>
   <button mat-raised-button color="accent" (click)="mode = 'creating'" *ngIf="mode == 'list_show'">Create new</button>
   <button mat-raised-button color="warn" (click)="delete_status()" *ngIf="mode == 'editing'">Delete</button>
-  <button mat-raised-button color="accent" type="submit" form="status_form" [disabled]="!status_form.valid"
+  <button mat-raised-button color="accent" type="submit" form="status_form" [disabled]="!statusForm.valid"
           *ngIf="mode != 'list_show'">Save
   </button>
 </mat-dialog-actions>

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 import {MatDialog} from '@angular/material';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -16,38 +16,37 @@ export class StatusSettingsComponent {
   }
 }
 
-
 @Component({
   selector: 'app-status-dialog-settings',
   templateUrl: './status-settings-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StatusSettingsDialogComponent implements OnInit {
+export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
   mode: 'editing' | 'creating' | 'list_show' | 'empty' | 'loading' = 'loading';
   statuses;
   selected;
-  status_form = new FormGroup({
+  statusForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.maxLength(40)]),
     color: new FormControl('', [Validators.required])
   });
 
-  constructor(private ApiService: PalladiumApiService) {
-  }
+  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
 
   get name() {
-    return this.status_form.get('name');
+    return this.statusForm.get('name');
   }
 
   get color() {
-    return this.status_form.get('color');
+    return this.statusForm.get('color');
   }
 
   async ngOnInit() {
     this.mode = 'loading';
-    this.ApiService.get_not_blocked_statuses().then(res => {
+    this.palladiumApiService.get_not_blocked_statuses().then(res => {
       this.statuses = res;
       this.mode = 'list_show';
-      this.empty_statuses_list()
+      this.empty_statuses_list();
+      this.cd.detectChanges();
     });
   }
 
@@ -56,44 +55,49 @@ export class StatusSettingsDialogComponent implements OnInit {
     this.color.setValue(status.color);
     this.mode = 'editing';
     this.selected = status;
+    this.cd.detectChanges();
   }
 
   async save() {
-    if (this.mode == 'editing') {
-      this.ApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
+    if (this.mode === 'editing') {
+      this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
         this.selected.name = res.name;
         this.selected.color = res.color;
         this.mode = 'list_show';
+        this.cd.detectChanges();
       });
     } else {
-      const a = await this.ApiService.status_new(this.name.value, this.color.value);
-      this.statuses.push( a);
+      const newStatus = await this.palladiumApiService.status_new(this.name.value, this.color.value);
+      this.statuses.push(newStatus);
       this.mode = 'list_show';
-      this.empty_statuses_list()
+      this.empty_statuses_list();
+      this.cd.detectChanges();
     }
-    this.reset_form()
+    this.reset_form();
+    this.cd.detectChanges();
   }
 
   delete_status() {
     if (confirm('A u shuare?')) {
-      this.ApiService.block_status(this.selected.id).then(res => {
+      this.palladiumApiService.block_status(this.selected.id).then(res => {
         this.statuses = this.statuses.filter(status => status.id !== res['id']);
         this.mode = 'list_show';
         this.selected = null;
         this.empty_statuses_list();
-        this.status_form.reset()
+        this.statusForm.reset();
+        this.cd.detectChanges();
       });
     }
   }
 
   empty_statuses_list() {
     if (!this.statuses.length) {
-      this.mode = 'empty'
+      this.mode = 'empty';
     }
   }
 
   reset_form() {
-    this.status_form.reset();
+    this.statusForm.reset();
   }
 
   back_to_show_all() {
@@ -103,5 +107,9 @@ export class StatusSettingsDialogComponent implements OnInit {
 
   getStyles(object) {
     return {'border-left': '7px solid ' + object.color};
+  }
+
+  ngOnDestroy(): void {
+    this.cd.detach();
   }
 }
