@@ -1,5 +1,5 @@
 <div class="result-space">
-  <div class="result-list" *ngIf="!loading">
+  <div class="result-list" [hidden]="loading">
     <mat-accordion>
       <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
                            [expanded]="isFirst"

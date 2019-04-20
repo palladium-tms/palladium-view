@@ -1,10 +1,11 @@
-import {Component, Input, OnInit, ViewEncapsulation, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation, Output, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
 
 @Component({
   selector: 'app-dropdown-menu',
   templateUrl: './dropdown-menu.component.html',
   encapsulation: ViewEncapsulation.Emulated,
-  styleUrls: ['./dropdown-menu.component.css']
+  styleUrls: ['./dropdown-menu.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DropdownMenuComponent implements OnInit {
   visibility = false;

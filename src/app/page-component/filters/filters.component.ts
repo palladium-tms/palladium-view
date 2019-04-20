@@ -1,11 +1,12 @@
 import {
-  Component, Input, Output, EventEmitter, OnChanges
+  Component, Input, Output, EventEmitter, OnChanges, ChangeDetectionStrategy
 } from '@angular/core';
 
 @Component({
   selector: 'app-filters',
   templateUrl: './filters.component.html',
-  styleUrls: ['./filters.component.css']
+  styleUrls: ['./filters.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FiltersComponent implements OnChanges {
 

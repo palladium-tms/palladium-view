@@ -22,7 +22,7 @@
                   *ngFor="let product of products"
                   matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
                   cdkDrag [cdkDragDisabled]=pinned
-                  [ngClass]="{'mat-elevation-z8 product-selected': product_selected(product)}"
+                  [ngClass]="{'mat-elevation-z8 product-selected': selectedProduct.id == product.id}"
                   (click)="select_product(product)">
           {{product.name}}
         </mat-card>

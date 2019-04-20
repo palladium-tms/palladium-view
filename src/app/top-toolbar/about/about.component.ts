@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
 const { version: appVersion } = require('../../../../package.json');
 
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutComponent {
 
@@ -18,6 +19,7 @@ export class AboutComponent {
 @Component({
   selector: 'app-about-dialog',
   templateUrl: './about.dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutDialogComponent implements OnInit  {
   version;

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {FormControl, Validators, FormGroup} from '@angular/forms';
@@ -6,47 +6,44 @@ import {FormControl, Validators, FormGroup} from '@angular/forms';
 @Component({
   moduleId: module.id,
   styleUrls: ['./login.component.css'],
-  templateUrl: 'login.component.html'
+  templateUrl: 'login.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class LoginComponent implements OnInit {
-  login_form = new FormGroup({
+export class LoginComponent implements OnInit, OnDestroy {
+  loginForm = new FormGroup({
     email: new FormControl('', [Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$'), Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(4)]),
   });
   loading = false;
-  load_form = false;
   error = '';
 
   constructor(private router: Router,
-              private authenticationService: AuthenticationService) {
-  }
+              private authenticationService: AuthenticationService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    // reset login status
     this.authenticationService.logout();
-    this.authenticationService.get_no_user_status().then(data => {
-      if (data['no_users']) {
-        this.router.navigate(['/registration']);
-      } else {
-        this.load_form = true;
-      }
-    });
+    this.cd.detectChanges();
   }
 
-  get email() { return this.login_form.get('email'); }
+  get email() { return this.loginForm.get('email'); }
 
-  get password() { return this.login_form.get('password'); }
+  get password() { return this.loginForm.get('password'); }
 
   login() {
     this.loading = true;
     this.authenticationService.login(this.email.value, this.password.value)
-      .then(result => {
+      .then(() => {
         this.router.navigate(['/']);
         this.loading = false;
-      }, error => {
+      }, () => {
         this.error = 'Username or password is incorrect';
         this.loading = false;
+        this.cd.detectChanges();
       });
+  }
+
+  ngOnDestroy() {
+    this.cd.detach();
   }
 }

@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Product settings</h1>
 <mat-dialog-content>
-  <form autocomplete="off" [formGroup]="product_form">
+  <form autocomplete="off" [formGroup]="formGroup">
     <mat-form-field color="accent" style="width: 100%">
       <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Product name"
              autocomplete="off" [value]="item.name">
@@ -22,6 +22,6 @@
 
 <mat-dialog-actions>
   <button mat-raised-button color="warn" (click)="delete_item()">Delete</button>
-  <button mat-raised-button color="accent" (click)="edit_product()" [disabled]="!product_form.valid">Save
+  <button mat-raised-button color="accent" (click)="edit_product()" [disabled]="!formGroup.valid">Save
   </button>
 </mat-dialog-actions>

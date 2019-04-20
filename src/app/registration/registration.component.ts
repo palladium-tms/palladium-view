@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AuthenticationService} from '../../services/authentication.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormControl, Validators, FormGroup} from '@angular/forms';
@@ -7,7 +7,8 @@ import {ValidatePassword} from './registration_form_validates/password_is_not_ma
 @Component({
   moduleId: module.id,
   styleUrls: ['registration.component.css'],
-  templateUrl: 'registration.component.html'
+  templateUrl: 'registration.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class RegistrationComponent implements OnInit {

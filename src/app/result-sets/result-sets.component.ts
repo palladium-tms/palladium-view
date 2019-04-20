@@ -1,8 +1,7 @@
-import {Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
-import {Params, Router} from '@angular/router';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
@@ -31,7 +30,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   statistic: Statistic = new Statistic(null);
   cases;
   object;
-  RESULT_COMPONENT;
+  ResultComponent;
   statuses = [];
   notBlockedStatus = [];
   statusesFormated = {};
@@ -42,6 +41,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   dropdownMenuItemSelect;
   runId;
   params;
+
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private palladiumApiService: PalladiumApiService, private router: Router,
               private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef) {
@@ -163,7 +163,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.resultSets = this.resultSets.filter(obj => (obj.id !== result.id));
           this.object = this.cases.find(obj => (obj.name === result.name));
           this.object.active = true;
-          this.router.navigate([this.router.url.replace(/\/result_set.*/, '/case/' +  this.object.id)]);
+          this.router.navigate([this.router.url.replace(/\/result_set.*/, '/case/' + this.object.id)]);
         }
         this.merge_result_sets_and_cases();
         this.update_statistic();
@@ -266,14 +266,17 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   update_click() {
     this.get_result_sets_and_cases();
     this.selectAllFlag = false;
+    if (this.ResultComponent && this.router.url.match(/result_set\/(\d+)/i) !== null) {
+      this.ResultComponent.init_results();
+    }
   }
 
   onActivate(componentRef) {
-    this.RESULT_COMPONENT = componentRef;
+    this.ResultComponent = componentRef;
   }
 
   clicked(event, object) {
-   if (!(event.target.classList.contains('result-set-checkbox') ||
+    if (!(event.target.classList.contains('result-set-checkbox') ||
       event.target.classList.contains('mat-checkbox-inner-container') ||
       event.target.classList.contains('menu') ||
       event.target.classList.contains('mat-checkbox'))) {
@@ -348,7 +351,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_result_sets(resultSets) {
-    if (!resultSets['result_sets']) { return; }
+    if (!resultSets['result_sets']) {
+      return;
+    }
     resultSets['result_sets'].forEach(element => {
       const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'result_set');
       this.resultSetsAndCases[index].status = element.status;
@@ -356,7 +361,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_cases(cases) {
-    if ( !cases['resultSets'] ) { return; }
+    if (!cases['resultSets']) {
+      return;
+    }
     cases['resultSets'].forEach(element => {
       const newResultSet = new ResultSet(element);
       const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'case');
@@ -392,7 +399,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-result-sets',
   templateUrl: 'result-sets.settings.component.html',
-  providers: [PalladiumApiService, StatusFilterPipe, ResultService]
+  providers: [PalladiumApiService, StatusFilterPipe, ResultService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class ResultSetsSettingsComponent implements OnInit {
