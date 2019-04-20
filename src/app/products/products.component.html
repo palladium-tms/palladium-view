@@ -21,7 +21,7 @@
         <mat-card class="product-item mat-elevation-z0"
                   *ngFor="let product of products"
                   cdkDrag [cdkDragDisabled]=pinned
-                  [ngClass]="{'product-selected': selectedProduct.id == product.id}"
+                  [ngClass]="{'product-selected': selectedProduct.id == product.id, 'mat-elevation-z1': !pinned}"
                   (click)="select_product(product)">
           {{product.name}}
         </mat-card>
