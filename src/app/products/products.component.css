@@ -17,8 +17,6 @@
   cursor: pointer;
   max-height: 6em;
   overflow: hidden;
-  margin: 0.2em;
-  padding: 0.5em;
 }
 .product-item {
   background-color: transparent;
@@ -26,7 +24,7 @@
 }
 
 .product-selected {
-  background-color: white;
+  color: #38838f;
 }
 
 .product-toolbar {

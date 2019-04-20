@@ -18,11 +18,10 @@
         </mat-toolbar-row>
       </mat-toolbar>
       <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
-        <mat-card class="product-item mat-elevation-z0" align="center" tabindex="0"
+        <mat-card class="product-item mat-elevation-z0"
                   *ngFor="let product of products"
-                  matRipple matRippleCentered=true [matRippleDisabled]="!pinned"
                   cdkDrag [cdkDragDisabled]=pinned
-                  [ngClass]="{'mat-elevation-z8 product-selected': selectedProduct.id == product.id}"
+                  [ngClass]="{'product-selected': selectedProduct.id == product.id}"
                   (click)="select_product(product)">
           {{product.name}}
         </mat-card>
