@@ -13,14 +13,11 @@
   height: 100%;
 }
 
-.product-item, .mat-card  {
-  cursor: pointer;
-  max-height: 6em;
-  overflow: hidden;
-}
 .product-item {
-  background-color: transparent;
-  outline: none;
+  cursor: pointer;
+  margin: 0 0.5em;
+  padding: 0.5em;
+  display: flex;
 }
 
 .product-selected {
@@ -61,7 +58,7 @@
 }
 
 mat-sidenav {
-  width: 500px;
+  width: 350px;
 }
 
 .toolbar {
