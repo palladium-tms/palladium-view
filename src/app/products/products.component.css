@@ -75,3 +75,15 @@ mat-sidenav {
  height: 100%;
  overflow: hidden;
 }
+
+.item-list-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: fit-content;
+}
+
+.product-item-main {
+  padding: 1em;
+  margin: 1em;
+}

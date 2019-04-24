@@ -18,7 +18,7 @@
         </mat-toolbar-row>
       </mat-toolbar>
       <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
-        <a class="product-item mat-elevation-z0"
+        <a class="product-item"
                   *ngFor="let product of products"
                   cdkDrag [cdkDragDisabled]=pinned
                   [ngClass]="{'product-selected': selectedProduct.id == product.id, 'mat-elevation-z1': !pinned}"
@@ -28,7 +28,14 @@
       </div>
     </div>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content class="sidebar-content">
+    <ng-container *ngIf="router.url === '/'">
+      <div  class="item-list item-list-main">
+        <mat-card  class="product-item product-item-main" *ngFor="let product of products" (click)="select_product(product)">
+          {{product.name}}
+        </mat-card>
+      </div>
+    </ng-container>
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

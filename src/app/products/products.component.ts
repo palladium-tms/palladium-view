@@ -77,7 +77,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   select_product(product) {
     this.sidenavService.set_product_name(product.name);
     this.selectedProduct.id = product.id;
-    this.sidenav.toggle();
+    this.sidenav.close();
     this.cd.detectChanges();
     this.router.navigate(['/product', product.id]);
   }
