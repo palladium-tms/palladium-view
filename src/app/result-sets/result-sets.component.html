@@ -22,7 +22,7 @@
           </button>
         </div>
       </div>
-      <div class="item-list" [hidden]="loading" >
+      <div class="item-list" *ngIf="!loading" >
         <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
           <mat-card class="item mat-elevation-z1"
                     *cdkVirtualFor="let object of showAllElements| statisticFilter:filter"
