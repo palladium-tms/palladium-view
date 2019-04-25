@@ -13,20 +13,15 @@
   height: 100%;
 }
 
-.product-item, .mat-card  {
-  cursor: pointer;
-  max-height: 6em;
-  overflow: hidden;
-  margin: 0.2em;
-  padding: 0.5em;
-}
 .product-item {
-  background-color: transparent;
-  outline: none;
+  cursor: pointer;
+  margin: 0 0.5em;
+  padding: 0.5em;
+  display: flex;
 }
 
 .product-selected {
-  background-color: white;
+  color: #38838f;
 }
 
 .product-toolbar {
@@ -63,7 +58,7 @@
 }
 
 mat-sidenav {
-  width: 500px;
+  width: 350px;
 }
 
 .toolbar {
@@ -79,4 +74,16 @@ mat-sidenav {
  display: flex;
  height: 100%;
  overflow: hidden;
+}
+
+.item-list-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: fit-content;
+}
+
+.product-item-main {
+  padding: 1em;
+  margin: 1em;
 }

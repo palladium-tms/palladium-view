@@ -18,7 +18,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav') sidenav: MatSidenav;
   products;
   pinned = true;
-  selectedProduct = {id: 0};
+  selectedProduct = {id: 0, name: ''};
 
   constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
@@ -26,9 +26,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(() => {
-      if(this.router.url.match(/product\/(\d+)/)) {
-        this.selectedProduct.id = +this.router.url.match(/product\/(\d+)/)[1];
-      }
       this.get_products();
       this.cd.detectChanges();
     });
@@ -41,6 +38,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
   async get_products() {
     this.products = [];
     this.products = await this.palladiumApiService.products();
+    const productUrl = this.router.url.match(/product\/(\d+)/);
+    if(productUrl) {
+      const productId = +productUrl[1];
+      this.selectedProduct.name = this.products.find(product => product.id === productId).name;
+      this.sidenavService.set_product_name(this.products.find(product => product.id === productId).name);
+    }
     this.cd.detectChanges();
   }
 
@@ -74,7 +77,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   select_product(product) {
     this.sidenavService.set_product_name(product.name);
     this.selectedProduct.id = product.id;
-    this.sidenav.toggle();
+    this.sidenav.close();
     this.cd.detectChanges();
     this.router.navigate(['/product', product.id]);
   }
