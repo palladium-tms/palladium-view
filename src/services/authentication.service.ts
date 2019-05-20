@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import {environment} from '../environments/environment';
@@ -12,45 +12,29 @@ export class AuthenticationService {
   isAuthorized$ = this.isAuthorized.asObservable();
 
   constructor(private http: HttpClient) {
-    // set token if saved in local storage
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
   }
 
   login(username: string, password: string) {
-    const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
-    const options = { headers: headers };
-    const params = new HttpParams()
-      .set(`user_data[email]`, username)
-      .set(`user_data[password]`, password);
-      return this.http.post(environment.host + '/public/login', params, options).toPromise().then((response: JSON) => {
-      localStorage.setItem('auth_data', JSON.stringify({ username: username, token: response['token'] }));
-        this.isAuthorized.next(true);
-        return Promise.resolve(true);
-    }, response => {
-      console.log(response);
-      return Promise.reject(false);
+    const myHeaders = {headers: new HttpHeaders().set('Content-Type', 'application/json')};
+    const path = environment.host + '/public/login';
+    return this.http.post(path, {'user_data': {'email': username, 'password': password}}, myHeaders).toPromise().then((response: JSON) => {
+      localStorage.setItem('auth_data', JSON.stringify({username, token: response['token']}));
+      this.isAuthorized.next(true);
     });
   }
 
-  registration(username: string, password: string, invite: string): Promise<any>  {
-    const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
-    const params = new HttpParams()
-      .set(`user_data[email]`, username)
-      .set(`user_data[password]`, password)
-      .set(`user_data[invite]`, invite);
-    const options = { headers: headers };
-    return this.http.post(environment.host + '/public/registration', params, options).toPromise()
-      .then(result => {
-        return Promise.resolve(result);
-      }, (error: any) => {
-        return Promise.reject({status: false, message: error._body});
-      });
+  registration(username: string, password: string, invite: string) {
+    const headers = {'Content-Type': 'application/json'};
+    const params = JSON.stringify({'user_data': {'email': username, 'password': password, 'invite': invite}});
+    const options = {headers};
+    return this.http.post(environment.host + '/public/registration', params, options).toPromise();
   }
 
   get_no_user_status() {
-    const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'};
-    const options = { headers: headers };
+    const headers = {'Content-Type': 'application/json'};
+    const options = {headers};
     return this.http.post(environment.host + '/public/no_users', {}, options).toPromise().then((response: JSON) => {
       return Promise.resolve(response);
     }, response => {
@@ -67,6 +51,6 @@ export class AuthenticationService {
   }
 
   saved_token() {
-    return(localStorage.getItem('auth_data'));
+    return (localStorage.getItem('auth_data'));
   }
 }

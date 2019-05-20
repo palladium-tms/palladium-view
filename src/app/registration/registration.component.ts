@@ -31,7 +31,7 @@ export class RegistrationComponent implements OnInit {
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private authenticationService: AuthenticationService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.invite = this.activatedRoute.snapshot.queryParams['invite'];
     if (this.invite === undefined) {
       this.invite = null;
