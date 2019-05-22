@@ -34,6 +34,7 @@ export class PlansComponent implements OnInit {
   }
 
   async get_plans(id) {
+    this.cd.detectChanges();
     return this.palladiumApiService.get_plans(id);
   }
 
