@@ -50,7 +50,7 @@ export class RegistrationComponent implements OnInit {
           this.error = result['errors'];
         }
         this.loading = false;
-      }, errors => {
+      }, () => {
         this.loading = false;
       });
   }
