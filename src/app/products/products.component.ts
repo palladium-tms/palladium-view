@@ -82,6 +82,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/product', product.id]);
   }
 
+  only_products() {
+    return this.router.url === '/';
+  }
+
   ngOnDestroy() {
     this.cd.detach();
   }
