@@ -23,6 +23,9 @@ export class TopToolbarComponent {
     });
     authenticationService.isAuthorized$.subscribe(status => {
       this.authorize = status;
+      if (status) {
+        this.username = JSON.parse(localStorage.getItem('auth_data'))['username'];
+      }
       this.cd.detectChanges();
     });
     const authData = localStorage.getItem('auth_data');
