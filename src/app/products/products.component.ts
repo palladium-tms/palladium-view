@@ -21,7 +21,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   selectedProduct = {id: 0, name: ''};
 
   constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private dialog: MatDialog,
+              public router: Router, private dialog: MatDialog,
               public sidenavService: SidenavService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
@@ -80,10 +80,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.sidenav.close();
     this.cd.detectChanges();
     this.router.navigate(['/product', product.id]);
-  }
-
-  only_products() {
-    return this.router.url === '/';
   }
 
   ngOnDestroy() {
