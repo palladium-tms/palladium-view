@@ -83,6 +83,8 @@ import {ClickOutsideDirective} from './directives/click-outside.directive';
 import {TopToolbarComponent} from './top-toolbar/top-toolbar.component';
 import {StatusFilterComponent} from './page-component/status-filter/status-filter.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
+import { SettingsComponent } from './settings/settings.component';
+import { ProfileSettingsComponent } from './settings/profile-settings/profile-settings.component';
 
 const appRoutes: Routes = [
   {path: 'singin', component: LoginComponent},
@@ -104,7 +106,7 @@ const appRoutes: Routes = [
             ]
           }
         ]
-      }
+      }, {path: 'settings', component: SettingsComponent, canActivate: [AuthGuard]},
     ]
   },
   {path: 'result/:id', component: DetailResultComponent, canActivate: [AuthGuard]},
@@ -187,7 +189,9 @@ const appRoutes: Routes = [
     VirtualscrollPipe,
     DropdownMenuComponent,
     ClickOutsideDirective,
-    StatusFilterComponent
+    StatusFilterComponent,
+    SettingsComponent,
+    ProfileSettingsComponent
   ],
   imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes), FormsModule,
     Angular2FontawesomeModule, BrowserAnimationsModule, ReactiveFormsModule,

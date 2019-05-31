@@ -1,0 +1,42 @@
+:host{
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  z-index: 3;
+  height: inherit;
+  margin: auto;
+}
+
+.settings-space {
+  margin: 1em;
+}
+
+.settings-navigation-element {
+  cursor: pointer;
+  margin: 0 .5em;
+  padding: .5em;
+  display: flex;
+}
+
+.settings-space {
+  display: flex;
+  overflow: hidden;
+}
+
+.settings-navigation{
+  display: flex;
+  width: 15em;
+  flex-direction: column;
+}
+.settings-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 4;
+  background-color: #246E6E;
+}
+.settings-title {
+  text-align: center;
+}
+.settings-content{
+  width: 40em;
+}

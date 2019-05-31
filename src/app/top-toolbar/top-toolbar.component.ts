@@ -40,6 +40,11 @@ export class TopToolbarComponent {
     this.router.navigate(['/singin']);
   }
 
+
+  settings_open() {
+    this.router.navigate(['/settings']);
+  }
+
   product_list_toggle() {
     this.sidenavService.toggle_product_list();
   }
