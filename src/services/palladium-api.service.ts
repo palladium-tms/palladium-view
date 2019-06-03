@@ -374,4 +374,11 @@ export class PalladiumApiService {
   }
 
   //#endregion
+
+  //#region UserSettigns
+  async get_user_setting() {
+    const response = await this.httpService.postData('/user_setting', {});
+    return response;
+  }
+  //#endregion
 }

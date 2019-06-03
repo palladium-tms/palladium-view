@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {startWith, map} from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import {Observable} from 'rxjs';
+import {PalladiumApiService} from '../../../services/palladium-api.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -15,17 +16,18 @@ export class ProfileSettingsComponent implements OnInit {
   timezoneForm: FormGroup = this._formBuilder.group({
     timezoneGroup: '',
   });
-
   timezoneGroupOptions$: Observable<string[]>;
   timezoneNames = [];
 
-  constructor(private _formBuilder: FormBuilder) {
+  constructor(private _formBuilder: FormBuilder, private palladiumApiService: PalladiumApiService) {
     moment.tz.names().forEach(timezone => {
       this.timezoneNames.push(timezone + ': ' + moment.tz(timezone).format('Z'));
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const userSettings = await this.palladiumApiService.get_user_setting();
+    this.timezoneForm.controls['timezoneGroup'].setValue(userSettings['timezone']);
     this.timezoneGroupOptions$ = this.timezoneForm.get('timezoneGroup')!.valueChanges
       .pipe(
         startWith(''),
