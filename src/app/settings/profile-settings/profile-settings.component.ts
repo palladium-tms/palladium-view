@@ -29,7 +29,9 @@ export class ProfileSettingsComponent implements OnInit {
 
   async ngOnInit() {
     const userSettings = await this.palladiumApiService.get_user_setting();
-    this.timezoneForm.controls['timezoneGroup'].setValue(userSettings['timezone']);
+    if (userSettings) {
+      this.timezoneForm.controls['timezoneGroup'].setValue(userSettings['timezone']);
+    }
     this.timezoneGroupOptions$ = this.timezoneForm.get('timezoneGroup')!.valueChanges
       .pipe(
         startWith(''),
@@ -39,8 +41,8 @@ export class ProfileSettingsComponent implements OnInit {
       );
     this.timezoneGroupOptions$.subscribe(() => {
       const value = this.timezoneForm.controls['timezoneGroup'].value;
-      if (value.match(new RegExp('\\+.*'))) {
-        this.timezoneOffset = value.match(new RegExp('\\+.*'))[0];
+      if (value.match(new RegExp('([-+]).*'))) {
+        this.timezoneOffset = value.match(new RegExp('([-+]).*'))[0];
       }
     });
   }
@@ -55,7 +57,6 @@ export class ProfileSettingsComponent implements OnInit {
 
   edit_profile() {
     const timezone = this.timezoneForm.controls['timezoneGroup'].value;
-    console.log(timezone);
     this.palladiumApiService.edit_user_setting(timezone);
   }
 }

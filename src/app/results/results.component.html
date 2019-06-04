@@ -9,7 +9,7 @@
             <b>{{statusesFormated[result.status_id].name}}</b>
           </mat-panel-title>
           <mat-panel-description>
-            {{result.created_at | date:'HH:MM:SS' }} {{result.created_at | date:'MMMM d, y' }}
+            {{result.created_at | date:'mediumTime':timeZone }} {{result.created_at | date:'MMMM d, y' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="result_content">
