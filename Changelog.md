@@ -1,5 +1,9 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * New menu - user settings
+    * Ability to change user timezone
+    * Result date now use user timezone 
 ## [0.6.0] - 03.26.2019
 ## Added
     * Live scrolling to result set and new_result lists
