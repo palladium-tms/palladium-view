@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 import {environment} from '../environments/environment';
 import {Subject} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Injectable()
 export class AuthenticationService {
@@ -11,7 +12,7 @@ export class AuthenticationService {
   isAuthorized = new Subject<boolean>();
   isAuthorized$ = this.isAuthorized.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     this.token = currentUser && currentUser.token;
   }
@@ -47,6 +48,7 @@ export class AuthenticationService {
     // clear token remove user from local storage to log user out
     this.token = null;
     localStorage.removeItem('auth_data');
+    this.router.navigate(['/singin']);
     this.isAuthorized.next(false);
   }
 
