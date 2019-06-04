@@ -11,7 +11,6 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
-  providers: [PalladiumApiService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlansComponent implements OnInit {

@@ -10,7 +10,6 @@ import {SidenavService} from '../../services/sidenav.service';
   selector: 'app-products',
   templateUrl: 'products.component.html',
   styleUrls: ['products.component.css'],
-  providers: [PalladiumApiService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 

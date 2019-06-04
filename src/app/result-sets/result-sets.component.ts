@@ -14,7 +14,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
   styleUrls: ['./result-sets.component.scss'],
-  providers: [PalladiumApiService, StatusFilterPipe, ResultService],
+  providers: [ResultService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -399,7 +399,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-result-sets',
   templateUrl: 'result-sets.settings.component.html',
-  providers: [PalladiumApiService, StatusFilterPipe, ResultService],
+  providers: [ResultService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
