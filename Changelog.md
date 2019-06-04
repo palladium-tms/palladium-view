@@ -4,6 +4,7 @@
     * New menu - user settings
     * Ability to change user timezone
     * Result date now use user timezone 
+    * Logout when token is wrong
 ## [0.6.0] - 03.26.2019
 ## Added
     * Live scrolling to result set and new_result lists
