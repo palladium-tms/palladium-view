@@ -18,6 +18,8 @@ export class ProfileSettingsComponent implements OnInit {
   });
   timezoneGroupOptions$: Observable<string[]>;
   timezoneNames = [];
+  currentTime = new Date();
+  timezoneOffset;
 
   constructor(private _formBuilder: FormBuilder, private palladiumApiService: PalladiumApiService) {
     moment.tz.names().forEach(timezone => {
@@ -35,6 +37,12 @@ export class ProfileSettingsComponent implements OnInit {
           return this._filterGroup(value);
         })
       );
+    this.timezoneGroupOptions$.subscribe(() => {
+      const value = this.timezoneForm.controls['timezoneGroup'].value;
+      if (value.match(new RegExp('\\+.*'))) {
+        this.timezoneOffset = value.match(new RegExp('\\+.*'))[0];
+      }
+    });
   }
 
   private _filterGroup(value: string) {
@@ -43,5 +51,11 @@ export class ProfileSettingsComponent implements OnInit {
       return this.timezoneNames.filter(x => x.toLowerCase().match(new RegExp('^' + value + '|\/' + value)));
     }
     return this.timezoneNames;
+  }
+
+  edit_profile() {
+    const timezone = this.timezoneForm.controls['timezoneGroup'].value;
+    console.log(timezone);
+    this.palladiumApiService.edit_user_setting(timezone);
   }
 }

@@ -7,4 +7,8 @@
         </mat-option>
     </mat-autocomplete>
   </mat-form-field>
+
+
+  <p>Current time: {{currentTime | date:'fullTime':timezoneOffset}}</p>
+  <button mat-raised-button color="accent" (click)="edit_profile()" [disabled]="!timezoneForm.valid">Save</button>
 </form>

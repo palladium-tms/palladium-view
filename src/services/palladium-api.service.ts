@@ -380,5 +380,9 @@ export class PalladiumApiService {
     const response = await this.httpService.postData('/user_setting', {});
     return response;
   }
+
+  async edit_user_setting(timezone) {
+    await this.httpService.postData('/user_setting_edit', {'user_settings':{'timezone': timezone}});
+  }
   //#endregion
 }
