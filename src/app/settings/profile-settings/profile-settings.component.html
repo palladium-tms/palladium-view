@@ -1,0 +1,14 @@
+<form [formGroup]="timezoneForm">
+  <mat-form-field color="accent" class="timezone-selector">
+    <input type="text" matInput placeholder="Timezone" formControlName="timezoneGroup" required [matAutocomplete]="autoGroup">
+    <mat-autocomplete #autoGroup="matAutocomplete">
+        <mat-option *ngFor="let name of timezoneGroupOptions$ | async" [value]="name">
+          {{name}}
+        </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+
+  <p>Current time: {{currentTime | date:'fullTime':timezoneOffset}}</p>
+  <button mat-raised-button color="accent" (click)="edit_profile()" [disabled]="!timezoneForm.valid">Save</button>
+</form>

@@ -24,6 +24,7 @@ export class PalladiumApiService {
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
   histories: ResultSet[] = [];
+  _timeZone: string;
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService) {
@@ -373,5 +374,29 @@ export class PalladiumApiService {
     return response;
   }
 
+  //#endregion
+
+  //#region UserSettigns
+  async get_user_setting() {
+    const response = await this.httpService.postData('/user_setting', {});
+    this._timeZone = response['timezone'];
+    return response;
+  }
+
+  async timezoneOffset():Promise<string>{
+    if (!this._timeZone) {
+      await this.get_user_setting();
+    }
+    const offset = this._timeZone.match(new RegExp('([-+]).*'));
+    if (offset) {
+      return offset[0];
+    } else {
+      return '+00:00';
+    }
+  }
+
+  async edit_user_setting(timezone) {
+    await this.httpService.postData('/user_setting_edit', {'user_settings':{'timezone': timezone}});
+  }
   //#endregion
 }

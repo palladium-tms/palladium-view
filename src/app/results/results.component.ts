@@ -19,10 +19,11 @@ export class ResultsComponent implements OnInit, OnDestroy {
   news;
   params;
   resultSetId;
+  timeZone;
   constructor(private palladiumApiService: PalladiumApiService, private resultservice: ResultService,
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.params = this.activatedRoute.url.subscribe((params: Params) => {
       this.resultSetId = params[1].path;
       this.init_results();
@@ -30,6 +31,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
     this.news = this.resultservice.news().subscribe(data => {
       this.add_result(data['result']);
     });
+    this.timeZone = await this.palladiumApiService.timezoneOffset();
   }
 
   add_result(data) {
