@@ -48,7 +48,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   params;
   searchToggle: SearchToggle;
   searchValue = '';
-  value;
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private palladiumApiService: PalladiumApiService, private router: Router,
@@ -56,7 +55,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
               private searchPipe: SearchPipe) {
     this.searchToggle = { 'toggle': false, 'color': 'none'};
   }
-
 
   ngOnInit() {
     this.params = this.activatedRoute.url.subscribe((params: Params) => {
