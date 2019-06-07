@@ -3,18 +3,23 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Statistic} from '../models/statistic';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {StatisticService} from '../../services/statistic.service';
 import {ResultService} from '../../services/result.service';
 import {ResultSet} from '../models/result_set';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {SearchPipe} from '../pipes/search/search.pipe';
+
+export interface SearchToggle {
+  toggle: boolean;
+  color: 'none' | 'accent';
+}
 
 @Component({
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
   styleUrls: ['./result-sets.component.scss'],
-  providers: [ResultService],
+  providers: [ResultService, SearchPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -41,10 +46,14 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   dropdownMenuItemSelect;
   runId;
   params;
+  searchToggle: SearchToggle;
+  searchValue = '';
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private palladiumApiService: PalladiumApiService, private router: Router,
-              private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef) {
+              private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef,
+              private searchPipe: SearchPipe) {
+    this.searchToggle = { 'toggle': false, 'color': 'none'};
   }
 
   ngOnInit() {
@@ -192,6 +201,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   select() {
+    this.showAllElements = this.searchPipe.transform(this.showAllElements, this.searchValue);
     this.showAllElements.forEach(obj => {
       obj.selected = this.selectAllFlag;
     });
@@ -387,6 +397,14 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.newResultForm.patchValue({status: this.get_status_by_id(selected[0].status)});
     } else {
       this.newResultForm.reset('status');
+    }
+  }
+
+  toggle_search() {
+    this.searchToggle.toggle = !this.searchToggle.toggle;
+    this.searchToggle.color = this.searchToggle.toggle ? 'accent' : 'none';
+    if (!this.searchToggle.toggle) {
+      this.searchValue = '';
     }
   }
 
