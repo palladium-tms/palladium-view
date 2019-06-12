@@ -35,7 +35,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   statistic: Statistic = new Statistic(null);
   cases;
   object;
-  ResultComponent;
+  resultComponent;
   statuses = [];
   notBlockedStatus = [];
   statusesFormated = {};
@@ -277,13 +277,13 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   update_click() {
     this.get_result_sets_and_cases();
     this.selectAllFlag = false;
-    if (this.ResultComponent && this.router.url.match(/result_set\/(\d+)/i) !== null) {
-      this.ResultComponent.init_results();
+    if (this.resultComponent && this.router.url.match(/result_set\/(\d+)/i) !== null) {
+      this.resultComponent.init_results();
     }
   }
 
   onActivate(componentRef) {
-    this.ResultComponent = componentRef;
+    this.resultComponent = componentRef;
   }
 
   clicked(event, object) {
