@@ -47,7 +47,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   runId;
   params;
   searchToggle: SearchToggle;
-  searchValue = '';
+  searchValue;
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService,
               private palladiumApiService: PalladiumApiService, private router: Router,
@@ -60,6 +60,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.params = this.activatedRoute.url.subscribe((params: Params) => {
       this.runId = params[1].path;
       this.object = null;
+      this.searchValue = '';
       this.get_result_sets_and_cases();
     });
   }

@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+
+## Fixed
+    * Clear search after run change
 ## [0.6.1]
 ## Added
     * New menu - user settings
