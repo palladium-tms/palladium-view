@@ -14,7 +14,7 @@ import {SidenavService} from '../../services/sidenav.service';
 })
 
 export class ProductsComponent implements OnInit, OnDestroy {
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
   products;
   pinned = true;
   selectedProduct = {id: 0, name: ''};
