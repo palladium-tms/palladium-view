@@ -257,16 +257,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (/result_set\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/result_set\/(\d+)/.exec(this.router.url)[1];
       this.object = this.resultSetsAndCases.filter(obj => obj.id === id && obj.path === 'result_set')[0];
-      this.object.active = true;
     } else if (/case\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/case\/(\d+)/.exec(this.router.url)[1];
       this.object = this.resultSetsAndCases.filter(obj => obj.id === id && obj.path === 'case')[0];
-      this.object.active = true;
     } else if (/case_history\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/case_history\/(\d+)/.exec(this.router.url)[1];
       const thisCase = this.cases.filter(object => object.id === id)[0];
       this.object = this.resultSetsAndCases.filter(obj => obj.name === thisCase.name)[0];
+    }
+    if (this.object) {
       this.object.active = true;
+    } else {
+      this.navigate_to_run_show();
     }
   }
 
