@@ -3,6 +3,7 @@
 
 ## Fixed
     * Clear search after run change
+    * Fix: error after update result_set list with selected deleteb result_set
 ## [0.6.1]
 ## Added
     * New menu - user settings
