@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import { Subject } from 'rxjs/Subject';
 import {Statistic} from '../app/models/statistic';
 
@@ -13,7 +10,7 @@ export class StatisticService {
     this.subject.next(Object);
   }
 
-  statistic_has_changed(): Observable<any> {
+  statistic_has_changed() {
     return this.subject.asObservable();
   }
   // calculate statistic

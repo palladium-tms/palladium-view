@@ -1,7 +1,4 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
 import { Subject } from 'rxjs/Subject';
 
 @Injectable()
@@ -11,7 +8,7 @@ export class ResultService {
   update_results(res) {
     this.subject.next(res);
   }
-  news(): Observable<any> {
+  news() {
     return this.subject.asObservable();
   }
 }
