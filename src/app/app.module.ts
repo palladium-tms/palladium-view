@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
-import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './_guards/auth.guard';
 import {AuthenticationService} from '../services/authentication.service';
 import {LocalSettingsService} from '../services/local-settings.service';
@@ -39,42 +38,8 @@ import {SortByNamePipe} from './pipes/sort-by-name/sort-by-name.pipe';
 import {ResultValueComponent} from './page-component/result-value/result-value.component';
 import {CdkTableModule} from '@angular/cdk/table';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import {
-  ErrorStateMatcher,
-  MatAutocompleteModule,
-  MatBadgeModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatChipsModule,
-  MatDatepickerModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatExpansionModule,
-  MatGridListModule,
-  MatIconModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatRadioModule,
-  MatRippleModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSliderModule,
-  MatSlideToggleModule,
-  MatSnackBarModule,
-  MatSortModule,
-  MatTableModule,
-  MatTabsModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  ShowOnDirtyErrorStateMatcher,
-} from '@angular/material';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material';
+import {AppMaterialModule} from './app-material/app-material.module';
 import {SearchPipe} from './pipes/search/search.pipe';
 import {SearchBarComponent} from './page-component/search-bar/search-bar.component';
 import {VirtualscrollPipe} from './pipes/virtual-scroll/virtualscroll.pipe';
@@ -87,7 +52,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { ProfileSettingsComponent } from './settings/profile-settings/profile-settings.component';
 
 const appRoutes: Routes = [
-  {path: 'singin', component: LoginComponent},
+  {path: 'singin', loadChildren: './login/login.module#LoginModule'},
   {path: 'registration', component: RegistrationComponent},
   {
     path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
@@ -118,37 +83,6 @@ const appRoutes: Routes = [
     ScrollingModule,
     DragDropModule,
     CdkTableModule,
-    MatAutocompleteModule, MatBadgeModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatRadioModule,
-    MatRippleModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatSnackBarModule,
-    MatSortModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule,
   ],
   declarations: [
     MainComponent,
@@ -158,7 +92,6 @@ const appRoutes: Routes = [
     PlansSettingsComponent,
     RunsComponent,
     RunsSettingsComponent,
-    LoginComponent,
     ResultSetsComponent,
     ResultSetsSettingsComponent,
     ResultsComponent,
@@ -197,38 +130,7 @@ const appRoutes: Routes = [
     Angular2FontawesomeModule, BrowserAnimationsModule, ReactiveFormsModule,
     CdkTableModule,
     DragDropModule,
-    MatAutocompleteModule, MatBadgeModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatDatepickerModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatExpansionModule,
-    MatGridListModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatNativeDateModule,
-    MatPaginatorModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatRadioModule,
-    MatRippleModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSliderModule,
-    MatSlideToggleModule,
-    MatSnackBarModule,
-    MatSortModule,
-    MatTableModule,
-    MatTabsModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    ScrollingModule],
+    ScrollingModule, AppMaterialModule],
   providers: [AuthGuard, AuthenticationService, StatisticService, PalladiumApiService, HttpService, SidenavService,
     LocalSettingsService, {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],
