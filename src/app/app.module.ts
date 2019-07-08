@@ -17,7 +17,6 @@ import {RunsComponent, RunsSettingsComponent} from './runs/runs.component';
 import {ResultSetsComponent, ResultSetsSettingsComponent} from './result-sets/result-sets.component';
 import {ResultsComponent} from './results/results.component';
 import {Angular2FontawesomeModule} from 'angular2-fontawesome/angular2-fontawesome';
-import {RegistrationComponent} from './registration/registration.component';
 import {EqualValidator} from './directives/equal-validator.directive'; // import validator
 import {StatusFilterPipe} from './pipes/status_filter_pipe/status-filter.pipe';
 import {SortByCreatedAtPipe} from './pipes/sort-by-created-at/sort-by-created-at.pipe';
@@ -53,7 +52,7 @@ import { ProfileSettingsComponent } from './settings/profile-settings/profile-se
 
 const appRoutes: Routes = [
   {path: 'singin', loadChildren: './login/login.module#LoginModule'},
-  {path: 'registration', component: RegistrationComponent},
+  {path: 'registration', loadChildren: './registration/registration.module#RegistrationModule'},
   {
     path: '', component: ProductsComponent, canActivate: [AuthGuard], children: [
       {
@@ -95,7 +94,6 @@ const appRoutes: Routes = [
     ResultSetsComponent,
     ResultSetsSettingsComponent,
     ResultsComponent,
-    RegistrationComponent,
     EqualValidator,
     StatusFilterPipe,
     SortByCreatedAtPipe,
