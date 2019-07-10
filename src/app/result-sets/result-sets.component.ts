@@ -57,8 +57,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.params = this.activatedRoute.url.subscribe((params: Params) => {
-      this.runId = params[1].path;
+    this.params = this.activatedRoute.params.subscribe((params: Params) => {
+      this.runId = params.id;
       this.object = null;
       this.searchValue = '';
       this.get_result_sets_and_cases();
