@@ -30,3 +30,9 @@
   margin-bottom: 0.7em;
   padding-left: 1px;
 }
+
+.settings-menu {
+  line-height: 1em;
+  height: 1em;
+  width: 1em;
+}

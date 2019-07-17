@@ -33,6 +33,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   existed_statuses = {};
   all_statistic = {};
   selected_object: Run;
+  object_for_settings;
   public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
@@ -154,10 +155,10 @@ export class RunsComponent implements OnInit, OnDestroy {
     }
   }
 
-  open_settings(object) {
+  open_settings() {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
       data: {
-        object: object,
+        object: this.object_for_settings,
         suites: this.suites,
       }
     });
