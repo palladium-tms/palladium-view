@@ -8,7 +8,6 @@ import {
   MatCardModule,
   MatCheckboxModule,
   MatChipsModule,
-  MatDatepickerModule,
   MatDialogModule,
   MatDividerModule,
   MatExpansionModule,
@@ -34,9 +33,18 @@ import {
   MatToolbarModule,
   MatTooltipModule,
 } from '@angular/material';
+import {SortByCreatedAtPipe} from '../pipes/sort-by-created-at/sort-by-created-at.pipe';
+import {StatusFilterPipe} from 'app/pipes/status_filter_pipe/status-filter.pipe';
+import {StatusFilterComponent} from '../page-component/status-filter/status-filter.component';
+import {StatisticFilterPipe} from '../pipes/statistic-filter/statistic-filter.pipe';
+import {VirtualscrollPipe} from '../pipes/virtual-scroll/virtualscroll.pipe';
+import {SearchPipe} from '../pipes/search/search.pipe';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ResultValueComponent} from 'app/page-component/result-value/result-value.component';
+import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
 
 @NgModule({
-  declarations: [],
+  declarations: [SortByUpdatedAtPipe, SortByCreatedAtPipe, StatusFilterPipe, StatusFilterComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -46,7 +54,6 @@ import {
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
-    MatDatepickerModule,
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
@@ -71,8 +78,18 @@ import {
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
+    StatusFilterComponent,
+    ResultValueComponent,
+    SortByCreatedAtPipe,
+    StatusFilterPipe,
+    StatisticFilterPipe,
+    VirtualscrollPipe,
+    SortByUpdatedAtPipe,
+    SearchPipe,
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
@@ -80,7 +97,6 @@ import {
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
-    MatDatepickerModule,
     MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
@@ -105,6 +121,9 @@ import {
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule
   ]
 })
 export class AppMaterialModule { }
