@@ -1,26 +1,33 @@
-  <div class="plan-space">
-    <div class="item-list" [hidden] = "loading">
-      <mat-card class="plan-item mat-elevation-z1"
-                *ngFor="let plan of plans | sortByCreatedAt:'desc'"
-                [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
-                (click)="clicked($event, plan)">
-        <span>{{plan.name}}</span>
-        <div class="item-statistic">
-          <ng-container *ngIf="plan.statistic && this.statuses">
-            <div class="statistic-bar">
-              <div *ngFor="let status of plan.statistic" class="status-element"
-                   [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}">
-              </div>
+<div class="plan-space">
+  <div class="item-list" [hidden]="loading">
+    <mat-card class="plan-item mat-elevation-z1"
+              *ngFor="let plan of plans | sortByCreatedAt:'desc'"
+              [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
+              (click)="clicked($event, plan)">
+      <span>{{plan.name}}</span>
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="settings-menu" (click)="plan_for_settings = plan">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <div class="item-statistic">
+        <ng-container *ngIf="plan.statistic && this.statuses">
+          <div class="statistic-bar">
+            <div *ngFor="let status of plan.statistic" class="status-element"
+                 [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}">
             </div>
-            <div>{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</div>
-          </ng-container>
-        </div>
-        <i class="fa fa-cogs settings" aria-hidden="true"></i>
-      </mat-card>
-    </div>
-    <div [hidden]="!loading" class="loader">
-      <mat-spinner color="accent" ></mat-spinner>
-    </div>
+          </div>
+          <div>{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</div>
+        </ng-container>
+      </div>
+    </mat-card>
   </div>
-
-  <router-outlet (activate)="onActivate($event)"></router-outlet>
+  <div [hidden]="!loading" class="loader">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="open_settings()">
+    <mat-icon>settings</mat-icon>
+    <span>Settings</span>
+  </button>
+</mat-menu>
+<router-outlet (activate)="onActivate($event)"></router-outlet>

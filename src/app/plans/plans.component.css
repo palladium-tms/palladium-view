@@ -29,3 +29,9 @@
 .plan-item:hover .settings {
   display: block;
 }
+
+.settings-menu {
+  line-height: 1em;
+  height: 24px;
+  width: 24px
+}

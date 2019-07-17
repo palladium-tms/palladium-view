@@ -16,6 +16,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
+  plan_for_settings;
   plans = [];
   RUN_COMPONENT;
   statuses;
@@ -51,7 +52,7 @@ export class PlansComponent implements OnInit {
 
   clicked(event, plan) {
     if (event.target.classList.contains('settings')) {
-      this.open_settings(plan);
+      // this.open_settings(plan);
     } else {
       this.selectedPlan = plan;
       this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
@@ -83,14 +84,6 @@ export class PlansComponent implements OnInit {
     });
   }
 
-  update_click() {
-    if (this.loading) {return;}
-    this.init_data();
-    if (this.RUN_COMPONENT) {
-      this.RUN_COMPONENT.update_click();
-    }
-  }
-
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
   }
@@ -108,11 +101,11 @@ export class PlansComponent implements OnInit {
     return (Math.floor(data * 100) / 100);
   }
 
-  open_settings(plan) {
+  open_settings() {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
         plans: this.plans,
-        plan
+        plan: this.plan_for_settings
       }
     });
 
