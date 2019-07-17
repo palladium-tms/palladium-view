@@ -9,6 +9,9 @@ import {StatisticService} from '../../services/statistic.service';
 const runRoutes: Routes = [{ path:  '', component: RunsComponent, children: [
     {
       path: 'run/:id', loadChildren: '../result-sets/result-sets.module#ResultSetsModule'
+    },
+    {
+      path: 'suite/:id', loadChildren: '../cases/cases.module#CasesModule'
     }
   ]}];
 

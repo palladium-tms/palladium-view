@@ -1,0 +1,46 @@
+<ng-container *ngIf="!loading">
+  <div class="case_space">
+    <div class="toolbar">
+      <div class="filters">
+      <div class="buttons">
+        <div class="divider"></div>
+        <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+    </div>
+
+    <div class="item-list">
+      <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
+        <mat-card class="item mat-elevation-z1"
+                  *cdkVirtualFor="let object of cases" style="height: 53px">
+          <div class="case">
+            <div class="item-name">{{object.name}}</div>
+            <div class="menu-button menu">
+              <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
+                      (click)="dropdownMenuItemSelect = object">
+                <mat-icon class="menu">more_vert</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="copy_name()">
+          <mat-icon>content_copy</mat-icon>
+          <span>Copy</span>
+        </button>
+        <button mat-menu-item (click)="open_settings()">
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+</ng-container>
+
+<div [hidden]="!loading" class="loader">
+  <mat-spinner color="accent"></mat-spinner>
+</div>
