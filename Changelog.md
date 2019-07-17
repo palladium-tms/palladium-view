@@ -1,6 +1,7 @@
 # Changelog
 ## master (unreleased)
-
+## Added
+    * Lazy loading for all routes
 ## Fixed
     * Clear search after run change
     * Fix: error after update result_set list with selected deleteb result_set
