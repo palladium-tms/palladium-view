@@ -4,10 +4,14 @@
               *ngFor="let plan of plans | sortByCreatedAt:'desc'"
               [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
               (click)="clicked($event, plan)">
-      <span>{{plan.name}}</span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" class="settings-menu" (click)="plan_for_settings = plan">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+      <div class="plan-name">
+        <div class="name">{{plan.name}}</div>
+        <div class="settings-menu">
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="plan_for_settings = plan">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </div>
       <div class="item-statistic">
         <ng-container *ngIf="plan.statistic && this.statuses">
           <div class="statistic-bar">

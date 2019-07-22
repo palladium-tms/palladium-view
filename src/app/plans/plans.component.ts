@@ -51,9 +51,7 @@ export class PlansComponent implements OnInit {
   }
 
   clicked(event, plan) {
-    if (event.target.classList.contains('settings')) {
-      // this.open_settings(plan);
-    } else {
+    if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
       this.selectedPlan = plan;
       this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
     }

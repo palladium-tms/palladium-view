@@ -28,10 +28,23 @@
 
 .plan-item:hover .settings {
   display: block;
+  padding: 0;
 }
 
 .settings-menu {
-  line-height: 1em;
-  height: 1em;
-  width: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.plan-name {
+  display: flex;
+}
+.name {
+  flex: 1;
+  overflow: hidden;
+  margin: auto;
+}
+.mat-card {
+  padding: 0 0.7em 0.2em;
 }
