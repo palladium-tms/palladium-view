@@ -1,3 +1,6 @@
 :host{
   height: inherit;
 }
+.background {
+  background-color: #ffffff;
+}
