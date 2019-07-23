@@ -27,8 +27,6 @@
   flex: 3
 }
 .result-list {
-  overflow: auto;
-  flex: 1;
   padding: 0.5em;
 }
 .hidden {
