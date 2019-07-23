@@ -202,9 +202,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   clicked(event, object) {
-    if (event.target.classList.contains('settings')) {
-      this.open_settings();
-    } else {
+    if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
       this.select_object(object);
     }
   }

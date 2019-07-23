@@ -32,7 +32,11 @@
 }
 
 .settings-menu {
-  line-height: 1em;
-  height: 1em;
-  width: 1em;
+  display: flex;
+}
+.run-name {
+  display: flex;
+}
+.mat-card {
+  padding: 0 0.7em 0.2em;
 }

@@ -15,10 +15,14 @@
               *ngFor="let object of runs_and_suites| statisticFilter:filter"
               (click)="clicked($event, object)"
               [ngClass]="{'mat-elevation-z5 selected': selected_object == object}">
-      <span class="item-name">{{object.name}}</span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" class="settings-menu" (click)="object_for_settings = object">
-        <mat-icon>more_vert</mat-icon>
-      </button>
+      <div class="run-name">
+        <div class="item-name">{{object.name}}</div>
+        <div class="settings-menu" >
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </div>
       <div class="item-statistic" *ngIf="object.statistic.existed_statuses">
         <div *ngFor="let status of object.statistic.existed_statuses"
              [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': get_status_by_id(status).color}">
