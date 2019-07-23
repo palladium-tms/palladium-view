@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {NgModule} from '@angular/core';
 import {ProductsComponent, ProductSettingsComponent} from './products.component';
 import {RouterModule, Routes} from '@angular/router';
 import {AppMaterialModule} from '../app-material/app-material.module';
@@ -15,21 +15,30 @@ import {ResultsComponent} from 'app/results/results.component';
 import {CaseHistoryComponent} from '../case-history/case-history.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {StatisticService} from '../../services/statistic.service';
+import {CasesComponent} from '../cases/cases.component';
 
-const productRoutes: Routes = [{ path: '', component: ProductsComponent, children: [
-    {path: 'product/:id', component: PlansComponent, children: [
-        {path: 'plan/:id', component: RunsComponent, children: [
-            {path: 'run/:id', component: ResultSetsComponent, children: [
-              {path: 'result_set/:id', component: ResultsComponent},
-              {path: 'case_history/:id', component: CaseHistoryComponent},
-            ]}
-          ]}
-      ]},
+const productRoutes: Routes = [{
+  path: '', component: ProductsComponent, children: [
+    {
+      path: 'product/:id', component: PlansComponent, children: [
+        {
+          path: 'plan/:id', component: RunsComponent, children: [
+            {
+              path: 'run/:id', component: ResultSetsComponent, children: [
+                {path: 'result_set/:id', component: ResultsComponent},
+                {path: 'case_history/:id', component: CaseHistoryComponent},
+              ]
+            }, {path: 'suite/:id', component: CasesComponent}
+          ]
+        }
+      ]
+    },
     {path: 'settings', loadChildren: '../settings/settings.module#SettingsModule'}
-  ]}];
+  ]
+}];
 
 @NgModule({
-  declarations: [ProductsComponent, ProductSettingsComponent,
+  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent,
     TopToolbarComponent,
     TokenComponent, TokenDialogComponent,
     InviteComponent, InviteDialogComponent,
@@ -39,10 +48,13 @@ const productRoutes: Routes = [{ path: '', component: ProductsComponent, childre
   imports: [
     RouterModule.forChild(productRoutes),
     AppMaterialModule, DragDropModule, ScrollingModule
-  ], entryComponents: [ProductSettingsComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
+  ],
+  entryComponents: [ProductSettingsComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
     AboutComponent,
     AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent, ResultSetsSettingsComponent, PlansSettingsComponent, RunsSettingsComponent], providers: [StatisticService]
+    StatusSettingsDialogComponent, ResultSetsSettingsComponent, PlansSettingsComponent, RunsSettingsComponent],
+  providers: [StatisticService]
 })
-export class ProductsModule {}
+export class ProductsModule {
+}
