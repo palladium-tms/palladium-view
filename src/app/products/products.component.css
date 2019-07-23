@@ -1,8 +1,11 @@
 :host{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   overflow: hidden;
   z-index: 3;
+  height: inherit;
+}
+.sidebar-container {
   height: inherit;
 }
 .dndPlaceholder{

@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav} from '@angular/mat
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SidenavService} from '../../services/sidenav.service';
+import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
   selector: 'app-products',
@@ -16,14 +17,21 @@ import {SidenavService} from '../../services/sidenav.service';
 export class ProductsComponent implements OnInit, OnDestroy {
   @ViewChild('sidenav', { static: true }) sidenav: MatSidenav;
   products;
+  authorize;
   pinned = true;
   selectedProduct = {id: 0, name: ''};
 
   constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               public router: Router, private dialog: MatDialog,
-              public sidenavService: SidenavService, private cd: ChangeDetectorRef) {}
+              public sidenavService: SidenavService, private cd: ChangeDetectorRef, private authenticationService: AuthenticationService) {
+    authenticationService.isAuthorized$.subscribe( status => {
+      this.authorize = status;
+    });
+  }
 
   ngOnInit() {
+    this.authorize = (localStorage.getItem('auth_data') !== null);
+    this.authenticationService.isAuthorized.next(this.authorize);
     this.activatedRoute.params.subscribe(() => {
       this.get_products();
       this.cd.detectChanges();

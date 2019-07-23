@@ -30,3 +30,13 @@
   margin-bottom: 0.7em;
   padding-left: 1px;
 }
+
+.settings-menu {
+  display: flex;
+}
+.run-name {
+  display: flex;
+}
+.mat-card {
+  padding: 0 0.7em 0.2em;
+}

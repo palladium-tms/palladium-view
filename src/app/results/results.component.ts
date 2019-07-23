@@ -24,8 +24,8 @@ export class ResultsComponent implements OnInit, OnDestroy {
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
-    this.params = this.activatedRoute.url.subscribe((params: Params) => {
-      this.resultSetId = params[1].path;
+    this.params = this.activatedRoute.params.subscribe((params: Params) => {
+      this.resultSetId = params.id;
       this.init_results();
     });
     this.news = this.resultservice.news().subscribe(data => {
