@@ -23,6 +23,9 @@
         </ng-container>
       </div>
     </mat-card>
+    <div class="show-more">
+      <button mat-button class="show-more-button" (click)="load_more_plans()">Show more</button>
+    </div>
   </div>
   <div [hidden]="!loading" class="loader">
     <mat-spinner color="accent"></mat-spinner>

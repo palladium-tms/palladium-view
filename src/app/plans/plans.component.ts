@@ -117,6 +117,11 @@ export class PlansComponent implements OnInit {
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
   }
+
+  async load_more_plans() {
+    console.log('load_more_plans')
+    // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
+  }
 }
 
 

@@ -48,3 +48,9 @@
 .mat-card {
   padding: 0 0.7em 0.2em;
 }
+.show-more {
+  display: flex;
+}
+.show-more-button {
+  flex: 1;
+}
