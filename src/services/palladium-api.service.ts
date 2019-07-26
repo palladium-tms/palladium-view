@@ -255,12 +255,12 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  async get_plans(product_id) {
+  async get_plans(productId) {
     try {
-      const response = await this.httpService.postData('/plans', {plan_data: {product_id: product_id}});
-      this.response_plan_data[product_id] = [];
+      const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId}});
+      this.response_plan_data[productId] = [];
       Object(response['plans']).forEach(plan => {
-        this.response_plan_data[product_id].push(new Plan(plan));
+        this.response_plan_data[productId].push(new Plan(plan));
       });
       return this.response_plan_data;
     } catch (errors) {
