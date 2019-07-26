@@ -1,5 +1,6 @@
 # Changelog
 ## master (unreleased)
+## [0.6.2]
 ## Added
     * Lazy loading for all routes
 ## Fixed
