@@ -31,8 +31,6 @@ export class Plan {
     }
   }
   sort_statistic() {
-    this.statistic.sort(function (s1, s2) {
-      return(s1['status'] < s2['status']);
-    });
+    this.statistic.sort((s1, s2) => (s1['status'] < s2['status']));
   }
 }
