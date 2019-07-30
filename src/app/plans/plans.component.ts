@@ -18,7 +18,7 @@ export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
   plan_for_settings;
-  _plans;
+  _plans = [];
   RUN_COMPONENT;
   statuses;
   loading = false;
@@ -34,26 +34,6 @@ export class PlansComponent implements OnInit {
     });
   }
 
-  plans = ():Plan[] => this.palladiumApiService.plans[this.productId];
-
-  async get_plans(id) {
-    this.palladiumApiService.get_plans(id).then(() => {
-      this._plans = this.palladiumApiService.plans[this.productId] || [];
-    });
-  }
-
-  get_suites(id) {
-    return this.palladiumApiService.get_suites(id).then(suites => {
-      return suites;
-    });
-  }
-
-  get_statuses() {
-    this.palladiumApiService.get_statuses().then(res => {
-      this.statuses = res;
-    });
-  }
-
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
       this.selectedPlan = plan;
@@ -61,40 +41,23 @@ export class PlansComponent implements OnInit {
     }
   }
 
-  count_of_cases(suites) {
-    let casesCount = 0;
-    suites.forEach(suite => {
-      casesCount += suite.statistic.all;
-    });
-    return casesCount;
-  }
-
-  init_data() {
+  async init_data() {
     this.loading = true;
-    Promise.all([this.get_plans(this.productId), this.get_suites(this.productId), this.get_statuses()]).then(res => {
-      this._plans.forEach(plan => {
-        this.update_statistic(plan, this.count_of_cases(res[1][this.productId]));
-      });
-      const planId = this.router.url.match(/plan\/(\d+)/i);
-      if (planId) {
-        this.selectedPlan = this._plans.find(plan => plan.id === +planId[1]);
-      }
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+
+    await this.palladiumApiService.get_plans(this.productId);
+    await this.palladiumApiService.get_suites(this.productId);
+    this.statuses = await this.palladiumApiService.get_statuses();
+    this._plans = this.palladiumApiService.plans[this.productId] || [];
+    const planId = this.router.url.match(/plan\/(\d+)/i);
+    if (planId) {
+      this.selectedPlan = this._plans.find(plan => plan.id === +planId[1]);
+    }
+    this.loading = false;
+    this.cd.detectChanges();
   }
 
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
-  }
-
-  update_statistic(plan, casesCount) {
-    if (plan.all_statistic['all'] < casesCount) {
-      const untested = casesCount - plan.all_statistic['all'];
-      plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
-      plan.get_statistic();
-    }
-    return (plan);
   }
 
   force_floor(data) {
@@ -121,7 +84,7 @@ export class PlansComponent implements OnInit {
   }
 
   async load_more_plans() {
-    console.log('load_more_plans')
+    console.log('load_more_plans');
     // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
   }
 }

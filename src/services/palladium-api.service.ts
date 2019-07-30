@@ -15,9 +15,9 @@ import {Invite} from '../app/models/invite';
 
 @Injectable()
 export class PalladiumApiService {
-  suites: Suite[] = [];
   plans = {};
-  response_suite_data = {};
+  suites = {};
+  statuses = {};
   response_results_data = {};
   response_runs_data = {};
   cases: Case[] = [];
@@ -30,7 +30,7 @@ export class PalladiumApiService {
   }
 
   //#region Status
-  get_statuses(): Promise<any> {
+  async get_statuses(): Promise<any> {
     return this.httpService.postData('/statuses', '').then((resp: any) => {
       const statuses = [];
       Object.keys(resp['statuses']).forEach(key => {
@@ -96,16 +96,29 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Suite
-  get_suites(product_id): Promise<any> {
-    return this.httpService.postData('/suites', {suite_data: {product_id: product_id}}).then((resp: any) => {
-      this.response_suite_data[product_id] = [];
-      Object(resp['suites']).forEach(suite => {
-        this.response_suite_data[product_id].push(new Suite(suite));
+  async get_suites(productId) {
+    const response = await this.httpService.postData('/suites', {suite_data: {product_id: productId}});
+      this.suites[productId] = [];
+      Object(response['suites']).forEach(suite => {
+        this.suites[productId].push(new Suite(suite));
       });
-      return this.response_suite_data;
-    }, (errors: any) => {
-      console.log(errors);
+    this.update_plan_statistic(productId);
+  }
+
+  update_plan_statistic(productId) {
+    let casesCount = 0;
+    this.suites[productId].forEach(suite => {
+      casesCount += suite.statistic.all;
     });
+    if (this.plans[productId]) {
+      this.plans[productId].forEach(plan => {
+        if (plan.all_statistic['all'] < casesCount) {
+          const untested = casesCount - plan.all_statistic['all'];
+          plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
+          plan.get_statistic();
+        }
+      });
+    }
   }
 
   edit_suite_by_run_id(run_id, name): Promise<any> {
