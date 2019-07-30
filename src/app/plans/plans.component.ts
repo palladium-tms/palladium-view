@@ -5,6 +5,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {Plan} from '../models/plan';
 
 @Component({
   selector: 'app-plans',
@@ -17,7 +18,7 @@ export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
   plan_for_settings;
-  plans = [];
+  _plans = [];
   RUN_COMPONENT;
   statuses;
   loading = false;
@@ -32,6 +33,8 @@ export class PlansComponent implements OnInit {
       this.init_data();
     });
   }
+
+  plans = ():Plan[] => this.palladiumApiService.plans[this.productId];
 
   async get_plans(id) {
     this.cd.detectChanges();
@@ -66,16 +69,15 @@ export class PlansComponent implements OnInit {
   }
 
   init_data() {
-    this.plans = [];
     this.loading = true;
     Promise.all([this.get_plans(this.productId), this.get_suites(this.productId), this.get_statuses()]).then(res => {
-      this.plans = res[0][this.productId] || [];
-      this.plans.forEach(plan => {
+      this._plans = this.palladiumApiService.plans[this.productId] || [];
+      this._plans.forEach(plan => {
         this.update_statistic(plan, this.count_of_cases(res[1][this.productId]));
       });
       const planId = this.router.url.match(/plan\/(\d+)/i);
       if (planId) {
-        this.selectedPlan = this.plans.find(plan => plan.id === +planId[1]);
+        this.selectedPlan = this._plans.find(plan => plan.id === +planId[1]);
       }
       this.loading = false;
       this.cd.detectChanges();
@@ -102,14 +104,14 @@ export class PlansComponent implements OnInit {
   open_settings() {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
-        plans: this.plans,
+        plans: this._plans,
         plan: this.plan_for_settings
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.plans = result;
+        this._plans = result;
       }
     });
   }
@@ -134,7 +136,7 @@ export class PlansComponent implements OnInit {
 export class PlansSettingsComponent implements OnInit {
   plan;
   item;
-  plans;
+  _plans;
   planForm = new FormGroup({
     name: new FormControl('',  [Validators.required])
   });
@@ -142,7 +144,7 @@ export class PlansSettingsComponent implements OnInit {
               private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
 
   ngOnInit(): void {
-    this.plans = this.data.plans;
+    this._plans = this.data.plans;
     this.item = this.data.plan;
     this.planForm.patchValue({name: this.item.name});
   }
@@ -152,15 +154,15 @@ export class PlansSettingsComponent implements OnInit {
   async edit_plan() {
     if (!this.name_is_not_changed()) {
       const plan = await this.palladiumApiService.edit_plan(this.item.id, this.name.value);
-      this.plans.filter(x => x.id === plan.id)[0].name = plan.name;
+      this._plans.filter(x => x.id === plan.id)[0].name = plan.name;
     }
-    this.dialogRef.close(this.plans);
+    this.dialogRef.close(this._plans);
   }
 
   name_is_existed() {
     if (this.item) {
       if (this.name_is_not_changed()) { return false; }
-      return this.plans.some(product => product.name === this.name.value);
+      return this._plans.some(product => product.name === this.name.value);
     }
   }
 
@@ -177,9 +179,9 @@ export class PlansSettingsComponent implements OnInit {
   async delete_plan() {
     if (confirm('A u shuare?')) {
       await this.palladiumApiService.delete_plan(this.item.id);
-      this.plans = this.plans.filter(currentPlan => currentPlan.id !== this.item.id);
+      this._plans = this._plans.filter(currentPlan => currentPlan.id !== this.item.id);
       this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
-      this.dialogRef.close(this.plans);
+      this.dialogRef.close(this._plans);
     }
   }
 }
