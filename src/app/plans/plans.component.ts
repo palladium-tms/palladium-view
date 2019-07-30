@@ -16,6 +16,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
+  planId;
   plan_for_settings;
   _plans = [];
   RUN_COMPONENT;
@@ -29,6 +30,9 @@ export class PlansComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.productId = params.id;
+      if (this.router.url.match(/plan\/(\d+)/i)) {
+        this.planId = this.router.url.match(/plan\/(\d+)/i)[1];
+      }
       this.init_data();
     });
   }
@@ -42,7 +46,12 @@ export class PlansComponent implements OnInit {
 
   async init_data() {
     this.loading = true;
-    const observablePlans = this.palladiumApiService.get_plans(this.productId);
+    let observablePlans;
+    if(this.planId) {
+      observablePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.planId);
+    } else {
+      observablePlans = this.palladiumApiService.get_plans(this.productId);
+    }
     const observableSuites = this.palladiumApiService.get_suites(this.productId);
     const observableStatus = this.palladiumApiService.get_statuses();
     await observablePlans;
@@ -50,9 +59,8 @@ export class PlansComponent implements OnInit {
     this.statuses = await observableStatus;
     this.palladiumApiService.update_plan_statistic(this.productId);
     this._plans = this.palladiumApiService.plans[this.productId] || [];
-    const planId = this.router.url.match(/plan\/(\d+)/i);
-    if (planId) {
-      this.selectedPlan = this._plans.find(plan => plan.id === +planId[1]);
+    if (this.planId) {
+      this.selectedPlan = this._plans.find(plan => plan.id == this.planId);
     }
     this.loading = false;
     this.cd.detectChanges();
@@ -87,6 +95,8 @@ export class PlansComponent implements OnInit {
 
   async load_more_plans() {
     console.log('load_more_plans');
+    await this.palladiumApiService.get_plans(this.productId);
+    this.palladiumApiService.update_plan_statistic(this.productId);
     this.cd.detectChanges();
     // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
   }
