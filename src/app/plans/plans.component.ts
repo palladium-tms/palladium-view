@@ -18,7 +18,7 @@ export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
   plan_for_settings;
-  _plans = [];
+  _plans;
   RUN_COMPONENT;
   statuses;
   loading = false;
@@ -37,8 +37,9 @@ export class PlansComponent implements OnInit {
   plans = ():Plan[] => this.palladiumApiService.plans[this.productId];
 
   async get_plans(id) {
-    this.cd.detectChanges();
-    return this.palladiumApiService.get_plans(id);
+    this.palladiumApiService.get_plans(id).then(() => {
+      this._plans = this.palladiumApiService.plans[this.productId] || [];
+    });
   }
 
   get_suites(id) {
@@ -71,7 +72,6 @@ export class PlansComponent implements OnInit {
   init_data() {
     this.loading = true;
     Promise.all([this.get_plans(this.productId), this.get_suites(this.productId), this.get_statuses()]).then(res => {
-      this._plans = this.palladiumApiService.plans[this.productId] || [];
       this._plans.forEach(plan => {
         this.update_statistic(plan, this.count_of_cases(res[1][this.productId]));
       });
