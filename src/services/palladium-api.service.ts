@@ -102,7 +102,6 @@ export class PalladiumApiService {
       Object(response['suites']).forEach(suite => {
         this.suites[productId].push(new Suite(suite));
       });
-    this.update_plan_statistic(productId);
   }
 
   update_plan_statistic(productId) {

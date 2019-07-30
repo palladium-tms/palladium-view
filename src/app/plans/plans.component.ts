@@ -5,7 +5,6 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
-import {Plan} from '../models/plan';
 
 @Component({
   selector: 'app-plans',
@@ -43,10 +42,13 @@ export class PlansComponent implements OnInit {
 
   async init_data() {
     this.loading = true;
-
-    await this.palladiumApiService.get_plans(this.productId);
-    await this.palladiumApiService.get_suites(this.productId);
-    this.statuses = await this.palladiumApiService.get_statuses();
+    const observablePlans = this.palladiumApiService.get_plans(this.productId);
+    const observableSuites = this.palladiumApiService.get_suites(this.productId);
+    const observableStatus = this.palladiumApiService.get_statuses();
+    await observablePlans;
+    await observableSuites;
+    this.statuses = await observableStatus;
+    this.palladiumApiService.update_plan_statistic(this.productId);
     this._plans = this.palladiumApiService.plans[this.productId] || [];
     const planId = this.router.url.match(/plan\/(\d+)/i);
     if (planId) {
@@ -85,6 +87,7 @@ export class PlansComponent implements OnInit {
 
   async load_more_plans() {
     console.log('load_more_plans');
+    this.cd.detectChanges();
     // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
   }
 }
