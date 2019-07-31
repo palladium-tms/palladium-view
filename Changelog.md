@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+## [0.6.3]
+## Added
+    * Limited plans loading
 ## [0.6.2]
 ## Added
     * Lazy loading for all routes
