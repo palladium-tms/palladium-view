@@ -16,8 +16,9 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 export class PlansComponent implements OnInit {
   selectedPlan = {id: 0};
   productId;
+  planId;
   plan_for_settings;
-  plans = [];
+  _plans = [];
   RUN_COMPONENT;
   statuses;
   loading = false;
@@ -29,24 +30,10 @@ export class PlansComponent implements OnInit {
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.productId = params.id;
+      if (this.router.url.match(/plan\/(\d+)/i)) {
+        this.planId = this.router.url.match(/plan\/(\d+)/i)[1];
+      }
       this.init_data();
-    });
-  }
-
-  async get_plans(id) {
-    this.cd.detectChanges();
-    return this.palladiumApiService.get_plans(id);
-  }
-
-  get_suites(id) {
-    return this.palladiumApiService.get_suites(id).then(suites => {
-      return suites;
-    });
-  }
-
-  get_statuses() {
-    this.palladiumApiService.get_statuses().then(res => {
-      this.statuses = res;
     });
   }
 
@@ -57,42 +44,30 @@ export class PlansComponent implements OnInit {
     }
   }
 
-  count_of_cases(suites) {
-    let casesCount = 0;
-    suites.forEach(suite => {
-      casesCount += suite.statistic.all;
-    });
-    return casesCount;
-  }
-
-  init_data() {
-    this.plans = [];
+  async init_data() {
     this.loading = true;
-    Promise.all([this.get_plans(this.productId), this.get_suites(this.productId), this.get_statuses()]).then(res => {
-      this.plans = res[0][this.productId] || [];
-      this.plans.forEach(plan => {
-        this.update_statistic(plan, this.count_of_cases(res[1][this.productId]));
-      });
-      const planId = this.router.url.match(/plan\/(\d+)/i);
-      if (planId) {
-        this.selectedPlan = this.plans.find(plan => plan.id === +planId[1]);
-      }
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+    let observablePlans;
+    if(this.planId) {
+      observablePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.planId);
+    } else {
+      observablePlans = this.palladiumApiService.get_plans(this.productId);
+    }
+    const observableSuites = this.palladiumApiService.get_suites(this.productId);
+    const observableStatus = this.palladiumApiService.get_statuses();
+    await observablePlans;
+    await observableSuites;
+    this.statuses = await observableStatus;
+    this.palladiumApiService.update_plan_statistic(this.productId);
+    this._plans = this.palladiumApiService.plans[this.productId] || [];
+    if (this.planId) {
+      this.selectedPlan = this._plans.find(plan => plan.id == this.planId);
+    }
+    this.loading = false;
+    this.cd.detectChanges();
   }
 
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
-  }
-
-  update_statistic(plan, casesCount) {
-    if (plan.all_statistic['all'] < casesCount) {
-      const untested = casesCount - plan.all_statistic['all'];
-      plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
-      plan.get_statistic();
-    }
-    return (plan);
   }
 
   force_floor(data) {
@@ -102,20 +77,28 @@ export class PlansComponent implements OnInit {
   open_settings() {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
-        plans: this.plans,
+        plans: this._plans,
         plan: this.plan_for_settings
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.plans = result;
+        this._plans = result;
       }
     });
   }
 
   get_status_by_id(id) {
     return this.statuses.find(status => status.id === +id);
+  }
+
+  async load_more_plans() {
+    console.log('load_more_plans');
+    await this.palladiumApiService.get_plans(this.productId);
+    this.palladiumApiService.update_plan_statistic(this.productId);
+    this.cd.detectChanges();
+    // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
   }
 }
 
@@ -129,7 +112,7 @@ export class PlansComponent implements OnInit {
 export class PlansSettingsComponent implements OnInit {
   plan;
   item;
-  plans;
+  _plans;
   planForm = new FormGroup({
     name: new FormControl('',  [Validators.required])
   });
@@ -137,7 +120,7 @@ export class PlansSettingsComponent implements OnInit {
               private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
 
   ngOnInit(): void {
-    this.plans = this.data.plans;
+    this._plans = this.data.plans;
     this.item = this.data.plan;
     this.planForm.patchValue({name: this.item.name});
   }
@@ -147,15 +130,15 @@ export class PlansSettingsComponent implements OnInit {
   async edit_plan() {
     if (!this.name_is_not_changed()) {
       const plan = await this.palladiumApiService.edit_plan(this.item.id, this.name.value);
-      this.plans.filter(x => x.id === plan.id)[0].name = plan.name;
+      this._plans.filter(x => x.id === plan.id)[0].name = plan.name;
     }
-    this.dialogRef.close(this.plans);
+    this.dialogRef.close(this._plans);
   }
 
   name_is_existed() {
     if (this.item) {
       if (this.name_is_not_changed()) { return false; }
-      return this.plans.some(product => product.name === this.name.value);
+      return this._plans.some(product => product.name === this.name.value);
     }
   }
 
@@ -172,9 +155,9 @@ export class PlansSettingsComponent implements OnInit {
   async delete_plan() {
     if (confirm('A u shuare?')) {
       await this.palladiumApiService.delete_plan(this.item.id);
-      this.plans = this.plans.filter(currentPlan => currentPlan.id !== this.item.id);
+      this._plans = this._plans.filter(currentPlan => currentPlan.id !== this.item.id);
       this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
-      this.dialogRef.close(this.plans);
+      this.dialogRef.close(this._plans);
     }
   }
 }

@@ -70,11 +70,10 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
   }
 
-  get_suites() {
+  async get_suites() {
     const product_id = this.router.url.match(/product\/(\d+)/i)[1];
-    return this.ApiService.get_suites(product_id).then(suites => {
-      return suites[product_id];
-    });
+    await this.ApiService.get_suites(product_id);
+    return this.ApiService.suites[product_id];
   }
 
   get_runs_and_suites() {

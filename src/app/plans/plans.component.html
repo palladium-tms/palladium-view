@@ -1,7 +1,7 @@
 <div class="plan-space">
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of plans | sortByCreatedAt:'desc'"
+              *ngFor="let plan of _plans | sortByCreatedAt:'desc'"
               [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
@@ -23,6 +23,9 @@
         </ng-container>
       </div>
     </mat-card>
+    <div class="show-more">
+      <button mat-button class="show-more-button" (click)="load_more_plans()">Show more</button>
+    </div>
   </div>
   <div [hidden]="!loading" class="loader">
     <mat-spinner color="accent"></mat-spinner>

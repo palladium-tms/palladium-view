@@ -15,10 +15,9 @@ import {Invite} from '../app/models/invite';
 
 @Injectable()
 export class PalladiumApiService {
-  suites: Suite[] = [];
-  plans: Plan[] = [];
-  response_plan_data = {};
-  response_suite_data = {};
+  plans = {};
+  suites = {};
+  statuses = {};
   response_results_data = {};
   response_runs_data = {};
   cases: Case[] = [];
@@ -31,7 +30,7 @@ export class PalladiumApiService {
   }
 
   //#region Status
-  get_statuses(): Promise<any> {
+  async get_statuses(): Promise<any> {
     return this.httpService.postData('/statuses', '').then((resp: any) => {
       const statuses = [];
       Object.keys(resp['statuses']).forEach(key => {
@@ -97,16 +96,28 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Suite
-  get_suites(product_id): Promise<any> {
-    return this.httpService.postData('/suites', {suite_data: {product_id: product_id}}).then((resp: any) => {
-      this.response_suite_data[product_id] = [];
-      Object(resp['suites']).forEach(suite => {
-        this.response_suite_data[product_id].push(new Suite(suite));
+  async get_suites(productId) {
+    const response = await this.httpService.postData('/suites', {suite_data: {product_id: productId}});
+      this.suites[productId] = [];
+      Object(response['suites']).forEach(suite => {
+        this.suites[productId].push(new Suite(suite));
       });
-      return this.response_suite_data;
-    }, (errors: any) => {
-      console.log(errors);
+  }
+
+  update_plan_statistic(productId) {
+    let casesCount = 0;
+    this.suites[productId].forEach(suite => {
+      casesCount += suite.statistic.all;
     });
+    if (this.plans[productId]) {
+      this.plans[productId].forEach(plan => {
+        if (plan.all_statistic['all'] < casesCount) {
+          const untested = casesCount - plan.all_statistic['all'];
+          plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
+          plan.get_statistic();
+        }
+      });
+    }
   }
 
   edit_suite_by_run_id(run_id, name): Promise<any> {
@@ -221,7 +232,7 @@ export class PalladiumApiService {
   }
 
   async delete_run(run_id) {
-    return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run']
+    return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run'];
   }
 
   //#endregion
@@ -233,7 +244,7 @@ export class PalladiumApiService {
   };
 
   async delete_product(id) {
-    return await this.httpService.postData('/product_delete', {product_data: {id: id}})
+    return await this.httpService.postData('/product_delete', {product_data: {id: id}});
   }
 
   async edit_product(id, name) {
@@ -241,7 +252,7 @@ export class PalladiumApiService {
       const product = await this.httpService.postData('/product_edit', {product_data: {name: name, id: id}});
       return new Product(product['product']);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -249,23 +260,28 @@ export class PalladiumApiService {
 
   //#region Products
   send_product_position(product_ids_array) {
-    return this.httpService.postData('/set_product_position', {product_position: product_ids_array})
+    return this.httpService.postData('/set_product_position', {product_position: product_ids_array});
   }
 
   //#endregion
 
   //#region Plans
-  async get_plans(product_id) {
-    try {
-      const response = await this.httpService.postData('/plans', {plan_data: {product_id: product_id}});
-      this.response_plan_data[product_id] = [];
-      Object(response['plans']).forEach(plan => {
-        this.response_plan_data[product_id].push(new Plan(plan));
-      });
-      return this.response_plan_data;
-    } catch (errors) {
-      console.log(errors);
+  async get_plans(productId) {
+    if (!this.plans[productId]){
+      this.plans[productId] = [];
     }
+    const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset: this.plans[productId].length}});
+    Object(response['plans']).forEach(plan => {
+      this.plans[productId].push(new Plan(plan));
+    });
+  }
+
+  async get_plans_to_id(productId, planId) {
+    this.plans[productId] = [];
+    const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: planId}});
+    Object(response['plans']).forEach(plan => {
+      this.plans[productId].push(new Plan(plan));
+    });
   }
 
   edit_plan(id, name): Promise<any> {
@@ -280,7 +296,7 @@ export class PalladiumApiService {
   }
 
   async delete_plan(id) {
-    return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan']
+    return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan'];
   }
 
   //#endregion
@@ -326,7 +342,9 @@ export class PalladiumApiService {
   }
 
   async result_new(result_sets, description, status) {
-    if (result_sets.length == 0) { return {} }
+    if (result_sets.length == 0) {
+      return {};
+    }
     const res = await this.httpService.postData('/result_new', {
       result_data: {
         message: description, status: status.name,
@@ -337,13 +355,15 @@ export class PalladiumApiService {
   }
 
   async result_new_by_case(cases, message, status, run_id) {
-    if (cases.length == 0) { return {} }
+    if (cases.length == 0) {
+      return {};
+    }
     const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
     for (const this_case of cases) {
       params.result_set_data.name.push(this_case.name);
     }
     const res = await this.httpService.postData('/result_new', params);
-    return this.reformat_response(res)
+    return this.reformat_response(res);
   }
 
   //#endregion
@@ -351,7 +371,7 @@ export class PalladiumApiService {
   //#region Result
   async generate_invite() {
     const response = await this.httpService.postData('/create_invite_token', {});
-    return new Invite(response['invite_data'])
+    return new Invite(response['invite_data']);
   }
 
   async get_invite() {
@@ -369,7 +389,7 @@ export class PalladiumApiService {
       response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
     }
     if (res['result']) {
-      response['result'] = new Result(res['result'])
+      response['result'] = new Result(res['result']);
     }
     return response;
   }
@@ -383,7 +403,7 @@ export class PalladiumApiService {
     return response;
   }
 
-  async timezoneOffset():Promise<string>{
+  async timezoneOffset(): Promise<string> {
     if (!this._timeZone) {
       await this.get_user_setting();
     }
@@ -396,7 +416,8 @@ export class PalladiumApiService {
   }
 
   async edit_user_setting(timezone) {
-    await this.httpService.postData('/user_setting_edit', {'user_settings':{'timezone': timezone}});
+    await this.httpService.postData('/user_setting_edit', {'user_settings': {'timezone': timezone}});
   }
+
   //#endregion
 }
