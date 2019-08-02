@@ -64,16 +64,16 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
   }
 
-  get_runs(plan_id) {
-    return this.ApiService.get_runs(plan_id).then(runs => {
+  get_runs(planId) {
+    return this.ApiService.get_runs(planId).then(runs => {
       return runs;
     });
   }
 
   async get_suites() {
-    const product_id = this.router.url.match(/product\/(\d+)/i)[1];
-    await this.ApiService.get_suites(product_id);
-    return this.ApiService.suites[product_id];
+    const productId = this.router.url.match(/product\/(\d+)/i)[1];
+    await this.ApiService.get_suites(productId);
+    return this.ApiService.suites[productId];
   }
 
   get_runs_and_suites() {
