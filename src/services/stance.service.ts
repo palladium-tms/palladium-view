@@ -13,4 +13,11 @@ export class StanceService {
         return +productUrl[1];
       }
   }
+
+  planId():number {
+    const planUrl = this.router.url.match(/plan\/(\d+)/i);
+      if (planUrl) {
+        return +planUrl[1];
+      }
+  }
 }
