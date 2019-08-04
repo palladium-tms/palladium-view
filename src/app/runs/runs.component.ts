@@ -29,12 +29,9 @@ export class RunsComponent implements OnInit, OnDestroy {
   statistic: Statistic;
   filter: number[] = []; // ids of active statuses
   loading = false;
-  errors = {};
-  existed_statuses = {};
   all_statistic = {};
   selected_object: Run;
   object_for_settings;
-  public Math: Math = Math;
 
   constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
               private router: Router, private statistic_service: StatisticService, private dialog: MatDialog,
