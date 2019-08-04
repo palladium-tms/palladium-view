@@ -33,8 +33,11 @@ export class RunsComponent implements OnInit, OnDestroy {
   selected_object: Run;
   object_for_settings;
 
-  constructor(private ApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
-              private router: Router, private statistic_service: StatisticService, private dialog: MatDialog,
+  constructor(private ApiService: PalladiumApiService,
+              private activatedRoute: ActivatedRoute,
+              private router: Router,
+              private statistic_service: StatisticService,
+              private dialog: MatDialog,
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {

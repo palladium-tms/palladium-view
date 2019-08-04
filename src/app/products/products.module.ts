@@ -15,6 +15,7 @@ import {ResultsComponent} from 'app/results/results.component';
 import {CaseHistoryComponent} from '../case-history/case-history.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {StatisticService} from '../../services/statistic.service';
+import {StanceService} from '../../services/stance.service';
 import {CasesComponent} from '../cases/cases.component';
 
 const productRoutes: Routes = [{
@@ -54,7 +55,7 @@ const productRoutes: Routes = [{
     AboutDialogComponent,
     StatusSettingsComponent,
     StatusSettingsDialogComponent, ResultSetsSettingsComponent, PlansSettingsComponent, RunsSettingsComponent],
-  providers: [StatisticService]
+  providers: [StatisticService, StanceService]
 })
 export class ProductsModule {
 }
