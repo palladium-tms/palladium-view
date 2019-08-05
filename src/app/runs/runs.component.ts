@@ -43,7 +43,7 @@ export class RunsComponent implements OnInit, OnDestroy {
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe((params: Params) => {
+    this.params = this.activatedRoute.params.subscribe(() => {
       this.get_runs_and_suites();
     });
     this.statistic_service.statistic_has_changed().subscribe(statistic => {
@@ -66,7 +66,9 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   async get_suites() {
-    await this.ApiService.get_suites(this.stance.productId());
+    if (!this.ApiService.suites[this.stance.productId()]) {
+      await this.ApiService.get_suites(this.stance.productId());
+    }
     return this.ApiService.suites[this.stance.productId()];
   }
 
