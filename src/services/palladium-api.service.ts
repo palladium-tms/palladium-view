@@ -108,22 +108,6 @@ export class PalladiumApiService {
       });
   }
 
-  update_plan_statistic(productId) {
-    let casesCount = 0;
-    this.suites[productId].forEach(suite => {
-      casesCount += suite.statistic.all;
-    });
-    if (this.plans[productId]) {
-      this.plans[productId].forEach(plan => {
-        if (plan.all_statistic['all'] < casesCount) {
-          const untested = casesCount - plan.all_statistic['all'];
-          plan.statistic.push({plan_id: plan.id, status: 0, count: untested});
-          plan.get_statistic();
-        }
-      });
-    }
-  }
-
   edit_suite_by_run_id(run_id, name): Promise<any> {
     const params = {suite_data: {run_id: run_id, name: name}};
     return this.httpService.postData('/suite_edit', params).then((resp: any) => {
