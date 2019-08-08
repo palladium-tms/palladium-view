@@ -39,6 +39,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.authenticationService.isAuthorized.next(this.authorize);
     this.activatedRoute.params.subscribe(() => {
       this.get_products();
+      this.palladiumApiService.get_statuses();
       this.cd.detectChanges();
     });
     this.sidenavService.close_product_subject$.subscribe(() => {

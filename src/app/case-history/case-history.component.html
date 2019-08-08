@@ -3,8 +3,8 @@
       <mat-card class="history" *ngFor="let result_set of history | SortByUpdatedAt:'desc'">
         <div class="history-item">
           <div class="history-status"
-               [ngStyle]="{'border-right': '2px solid ' + statusesFormated[result_set.status].color}">
-            <div class="history-status-name"><b>{{statusesFormated[result_set.status].name}}</b></div>
+               [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(result_set.status).color}">
+            <div class="history-status-name"><b>{{palladiumApiService.get_status_by_id(result_set.status).name}}</b></div>
           </div>
           <div class="plan-name">
             {{result_set.plan.name}}
@@ -18,10 +18,10 @@
           <mat-accordion>
             <mat-expansion-panel class="result-item"
                                  *ngFor="let result of resultsData[result_set.id].results | sortByCreatedAt:'desc'"
-                                 [ngStyle]="{'border-color': statusesFormated[result.status_id].color}">
+                                 [ngStyle]="{'border-color': palladiumApiService.get_status_by_id(result.status_id).color}">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  <b>{{statusesFormated[result.status_id].name}}</b>
+                  <b>{{palladiumApiService.get_status_by_id(result.status_id).name}}</b>
                 </mat-panel-title>
                 <mat-panel-description>
                   {{result.created_at | date:'HH:MM:SS' }} {{result.created_at | date:'MMMM d, y' }}

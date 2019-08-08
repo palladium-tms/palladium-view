@@ -3,10 +3,10 @@
     <mat-accordion>
       <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
                            [expanded]="isFirst"
-                           [ngStyle]="{'border-color': statusesFormated[result.status_id].color}">
+                           [ngStyle]="{'border-color': palladiumApiService.get_status_by_id(result.status_id).color}">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <b>{{statusesFormated[result.status_id].name}}</b>
+            <b>{{palladiumApiService.get_status_by_id(result.status_id).name}}</b>
           </mat-panel-title>
           <mat-panel-description>
             {{result.created_at | date:'mediumTime':timeZone }} {{result.created_at | date:'MMMM d, y' }}

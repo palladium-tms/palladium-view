@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {ActivatedRoute, Params} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -23,7 +23,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   runs = [];
   runs_and_suites = [];
   plan_id;
-  statuses;
   params;
   object;
   ResultSetComponent;
@@ -33,8 +32,9 @@ export class RunsComponent implements OnInit, OnDestroy {
   all_statistic = {};
   selected_object: Run;
   object_for_settings;
+  statusArray = [];
 
-  constructor(private ApiService: PalladiumApiService,
+  constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
               private activatedRoute: ActivatedRoute,
               private router: Router,
@@ -46,43 +46,42 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.params = this.activatedRoute.params.subscribe(() => {
       this.get_runs_and_suites();
     });
+    this.palladiumApiService.statusObservable.subscribe(() => {
+      console.log('runs statusObservable');
+      this.statusArray = Object.values(this.palladiumApiService.statuses);
+      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
+      this.all_statistic = this.statistic.extended;
+      this.cd.detectChanges();
+    });
     this.statistic_service.statistic_has_changed().subscribe(statistic => {
-      if (this.runs_and_suites.length === 0) {return}
+      if (this.runs_and_suites.length === 0) {return;}
       this.runs_and_suites.filter(object => this.stance.run_or_suite_by_url(object))[0].statistic = statistic;
       this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
-    });
-  }
-
-  get_statuses() {
-    return this.ApiService.get_statuses().then(res => {
-      return res;
+      this.statistic_service.plan_statistic_update(this.statistic);
     });
   }
 
   get_runs(planId) {
-    return this.ApiService.get_runs(planId).then(runs => {
+    return this.palladiumApiService.get_runs(planId).then(runs => {
       return runs;
     });
   }
 
   async get_suites() {
-    if (!this.ApiService.suites[this.stance.productId()]) {
-      await this.ApiService.get_suites(this.stance.productId());
+    if (!this.palladiumApiService.suites[this.stance.productId()]) {
+      await this.palladiumApiService.get_suites(this.stance.productId());
     }
-    return this.ApiService.suites[this.stance.productId()];
+    return this.palladiumApiService.suites[this.stance.productId()];
   }
 
   get_runs_and_suites() {
     this.runs_and_suites = [];
     this.loading = true;
     this.cd.detectChanges();
-    Promise.all([this.get_runs(this.stance.planId()), this.get_suites(), this.get_statuses()]).then(res => {
-      this.statuses = res[2];
+    Promise.all([this.get_runs(this.stance.planId()), this.get_suites()]).then(res => {
       this.suites = res[1];
       this.runs = res[0][this.stance.planId()];
       this.merge_suites_and_runs();
-      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
-      this.all_statistic = this.statistic.extended;
       this.loading = false;
       this.get_selected_object();
       this.get_filters();
@@ -113,13 +112,13 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   select_filter(status) {
     status.active = !status.active;
-    this.filter = this.statuses.filter(elem => elem.active).map(elem => elem.id);
+    this.filter = Object.values(this.palladiumApiService.statuses).filter(elem => elem.active).map(elem => elem.id);
     this.check_selected_is_hidden();
     this.get_selected_object();
   }
 
   get_filters() {
-    this.statuses.forEach(elem => {
+    this.statusArray.forEach(elem => {
       if (this.filter.includes(elem.id)) {
         elem.active = true;
       }
@@ -195,10 +194,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   select_object(object) {
     this.selected_object = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
-  }
-
-  get_status_by_id(id) {
-    return this.statuses.find(status => status.id === +id);
   }
 
   get_selected_object() {

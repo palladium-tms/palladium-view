@@ -37,9 +37,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   cases;
   object;
   resultComponent;
-  statuses = [];
+  statuses;
   notBlockedStatus = [];
-  statusesFormated = {};
   resultSetsAndCases = [];
   showAllElements = [];
   filter = [];
@@ -62,10 +61,17 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.searchValue = '';
       this.get_result_sets_and_cases();
     });
+
+    this.palladiumApiService.statusObservable.subscribe(() => {
+      this.statuses = Object.values(this.palladiumApiService.statuses);
+      this.notBlockedStatus = this.statuses.filter(status => !status.block);
+      console.log(this.notBlockedStatus)
+      this.cd.detectChanges();
+    });
   }
 
   get_used_statuses_id() {
-    return this.statuses.filter(x => {
+    return Object.values(this.palladiumApiService.statuses).filter(x => {
       return x.active;
     }).map(x => {
       return x.id;
@@ -92,20 +98,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.show_all();
   }
 
-  get_status_by_id(id) {
-    return this.statuses.find(status => status.id === id);
-  }
-
-  get_statuses() {
-    this.palladiumApiService.get_statuses().then(res => {
-      this.statuses = res;
-      this.notBlockedStatus = this.statuses.filter(status => status.block === false);
-      this.statuses.forEach(status => {
-        this.statusesFormated[status.id] = status.color;
-      });
-    });
-  }
-
   get_result_sets() {
     return this.palladiumApiService.get_result_sets(this.stance.runId()).then(resultSets => {
       return resultSets;
@@ -123,7 +115,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.resultSetsAndCases = [];
     this.loading = true;
     this.cd.detectChanges();
-    Promise.all([this.get_result_sets(), this.get_cases(), this.get_statuses()]).then(res => {
+    Promise.all([this.get_result_sets(), this.get_cases()]).then(res => {
       this.resultSets = res[0];
       this.cases = res[1];
       const cases = [];
@@ -154,6 +146,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   open_settings() {
+    console.log(this.showAllElements)
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
         object: this.dropdownMenuItemSelect,
@@ -390,7 +383,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     const selected = this.resultSetsAndCases.filter(obj => obj.selected);
     this.addResultOpen = true;
     if (selected.length === 1) {
-      this.newResultForm.patchValue({status: this.get_status_by_id(selected[0].status)});
+      this.newResultForm.patchValue({status: this.palladiumApiService.get_status_by_id(selected[0].status)});
     } else {
       this.newResultForm.reset('status');
     }

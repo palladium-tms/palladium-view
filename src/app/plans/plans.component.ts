@@ -6,6 +6,7 @@ import {StanceService} from '../../services/stance.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import {StatisticService} from '../../services/statistic.service';
 
 @Component({
   selector: 'app-plans',
@@ -20,20 +21,26 @@ export class PlansComponent implements OnInit {
   plan_for_settings;
   _plans = [];
   RUN_COMPONENT;
-  statuses;
   loading = false;
 
   constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
+              private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
-              private cd: ChangeDetectorRef) {
-  }
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.activatedRoute.params.subscribe((params: Params) => {
       this.productId = params.id;
       this.init_data();
+    });
+    this.palladiumApiService.statusObservable.subscribe(() => {
+      this.cd.detectChanges();
+    });
+    this.statisticService.planSubject.subscribe(statistic => {
+      this._plans.find(plan => plan.id === this.stance.planId()).statistic = statistic;
+      this.cd.detectChanges();
     });
   }
 
@@ -53,11 +60,8 @@ export class PlansComponent implements OnInit {
       observablePlans = this.palladiumApiService.get_plans(this.productId);
     }
     const observableSuites = this.palladiumApiService.get_suites(this.productId);
-    const observableStatus = this.palladiumApiService.get_statuses();
     await observablePlans;
     await observableSuites;
-    this.statuses = await observableStatus;
-    this.palladiumApiService.update_plan_statistic(this.productId);
     this._plans = this.palladiumApiService.plans[this.productId] || [];
     if (this.stance.planId()) {
       this.selectedPlan = this._plans.find(plan => plan.id === this.stance.planId());
@@ -68,10 +72,6 @@ export class PlansComponent implements OnInit {
 
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
-  }
-
-  force_floor(data) {
-    return (Math.floor(data * 100) / 100);
   }
 
   open_settings() {
@@ -89,16 +89,9 @@ export class PlansComponent implements OnInit {
     });
   }
 
-  get_status_by_id(id) {
-    return this.statuses.find(status => status.id === +id);
-  }
-
   async load_more_plans() {
-    console.log('load_more_plans');
     await this.palladiumApiService.get_plans(this.productId);
-    this.palladiumApiService.update_plan_statistic(this.productId);
     this.cd.detectChanges();
-    // async this.palladiumApiService.get_plans(this.productId, this.plans.length);
   }
 }
 

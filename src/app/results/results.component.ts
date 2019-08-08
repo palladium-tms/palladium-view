@@ -14,7 +14,6 @@ import {ResultService} from '../../services/result.service';
 export class ResultsComponent implements OnInit, OnDestroy {
   results: Result[] = [];
   statuses;
-  statusesFormated = {};
   loading = false;
   news;
   params;
@@ -30,8 +29,13 @@ export class ResultsComponent implements OnInit, OnDestroy {
     });
     this.news = this.resultservice.news().subscribe(data => {
       this.add_result(data['result']);
+      this.cd.detectChanges();
     });
     this.timeZone = await this.palladiumApiService.timezoneOffset();
+    this.palladiumApiService.statusObservable.subscribe((statuses) => {
+      this.statuses = statuses;
+      this.cd.detectChanges();
+    });
   }
 
   add_result(data) {
@@ -41,20 +45,13 @@ export class ResultsComponent implements OnInit, OnDestroy {
   init_results() {
     this.loading = true;
     this.cd.detectChanges();
-    Promise.all([this.get_statuses(), this.get_results()]).then(res => {
-      this.results = res[1];
-      this.statuses = res[0];
-      this.statuses.forEach(status => {
-        this.statusesFormated[status.id] = {color: status.color, name: status.name};
-      });
+    Promise.all([this.get_results()]).then(res => {
+      this.results = res[0];
       this.loading = false;
       this.cd.detectChanges();
     });
   }
 
-  get_statuses() {
-    return this.palladiumApiService.get_statuses().then(res => res);
-  }
 
   async get_results() {
     return this.palladiumApiService.results(this.resultSetId);

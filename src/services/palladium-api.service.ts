@@ -12,12 +12,17 @@ import {Result} from '../app/models/result';
 import {History} from '../app/models/history_object';
 import {Status} from '../app/models/status';
 import {Invite} from '../app/models/invite';
+import {BehaviorSubject} from 'rxjs';
 
+export interface Statuses {
+  [key: number]: Status;
+}
 @Injectable()
 export class PalladiumApiService {
   plans = {};
   suites = {};
-  statuses = {};
+  statuses: Statuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'blocked': true})};
+  statusObservable = new BehaviorSubject(this.statuses);
   response_results_data = {};
   response_runs_data = {};
   cases: Case[] = [];
@@ -30,18 +35,21 @@ export class PalladiumApiService {
   }
 
   //#region Status
-  async get_statuses(): Promise<any> {
-    return this.httpService.postData('/statuses', '').then((resp: any) => {
-      const statuses = [];
+  get_statuses(): void {
+    this.httpService.postData('/statuses', '').then(resp => {
+      this.statuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'block': true})};
       Object.keys(resp['statuses']).forEach(key => {
-        statuses.push(new Status(resp['statuses'][key]));
+        const statusNew = new Status(resp['statuses'][key]);
+        this.statuses[statusNew.id] = statusNew;
       });
-      statuses.push(new Status({name: 'Untested', color: 'white', id: 0, 'blocked': true}));
-      return statuses;
-    });
+    }).then(() => { this.statusObservable.next(this.statuses);});
   }
 
-  get_not_blocked_statuses(): Promise<any> {
+  get_status_by_id(id): Status {
+    return this.statuses[id] || this.statuses[0];
+  }
+
+  get_not_blocked_statuses(): Promise<Status[]> {
     return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
       const statuses = [];
       Object.keys(resp['statuses']).forEach(key => {
@@ -57,14 +65,10 @@ export class PalladiumApiService {
     });
   }
 
-  update_status(id, name, color): Promise<any> {
-    return this.httpService.postData('/status_edit', {
-      status_data: {
-        id: id,
-        name: name,
-        color: color
-      }
-    }).then((resp: any) => {
+  update_status(id, name, color): Promise<Status> {
+    return this.httpService.postData('/status_edit', { status_data: { id, name, color }}).then((resp: any) => {
+      this.statuses[id] = new Status(resp['status']);
+      this.statusObservable.next(this.statuses);
       return new Status(resp['status']);
     });
   }
@@ -259,8 +263,8 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Products
-  send_product_position(product_ids_array) {
-    return this.httpService.postData('/set_product_position', {product_position: product_ids_array});
+  send_product_position(productIds) {
+    return this.httpService.postData('/set_product_position', {product_position: productIds});
   }
 
   //#endregion
