@@ -26,7 +26,7 @@ export class StatusFilterComponent implements OnInit {
 
   get_border_color() {
     if (!this.selected) {
-      return this.status.color
+      return this.status.color;
     }
   }
 
