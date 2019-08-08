@@ -65,7 +65,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.palladiumApiService.statusObservable.subscribe(() => {
       this.statuses = Object.values(this.palladiumApiService.statuses);
       this.notBlockedStatus = this.statuses.filter(status => !status.block);
-      console.log(this.notBlockedStatus)
       this.cd.detectChanges();
     });
   }
@@ -146,7 +145,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   open_settings() {
-    console.log(this.showAllElements)
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
         object: this.dropdownMenuItemSelect,

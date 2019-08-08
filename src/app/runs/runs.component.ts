@@ -47,7 +47,6 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.get_runs_and_suites();
     });
     this.palladiumApiService.statusObservable.subscribe(() => {
-      console.log('runs statusObservable');
       this.statusArray = Object.values(this.palladiumApiService.statuses);
       this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.all_statistic = this.statistic.extended;
