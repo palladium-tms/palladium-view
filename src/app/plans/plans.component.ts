@@ -86,6 +86,7 @@ export class PlansComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this._plans = result;
+        this.cd.detectChanges();
       }
     });
   }
