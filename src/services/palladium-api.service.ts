@@ -255,9 +255,7 @@ export class PalladiumApiService {
 
   //#region Plans
   async get_plans(productId) {
-    if (!this.plans[productId]){
-      this.plans[productId] = [];
-    }
+    this.plans[productId] = [];
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset: this.plans[productId].length}});
     Object(response['plans']).forEach(plan => {
       this.plans[productId].push(new Plan(plan));
