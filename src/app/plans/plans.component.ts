@@ -59,6 +59,7 @@ export class PlansComponent implements OnInit {
     } else {
       observablePlans = this.palladiumApiService.get_plans(this.productId);
     }
+    this.cd.detectChanges();
     const observableSuites = this.palladiumApiService.get_suites(this.productId);
     await observablePlans;
     await observableSuites;
