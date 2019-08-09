@@ -1,5 +1,9 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * Plan statistic update
+    * Updating all statuses in one time
+    * Optimisations for status loading
 ## [0.6.3]
 ## Added
     * Limited plans loading
