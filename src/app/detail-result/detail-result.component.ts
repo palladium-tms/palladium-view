@@ -32,10 +32,7 @@ export class DetailResultComponent implements OnInit {
   }
 
   get_statuses() {
-    return this.ApiService.get_statuses().then(res => {
-      this.statuses = res;
-      return res;
-    });
+    return this.ApiService.get_statuses();
   }
 
   get_result() {

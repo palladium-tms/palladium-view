@@ -1,3 +1,7 @@
+export interface StatisticInterface {
+  [key: number]: number;
+}
+
 export class Statistic {
   all = 0;
   lost = 0;
@@ -5,7 +9,7 @@ export class Statistic {
   extended = {}; // looks like {status_id: count, status_id: count, 1: 2, 0: 4...}
   existed_statuses = [];
 
-  constructor(data) {
+  constructor(data: StatisticInterface) {
     this.extended = data;
     if (data === null) {
       this.extended = {};
@@ -13,7 +17,7 @@ export class Statistic {
       this.existed_statuses = Object.keys(this.extended);
       this.existed_statuses.forEach(status_id => {
         this.all += this.extended[status_id];
-        if (status_id === 0) {
+        if (+status_id === 0) {
           this.lost = this.extended[status_id];
         }
       });

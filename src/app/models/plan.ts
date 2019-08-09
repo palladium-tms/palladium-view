@@ -1,11 +1,12 @@
+import {Statistic} from './statistic';
+
 export class Plan {
   id: number;
   name: string;
   product_id: string;
   created_at: number;
   updated_at: number;
-  statistic: any;
-  all_statistic: any = {'all': 0, 'lost': 0, 'attitude': 0};
+  statistic: Statistic;
   constructor (plan) {
       this.id = plan['id'];
       this.name = plan['name'];
@@ -13,24 +14,18 @@ export class Plan {
       this.created_at = plan['created_at'].split(' +')[0];
       this.updated_at = plan['updated_at'].split(' +')[0];
       if (plan['statistic']) {
-        this.statistic = plan['statistic'];
-        this.get_statistic();
+        this.statistic = new Statistic(this.get_statistic_new(plan['statistic']));
     }
   }
-  get_statistic() {
-    this.all_statistic = {'all': 0, 'lost': 0, 'attitude': 0};
-    for (const one_status_data of this.statistic) {
-      this.all_statistic['all'] += one_status_data['count'];
-      if (one_status_data['status'] === 0) {
-        this.all_statistic['lost'] = one_status_data['count'];
-      }
-    }
-    this.sort_statistic();
-    if (this.all_statistic['all'] !== 0) {
-      this.all_statistic['attitude'] = (1 - this.all_statistic['lost'] / this.all_statistic['all']);
-    }
+
+  get_statistic_new(statistic) {
+    const newStatistic = {};
+    statistic.forEach((current) => {
+      newStatistic[current.status] = current.count;
+    });
+    return newStatistic;
   }
-  sort_statistic() {
-    this.statistic.sort((s1, s2) => (s1['status'] < s2['status']));
-  }
+  // sort_statistic() {
+  //   this.statistic.sort((s1, s2) => (s1['status'] < s2['status']));
+  // }
 }

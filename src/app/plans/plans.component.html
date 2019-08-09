@@ -13,14 +13,13 @@
         </div>
       </div>
       <div class="item-statistic">
-        <ng-container *ngIf="plan.statistic && this.statuses">
-          <div class="statistic-bar">
-            <div *ngFor="let status of plan.statistic" class="status-element"
-                 [ngStyle]="{ 'width': (status['count'] / plan.all_statistic['all'] * 100) + '%', 'background-color': get_status_by_id(status['status']).color}">
-            </div>
+        <div class="statistic-bar">
+          <div *ngFor="let status of plan.statistic.existed_statuses" class="status-element"
+               [ngStyle]="{ 'width': (plan.statistic.extended[status] / plan.statistic.all * 100) + '%',
+                  'background-color': this.palladiumApiService.statuses[status].color}">
           </div>
-          <div>{{ force_floor(plan.all_statistic['attitude']) || 0 | percent}}</div>
-        </ng-container>
+        </div>
+        <div>{{ plan.statistic.attitude || 0 | percent}}</div>
       </div>
     </mat-card>
     <div class="show-more">

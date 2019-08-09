@@ -12,7 +12,6 @@ import { Location } from '@angular/common';
 export class CaseHistoryComponent implements OnInit, OnDestroy {
   history;
   statuses;
-  statusesFormated = {};
   loading = true;
   resultsData = {};
   params;
@@ -32,9 +31,6 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
     Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
       this.statuses = res[0];
       this.history = res[1];
-      this.statuses.forEach( status => {
-        this.statusesFormated[status.id] = {color: status.color, name: status.name};
-      });
       this.loading = false;
       this.cd.detectChanges();
     });

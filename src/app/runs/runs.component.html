@@ -1,8 +1,8 @@
 <div class="run-space">
   <div class="toolbar" [hidden]="loading">
-    <div class="filters" [ngClass]="{'hidden': loading}">
+    <div class="filters" [ngClass]="{'hidden': loading}"  *ngIf="statistic">
       <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="select_filter(status)"
-                         *ngFor="let status of statuses"></app-status-filter>
+                         *ngFor="let status of statusArray"></app-status-filter>
     </div>
     <div class="buttons">
       <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
@@ -25,12 +25,12 @@
       </div>
       <div class="item-statistic" *ngIf="object.statistic.existed_statuses">
         <div *ngFor="let status of object.statistic.existed_statuses"
-             [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': get_status_by_id(status).color}">
+             [ngStyle]="{ 'width': (object.statistic.extended[status] / object.statistic.all * 100) + '%', 'background-color': palladiumApiService.get_status_by_id(status).color}">
         </div>
       </div>
       <mat-card-subtitle *ngIf="object.statistic.existed_statuses" class="item-statistic">
         <div *ngFor="let status of object.statistic.existed_statuses" class="status-small">
-          {{object.statistic.extended[status]}} {{ get_status_by_id(status).name || 0}}
+          {{object.statistic.extended[status]}} {{ palladiumApiService.get_status_by_id(status).name || 0}}
         </div>
       </mat-card-subtitle>
     </mat-card>

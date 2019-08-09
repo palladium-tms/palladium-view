@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav} from '@angular/mat
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SidenavService} from '../../services/sidenav.service';
+import {StanceService} from '../../services/stance.service';
 import {AuthenticationService} from '../../services/authentication.service';
 
 @Component({
@@ -21,9 +22,13 @@ export class ProductsComponent implements OnInit, OnDestroy {
   pinned = true;
   selectedProduct = {id: 0, name: ''};
 
-  constructor(private palladiumApiService: PalladiumApiService, private activatedRoute: ActivatedRoute,
+  constructor(private palladiumApiService: PalladiumApiService,
+              private stance: StanceService,
+              private activatedRoute: ActivatedRoute,
               public router: Router, private dialog: MatDialog,
-              public sidenavService: SidenavService, private cd: ChangeDetectorRef, private authenticationService: AuthenticationService) {
+              public sidenavService: SidenavService,
+              private cd: ChangeDetectorRef,
+              private authenticationService: AuthenticationService) {
     authenticationService.isAuthorized$.subscribe( status => {
       this.authorize = status;
     });
@@ -34,6 +39,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.authenticationService.isAuthorized.next(this.authorize);
     this.activatedRoute.params.subscribe(() => {
       this.get_products();
+      this.palladiumApiService.get_statuses();
       this.cd.detectChanges();
     });
     this.sidenavService.close_product_subject$.subscribe(() => {
@@ -45,11 +51,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   async get_products() {
     this.products = [];
     this.products = await this.palladiumApiService.products();
-    const productUrl = this.router.url.match(/product\/(\d+)/);
-    if(productUrl) {
-      const productId = +productUrl[1];
-      this.selectedProduct.name = this.products.find(product => product.id === productId).name;
-      this.sidenavService.set_product_name(this.products.find(product => product.id === productId).name);
+    if(this.stance.productId()) {
+      this.selectedProduct.name = this.products.find(product => product.id === this.stance.productId()).name;
+      this.sidenavService.set_product_name(this.products.find(product => product.id === this.stance.productId()).name);
     }
     this.cd.detectChanges();
   }

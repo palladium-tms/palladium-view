@@ -37,15 +37,15 @@
         <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
           <mat-card class="item mat-elevation-z1"
                     *cdkVirtualFor="let object of showAllElements| statisticFilter:filter| search: searchValue"
-                    [ngStyle]="{'border-right': '2px solid ' + statusesFormated[object.status]}"
+                    [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status).color}"
                     [ngClass]="{'mat-elevation-z5 selected': object.active}" style="height: 53px">
             <div class="result-set pointer" (click)="clicked($event, object)">
               <div class="result-set-checkbox">
                 <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
               </div>
               <div class="item-name">{{object.name}}</div>
-              <div class="status-name" *ngIf="this.statuses && !object.deleting">
-                <b>{{get_status_by_id(object['status']).name}}</b>
+              <div class="status-name" *ngIf="!object.deleting">
+                <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
               </div>
               <div class="menu-button menu">
                 <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
@@ -114,7 +114,7 @@
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
         <mat-card class="item mat-elevation-z1"
                   *cdkVirtualFor="let object of get_selected_for_add_result()"
-                  [ngStyle]="{'border-right': '2px solid ' + statusesFormated[object.status]}">
+                  [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status)}">
           <div class="result-set">
             <div class="result-set-delete">
               <button mat-icon-button (click)="unselect(object)">
@@ -122,8 +122,8 @@
               </button>
             </div>
             <div class="item-name item-name-for-deleting">{{object.name}}</div>
-            <div class="status-name status-padding" *ngIf="this.statuses && !object.deleting">
-              <b>{{get_status_by_id(object['status']).name}}</b>
+            <div class="status-name status-padding" *ngIf="!object.deleting">
+              <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
             </div>
           </div>
         </mat-card>
