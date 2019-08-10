@@ -157,13 +157,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       if (result) {
         if (result.path === 'case') {
           this.cases = this.cases.filter(obj => (obj.id !== result.id));
-          this.navigate_to_run_show();
         } else {
           this.resultSets = this.resultSets.filter(obj => (obj.id !== result.id));
-          this.object = this.cases.find(obj => (obj.name === result.name));
-          this.object.active = true;
-          this.router.navigate([this.router.url.replace(/\/result_set.*/, '/case/' + this.object.id)]);
         }
+        this.navigate_to_run_show();
         this.merge_result_sets_and_cases();
         this.update_statistic();
         this.show_all();
