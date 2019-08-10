@@ -38,8 +38,8 @@
           <mat-card class="item mat-elevation-z1"
                     *cdkVirtualFor="let object of showAllElements| statisticFilter:filter| search: searchValue"
                     [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status).color}"
-                    [ngClass]="{'mat-elevation-z5 selected': object.active}" style="height: 53px">
-            <div class="result-set pointer" (click)="clicked($event, object)">
+                    [ngClass]="{'mat-elevation-z5 selected': object.active, 'case': object.path == 'case'}" style="height: 53px">
+            <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
               <div class="result-set-checkbox">
                 <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
               </div>

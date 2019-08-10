@@ -276,7 +276,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (!(event.target.classList.contains('result-set-checkbox') ||
       event.target.classList.contains('mat-checkbox-inner-container') ||
       event.target.classList.contains('menu') ||
-      event.target.classList.contains('mat-checkbox'))) {
+      event.target.classList.contains('mat-checkbox')) && object.path !== 'case') {
       this.open_results(object);
     }
   }
