@@ -81,6 +81,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.suites = res[1];
       this.runs = res[0][this.stance.planId()];
       this.merge_suites_and_runs();
+      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.loading = false;
       this.get_selected_object();
       this.get_filters();
