@@ -1,5 +1,6 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Status} from 'app/models/status'
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {Point} from 'app/models/statistic';
+import {PalladiumApiService} from '../../../services/palladium-api.service';
 
 @Component({
   selector: 'app-status-filter',
@@ -8,31 +9,16 @@ import {Status} from 'app/models/status'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent implements OnInit {
-  @Input() status: Status;
-  @Input() count: number;
-  @Output() select = new EventEmitter();
+  @Input() point: Point;
   selected: boolean;
-  constructor() { }
+  constructor(private palladiumApi: PalladiumApiService) { }
 
   ngOnInit() {
-    this.selected = this.status.active;
   }
 
   get_background_color() {
-    if (this.selected) {
-      return this.status.color;
+    if (this.point.active) {
+      return this.palladiumApi.statuses[this.point.status].color;
     }
-  }
-
-  get_border_color() {
-    if (!this.selected) {
-      return this.status.color;
-    }
-  }
-
-  select_status() {
-    this.selected = !this.selected;
-    this.status.active = !this.selected;
-    this.select.emit([this.status]);
   }
 }

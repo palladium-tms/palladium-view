@@ -11,7 +11,7 @@
 // hue. Available color palettes: https://material.io/design/color/
 $palladium-primary: mat-palette($mat-yellow, 50);
 $palladium-primary-active: mat-palette($mat-yellow, 100);
-$palladium-accent: mat-palette($mat-cyan, 800);
+$palladium-accent: mat-palette($mat-cyan, 600);
 
 // The warn palette is optional (defaults to red).
 $palladium-warn: mat-palette($mat-red);
@@ -39,6 +39,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   font-family: Open Sans, sans-serif;
+  background: #6DB3F2 url('assets/stripes-light.png');
 }
 
 pre {
@@ -130,6 +131,9 @@ figure {
   min-height: 0.3em;
   padding-top: 0.2em;
   margin-bottom: 0;
+}
+.status-elements-no-empty {
+  display: flex;
 }
 
 //.status, .status-small {

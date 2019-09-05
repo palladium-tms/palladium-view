@@ -27,7 +27,6 @@ export class Run {
     this.plan_id = 0;
     this.created_at = 0;
     this.updated_at = 0;
-    this.statistic = new Statistic(null);
   }
 
   get_statistic(data) {

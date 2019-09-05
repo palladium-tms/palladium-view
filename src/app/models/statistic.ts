@@ -3,54 +3,37 @@ export interface StatisticInterface {
 }
 
 export class Statistic {
-  all = 0;
+  all: number;
+  points: Point[] = [];
   lost = 0;
-  attitude = 0;
+  attitude = 1;
   extended = {}; // looks like {status_id: count, status_id: count, 1: 2, 0: 4...}
-  existed_statuses = [];
+  existedStatuses = [];
+  data;
 
   constructor(data: StatisticInterface) {
-    this.extended = data;
-    if (data === null) {
-      this.extended = {};
-    } else {
-      this.existed_statuses = Object.keys(this.extended);
-      this.existed_statuses.forEach(status_id => {
-        this.all += this.extended[status_id];
-        if (+status_id === 0) {
-          this.lost = this.extended[status_id];
-        }
-      });
-      this.existed_statuses = Object.keys(this.extended);
-      this.attitude = (1 - this.lost / this.all);
+    this.data = data;
+    if (Object.keys(data).length === 0) {
+      return;
     }
+    this.all = +Object.values(data).reduce((a: number, b: number) => a + b);
+    this.existedStatuses = Object.keys(this.data);
+    Object.entries(data).forEach(
+      ([statusId, count]) => this.points.push(new Point(statusId, count, this.all))
+    );
   }
-  add_status(id, count) {
-    this.all = 0;
-    this.lost = 0;
-    this.attitude = 0;
-    this.extended[id] = count;
-    this.existed_statuses = Object.keys(this.extended);
-    this.existed_statuses.forEach(status_id => {
-      this.all += this.extended[status_id];
-      if (status_id === 0) {
-        this.lost = this.extended[status_id];
-      }
-    });
-    this.existed_statuses = Object.keys(this.extended);
-    this.attitude = (1 - this.lost / this.all);
-  }
+}
 
-  has_statuses(status_array) {
-    let status_exist = false;
-    if (status_array.length === 0) {
-      return true;
-    }
-    this.existed_statuses.forEach(status => {
-      if (status_array.indexOf(+status) > -1) {
-        status_exist = true;
-      }
-    });
-    return status_exist;
+export class Point {
+  status: number;
+  attitude: number;
+  count: number;
+  active: boolean;
+
+  constructor(status, count, all) {
+    this.status = +status;
+    this.count = count;
+    this.attitude = count / all;
+    this.active = false;
   }
 }

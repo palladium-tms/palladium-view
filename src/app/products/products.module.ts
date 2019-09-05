@@ -17,6 +17,7 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {CasesComponent} from '../cases/cases.component';
+import {PointComponent} from '../point/point.component';
 
 const productRoutes: Routes = [{
   path: '', component: ProductsComponent, children: [
@@ -39,7 +40,7 @@ const productRoutes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent,
+  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent,
     TopToolbarComponent,
     TokenComponent, TokenDialogComponent,
     InviteComponent, InviteDialogComponent,

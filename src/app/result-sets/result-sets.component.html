@@ -1,133 +1,134 @@
-  <div class="result-set-space" *ngIf="!addResultOpen">
-      <div class="toolbar" [hidden]="loading" >
-        <div class="filters">
-          <app-status-filter [status]=status [count]=statistic.extended[status.id] (select)="select_filter(status)"
-                             *ngFor="let status of statuses"></app-status-filter>
-        </div>
-        <div class="buttons">
-          <div class="select_all_checkbox">
-            <mat-checkbox (change)="select()" [(ngModel)]="selectAllFlag"></mat-checkbox>
-          </div>
-          <button mat-button (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
-            <mat-icon>library_add</mat-icon>
-            {{get_selected_count()}}
-          </button>
-          <div class="divider"></div>
-          <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
-            <mat-icon>refresh</mat-icon>
-          </button>
-          <button mat-icon-button [disabled]=this.loading [color]="searchToggle.color" (click)="toggle_search()">
-            <mat-icon>search</mat-icon>
-          </button>
-          <!--<button mat-icon-button (click)="scroll.scrollToIndex(showAllElements.indexOf(object) - 3, 'auto')"-->
-                  <!--[disabled]="this.loading" *ngIf="object">-->
-            <!--<mat-icon>my_location</mat-icon>-->
-          <!--</button>-->
-        </div>
+<div class="result-set-space" *ngIf="!addResultOpen">
+  <div class="toolbar" *ngIf="!loading">
+    <div class="filters" *ngIf="statistic">
+      <app-status-filter [point]=point (click)="select_filter(point)"
+                         *ngFor="let point of statistic.points.concat(untestedPoint)"></app-status-filter>
+    </div>
+    <div class="buttons">
+      <div class="select_all_checkbox">
+        <mat-checkbox (change)="select()" [(ngModel)]="selectAllFlag"></mat-checkbox>
       </div>
-    <mat-card class="search-bar" *ngIf="searchToggle.toggle">
-      <mat-form-field color="accent" class="search-input" floatLabel="never">
-        <input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off" placeholder="Search" autofocus>
-        <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-    </mat-card>
-      <div class="item-list" *ngIf="!loading" >
-        <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
-          <mat-card class="item mat-elevation-z1"
-                    *cdkVirtualFor="let object of showAllElements| statisticFilter:filter| search: searchValue"
-                    [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status).color}"
-                    [ngClass]="{'mat-elevation-z5 selected': object.active}" style="height: 53px">
-            <div class="result-set pointer" (click)="clicked($event, object)">
-              <div class="result-set-checkbox">
-                <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
-              </div>
-              <div class="item-name">{{object.name}}</div>
-              <div class="status-name" *ngIf="!object.deleting">
-                <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
-              </div>
-              <div class="menu-button menu">
-                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
-                        (click)="dropdownMenuItemSelect = object">
-                  <mat-icon class="menu">more_vert</mat-icon>
-                </button>
-              </div>
-              <div *ngIf="object.deleting">
-                <b style="color: #ca0a0a">Deleting...</b>
-              </div>
-            </div>
-          </mat-card>
-        </cdk-virtual-scroll-viewport>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="copy_result_set_name()">
-            <mat-icon>content_copy</mat-icon>
-            <span>Copy</span>
-          </button>
-          <button mat-menu-item (click)="open_history_page()">
-            <mat-icon>date_range</mat-icon>
-            <span>History</span>
-          </button>
-          <button mat-menu-item (click)="open_settings()">
-            <mat-icon>settings</mat-icon>
-            <span>Settings</span>
-          </button>
-        </mat-menu>
-      </div>
-    <div [hidden]="!loading" class="loader">
-      <mat-spinner color="accent"></mat-spinner>
+      <button mat-button (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
+        <mat-icon>library_add</mat-icon>
+        {{get_selected_count()}}
+      </button>
+      <div class="divider"></div>
+      <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button [disabled]=this.loading [color]="searchToggle.color" (click)="toggle_search()">
+        <mat-icon>search</mat-icon>
+      </button>
+      <!--<button mat-icon-button (click)="scroll.scrollToIndex(showAllElements.indexOf(object) - 3, 'auto')"-->
+      <!--[disabled]="this.loading" *ngIf="object">-->
+      <!--<mat-icon>my_location</mat-icon>-->
+      <!--</button>-->
     </div>
   </div>
+  <mat-card class="search-bar" *ngIf="searchToggle.toggle">
+    <mat-form-field color="accent" class="search-input" floatLabel="never">
+      <input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"
+             placeholder="Search" autofocus>
+      <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </mat-card>
+  <div class="item-list" *ngIf="!loading">
+    <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
+      <mat-card class="item mat-elevation-z1"
+                *cdkVirtualFor="let object of resultSetsAndCases| statusFilter: filter| search: searchValue"
+                [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status).color}"
+                [ngClass]="{'selected': object.active, 'case': object.path == 'case'}" style="height: 53px">
+        <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
+          <div class="result-set-checkbox">
+            <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
+          </div>
+          <div class="item-name">{{object.name}}</div>
+          <div class="status-name" *ngIf="!object.deleting">
+            <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
+          </div>
+          <div class="menu-button menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
+                    (click)="dropdownMenuItemSelect = object">
+              <mat-icon class="menu">more_vert</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="object.deleting">
+            <b style="color: #ca0a0a">Deleting...</b>
+          </div>
+        </div>
+      </mat-card>
+    </cdk-virtual-scroll-viewport>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="copy_result_set_name()">
+        <mat-icon>content_copy</mat-icon>
+        <span>Copy</span>
+      </button>
+      <button mat-menu-item (click)="open_history_page()">
+        <mat-icon>date_range</mat-icon>
+        <span>History</span>
+      </button>
+      <button mat-menu-item (click)="open_settings()">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+    </mat-menu>
+  </div>
+  <div [hidden]="!loading" class="loader">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+</div>
 
-  <div class="new-result-space" *ngIf="addResultOpen">
-    <mat-card class="new-result-form-card mat-elevation-z1">
-      <mat-card-content>
-        <form [formGroup]="newResultForm">
-          <div class="new_result_form">
-            <mat-form-field color="accent">
-              <mat-select placeholder="Select status" formControlName="status">
-                <mat-option *ngFor="let status of notBlockedStatus"
-                            [value]="status"
-                            [ngStyle]="{'border-right': '7px solid ' + status.color}">
-                  {{status.name}}
-                </mat-option>
-              </mat-select>
-              <mat-icon matSuffix [ngStyle]="{'color': this.status ? this.status.color: '#ffffff'}">brightness_1
-              </mat-icon>
-            </mat-form-field>
-            <mat-form-field color="accent">
+<div class="new-result-space" *ngIf="addResultOpen">
+  <mat-card class="new-result-form-card mat-elevation-z1">
+    <mat-card-content>
+      <form [formGroup]="newResultForm">
+        <div class="new_result_form">
+          <mat-form-field color="accent">
+            <mat-select placeholder="Select status" formControlName="status">
+              <mat-option *ngFor="let status of notBlockedStatus"
+                          [value]="status"
+                          [ngStyle]="{'border-right': '7px solid ' + status.color}">
+                {{status.name}}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix [ngStyle]="{'color': this.status ? this.status.color: '#ffffff'}">brightness_1
+            </mat-icon>
+          </mat-form-field>
+          <mat-form-field color="accent">
             <textarea cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" matInput
                       placeholder="Leave a comment" formControlName="message"></textarea>
-            </mat-form-field>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-actions class="new-result-buttons">
+      <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
+      <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
+              matBadge="{{get_selected_count()}}" matBadgePosition="after"
+              (click)="add_result()" style="float: right">Add result
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  <div class="item-list">
+    <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
+      <mat-card class="item mat-elevation-z1"
+                *cdkVirtualFor="let object of get_selected_for_add_result()"
+                [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status)}">
+        <div class="result-set">
+          <div class="result-set-delete">
+            <button mat-icon-button (click)="unselect(object)">
+              <mat-icon>clear</mat-icon>
+            </button>
           </div>
-        </form>
-      </mat-card-content>
-      <mat-card-actions class="new-result-buttons">
-        <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
-        <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
-                matBadge="{{get_selected_count()}}" matBadgePosition="after"
-                (click)="add_result()" style="float: right">Add result
-        </button>
-      </mat-card-actions>
-    </mat-card>
-    <div class="item-list">
-      <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
-        <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of get_selected_for_add_result()"
-                  [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status)}">
-          <div class="result-set">
-            <div class="result-set-delete">
-              <button mat-icon-button (click)="unselect(object)">
-                <mat-icon>clear</mat-icon>
-              </button>
-            </div>
-            <div class="item-name item-name-for-deleting">{{object.name}}</div>
-            <div class="status-name status-padding" *ngIf="!object.deleting">
-              <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
-            </div>
+          <div class="item-name item-name-for-deleting">{{object.name}}</div>
+          <div class="status-name status-padding" *ngIf="!object.deleting">
+            <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
           </div>
-        </mat-card>
-      </cdk-virtual-scroll-viewport>
-    </div>
+        </div>
+      </mat-card>
+    </cdk-virtual-scroll-viewport>
   </div>
+</div>
 <router-outlet (activate)="onActivate($event)"></router-outlet>
