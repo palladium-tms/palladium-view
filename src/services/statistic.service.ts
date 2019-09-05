@@ -8,7 +8,7 @@ export class StatisticService {
   planSubject = new Subject<Statistic>();
 
 
-  update_parant_statistic(statistic) {
+  update_run_statistic(statistic) {
     this.subject.next(statistic);
   }
 
@@ -16,14 +16,14 @@ export class StatisticService {
     return this.subject.asObservable();
   }
 
-  plan_statistic_update(statistic) {
+  update_plan_statistic(statistic) {
     this.planSubject.next(statistic);
   }
   // calculate statistic
   runs_and_suites_statistic(objects):Statistic {
     const allStatistic = {};
     objects.forEach(object => {
-      object.statistic.existed_statuses.forEach( statusId => {
+      object.statistic.existedStatuses.forEach(statusId => {
         if (allStatistic[statusId]) {
           allStatistic[statusId] += object.statistic.extended[statusId];
         } else {

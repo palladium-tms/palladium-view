@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewEncapsulation} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, AfterViewInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
@@ -15,11 +15,10 @@ import {StatisticService} from '../../services/statistic.service';
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlansComponent implements OnInit {
-  selectedPlan = {id: 0};
+export class PlansComponent implements OnInit, AfterViewInit {
+  selectedPlan;
   productId;
   plan_for_settings;
-  _plans = [];
   RUN_COMPONENT;
   loading = false;
 
@@ -38,8 +37,11 @@ export class PlansComponent implements OnInit {
     this.palladiumApiService.statusObservable.subscribe(() => {
       this.cd.detectChanges();
     });
+  }
+
+  ngAfterViewInit() {
     this.statisticService.planSubject.subscribe(statistic => {
-      this._plans.find(plan => plan.id === this.stance.planId()).statistic = statistic;
+      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic = statistic;
       this.cd.detectChanges();
     });
   }
@@ -51,24 +53,23 @@ export class PlansComponent implements OnInit {
     }
   }
 
-  async init_data() {
+  init_data() {
     this.loading = true;
-    let observablePlans;
+    this.cd.detectChanges();
+    this.selectedPlan = {id: 0};
+    let promisePlans;
     if(this.stance.planId()) {
-      observablePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
+      promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
     } else {
-      observablePlans = this.palladiumApiService.get_plans(this.productId);
+      promisePlans = this.palladiumApiService.get_plans(this.productId);
     }
-    this.cd.detectChanges();
-    const observableSuites = this.palladiumApiService.get_suites(this.productId);
-    await observablePlans;
-    await observableSuites;
-    this._plans = this.palladiumApiService.plans[this.productId] || [];
-    if (this.stance.planId()) {
-      this.selectedPlan = this._plans.find(plan => plan.id === this.stance.planId());
-    }
-    this.loading = false;
-    this.cd.detectChanges();
+    Promise.all([promisePlans, this.palladiumApiService.get_suites(this.productId)]).then(() => {
+      if (this.stance.planId()) {
+        this.selectedPlan = this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId());
+      }
+      this.loading = false;
+      this.cd.detectChanges();
+    });
   }
 
   onActivate(componentRef) {
@@ -78,14 +79,14 @@ export class PlansComponent implements OnInit {
   open_settings() {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
-        plans: this._plans,
+        plans: this.palladiumApiService.plans[this.productId],
         plan: this.plan_for_settings
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this._plans = result;
+        this.palladiumApiService.plans[this.productId] = result;
         this.cd.detectChanges();
       }
     });

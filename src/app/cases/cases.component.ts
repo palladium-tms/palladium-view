@@ -94,6 +94,6 @@ export class CasesComponent implements OnInit {
         statData[object['status']] = 1;
       }
     });
-    this.stat.update_parant_statistic(new Statistic(statData));
+    // this.stat.update_parant_statistic(new Statistic(statData));
   }
 }

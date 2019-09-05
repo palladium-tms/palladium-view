@@ -132,6 +132,9 @@ figure {
   padding-top: 0.2em;
   margin-bottom: 0;
 }
+.status-elements-no-empty {
+  display: flex;
+}
 
 //.status, .status-small {
 //  flex-direction: row;

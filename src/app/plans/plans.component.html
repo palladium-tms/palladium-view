@@ -1,8 +1,8 @@
 <div class="plan-space">
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of _plans | sortByCreatedAt:'desc'"
-              [ngClass]="{'mat-elevation-z5 selected': selectedPlan.id == plan.id}"
+              *ngFor="let plan of this.palladiumApiService.plans[productId] | sortByCreatedAt:'desc'"
+              [ngClass]="{'selected': selectedPlan.id == plan.id}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
         <div class="name">{{plan.name}}</div>
@@ -14,12 +14,17 @@
       </div>
       <div class="item-statistic">
         <div class="statistic-bar">
-          <div *ngFor="let status of plan.statistic.existed_statuses" class="status-element"
-               [ngStyle]="{ 'width': (plan.statistic.extended[status] / plan.statistic.all * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses[status].color}">
+          <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((plan.statistic.all / this.palladiumApiService.case_count(productId)) * 100) + '%'}">
+            <div *ngFor="let point of plan.statistic.points" class="status-element"
+                 [ngStyle]="{ 'width': (point.attitude * 100) + '%',
+                  'background-color': this.palladiumApiService.statuses[point.status].color}">
+            </div>
           </div>
+          <div class="status-element"
+               [ngStyle]="{ 'width': ((1 - plan.statistic.all / this.palladiumApiService.case_count(productId)) * 100) + '%',
+                  'background-color': this.palladiumApiService.statuses['0'].color}"></div>
         </div>
-        <div>{{ plan.statistic.attitude || 0 | percent}}</div>
+        <div>{{plan.statistic.all / palladiumApiService.case_count(productId) || 0 | percent}}</div>
       </div>
     </mat-card>
     <div class="show-more">

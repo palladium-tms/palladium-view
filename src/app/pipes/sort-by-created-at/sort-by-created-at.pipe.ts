@@ -7,6 +7,9 @@ export class SortByCreatedAtPipe implements PipeTransform {
 
   // asc desc
   transform(value: any[], args?: any): any {
+    if (!value) {
+      return [];
+    }
     if (args === 'asc') {
       value.sort(function(a, b) { return a.id - b.id; });
     } else if (args === 'desc') {
