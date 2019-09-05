@@ -22,7 +22,7 @@ export class PlansComponent implements OnInit, AfterViewInit {
   RUN_COMPONENT;
   loading = false;
 
-  constructor(private palladiumApiService: PalladiumApiService,
+  constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
               private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
