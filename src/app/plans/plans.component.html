@@ -28,7 +28,7 @@
       </div>
     </mat-card>
     <div class="show-more">
-      <button mat-button class="show-more-button" (click)="load_more_plans()">Show more</button>
+      <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
     </div>
   </div>
   <div [hidden]="!loading" class="loader">

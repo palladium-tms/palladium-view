@@ -272,17 +272,22 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  async get_plans(productId) {
+  async get_plans(productId): Promise<boolean> {
     let offset = 0;
     if (this.plans[productId]) {
-      offset = this.plans[productId].length
+      offset = this.plans[productId].length;
     }
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}});
     const tmpPlans = [];
     Object(response['plans']).forEach(plan => {
       tmpPlans.push(new Plan(plan));
     });
-    this.plans[productId] = tmpPlans;
+    if (this.plans[productId]) {
+      this.plans[productId] = this.plans[productId].concat(tmpPlans);
+    } else {
+      this.plans[productId] = tmpPlans;
+    }
+    return tmpPlans === [];
   }
 
   async get_plans_to_id(productId, planId) {
