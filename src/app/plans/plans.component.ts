@@ -21,6 +21,7 @@ export class PlansComponent implements OnInit, AfterViewInit {
   plan_for_settings;
   RUN_COMPONENT;
   loading = false;
+  showMore = true;
 
   constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -93,8 +94,10 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   async load_more_plans() {
-    await this.palladiumApiService.get_plans(this.productId);
-    this.cd.detectChanges();
+    this.palladiumApiService.get_plans(this.productId).then(canBeLoadedMore => {
+      this.showMore = canBeLoadedMore;
+      this.cd.detectChanges();
+    });
   }
 }
 

@@ -32,7 +32,7 @@ export class PalladiumApiService {
   plans: StructuredPlans = {};
   suites = {};
   resultSets: StructuredResultSets = {};
-  statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'blocked': true})};
+  statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
   statusObservable = new BehaviorSubject(this.statuses);
   response_results_data = {};
   response_runs_data = {};
@@ -48,7 +48,7 @@ export class PalladiumApiService {
   //#region Status
   get_statuses(): void {
     this.httpService.postData('/statuses', '').then(resp => {
-      this.statuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'block': true})};
+      this.statuses = {0: new Status({name: 'Untested', color: '#efefef', id: 0, 'block': true})};
       Object.keys(resp['statuses']).forEach(key => {
         const statusNew = new Status(resp['statuses'][key]);
         this.statuses[statusNew.id] = statusNew;
@@ -272,17 +272,22 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  async get_plans(productId) {
+  async get_plans(productId): Promise<boolean> {
     let offset = 0;
     if (this.plans[productId]) {
-      offset = this.plans[productId].length
+      offset = this.plans[productId].length;
     }
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}});
     const tmpPlans = [];
     Object(response['plans']).forEach(plan => {
       tmpPlans.push(new Plan(plan));
     });
-    this.plans[productId] = tmpPlans;
+    if (this.plans[productId]) {
+      this.plans[productId] = this.plans[productId].concat(tmpPlans);
+    } else {
+      this.plans[productId] = tmpPlans;
+    }
+    return tmpPlans === [];
   }
 
   async get_plans_to_id(productId, planId) {
