@@ -32,7 +32,7 @@ export class PalladiumApiService {
   plans: StructuredPlans = {};
   suites = {};
   resultSets: StructuredResultSets = {};
-  statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'blocked': true})};
+  statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
   statusObservable = new BehaviorSubject(this.statuses);
   response_results_data = {};
   response_runs_data = {};
@@ -48,7 +48,7 @@ export class PalladiumApiService {
   //#region Status
   get_statuses(): void {
     this.httpService.postData('/statuses', '').then(resp => {
-      this.statuses = {0: new Status({name: 'Untested', color: 'white', id: 0, 'block': true})};
+      this.statuses = {0: new Status({name: 'Untested', color: '#efefef', id: 0, 'block': true})};
       Object.keys(resp['statuses']).forEach(key => {
         const statusNew = new Status(resp['statuses'][key]);
         this.statuses[statusNew.id] = statusNew;
