@@ -1,15 +1,14 @@
 # Changelog
 ## master (unreleased)
+## [0.6.4]
 ## Added
     * Plan statistic update
     * Updating all statuses in one time
     * Optimisations for status loading
 ## Changed
     * Background colore for bode and untested status
-
 ### Fixed
     * Errors after showing more plans 
-
 ## [0.6.3]
 ## Added
     * Limited plans loading
