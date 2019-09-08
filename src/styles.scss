@@ -12,6 +12,7 @@
 $palladium-primary: mat-palette($mat-yellow, 50);
 $palladium-primary-active: mat-palette($mat-yellow, 100);
 $palladium-accent: mat-palette($mat-cyan, 600);
+$palladium-font-color-selected: '#38808e';
 
 // The warn palette is optional (defaults to red).
 $palladium-warn: mat-palette($mat-red);
@@ -39,8 +40,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   font-family: Open Sans, sans-serif;
-  //background: #6DB3F2 url('assets/stripes-light.png');
-  background: #e6e6e6;
+  background: #6DB3F2 url('assets/handmadepaper.png');
 }
 
 pre {
@@ -84,13 +84,13 @@ figure {
   padding: 0.5em 0.7em 0.5em 0.5em;
   margin: 0.5em;
   cursor: pointer;
-  border: solid 2px transparent;
+  border: solid 1px transparent;
 }
 
 .selected {
-  border: solid 2px mat-color($palladium-accent);
-  //border-left: solid 3px mat-color($palladium-accent);
-  transition: border-color 300ms ease-out;
+  background-color: #f5f9ff;
+  color: $palladium-font-color-selected;
+  border: 1px solid #00acc1;
 }
 
 .item-list {
