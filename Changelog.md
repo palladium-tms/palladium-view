@@ -1,5 +1,8 @@
 # Changelog
 ## master (unreleased)
+## Changed
+    * Style for selected items 
+    
 ## [0.6.4]
 ## Added
     * Plan statistic update
