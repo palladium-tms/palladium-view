@@ -11,7 +11,7 @@ export class StatisticFilterPipe implements PipeTransform {
       if (args[0].indexOf(0) > -1) {
         return  value.filter(
           item =>(item.statistic.existedStatuses.filter(currentStatus => args[0].indexOf(+currentStatus) > -1).length > 0 ||
-            args[1][item.name] !== 0
+            (args[1][item.name] && args[1][item.name].count > 0)
           )
         );
       } else {
