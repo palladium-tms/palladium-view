@@ -2,7 +2,8 @@
 ## master (unreleased)
 ## Changed
     * Style for selected items 
-    
+## Fixed
+    * Fix untested filter
 ## [0.6.4]
 ## Added
     * Plan statistic update
