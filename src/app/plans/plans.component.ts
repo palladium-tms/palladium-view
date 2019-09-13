@@ -42,8 +42,11 @@ export class PlansComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.statisticService.planSubject.subscribe(statistic => {
-      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic = statistic;
-      this.cd.detectChanges();
+      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic$.then(planStatistic => {
+        planStatistic.data = statistic.data;
+        planStatistic.calculate();
+        this.cd.detectChanges();
+      });
     });
   }
 

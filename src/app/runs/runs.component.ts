@@ -24,7 +24,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   runs_and_suites = [];
   params;
   ResultSetComponent;
-  plan;
   untestedCash = {};
   untestedPoint: Point;
   statistic: Statistic;
@@ -49,11 +48,11 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
     this.palladiumApiService.statusObservable.subscribe(() => {
       this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
-      this.all_statistic = this.statistic.extended;
       this.cd.detectChanges();
     });
+
     this.statistic_service.statistic_has_changed().subscribe(statistic => {
-      if (this.runs_and_suites.length === 0) {return;}
+      if (this.runs_and_suites.length === 0 || !this.palladiumApiService.plans[this.stance.productId()]) {return;}
       this.runs_and_suites.filter(object => this.stance.run_or_suite_by_url(object))[0].statistic = statistic;
       this.get_statistic();
       this.merge_suites_and_runs();
@@ -123,7 +122,6 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
     this.runs_and_suites = this.runs.concat(suiteForAdd);
   }
-
 
   select_filter(point) {
     this.filter = [];
