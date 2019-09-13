@@ -299,13 +299,12 @@ export class PalladiumApiService {
     } else {
       this.plans[productId] = tmpPlans;
     }
-    return tmpPlans === []; // there are not more plans for loading
+    return tmpPlans.length === 0; // there are not more plans for loading
   }
 
   get_plans_statistic(planIds):Promise<StructuredPlansStatistic>{
       return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
         const statistics = {};
-        console.log('get_plans_statistic');
         Object.keys(response['statistic']).forEach(planId => {
           statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
         });

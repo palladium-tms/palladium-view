@@ -97,8 +97,8 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   async load_more_plans() {
-    this.palladiumApiService.get_plans(this.productId).then(canBeLoadedMore => {
-      this.showMore = canBeLoadedMore;
+    this.palladiumApiService.get_plans(this.productId).then(canNotBeLoadedMore => {
+      this.showMore = !canNotBeLoadedMore;
       this.cd.detectChanges();
     });
   }

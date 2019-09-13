@@ -4,6 +4,7 @@
     * Style for selected items 
 ## Fixed
     * Fix untested filter
+    * Fix: show more button is hided after click
 ## [0.6.4]
 ## Added
     * Plan statistic update
