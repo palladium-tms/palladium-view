@@ -1,5 +1,7 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * Added async loading for plan object and statistic
 ## Changed
     * Style for selected items 
 ## Fixed
