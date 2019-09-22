@@ -170,6 +170,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   select_object(object) {
+    if (this.selected_object === object) {return;}
     this.selected_object = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
   }

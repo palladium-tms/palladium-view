@@ -52,6 +52,7 @@ export class PlansComponent implements OnInit, AfterViewInit {
 
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
+      if (this.selectedPlan === plan) {return;}
       this.selectedPlan = plan;
       this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
     }
