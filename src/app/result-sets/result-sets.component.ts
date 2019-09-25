@@ -31,7 +31,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   });
   loading = true;
   addResultOpen = false;
-  selectedStatus;
   resultSets = [];
   statistic: Statistic;
   untestedPoint: Point;
@@ -344,7 +343,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   cancel_result_custom() {
-    this.selectedStatus = '';
     this.addResultOpen = false;
   }
 
