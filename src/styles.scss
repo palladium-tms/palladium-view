@@ -128,7 +128,6 @@ figure {
 }
 
 .item-statistic {
-  display: flex;
   min-height: 0.3em;
   padding-top: 0.2em;
   margin-bottom: 0;
@@ -136,16 +135,6 @@ figure {
 .status-elements-no-empty {
   display: flex;
 }
-
-//.status, .status-small {
-//  flex-direction: row;
-//  display: flex;
-//  overflow: hidden;
-//}
-//
-//.status-small{
-//  margin-right: 0.4em;
-//}
 
 .status-name {
   padding-top: 3px;

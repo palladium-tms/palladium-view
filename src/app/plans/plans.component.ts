@@ -42,13 +42,17 @@ export class PlansComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.statisticService.planSubject.subscribe(statistic => {
-      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic = statistic;
-      this.cd.detectChanges();
+      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic$.then(planStatistic => {
+        planStatistic.data = statistic.data;
+        planStatistic.calculate();
+        this.cd.detectChanges();
+      });
     });
   }
 
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
+      if (this.selectedPlan === plan) {return;}
       this.selectedPlan = plan;
       this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
     }
@@ -94,8 +98,8 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   async load_more_plans() {
-    this.palladiumApiService.get_plans(this.productId).then(canBeLoadedMore => {
-      this.showMore = canBeLoadedMore;
+    this.palladiumApiService.get_plans(this.productId).then(canNotBeLoadedMore => {
+      this.showMore = !canNotBeLoadedMore;
       this.cd.detectChanges();
     });
   }

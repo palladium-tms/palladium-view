@@ -27,6 +27,10 @@ export interface StructuredResultSets {
   [key: number]: ResultSet[];
 }
 
+export interface StructuredPlansStatistic {
+  [key: number]: Statistic;
+}
+
 @Injectable()
 export class PalladiumApiService {
   plans: StructuredPlans = {};
@@ -34,6 +38,7 @@ export class PalladiumApiService {
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
   statusObservable = new BehaviorSubject(this.statuses);
+  plansStatistic: StructuredPlansStatistic = {};
   response_results_data = {};
   response_runs_data = {};
   cases: Case[] = [];
@@ -279,24 +284,62 @@ export class PalladiumApiService {
     }
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}});
     const tmpPlans = [];
+    const planIds = Object(response['plans']).map(plan => plan.id);
+    const statisticPromise = this.get_plans_statistic(planIds);
+
     Object(response['plans']).forEach(plan => {
-      tmpPlans.push(new Plan(plan));
+      const _plan = new Plan(plan);
+      _plan.statistic$ = statisticPromise.then(statisticAll => {
+        return statisticAll[_plan.id];
+      });
+      tmpPlans.push(_plan);
     });
     if (this.plans[productId]) {
       this.plans[productId] = this.plans[productId].concat(tmpPlans);
     } else {
       this.plans[productId] = tmpPlans;
     }
-    return tmpPlans === [];
+    return tmpPlans.length === 0; // there are not more plans for loading
+  }
+
+  get_plans_statistic(planIds):Promise<StructuredPlansStatistic>{
+      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
+        const statistics = {};
+        Object.keys(response['statistic']).forEach(planId => {
+          statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+        });
+        return statistics;
+      });
+  }
+
+  // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
+  reformatted_statistic_data(data) {
+    const _statistic = {};
+    data.forEach(i => {
+      _statistic[i.status] = i.count;
+    });
+    return _statistic;
   }
 
   async get_plans_to_id(productId, planId) {
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: planId}});
     const tmpPlans = [];
+    const planIds = Object(response['plans']).map(plan => plan.id);
+    const statisticPromise = this.get_plans_statistic(planIds);
+
     Object(response['plans']).forEach(plan => {
-      tmpPlans.push(new Plan(plan));
+      const _plan = new Plan(plan);
+      _plan.statistic$ = statisticPromise.then(statisticAll => {
+        return statisticAll[_plan.id];
+      });
+      tmpPlans.push(_plan);
     });
-    this.plans[productId] = tmpPlans;
+    if (this.plans[productId]) {
+      this.plans[productId] = this.plans[productId].concat(tmpPlans);
+    } else {
+      this.plans[productId] = tmpPlans;
+    }
+    return tmpPlans === []; // there are not more plans for loading
   }
 
   case_count(productId) {
@@ -315,7 +358,8 @@ export class PalladiumApiService {
         if (resp['errors']) {
           return Promise.reject(resp['errors']);
         } else {
-          return Promise.resolve(new Plan(resp['plan']));
+          // return Promise.resolve(new Plan(resp['plan']));
+          return Promise.resolve({});
         }
       });
   }

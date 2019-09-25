@@ -5,9 +5,7 @@ export interface StatisticInterface {
 export class Statistic {
   all: number;
   points: Point[] = [];
-  lost = 0;
   attitude = 1;
-  extended = {}; // looks like {status_id: count, status_id: count, 1: 2, 0: 4...}
   existedStatuses = [];
   data;
 
@@ -16,11 +14,17 @@ export class Statistic {
     if (Object.keys(data).length === 0) {
       return;
     }
-    this.all = +Object.values(data).reduce((a: number, b: number) => a + b);
+    this.calculate();
+  }
+
+  calculate() {
+    const _points = [];
+    this.all = +Object.values(this.data).reduce((a: number, b: number) => a + b);
     this.existedStatuses = Object.keys(this.data);
-    Object.entries(data).forEach(
-      ([statusId, count]) => this.points.push(new Point(statusId, count, this.all))
+    Object.entries(this.data).forEach(
+      ([statusId, count]) => _points.push(new Point(statusId, count, this.all))
     );
+    this.points = _points;
   }
 }
 

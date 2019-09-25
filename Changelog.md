@@ -1,9 +1,13 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * Added async loading for plan object and statistic
 ## Changed
-    * Style for selected items 
+    * Style for selected items
+    * No routing after click to selected object
 ## Fixed
     * Fix untested filter
+    * Fix: show more button is hided after click
 ## [0.6.4]
 ## Added
     * Plan statistic update

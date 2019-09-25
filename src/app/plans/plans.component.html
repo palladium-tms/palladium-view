@@ -13,18 +13,7 @@
         </div>
       </div>
       <div class="item-statistic">
-        <div class="statistic-bar">
-          <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((plan.statistic.all / this.palladiumApiService.case_count(productId)) * 100) + '%'}">
-            <div *ngFor="let point of plan.statistic.points" class="status-element"
-                 [ngStyle]="{ 'width': (point.attitude * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses[point.status].color}">
-            </div>
-          </div>
-          <div class="status-element"
-               [ngStyle]="{ 'width': ((1 - plan.statistic.all / this.palladiumApiService.case_count(productId)) * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses['0'].color}"></div>
-        </div>
-        <div>{{plan.statistic.all / palladiumApiService.case_count(productId) || 0 | percent}}</div>
+        <app-statistic [statistic$] = plan.statistic$></app-statistic>
       </div>
     </mat-card>
     <div class="show-more">
