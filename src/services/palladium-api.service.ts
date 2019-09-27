@@ -277,48 +277,20 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  async get_plans(productId): Promise<boolean> {
-    let offset = 0;
-    if (this.plans[productId]) {
-      offset = this.plans[productId].length;
-    }
-    const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}});
-    const tmpPlans = [];
-    const planIds = Object(response['plans']).map(plan => plan.id);
-    const statisticPromise = this.get_plans_statistic(planIds);
-
-    Object(response['plans']).forEach(plan => {
-      const _plan = new Plan(plan);
-      _plan.statistic$ = statisticPromise.then(statisticAll => {
-        return statisticAll[_plan.id];
-      });
-      tmpPlans.push(_plan);
-    });
-    if (this.plans[productId]) {
-      this.plans[productId] = this.plans[productId].concat(tmpPlans);
-    } else {
-      this.plans[productId] = tmpPlans;
-    }
-    return tmpPlans.length === 0; // there are not more plans for loading
-  }
-
-  get_plans_statistic(planIds):Promise<StructuredPlansStatistic>{
-      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
-        const statistics = {};
-        Object.keys(response['statistic']).forEach(planId => {
-          statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+  async get_plans(productId, offset): Promise<Plan[]> {
+    return this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).then(response => {
+      const tmpPlans = [];
+      const planIds = Object(response['plans']).map(plan => plan.id);
+      const statisticPromise = this.get_plans_statistic(planIds);
+      Object(response['plans']).forEach(plan => {
+        const _plan = new Plan(plan);
+        _plan.statistic$ = statisticPromise.then(statisticAll => {
+          return statisticAll[_plan.id];
         });
-        return statistics;
+        tmpPlans.push(_plan);
       });
-  }
-
-  // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
-  reformatted_statistic_data(data) {
-    const _statistic = {};
-    data.forEach(i => {
-      _statistic[i.status] = i.count;
+      return tmpPlans;
     });
-    return _statistic;
   }
 
   async get_plans_to_id(productId, planId) {
@@ -340,6 +312,42 @@ export class PalladiumApiService {
       this.plans[productId] = tmpPlans;
     }
     return tmpPlans === []; // there are not more plans for loading
+  }
+
+  async get_plans_initializing(productId) {
+    return this.get_plans(productId, 0).then(plans => {
+      this.plans[productId] = plans;
+    });
+  }
+
+  async get_plans_show_more(productId):Promise<boolean> {
+    let offset = 0;
+    if (this.plans[productId]) {
+      offset = this.plans[productId].length;
+    }
+    return this.get_plans(productId, offset).then(plans => {
+      this.plans[productId] = this.plans[productId].concat(plans);
+      return plans.length === 0; // there are not more plans for loading
+    });
+  }
+
+  get_plans_statistic(planIds):Promise<StructuredPlansStatistic>{
+      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
+        const statistics = {};
+        Object.keys(response['statistic']).forEach(planId => {
+          statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+        });
+        return statistics;
+      });
+  }
+
+  // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
+  reformatted_statistic_data(data) {
+    const _statistic = {};
+    data.forEach(i => {
+      _statistic[i.status] = i.count;
+    });
+    return _statistic;
   }
 
   case_count(productId) {
