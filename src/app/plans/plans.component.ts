@@ -65,8 +65,10 @@ export class PlansComponent implements OnInit, AfterViewInit {
     let promisePlans;
     if(this.stance.planId()) {
       promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
+    } else if (!this.palladiumApiService.plans[this.productId]) {
+      promisePlans = this.palladiumApiService.get_plans_initializing(this.productId);
     } else {
-      promisePlans = this.palladiumApiService.get_plans(this.productId);
+      promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
     }
     Promise.all([promisePlans, this.palladiumApiService.get_suites(this.productId)]).then(() => {
       if (this.stance.planId()) {
@@ -98,13 +100,12 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   async load_more_plans() {
-    this.palladiumApiService.get_plans(this.productId).then(canNotBeLoadedMore => {
+    this.palladiumApiService.get_plans_show_more(this.productId).then(canNotBeLoadedMore => {
       this.showMore = !canNotBeLoadedMore;
       this.cd.detectChanges();
     });
   }
 }
-
 
 @Component({
   selector: 'app-plan-settings',
