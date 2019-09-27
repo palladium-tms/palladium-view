@@ -116,10 +116,10 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.suites.forEach(suite => {
       const run = this.runs.find(run => run.name === suite.name);
       if (run) {
-        if (run.statistic.points.length !== 0 ) {
-          this.untestedCash[run.name] = new Point(0, suite.statistic.all - run.statistic.all, suite.statistic.all);
-        } else {
+        if (run.statistic.points.length === 0) {
           this.untestedCash[run.name] = this.suites.find(suite => suite.name === run.name).statistic.points[0];
+        } else {
+          this.untestedCash[run.name] = new Point(0, suite.statistic.all - run.statistic.all, suite.statistic.all);
         }
       } else {
         suiteForAdd.push(suite);
@@ -148,17 +148,17 @@ export class RunsComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (this.stance.runId) {
-          this.runs = this.runs.filter(current_run => current_run.id !== result.id);
-          const path = this.router.url.replace(/run.*/, 'suite/');
-          this.selected_object = this.suites.find(suite => suite.name === result.name);
-          this.router.navigate([ path + this.selected_object.id]);
+        if (result.path === 'run') {
+          this.runs = this.runs.filter(currentRun => currentRun.id !== result.id);
+          const object = this.suites.find(suite => suite.name === result.name);
+          this.merge_suites_and_runs();
+          this.select_object(object);
         } else {
-          this.suites = this.suites.filter(obj => (obj.id !== result.id));
-          this.router.navigate([ this.router.url.replace(/\/suite.*/, '')]);
+          this.suites = this.suites.filter(currentSuite => currentSuite.id !== result.id);
+          this.router.navigate([this.router.url.replace(/\/suite.*/, '')]);
+          this.merge_suites_and_runs();
+          this.get_statistic();
         }
-        this.merge_suites_and_runs();
-        this.get_statistic();
       }
       this.cd.detectChanges();
     });
@@ -175,7 +175,9 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   select_object(object) {
-    if (this.selected_object === object || object.id === 0) {return;}
+    if (this.selected_object === object || object.id === 0) {
+      return;
+    }
     this.selected_object = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
   }
@@ -193,7 +195,7 @@ export class RunsComponent implements OnInit, OnDestroy {
     const creatingRunPromise = this.palladiumApiService.create_run(this.object_for_settings.name, this.stance.planId());
     const newRun = new Run(null);
     newRun.name = this.object_for_settings.name;
-    newRun.statistic= this.object_for_settings.statistic;
+    newRun.statistic = new Statistic({});
     this.runs.push(newRun);
     if (this.selected_object.name === this.object_for_settings.name) {
       this.selected_object = newRun;
@@ -205,7 +207,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       obj.id = result.id;
       obj.created_at = result.created_at;
       obj.updated_at = result.updated_at;
-      if (this.selected_object.name === this.object_for_settings.name) {
+      if (this.selected_object.name === obj.name) {
         this.selected_object = obj;
       }
       this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
@@ -267,7 +269,7 @@ export class RunsSettingsComponent implements OnInit {
 
   async delete_object() {
     if (confirm('A u shuare?')) {
-      if (this.run_opened()) {
+      if (this.object.path === 'run') {
         await this.ApiService.delete_run(this.object.id);
       } else {
         await this.ApiService.delete_suite(this.object.id);
