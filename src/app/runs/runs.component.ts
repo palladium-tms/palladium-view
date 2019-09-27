@@ -203,6 +203,8 @@ export class RunsComponent implements OnInit, OnDestroy {
     creatingRunPromise.then(result => {
       const obj = this.runs_and_suites.find(object => object.name === result.name);
       obj.id = result.id;
+      obj.created_at = result.created_at;
+      obj.updated_at = result.updated_at;
       if (this.selected_object.name === this.object_for_settings.name) {
         this.selected_object = obj;
       }
