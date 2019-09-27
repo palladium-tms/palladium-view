@@ -2,6 +2,7 @@
 ## master (unreleased)
 ## Added
     * Added async loading for plan object and statistic
+    * Added new button in suite menu - "Make Run". It need for make run from suite, and adding results for case by interface
 ## Changed
     * Style for selected items
     * No routing after click to selected object
