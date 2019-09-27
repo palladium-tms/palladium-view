@@ -16,7 +16,7 @@
               [ngClass]="{'selected': selected_object == object}">
       <div class="run-name">
         <div class="item-name">{{object.name}}</div>
-        <div class="settings-menu" >
+        <div class="settings-menu">
           <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -32,7 +32,7 @@
          'background-color': palladiumApiService.get_status_by_id(untestedCash[object.name].status).color}" >
         </div>
       </div>
-      <mat-card-subtitle *ngIf="object.statistic.existedStatuses" class="item-statistic">
+      <mat-card-subtitle class="item-statistic">
         <app-point [point] = point *ngFor="let point of object.statistic.points" ></app-point>
         <app-point [point] = untestedCash[object.name] ></app-point>
       </mat-card-subtitle>
@@ -46,6 +46,10 @@
   <button mat-menu-item (click)="open_settings()">
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
+  </button>
+  <button mat-menu-item (click)="make_run()" *ngIf="object_for_settings && object_for_settings.path == 'suite'">
+    <mat-icon>add_to_queue</mat-icon>
+    <span>Make Run</span>
   </button>
 </mat-menu>
 <router-outlet (activate)="onActivate($event)"></router-outlet>
