@@ -29,7 +29,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   statistic: Statistic;
   filter: number[] = []; // ids of active statuses
   loading = false;
-  all_statistic = {};
   selected_object: Run;
   object_for_settings;
 
@@ -65,6 +64,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       return runs;
     });
   }
+
   click() {
     this.cd.detectChanges();
   }
@@ -112,10 +112,15 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   merge_suites_and_runs() {
     const suiteForAdd = [];
+    this.untestedCash = [];
     this.suites.forEach(suite => {
       const run = this.runs.find(run => run.name === suite.name);
       if (run) {
-        this.untestedCash[run.name] = new Point(0, suite.statistic.all - run.statistic.all, suite.statistic.all);
+        if (run.statistic.points.length !== 0 ) {
+          this.untestedCash[run.name] = new Point(0, suite.statistic.all - run.statistic.all, suite.statistic.all);
+        } else {
+          this.untestedCash[run.name] = this.suites.find(suite => suite.name === run.name).statistic.points[0];
+        }
       } else {
         suiteForAdd.push(suite);
       }
@@ -170,7 +175,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   select_object(object) {
-    if (this.selected_object === object) {return;}
+    if (this.selected_object === object || object.id === 0) {return;}
     this.selected_object = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
   }
@@ -182,6 +187,28 @@ export class RunsComponent implements OnInit, OnDestroy {
     } else {
       this.selected_object = new Run(null);
     }
+  }
+
+  make_run() {
+    const creatingRunPromise = this.palladiumApiService.create_run(this.object_for_settings.name, this.stance.planId());
+    const newRun = new Run(null);
+    newRun.name = this.object_for_settings.name;
+    newRun.statistic= this.object_for_settings.statistic;
+    this.runs.push(newRun);
+    if (this.selected_object.name === this.object_for_settings.name) {
+      this.selected_object = newRun;
+    }
+    this.merge_suites_and_runs();
+    this.cd.detectChanges();
+    creatingRunPromise.then(result => {
+      const obj = this.runs_and_suites.find(object => object.name === result.name);
+      obj.id = result.id;
+      if (this.selected_object.name === this.object_for_settings.name) {
+        this.selected_object = obj;
+      }
+      this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
+      this.cd.detectChanges();
+    });
   }
 
   ngOnDestroy() {
