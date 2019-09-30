@@ -52,8 +52,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.products = [];
     this.products = await this.palladiumApiService.products();
     if(this.stance.productId()) {
-      this.selectedProduct.name = this.products.find(product => product.id === this.stance.productId()).name;
-      this.sidenavService.set_product_name(this.products.find(product => product.id === this.stance.productId()).name);
+      const _selectedProductTmp = this.products.find(product => product.id === this.stance.productId());
+      this.selectedProduct = {name: _selectedProductTmp.name, id: _selectedProductTmp.id};
+      this.sidenavService.set_product_name(_selectedProductTmp.name);
     }
     this.cd.detectChanges();
   }
