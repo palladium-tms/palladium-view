@@ -68,6 +68,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.products = result;
+        this.cd.detectChanges();
       }
     });
   }
