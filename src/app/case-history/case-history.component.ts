@@ -23,14 +23,18 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
       this.init_data(params['id']);
       this.cd.detectChanges();
     });
+
+    this.palladiumApiService.statusObservable.subscribe(() => {
+      this.statuses = Object.values(this.palladiumApiService.statuses);
+      this.cd.detectChanges();
+    });
   }
 
   init_data(id) {
     this.loading = true;
     this.history = [];
-    Promise.all([this.get_statuses(), this.get_case_history(id)]).then(res => {
-      this.statuses = res[0];
-      this.history = res[1];
+    Promise.all([this.get_case_history(id)]).then(res => {
+      this.history = res[0];
       this.loading = false;
       this.cd.detectChanges();
     });
@@ -38,10 +42,6 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
 
   get_case_history(id) {
     return this.palladiumApiService.history(id);
-  }
-
-  get_statuses() {
-    return this.palladiumApiService.get_statuses();
   }
 
   async get_results(history) {
