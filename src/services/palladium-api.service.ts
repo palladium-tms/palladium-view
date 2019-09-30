@@ -366,8 +366,7 @@ export class PalladiumApiService {
         if (resp['errors']) {
           return Promise.reject(resp['errors']);
         } else {
-          // return Promise.resolve(new Plan(resp['plan']));
-          return Promise.resolve({});
+          return Promise.resolve(new Plan(resp.plan));
         }
       });
   }
