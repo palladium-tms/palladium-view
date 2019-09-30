@@ -164,7 +164,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   open_history_page() {
     const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
-    if (this.object.path === 'case') {
+    if (this.dropdownMenuItemSelect.path === 'case') {
       this.router.navigate([path, this.dropdownMenuItemSelect.id]);
     } else {
       const caseId = this.get_case_id_by_result_set(this.dropdownMenuItemSelect);
