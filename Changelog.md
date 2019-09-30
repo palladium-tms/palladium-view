@@ -10,6 +10,7 @@
     * Fix untested filter
     * Fix: show more button is hided after click
     * Fix: more plans loading after product reopened
+    * Fix: error after trying to open history for case
 ## [0.6.4]
 ## Added
     * Plan statistic update
