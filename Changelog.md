@@ -11,6 +11,9 @@
     * Fix: show more button is hided after click
     * Fix: more plans loading after product reopened
     * Fix: error after trying to open history for case
+    * Fix: error plan name change
+    * Fix: product list not updated after name changing
+    * Fix: product not selected after opening by link
 ## [0.6.4]
 ## Added
     * Plan statistic update
