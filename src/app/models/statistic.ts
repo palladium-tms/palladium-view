@@ -7,7 +7,7 @@ export class Statistic {
   points: Point[] = [];
   attitude = 1;
   existedStatuses = [];
-  data;
+  data = {};
 
   constructor(data: StatisticInterface) {
     this.data = data;
