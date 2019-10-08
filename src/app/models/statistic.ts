@@ -18,6 +18,9 @@ export class Statistic {
   }
 
   calculate() {
+    if (Object.keys(this.data).length === 0) {
+      return;
+    }
     const _points = [];
     this.all = +Object.values(this.data).reduce((a: number, b: number) => a + b);
     this.existedStatuses = Object.keys(this.data);
