@@ -331,11 +331,16 @@ export class PalladiumApiService {
     });
   }
 
-  get_plans_statistic(planIds):Promise<StructuredPlansStatistic>{
+  get_plans_statistic(planIds: number[]):Promise<StructuredPlansStatistic> {
       return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
         const statistics = {};
-        Object.keys(response['statistic']).forEach(planId => {
-          statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+        planIds.forEach(planId => {
+          const _responseStatisticData = response['statistic'][planId];
+          if (_responseStatisticData ) {
+            statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+          } else {
+            statistics[planId] = new Statistic({});
+          }
         });
         return statistics;
       });
