@@ -46,7 +46,6 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.filter = [];
     });
     this.palladiumApiService.statusObservable.subscribe(() => {
-      this.statistic = this.statistic_service.runs_and_suites_statistic(this.runs_and_suites);
       this.cd.detectChanges();
     });
 
