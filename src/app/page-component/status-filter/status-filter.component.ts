@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Point} from 'app/models/statistic';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 
@@ -11,10 +11,15 @@ import {PalladiumApiService} from '../../../services/palladium-api.service';
 export class StatusFilterComponent implements OnInit {
   @Input() point: Point;
   selected: boolean;
-  constructor(private palladiumApi: PalladiumApiService) { }
+  constructor(private palladiumApi: PalladiumApiService, private cd: ChangeDetectorRef) { }
+
 
   ngOnInit() {
+    this.palladiumApi.statusObservable.subscribe(() => {
+      this.cd.detectChanges();
+    });
   }
+
 
   get_background_color() {
     if (this.point.active) {
