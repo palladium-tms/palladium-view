@@ -43,7 +43,8 @@
     "ts-node": "8.3.0",
     "tslint": "5.18.0",
     "typescript": "3.4.5",
-    "uglify-js": "^3.6.0"
+    "uglify-js": "^3.6.0",
+    "serialize-javascript": ">=2.1.1"
   },
   "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.",
   "main": "karma.conf.js",
