@@ -25,6 +25,10 @@
   </div>
 </div>
 <mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="archive_open()">
+    <mat-icon>archive</mat-icon>
+    <span>Archive</span>
+  </button>
   <button mat-menu-item (click)="open_settings()">
     <mat-icon>settings</mat-icon>
     <span>Settings</span>

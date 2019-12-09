@@ -105,6 +105,12 @@ export class PlansComponent implements OnInit, AfterViewInit {
       this.cd.detectChanges();
     });
   }
+
+  archive_open() {
+    if (confirm('Attention!! You will can not to undo this action')) {
+      this.palladiumApiService.archive_plane(this.plan_for_settings.id);
+    }
+  }
 }
 
 @Component({

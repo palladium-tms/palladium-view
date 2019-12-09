@@ -376,6 +376,12 @@ export class PalladiumApiService {
       });
   }
 
+  async archive_plane(planId) {
+    return this.httpService.postData('/plan_archive', {plan_data: {id: planId}}).then(response => {
+      console.log(response);
+    });
+  }
+
   async delete_plan(id) {
     return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan'];
   }
