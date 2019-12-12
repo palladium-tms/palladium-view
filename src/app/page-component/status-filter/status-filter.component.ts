@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Point} from 'app/models/statistic';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-status-filter',
@@ -11,11 +12,13 @@ import {PalladiumApiService} from '../../../services/palladium-api.service';
 export class StatusFilterComponent implements OnInit {
   @Input() point: Point;
   selected: boolean;
+  private  statusSub$: Subscription;
+
   constructor(private palladiumApi: PalladiumApiService, private cd: ChangeDetectorRef) { }
 
 
   ngOnInit() {
-    this.palladiumApi.statusObservable.subscribe(() => {
+    this.statusSub$ = this.palladiumApi.statusObservable.subscribe(() => {
       this.cd.detectChanges();
     });
   }
@@ -25,5 +28,9 @@ export class StatusFilterComponent implements OnInit {
     if (this.point.active) {
       return this.palladiumApi.statuses[this.point.status].color;
     }
+  }
+
+  ngOnDestroy() {
+    this.statusSub$.unsubscribe(); // <- unsubscribe on destroy
   }
 }
