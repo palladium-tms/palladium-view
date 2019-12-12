@@ -1,4 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import {Suite} from "../../models/suite";
+import {Run} from "../../models/run";
 
 @Pipe({
   name: 'statisticFilter',
@@ -6,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class StatisticFilterPipe implements PipeTransform {
 
-  transform(value: any[], args?: any[]): any {
+  transform(value: Array<Run|Suite>, args?: any[]): Array<Run|Suite> {
     if (args[0].length !== 0) {
       if (args[0].indexOf(0) > -1) {
         return  value.filter(
