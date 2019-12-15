@@ -30,10 +30,10 @@ export class Run {
   }
 
   get_statistic(data) {
-    const stat_data = {};
+    const statData = {};
     data.statistic.forEach(object => {
-      stat_data[object['status']] = object['count'];
+      statData[object['status']] = object['count'];
     });
-    return new Statistic(stat_data);
+    return new Statistic(statData);
   }
 }
