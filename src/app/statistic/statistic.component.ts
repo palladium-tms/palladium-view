@@ -11,6 +11,7 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 })
 export class StatisticComponent implements OnInit {
   @Input() statistic$: Promise<Statistic>;
+  @Input() isArchived: boolean;
   statistic: Statistic;
 
   constructor(public stance: StanceService,

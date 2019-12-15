@@ -295,17 +295,24 @@ export class PalladiumApiService {
 
   async get_plans_to_id(productId, planId) {
     const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: planId}});
+    const archivedPlans = response['plans'].filter(plan => plan['is_archived']);
+    const plans = response['plans'].filter(plan => !plan['is_archived']);
+    const statisticPromise = this.get_plans_statistic(plans.map(plan => plan.id));
     const tmpPlans = [];
-    const planIds = Object(response['plans']).map(plan => plan.id);
-    const statisticPromise = this.get_plans_statistic(planIds);
 
-    Object(response['plans']).forEach(plan => {
+    archivedPlans.forEach( plan => {
+      const _plan = new Plan(plan);
+      _plan.statistic$ = Promise.resolve(new Statistic(this.reformatted_statistic_data(JSON.parse(plan.statistic))));
+      tmpPlans.push(_plan);
+    });
+    plans.forEach(plan => {
       const _plan = new Plan(plan);
       _plan.statistic$ = statisticPromise.then(statisticAll => {
-        return statisticAll[_plan.id];
+        return statisticAll[_plan.id] || plan.statistic;
       });
       tmpPlans.push(_plan);
     });
+
     if (this.plans[productId]) {
       this.plans[productId] = this.plans[productId].concat(tmpPlans);
     } else {

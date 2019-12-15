@@ -6,11 +6,11 @@
                   'background-color': this.palladiumApiService.statuses[point.status].color}">
       </div>
     </div>
-    <div class="status-element"
+    <div *ngIf="!this.isArchived" class="status-element"
          [ngStyle]="{ 'width': ((1 - statistic.all / this.palladiumApiService.case_count(stance.productId())) * 100) + '%',
                   'background-color': this.palladiumApiService.statuses['0'].color}"></div>
   </div>
-  <div *ngIf="statistic">{{statistic.all / palladiumApiService.case_count(stance.productId()) || 0 | percent}}</div>
+  <div *ngIf="statistic && !this.isArchived">{{statistic.all / palladiumApiService.case_count(stance.productId()) || 0 | percent}}</div>
 
 </ng-container>
 
