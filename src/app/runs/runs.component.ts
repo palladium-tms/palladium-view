@@ -152,6 +152,7 @@ export class RunsComponent implements OnInit, OnDestroy {
           const object = this.suites.find(suite => suite.name === result.name);
           this.merge_suites_and_runs();
           this.select_object(object);
+          this.get_statistic();
         } else {
           this.suites = this.suites.filter(currentSuite => currentSuite.id !== result.id);
           this.router.navigate([this.router.url.replace(/\/suite.*/, '')]);
