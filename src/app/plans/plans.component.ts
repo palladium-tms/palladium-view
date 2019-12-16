@@ -47,7 +47,8 @@ export class PlansComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
-      this.get_plans(id);
+      this.productId = id;
+      this.init_plans(id);
       return this.palladiumApiService.products$.map(products => {
         this.selectedProduct = products.find(product => product.id === id);
         if (this.selectedProduct) {
@@ -79,8 +80,8 @@ export class PlansComponent implements OnInit, AfterViewInit {
     }
   }
 
-  get_plans(id) {
-      this.palladiumApiService.get_plans(id, 0);
+  init_plans(id) {
+      this.palladiumApiService.init_plans(id);
 
     // if (this.stance.planId()) {
     //   promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
@@ -134,10 +135,12 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   async load_more_plans() {
-    this.palladiumApiService.get_plans_show_more(this.productId).then(canNotBeLoadedMore => {
-      this.showMore = !canNotBeLoadedMore;
-      this.cd.detectChanges();
-    });
+    console.log(this.productId)
+    this.palladiumApiService.get_plans(+this.productId);
+    // this.palladiumApiService.get_plans_show_more(this.productId).then(canNotBeLoadedMore => {
+    //   this.showMore = !canNotBeLoadedMore;
+    //   this.cd.detectChanges();
+    // });
   }
 
   archive_open() {

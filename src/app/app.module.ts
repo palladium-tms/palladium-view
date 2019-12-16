@@ -11,6 +11,7 @@ import {MainComponent} from './main/main.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 const appRoutes: Routes = [
   {path: 'singin', loadChildren: './login/login.module#LoginModule'},
@@ -27,7 +28,8 @@ const appRoutes: Routes = [
     MainComponent,
     DetailResultComponent,
   ],
-  imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes),  BrowserAnimationsModule],
+  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.DEBUG}),
+    BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes),  BrowserAnimationsModule],
   providers: [AuthGuard, AuthenticationService, PalladiumApiService, HttpService,
     {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],

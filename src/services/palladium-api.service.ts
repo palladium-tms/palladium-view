@@ -16,6 +16,7 @@ import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
 import {map} from "rxjs/operators";
+import {NGXLogger} from 'ngx-logger';
 
 export interface StructuredStatuses {
   [key: number]: Status;
@@ -65,7 +66,7 @@ export class PalladiumApiService {
   _timeZone: string;
 
   constructor(private router: Router, private httpService: HttpService,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService, private logger: NGXLogger) {
   }
 
   // #region Status
@@ -144,6 +145,7 @@ export class PalladiumApiService {
       this._products.find(product => product.id === productId).suites$.next(suites);
     }).subscribe();
   }
+
   //
   // edit_suite_by_run_id(run_id, name): Promise<any> {
   //   const params = {suite_data: {run_id: run_id, name: name}};
@@ -277,8 +279,9 @@ export class PalladiumApiService {
   //#region Products
   get_products(): void {
     this.httpService.postData('/products', '').map(response => {
+      this.logger.debug('get_products');
       this._products = response['products'].map(product => new Product(product));
-      this.products$.next(this._products);
+       this.products$.next(this._products);
     }).subscribe();
   }
 
@@ -290,10 +293,10 @@ export class PalladiumApiService {
   }
 
   edit_product(id, name): void {
-      this.httpService.postData('/product_edit', {product_data: {name, id}}).map(result => {
-        this._products[this._products.findIndex(x => x.id === result['product'].id)] = new Product(result['product']);
-        this.products$.next(this._products);
-      }).subscribe();
+    this.httpService.postData('/product_edit', {product_data: {name, id}}).map(result => {
+      this._products[this._products.findIndex(x => x.id === result['product'].id)] = new Product(result['product']);
+      this.products$.next(this._products);
+    }).subscribe();
   }
 
   send_product_position(productIds) {
@@ -303,36 +306,33 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  get_plans(productId, offset): void {
-    // this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).map(response => {
-    //   const tmpPlans = [];
-    //   const planIds = Object(response['plans']).map(plan => plan.id);
-    //   const statisticPromise = this.get_plans_statistic(planIds);
-    //   Object(response['plans']).forEach(plan => {
-    //     const _plan = new Plan(plan);
-    //     _plan.statistic$ = statisticPromise.then(statisticAll => {
-    //       return statisticAll[_plan.id];
-    //     });
-    //     tmpPlans.push(_plan);
-    //   });
-    //   this._plans[productId] = tmpPlans;
-    //   this.plans$.next(this._plans);
-    // }).subscribe();
+  get_plans(productId): void {
+    let oldestPlan = 0;
+    if (this._plans[productId]) {
+      oldestPlan = this._plans[productId].reduce((min, p) => p.id < min ? p.id : min, this._plans[productId][0].id);
+      this.logger.debug('get_plans. oldestPlan: ' + oldestPlan);
+    } else {
+      this._plans[productId] = [];
+    }
 
-
-
-    this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).map(response => {
-      const tmpPlans = [];
+    this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: oldestPlan}}).map(response => {
+      this.logger.debug('get_plans. productId: ' + productId + ' offset: ' + 0);
       Object(response['plans']).forEach(plan => {
         const _plan = new Plan(plan);
-        tmpPlans.push(_plan);
+        this._plans[productId].push(_plan);
       });
-      this._plans[productId] = tmpPlans;
       this.plans$.next(this._plans);
       const plansId = Object(response['plans']).map(plan => plan.id);
       this.get_plans_statistic(plansId, productId);
     }).subscribe();
     this.get_suites(productId);
+  }
+
+  init_plans(productId) {
+    this.logger.debug('init_plans. productId: ' + productId);
+    if (!this._plans[productId]) {
+      this.get_plans(productId);
+    }
   }
 
   // async get_plans_to_id(productId, planId) {
@@ -363,7 +363,7 @@ export class PalladiumApiService {
   //   return tmpPlans === []; // there are not more plans for loading
   // }
 
-  async get_plans_show_more(productId):Promise<boolean> {
+  async get_plans_show_more(productId): Promise<boolean> {
     let offset = 0;
     if (this.plans[productId]) {
       offset = this.plans[productId].length;
@@ -375,12 +375,13 @@ export class PalladiumApiService {
   }
 
   get_plans_statistic(planIds: number[], productId: number): void {
-      this.httpService.postData('/plans_statistic', {plan_data: planIds}).map(response => {
-        planIds.forEach(planId => {
-          const statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
-          this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
-        });
-      }).subscribe();
+    this.httpService.postData('/plans_statistic', {plan_data: planIds}).map(response => {
+      this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
+      planIds.forEach(planId => {
+        const statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+        this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+      });
+    }).subscribe();
   }
 
   // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
@@ -397,8 +398,11 @@ export class PalladiumApiService {
   edit_plan(id, name): void {
     this.httpService.postData('/plan_edit', {plan_data: {plan_name: name, id}})
       .map(response => {
-        const newPlan = new Plan(response['plan']);
-        this._plans[newPlan.product_id][this._plans[newPlan.product_id].findIndex(x => x.id === response['plan'].id)] = newPlan;
+        this.logger.debug('edit_plan. id: ', id, '; name: ', name);
+        const productId = response['plan'].product_id;
+        const plan = this._plans[productId][this._plans[productId].findIndex(x => x.id === response['plan'].id)];
+        plan.name = response['plan']['name'];
+        plan.updated_at = response['plan']['updated_at'];
         this.plans$.next(this._plans);
       }).subscribe();
   }
