@@ -15,6 +15,7 @@ import {Invite} from '../app/models/invite';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
+import {map} from "rxjs/operators";
 
 export interface StructuredStatuses {
   [key: number]: Status;
@@ -49,8 +50,10 @@ export class PalladiumApiService {
   statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
   private _statuses: StructuredStatuses = {};
 
+  suites$: ReplaySubject<StructuredSuites> = new ReplaySubject(1);
+  private _suites: StructuredSuites = {};
+
   plans: StructuredPlans = {};
-  suites: StructuredSuites = {};
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
   statusObservable = new BehaviorSubject(this.statuses);
@@ -112,70 +115,72 @@ export class PalladiumApiService {
   //
   // #endregion
 
-  //#region Token
-  async get_tokens() {
-    return await this.httpService.postData('/tokens', '').then((resp: any) => {
-      return resp['tokens'];
-    }, (errors: any) => {
-      console.log(errors);
-      this.authenticationService.logout();
-      this.router.navigate(['/singin']);
-    });
+  // //#region Token
+  // async get_tokens() {
+  //   return await this.httpService.postData('/tokens', '').then((resp: any) => {
+  //     return resp['tokens'];
+  //   }, (errors: any) => {
+  //     console.log(errors);
+  //     this.authenticationService.logout();
+  //     this.router.navigate(['/singin']);
+  //   });
+  // }
+  //
+  // create_token(name: string): Promise<JSON> {
+  //   return this.httpService.postData('/token_new', {token_data: {name: name}}).then((resp: any) => {
+  //     return resp;
+  //   });
+  // }
+  //
+  // //#endregion
+  //
+  // #region Suite
+  get_suites(productId: number): void {
+    this.httpService.postData('/suites', {suite_data: {product_id: productId}}).map(response => {
+      const suites = [];
+      response['suites'].forEach(suite => {
+        suites.push(new Suite(suite));
+      });
+      this._products.find(product => product.id === productId).suites$.next(suites);
+    }).subscribe();
   }
-
-  create_token(name: string): Promise<JSON> {
-    return this.httpService.postData('/token_new', {token_data: {name: name}}).then((resp: any) => {
-      return resp;
-    });
-  }
-
-  //#endregion
-
-  //#region Suite
-  async get_suites(productId) {
-    const response = await this.httpService.postData('/suites', {suite_data: {product_id: productId}});
-    this.suites[productId] = [];
-    Object(response['suites']).forEach(suite => {
-      this.suites[productId].push(new Suite(suite));
-    });
-  }
-
-  edit_suite_by_run_id(run_id, name): Promise<any> {
-    const params = {suite_data: {run_id: run_id, name: name}};
-    return this.httpService.postData('/suite_edit', params).then((resp: any) => {
-      if (resp['errors']) {
-        return Promise.reject(resp['errors']);
-      } else {
-        return Promise.resolve(new Suite(resp['suite']));
-      }
-    });
-  }
-
-  edit_suite(id, name): Promise<any> {
-    return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
-      if (resp['errors']) {
-        console.log('errors');
-        return Promise.reject(resp['errors']);
-      } else {
-        console.log('all right');
-        return Promise.resolve(new Suite(resp['suite']));
-      }
-    });
-  }
-
-  async delete_suite(suiteId):Promise<boolean> {
-    return this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).then(resp => {
-      if (resp.errors == null) {
-        console.log(this.suites[resp.suite.product_id]);
-        this.suites[resp.suite.product_id] = this.suites[resp.suite.product_id].filter(suite => suite.id !== suiteId);
-        return true;
-      } else {
-        return false
-      }
-    });
-  }
-
-  //#endregion
+  //
+  // edit_suite_by_run_id(run_id, name): Promise<any> {
+  //   const params = {suite_data: {run_id: run_id, name: name}};
+  //   return this.httpService.postData('/suite_edit', params).then((resp: any) => {
+  //     if (resp['errors']) {
+  //       return Promise.reject(resp['errors']);
+  //     } else {
+  //       return Promise.resolve(new Suite(resp['suite']));
+  //     }
+  //   });
+  // }
+  //
+  // edit_suite(id, name): Promise<any> {
+  //   return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
+  //     if (resp['errors']) {
+  //       console.log('errors');
+  //       return Promise.reject(resp['errors']);
+  //     } else {
+  //       console.log('all right');
+  //       return Promise.resolve(new Suite(resp['suite']));
+  //     }
+  //   });
+  // }
+  //
+  // // async delete_suite(suiteId):Promise<boolean> {
+  // //   return this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).then(resp => {
+  // //     if (resp.errors == null) {
+  // //       console.log(this.suites[resp.suite.product_id]);
+  // //       this.suites[resp.suite.product_id] = this.suites[resp.suite.product_id].filter(suite => suite.id !== suiteId);
+  // //       return true;
+  // //     } else {
+  // //       return false
+  // //     }
+  // //   });
+  // // }
+  //
+  // #endregion
 
   // //#region Cases
   // get_cases(id): Promise<any> {
@@ -238,36 +243,36 @@ export class PalladiumApiService {
   //
   // //#endregion
 
-  //#region Run
-  get_runs(plan_id): Promise<any> {
-    return this.httpService.postData('/runs', {run_data: {plan_id: plan_id}})
-      .then(
-        (resp: any) => {
-          this.response_runs_data[plan_id] = [];
-          resp['runs'].forEach(run => {
-            this.response_runs_data[plan_id].push(new Run(run));
-          });
-          return this.response_runs_data;
-        }, (errors: any) => {
-          console.log(errors);
-        });
-  }
-
-  create_run(run_name, plan_id): Promise<any> {
-    return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
-      .then(
-        (resp: any) => {
-          return new Run(resp['run']);
-        }, (errors: any) => {
-          console.log(errors);
-        });
-  }
-
-  async delete_run(run_id) {
-    return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run'];
-  }
-
-  //#endregion
+  // //#region Run
+  // get_runs(plan_id): Promise<any> {
+  //   return this.httpService.postData('/runs', {run_data: {plan_id: plan_id}})
+  //     .then(
+  //       (resp: any) => {
+  //         this.response_runs_data[plan_id] = [];
+  //         resp['runs'].forEach(run => {
+  //           this.response_runs_data[plan_id].push(new Run(run));
+  //         });
+  //         return this.response_runs_data;
+  //       }, (errors: any) => {
+  //         console.log(errors);
+  //       });
+  // }
+  //
+  // create_run(run_name, plan_id): Promise<any> {
+  //   return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
+  //     .then(
+  //       (resp: any) => {
+  //         return new Run(resp['run']);
+  //       }, (errors: any) => {
+  //         console.log(errors);
+  //       });
+  // }
+  //
+  // async delete_run(run_id) {
+  //   return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run'];
+  // }
+  //
+  // //#endregion
 
   //#region Products
   get_products(): void {
@@ -299,49 +304,64 @@ export class PalladiumApiService {
 
   //#region Plans
   get_plans(productId, offset): void {
+    // this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).map(response => {
+    //   const tmpPlans = [];
+    //   const planIds = Object(response['plans']).map(plan => plan.id);
+    //   const statisticPromise = this.get_plans_statistic(planIds);
+    //   Object(response['plans']).forEach(plan => {
+    //     const _plan = new Plan(plan);
+    //     _plan.statistic$ = statisticPromise.then(statisticAll => {
+    //       return statisticAll[_plan.id];
+    //     });
+    //     tmpPlans.push(_plan);
+    //   });
+    //   this._plans[productId] = tmpPlans;
+    //   this.plans$.next(this._plans);
+    // }).subscribe();
+
+
+
     this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).map(response => {
       const tmpPlans = [];
-      const planIds = Object(response['plans']).map(plan => plan.id);
-      const statisticPromise = this.get_plans_statistic(planIds);
       Object(response['plans']).forEach(plan => {
         const _plan = new Plan(plan);
-        _plan.statistic$ = statisticPromise.then(statisticAll => {
-          return statisticAll[_plan.id];
-        });
         tmpPlans.push(_plan);
       });
       this._plans[productId] = tmpPlans;
       this.plans$.next(this._plans);
+      const plansId = Object(response['plans']).map(plan => plan.id);
+      this.get_plans_statistic(plansId, productId);
     }).subscribe();
+    this.get_suites(productId);
   }
 
-  async get_plans_to_id(productId, planId) {
-    const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: planId}});
-    const archivedPlans = response['plans'].filter(plan => plan['is_archived']);
-    const plans = response['plans'].filter(plan => !plan['is_archived']);
-    const statisticPromise = this.get_plans_statistic(plans.map(plan => plan.id));
-    const tmpPlans = [];
-
-    archivedPlans.forEach( plan => {
-      const _plan = new Plan(plan);
-      _plan.statistic$ = Promise.resolve(new Statistic(this.reformatted_statistic_data(JSON.parse(plan.statistic))));
-      tmpPlans.push(_plan);
-    });
-    plans.forEach(plan => {
-      const _plan = new Plan(plan);
-      _plan.statistic$ = statisticPromise.then(statisticAll => {
-        return statisticAll[_plan.id] || plan.statistic;
-      });
-      tmpPlans.push(_plan);
-    });
-
-    if (this.plans[productId]) {
-      this.plans[productId] = this.plans[productId].concat(tmpPlans);
-    } else {
-      this.plans[productId] = tmpPlans;
-    }
-    return tmpPlans === []; // there are not more plans for loading
-  }
+  // async get_plans_to_id(productId, planId) {
+  //   const response = await this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: planId}});
+  //   const archivedPlans = response['plans'].filter(plan => plan['is_archived']);
+  //   const plans = response['plans'].filter(plan => !plan['is_archived']);
+  //   const statisticPromise = this.get_plans_statistic(plans.map(plan => plan.id));
+  //   const tmpPlans = [];
+  //
+  //   archivedPlans.forEach( plan => {
+  //     const _plan = new Plan(plan);
+  //     _plan.statistic$ = Promise.resolve(new Statistic(this.reformatted_statistic_data(JSON.parse(plan.statistic))));
+  //     tmpPlans.push(_plan);
+  //   });
+  //   plans.forEach(plan => {
+  //     const _plan = new Plan(plan);
+  //     _plan.statistic$ = statisticPromise.then(statisticAll => {
+  //       return statisticAll[_plan.id] || plan.statistic;
+  //     });
+  //     tmpPlans.push(_plan);
+  //   });
+  //
+  //   if (this.plans[productId]) {
+  //     this.plans[productId] = this.plans[productId].concat(tmpPlans);
+  //   } else {
+  //     this.plans[productId] = tmpPlans;
+  //   }
+  //   return tmpPlans === []; // there are not more plans for loading
+  // }
 
   async get_plans_show_more(productId):Promise<boolean> {
     let offset = 0;
@@ -354,38 +374,24 @@ export class PalladiumApiService {
     });
   }
 
-  get_plans_statistic(planIds: number[]):Promise<StructuredPlansStatistic> {
-      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).toPromise().then(response => {
-        const statistics = {};
+  get_plans_statistic(planIds: number[], productId: number): void {
+      this.httpService.postData('/plans_statistic', {plan_data: planIds}).map(response => {
         planIds.forEach(planId => {
-          const _responseStatisticData = response['statistic'][planId];
-          if (_responseStatisticData ) {
-            statistics[planId] = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
-          } else {
-            statistics[planId] = new Statistic({});
-          }
+          const statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+          this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
         });
-        return statistics;
-      });
+      }).subscribe();
   }
 
   // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
   reformatted_statistic_data(data) {
     const _statistic = {};
-    data.forEach(i => {
-      _statistic[i.status] = i.count;
-    });
-    return _statistic;
-  }
-
-  case_count(productId) {
-    let casesCount = 0;
-    if (this.suites[productId]) {
-      this.suites[productId].forEach(suite => {
-        casesCount += suite.statistic.all;
+    if (data) {
+      data.forEach(i => {
+        _statistic[i.status] = i.count;
       });
     }
-    return casesCount;
+    return _statistic;
   }
 
   edit_plan(id, name): void {

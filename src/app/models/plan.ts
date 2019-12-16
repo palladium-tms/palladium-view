@@ -1,3 +1,5 @@
+import {ReplaySubject} from "rxjs";
+
 export class Plan {
   id: number;
   name: string;
@@ -13,5 +15,6 @@ export class Plan {
       this.isArchived = plan['is_archived'];
       this.created_at = plan['created_at'].split(' +')[0];
       this.updated_at = plan['updated_at'].split(' +')[0];
+      this.statistic$ = new ReplaySubject(1);
   }
 }

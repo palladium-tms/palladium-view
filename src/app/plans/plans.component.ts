@@ -5,11 +5,11 @@ import {
   Inject,
   OnInit,
   AfterViewInit,
-  ViewEncapsulation, OnDestroy
+  ViewEncapsulation
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {PalladiumApiService} from '../../services/palladium-api.service';
+import {PalladiumApiService, StructuredPlans} from '../../services/palladium-api.service';
 import {StanceService} from '../../services/stance.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
@@ -35,7 +35,7 @@ export class PlansComponent implements OnInit, AfterViewInit {
   RUN_COMPONENT;
   loading = false;
   showMore = true;
-  selectedProduct: Product = {created_at: 0, updated_at: 0, id: 0, name: ''};
+  selectedProduct: Product = {createdAt: 0, updatedAt: 0, id: 0, name: ''};
 
   constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -60,7 +60,7 @@ export class PlansComponent implements OnInit, AfterViewInit {
     }).subscribe();
 
     this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
-      return this.palladiumApiService.plans$.map(plans => {
+      return this.palladiumApiService.plans$.map((plans: StructuredPlans) => {
         this.plans = plans[id];
         if (this.stance.planId()) {
           this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
@@ -68,16 +68,6 @@ export class PlansComponent implements OnInit, AfterViewInit {
         this.cd.detectChanges();
       });
     }).subscribe();
-  }
-
-  ngAfterViewInit() {
-    this.statisticService.planSubject.subscribe(statistic => {
-      this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).statistic$.then(planStatistic => {
-        planStatistic.data = statistic.data;
-        planStatistic.calculate();
-        this.cd.detectChanges();
-      });
-    });
   }
 
   clicked(event, plan) {

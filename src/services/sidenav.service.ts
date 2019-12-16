@@ -20,6 +20,6 @@ export class SidenavService {
   }
 
   clear_product_name(): void {
-    this.selectedProduct$.next({created_at: 0, updated_at: 0, id: 0, name: ''});
+    this.selectedProduct$.next({createdAt: 0, updatedAt: 0, id: 0, name: ''});
   }
 }
