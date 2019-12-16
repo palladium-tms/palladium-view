@@ -17,10 +17,12 @@ export class TopToolbarComponent {
   constructor(private router: Router,
               private authenticationService: AuthenticationService,
               public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
-    sidenavService.get_product_subject$.subscribe(productName => {
-      this.productName = productName;
+
+    sidenavService.selectedProduct$.subscribe(product => {
+      this.productName = (product && product.name) || '';
       this.cd.detectChanges();
     });
+
     authenticationService.isAuthorized$.subscribe(status => {
       this.authorize = status;
       if (status) {

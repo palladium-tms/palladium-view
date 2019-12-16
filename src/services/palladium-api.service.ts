@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from './http-request.service';
 import {AuthenticationService} from './authentication.service';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Product} from '../app/models/product';
@@ -12,15 +12,22 @@ import {Result} from '../app/models/result';
 import {History} from '../app/models/history_object';
 import {Status} from '../app/models/status';
 import {Invite} from '../app/models/invite';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
+import 'rxjs/Rx';
 
 export interface StructuredStatuses {
   [key: number]: Status;
 }
 
+// key is a product id
 export interface StructuredPlans {
   [key: number]: Plan[];
+}
+
+// key is a product id
+export interface StructuredSuites {
+  [key: number]: Suite[];
 }
 
 export interface StructuredResultSets {
@@ -33,12 +40,17 @@ export interface StructuredPlansStatistic {
 
 @Injectable()
 export class PalladiumApiService {
+  products$: ReplaySubject<Product[]> = new ReplaySubject(1);
+  private _products: Product[] = [];
+
+  plans$: ReplaySubject<StructuredPlans> = new ReplaySubject(1);
+  private _plans: StructuredPlans = {};
+
   plans: StructuredPlans = {};
-  suites = {};
+  suites: StructuredSuites = {};
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
   statusObservable = new BehaviorSubject(this.statuses);
-  plansStatistic: StructuredPlansStatistic = {};
   response_results_data = {};
   response_runs_data = {};
   cases: Case[] = [];
@@ -149,9 +161,16 @@ export class PalladiumApiService {
     });
   }
 
-  async delete_suite(suite_id) {
-    const resp = await this.httpService.postData('/suite_delete', {suite_data: {id: suite_id}});
-    return new Suite(resp['suite']);
+  async delete_suite(suiteId):Promise<boolean> {
+    return this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).then(resp => {
+      if (resp.errors == null) {
+        console.log(this.suites[resp.suite.product_id]);
+        this.suites[resp.suite.product_id] = this.suites[resp.suite.product_id].filter(suite => suite.id !== suiteId);
+        return true;
+      } else {
+        return false
+      }
+    });
   }
 
   //#endregion
@@ -249,27 +268,27 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Products
-  products = async () => {
-    const product_pack = await this.httpService.postData('/products', '');
-    return product_pack['products'].map(product => new Product(product));
-  };
-
-  async delete_product(id) {
-    return await this.httpService.postData('/product_delete', {product_data: {id: id}});
+  get_products(): void {
+    this.httpService.postData('/products', '').map(response => {
+      this._products = response['products'].map(product => new Product(product));
+      this.products$.next(this._products);
+    }).subscribe();
   }
 
-  async edit_product(id, name) {
-    try {
-      const product = await this.httpService.postData('/product_edit', {product_data: {name: name, id: id}});
-      return new Product(product['product']);
-    } catch (error) {
-      console.log(error);
-    }
+  delete_product(id): void {
+    this.httpService.postData('/product_delete', {product_data: {id}}).map(result => {
+      this._products = this._products.filter(product => product.id !== id);
+      this.products$.next(this._products);
+    }).subscribe();
   }
 
-  //#endregion
+  edit_product(id, name): void {
+      this.httpService.postData('/product_edit', {product_data: {name, id}}).map(result => {
+        this._products[this._products.findIndex(x => x.id === result['product'].id)] = new Product(result['product']);
+        this.products$.next(this._products);
+      }).subscribe();
+  }
 
-  //#region Products
   send_product_position(productIds) {
     return this.httpService.postData('/set_product_position', {product_position: productIds});
   }
@@ -277,8 +296,8 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  async get_plans(productId, offset): Promise<Plan[]> {
-    return this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).then(response => {
+  get_plans(productId, offset): void {
+    this.httpService.postData('/plans', {plan_data: {product_id: productId, offset}}).map(response => {
       const tmpPlans = [];
       const planIds = Object(response['plans']).map(plan => plan.id);
       const statisticPromise = this.get_plans_statistic(planIds);
@@ -289,8 +308,9 @@ export class PalladiumApiService {
         });
         tmpPlans.push(_plan);
       });
-      return tmpPlans;
-    });
+      this._plans[productId] = tmpPlans;
+      this.plans$.next(this._plans);
+    }).subscribe();
   }
 
   async get_plans_to_id(productId, planId) {
@@ -321,12 +341,6 @@ export class PalladiumApiService {
     return tmpPlans === []; // there are not more plans for loading
   }
 
-  async get_plans_initializing(productId) {
-    return this.get_plans(productId, 0).then(plans => {
-      this.plans[productId] = plans;
-    });
-  }
-
   async get_plans_show_more(productId):Promise<boolean> {
     let offset = 0;
     if (this.plans[productId]) {
@@ -339,7 +353,7 @@ export class PalladiumApiService {
   }
 
   get_plans_statistic(planIds: number[]):Promise<StructuredPlansStatistic> {
-      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).then(response => {
+      return this.httpService.postData('/plans_statistic', {plan_data: planIds}).toPromise().then(response => {
         const statistics = {};
         planIds.forEach(planId => {
           const _responseStatisticData = response['statistic'][planId];
@@ -372,15 +386,13 @@ export class PalladiumApiService {
     return casesCount;
   }
 
-  edit_plan(id, name): Promise<any> {
-    return this.httpService.postData('/plan_edit', {plan_data: {plan_name: name, id: id}})
-      .then((resp: any) => {
-        if (resp['errors']) {
-          return Promise.reject(resp['errors']);
-        } else {
-          return Promise.resolve(new Plan(resp.plan));
-        }
-      });
+  edit_plan(id, name): void {
+    this.httpService.postData('/plan_edit', {plan_data: {plan_name: name, id}})
+      .map(response => {
+        const newPlan = new Plan(response['plan']);
+        this._plans[newPlan.product_id][this._plans[newPlan.product_id].findIndex(x => x.id === response['plan'].id)] = newPlan;
+        this.plans$.next(this._plans);
+      }).subscribe();
   }
 
   async archive_plane(planId) {

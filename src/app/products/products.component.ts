@@ -35,41 +35,35 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.palladiumApiService.get_products();
     this.authorize = (localStorage.getItem('auth_data') !== null);
     this.authenticationService.isAuthorized.next(this.authorize);
-    this.activatedRoute.params.subscribe(() => {
-      this.get_products();
-      this.palladiumApiService.get_statuses();
+    this.activatedRoute.params.subscribe((data) => {
       this.cd.detectChanges();
     });
+    this.palladiumApiService.products$.subscribe(products => {
+      this.products = products;
+      this.cd.detectChanges();
+    });
+
     this.sidenavService.close_product_subject$.subscribe(() => {
       this.sidenav.toggle();
       this.cd.detectChanges();
     });
-  }
-
-  async get_products() {
-    this.products = [];
-    this.products = await this.palladiumApiService.products();
-    if(this.stance.productId()) {
-      const _selectedProductTmp = this.products.find(product => product.id === this.stance.productId());
-      this.selectedProduct = {name: _selectedProductTmp.name, id: _selectedProductTmp.id};
-      this.sidenavService.set_product_name(_selectedProductTmp.name);
-    }
-    this.cd.detectChanges();
+    this.sidenavService.selectedProduct$.subscribe(product => {
+      if (product) {
+        this.selectedProduct = product;
+      } else {
+        this.sidenavService.clear_product_name();
+      }
+      this.cd.detectChanges();
+      });
   }
 
   open_settings() {
-    const dialogRef = this.dialog.open(ProductSettingsComponent, {
+    this.dialog.open(ProductSettingsComponent, {
       data: {
         products: this.products,
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.products = result;
-        this.cd.detectChanges();
       }
     });
   }
@@ -88,10 +82,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   select_product(product) {
-    this.sidenavService.set_product_name(product.name);
-    this.selectedProduct.id = product.id;
     this.sidenav.close();
-    this.cd.detectChanges();
     this.router.navigate(['/product', product.id]);
   }
 
@@ -114,7 +105,7 @@ export class ProductSettingsComponent implements OnInit, OnDestroy {
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
               private palladiumApiService: PalladiumApiService, private router: Router,
-              @Inject(MAT_DIALOG_DATA) public data, public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
+              @Inject(MAT_DIALOG_DATA) public data, private cd: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -144,19 +135,16 @@ export class ProductSettingsComponent implements OnInit, OnDestroy {
     return this.item.name === this.name.value;
   }
 
-  async edit_product() {
+  edit_product() {
     if (!this.formGroup.untouched) {
-      this.item = await this.palladiumApiService.edit_product(this.item.id, this.name.value);
-      this.products[this.products.findIndex(x => x.id === this.item.id)] = this.item;
+      this.palladiumApiService.edit_product(this.item.id, this.name.value);
     }
-    this.sidenavService.set_product_name(this.name.value);
     this.dialogRef.close(this.products);
   }
 
-  async delete_item() {
+  delete_item() {
     if (confirm('A u shuare?')) {
-      await this.palladiumApiService.delete_product(this.item.id);
-      this.products = this.products.filter(prod => prod.id !== this.item.id);
+      this.palladiumApiService.delete_product(this.item.id);
       this.router.navigate(['/']);
       this.dialogRef.close(this.products);
     }

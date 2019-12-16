@@ -1,5 +1,13 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, AfterViewInit, ViewEncapsulation} from '@angular/core';
-import {ActivatedRoute, Params} from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnInit,
+  AfterViewInit,
+  ViewEncapsulation, OnDestroy
+} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PalladiumApiService} from '../../services/palladium-api.service';
 import {StanceService} from '../../services/stance.service';
@@ -7,6 +15,9 @@ import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {StatisticService} from '../../services/statistic.service';
+import {SidenavService} from '../../services/sidenav.service';
+import {Product} from "../models/product";
+import {Plan} from "../models/plan";
 
 @Component({
   selector: 'app-plans',
@@ -16,28 +27,47 @@ import {StatisticService} from '../../services/statistic.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlansComponent implements OnInit, AfterViewInit {
-  selectedPlan;
+  plans: Plan[];
+  selectedPlanId = 0;
   productId;
   plan_for_settings;
   RUN_COMPONENT;
   loading = false;
   showMore = true;
+  selectedProduct: Product = {created_at: 0, updated_at: 0, id: 0, name: ''};
 
   constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
+              public sidenavService: SidenavService,
               private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
-      this.productId = params.id;
-      this.init_data();
-    });
-    this.palladiumApiService.statusObservable.subscribe(() => {
-      this.cd.detectChanges();
-    });
+    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
+      this.get_plans(id);
+      return this.palladiumApiService.products$.map(products => {
+        this.selectedProduct = products.find(product => product.id === id);
+        if (this.selectedProduct) {
+          this.sidenavService.select_product(this.selectedProduct);
+        } else {
+          this.sidenavService.select_product(this.selectedProduct);
+          this.router.navigate(['/']);
+        }
+      });
+    }).subscribe();
+
+    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
+      return this.palladiumApiService.plans$.map(plans => {
+        this.plans = plans[id];
+        if (this.stance.planId()) {
+          this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
+        }
+        this.cd.detectChanges();
+        console.log(this.plans);
+      });
+    }).subscribe();
   }
 
   ngAfterViewInit() {
@@ -52,41 +82,55 @@ export class PlansComponent implements OnInit, AfterViewInit {
 
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
-      if (this.selectedPlan === plan) {return;}
-      this.selectedPlan = plan;
-      this.router.navigate(['plan', this.selectedPlan.id], {relativeTo: this.activatedRoute});
+      if (this.selectedPlanId === plan.id) {
+        return;
+      }
+      this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute});
     }
   }
 
-  init_data() {
-    this.loading = true;
-    this.cd.detectChanges();
-    this.selectedPlan = {id: 0};
-    let promisePlans;
-    if(this.stance.planId()) {
-      promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
-    } else if (!this.palladiumApiService.plans[this.productId]) {
-      promisePlans = this.palladiumApiService.get_plans_initializing(this.productId);
-    } else {
-      promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
-    }
-    Promise.all([promisePlans, this.palladiumApiService.get_suites(this.productId)]).then(() => {
-      if (this.stance.planId()) {
-        this.selectedPlan = this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId());
-      }
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+  get_plans(id) {
+      this.palladiumApiService.get_plans(id, 0);
+
+    // if (this.stance.planId()) {
+    //   promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
+    // } else if (!this.palladiumApiService.plans[this.productId]) {
+    //   promisePlans = this.palladiumApiService.get_plans(this.productId, 0);
+    // } else {
+    //   promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
+    // }
   }
+
+  // init_data() {
+  //   this.loading = true;
+  //   this.cd.detectChanges();
+  //   this.selectedPlan = 0;
+  //   let promisePlans;
+  //   if (this.stance.planId()) {
+  //     promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
+  //   } else if (!this.palladiumApiService.plans[this.productId]) {
+  //     promisePlans = this.palladiumApiService.get_plans(this.productId, 0);
+  //   } else {
+  //     promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
+  //   }
+  //   Promise.all([promisePlans]).then(() => {
+  //     if (this.stance.planId()) {
+  //       this.selectedPlan = this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).id;
+  //     }
+  //     this.loading = false;
+  //     this.cd.detectChanges();
+  //   });
+  // }
 
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
   }
 
   open_settings() {
+    console.log(this.plan_for_settings)
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
-        plans: this.palladiumApiService.plans[this.productId],
+        plans: this.plans,
         plan: this.plan_for_settings
       }
     });
@@ -124,10 +168,12 @@ export class PlansSettingsComponent implements OnInit {
   item;
   _plans;
   planForm = new FormGroup({
-    name: new FormControl('',  [Validators.required])
+    name: new FormControl('', [Validators.required])
   });
+
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {}
+              private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
+  }
 
   ngOnInit(): void {
     this._plans = this.data.plans;
@@ -135,19 +181,22 @@ export class PlansSettingsComponent implements OnInit {
     this.planForm.patchValue({name: this.item.name});
   }
 
-  get name() { return this.planForm.get('name'); }
+  get name() {
+    return this.planForm.get('name');
+  }
 
-  async edit_plan() {
+  edit_plan() {
     if (!this.name_is_not_changed()) {
-      const plan = await this.palladiumApiService.edit_plan(this.item.id, this.name.value);
-      this._plans.filter(x => x.id === plan.id)[0].name = plan.name;
+      this.palladiumApiService.edit_plan(this.item.id, this.name.value);
     }
     this.dialogRef.close(this._plans);
   }
 
   name_is_existed() {
     if (this.item) {
-      if (this.name_is_not_changed()) { return false; }
+      if (this.name_is_not_changed()) {
+        return false;
+      }
       return this._plans.some(product => product.name === this.name.value);
     }
   }

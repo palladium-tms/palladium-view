@@ -1,8 +1,8 @@
 <div class="plan-space">
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of this.palladiumApiService.plans[productId] | sortByCreatedAt:'desc'"
-              [ngClass]="{'selected': selectedPlan.id == plan.id}"
+              *ngFor="let plan of plans | sortByCreatedAt:'desc'"
+              [ngClass]="{'selected': selectedPlanId == plan.id}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
         <div class="name">{{plan.name}}</div>
@@ -12,9 +12,9 @@
           </button>
         </div>
       </div>
-      <div class="item-statistic">
-        <app-statistic [statistic$] = plan.statistic$ [isArchived] = plan.isArchived></app-statistic>
-      </div>
+<!--      <div class="item-statistic">-->
+<!--        <app-statistic [statistic$] = plan.statistic$ [isArchived] = plan.isArchived></app-statistic>-->
+<!--      </div>-->
     </mat-card>
     <div class="show-more">
       <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
