@@ -1,5 +1,5 @@
 <mat-card class="status-wrapper mat-elevation-z1" *ngIf="point && point.count > 0"
-     [ngStyle]="{'background-color': get_background_color(), 'border-right': 'solid 4px ' + palladiumApi.statuses[this.point.status].color}"
+     [ngStyle]="{'background-color': get_background_color(), 'border-right': 'solid 4px ' + (statuses$ | async)[this.point.status].color}"
      [ngClass]="{'mat-elevation-z7': point.active}">
-  <span class="status-text">{{point.count}} {{palladiumApi.statuses[point.status].name}}</span>
+  <span class="status-text">{{point.count}} {{(statuses$ | async)[point.status].name}}</span>
 </mat-card>

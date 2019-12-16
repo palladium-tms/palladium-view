@@ -17,6 +17,7 @@ import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
 import {map} from "rxjs/operators";
 import {NGXLogger} from 'ngx-logger';
+import { delay } from 'rxjs/internal/operators';
 
 export interface StructuredStatuses {
   [key: number]: Status;
@@ -25,6 +26,11 @@ export interface StructuredStatuses {
 // key is a product id
 export interface StructuredPlans {
   [key: number]: Plan[];
+}
+
+// key is a plan id
+export interface StructuredRuns {
+  [key: number]: Run[];
 }
 
 // key is a product id
@@ -47,6 +53,9 @@ export class PalladiumApiService {
 
   plans$: ReplaySubject<StructuredPlans> = new ReplaySubject(1);
   private _plans: StructuredPlans = {};
+
+  runs$: ReplaySubject<StructuredRuns> = new ReplaySubject(1);
+  private _runs: StructuredRuns = {};
 
   statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
   private _statuses: StructuredStatuses = {};
@@ -245,20 +254,17 @@ export class PalladiumApiService {
   //
   // //#endregion
 
-  // //#region Run
-  // get_runs(plan_id): Promise<any> {
-  //   return this.httpService.postData('/runs', {run_data: {plan_id: plan_id}})
-  //     .then(
-  //       (resp: any) => {
-  //         this.response_runs_data[plan_id] = [];
-  //         resp['runs'].forEach(run => {
-  //           this.response_runs_data[plan_id].push(new Run(run));
-  //         });
-  //         return this.response_runs_data;
-  //       }, (errors: any) => {
-  //         console.log(errors);
-  //       });
-  // }
+  //#region Run
+  get_runs(planId): void {
+    this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
+        response => {
+          this._runs[planId] = [];
+          response['runs'].forEach(run => {
+            this._runs[planId].push(new Run(run));
+          });
+          this.runs$.next(this._runs);
+        }).subscribe();
+  }
   //
   // create_run(run_name, plan_id): Promise<any> {
   //   return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
@@ -274,7 +280,7 @@ export class PalladiumApiService {
   //   return await this.httpService.postData('/run_delete', {run_data: {id: run_id}})['run'];
   // }
   //
-  // //#endregion
+  //#endregion
 
   //#region Products
   get_products(): void {
@@ -379,6 +385,7 @@ export class PalladiumApiService {
       this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
       planIds.forEach(planId => {
         const statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
+        this.logger.debug('get_plans_statistic. statistic: ' + statistic);
         this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
       });
     }).subscribe();

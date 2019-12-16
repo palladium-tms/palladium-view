@@ -10,6 +10,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
+import {Observable} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-runs',
@@ -26,7 +28,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   ResultSetComponent;
   untestedCash = {};
   untestedPoint: Point;
-  statistic: Statistic;
+  statistic$: Observable<Statistic>;
   filter: number[] = []; // ids of active statuses
   loading = false;
   selected_object: Run;
@@ -41,21 +43,26 @@ export class RunsComponent implements OnInit, OnDestroy {
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe(() => {
-      this.get_runs_and_suites();
-      this.filter = [];
-    });
-    this.palladiumApiService.statusObservable.subscribe(() => {
-      this.cd.detectChanges();
-    });
+    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
+      return this.palladiumApiService.plans$.map(plans => {
+        this.statistic$ = plans[this.stance.productId()].find(plan => plan.id === id).statistic$.pipe();
+      });
 
-    this.statistic_service.statistic_has_changed().subscribe(statistic => {
-      if (this.runs_and_suites.length === 0 || !this.palladiumApiService.plans[this.stance.productId()]) {return;}
-      this.runs_and_suites.filter(object => this.stance.run_or_suite_by_url(object))[0].statistic = statistic;
-      this.get_statistic();
-      this.merge_suites_and_runs();
-      this.statistic_service.update_plan_statistic(this.statistic);
-    });
+      // this.get_runs_and_suites();
+      // this.filter = [];
+    }).map(() => this.cd.detectChanges()).subscribe();
+
+    // this.palladiumApiService.statusObservable.subscribe(() => {
+    //   this.cd.detectChanges();
+    // });
+    //
+    // this.statistic_service.statistic_has_changed().subscribe(statistic => {
+    //   if (this.runs_and_suites.length === 0 || !this.palladiumApiService.plans[this.stance.productId()]) {return;}
+    //   this.runs_and_suites.filter(object => this.stance.run_or_suite_by_url(object))[0].statistic = statistic;
+    //   this.get_statistic();
+    //   this.merge_suites_and_runs();
+    //   this.statistic_service.update_plan_statistic(this.statistic);
+    // });
   }
 
   get_runs(planId) {
@@ -217,7 +224,10 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.cd.detach();
-    this.params.unsubscribe();
+  }
+
+  log(a) {
+    console.log(a)
   }
 }
 

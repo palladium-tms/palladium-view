@@ -26,12 +26,11 @@ import {Plan} from "../models/plan";
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlansComponent implements OnInit, AfterViewInit {
+export class PlansComponent implements OnInit {
   plans: Plan[];
-  statuses = {};
   selectedPlanId = 0;
   productId;
-  plan_for_settings;
+  planForSettings;
   RUN_COMPONENT;
   loading = false;
   showMore = true;
@@ -76,20 +75,15 @@ export class PlansComponent implements OnInit, AfterViewInit {
       if (this.selectedPlanId === plan.id) {
         return;
       }
+
+      this.selectedPlanId = plan.id;
       this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute});
+      this.cd.detectChanges();
     }
   }
 
   init_plans(id) {
       this.palladiumApiService.init_plans(id);
-
-    // if (this.stance.planId()) {
-    //   promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
-    // } else if (!this.palladiumApiService.plans[this.productId]) {
-    //   promisePlans = this.palladiumApiService.get_plans(this.productId, 0);
-    // } else {
-    //   promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
-    // }
   }
 
   // init_data() {
@@ -118,11 +112,10 @@ export class PlansComponent implements OnInit, AfterViewInit {
   }
 
   open_settings() {
-    console.log(this.plan_for_settings)
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
         plans: this.plans,
-        plan: this.plan_for_settings
+        plan: this.planForSettings
       }
     });
 
@@ -137,15 +130,11 @@ export class PlansComponent implements OnInit, AfterViewInit {
   async load_more_plans() {
     console.log(this.productId)
     this.palladiumApiService.get_plans(+this.productId);
-    // this.palladiumApiService.get_plans_show_more(this.productId).then(canNotBeLoadedMore => {
-    //   this.showMore = !canNotBeLoadedMore;
-    //   this.cd.detectChanges();
-    // });
   }
 
   archive_open() {
     if (confirm('Attention!! You will can not to undo this action')) {
-      this.palladiumApiService.archive_plane(this.plan_for_settings.id);
+      this.palladiumApiService.archive_plane(this.planForSettings.id);
     }
   }
 }
