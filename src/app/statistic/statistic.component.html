@@ -3,12 +3,12 @@
     <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((statistic.all / this.palladiumApiService.case_count(stance.productId())) * 100) + '%'}">
       <div *ngFor="let point of statistic.points" class="status-element"
            [ngStyle]="{ 'width': (point.attitude * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses[point.status].color}">
+                  'background-color': statuses[point.status].color}">
       </div>
     </div>
     <div *ngIf="!this.isArchived" class="status-element"
          [ngStyle]="{ 'width': ((1 - statistic.all / this.palladiumApiService.case_count(stance.productId())) * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses['0'].color}"></div>
+                  'background-color': statuses['0'].color}"></div>
   </div>
   <div *ngIf="statistic && !this.isArchived">{{statistic.all / palladiumApiService.case_count(stance.productId()) || 0 | percent}}</div>
 

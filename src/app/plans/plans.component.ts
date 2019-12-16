@@ -28,6 +28,7 @@ import {Plan} from "../models/plan";
 })
 export class PlansComponent implements OnInit, AfterViewInit {
   plans: Plan[];
+  statuses = {};
   selectedPlanId = 0;
   productId;
   plan_for_settings;
@@ -65,7 +66,6 @@ export class PlansComponent implements OnInit, AfterViewInit {
           this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
         }
         this.cd.detectChanges();
-        console.log(this.plans);
       });
     }).subscribe();
   }
@@ -211,12 +211,11 @@ export class PlansSettingsComponent implements OnInit {
     }
   }
 
-  async delete_plan() {
+  delete_plan() {
     if (confirm('A u shuare?')) {
-      await this.palladiumApiService.delete_plan(this.item.id);
-      this._plans = this._plans.filter(currentPlan => currentPlan.id !== this.item.id);
+      this.palladiumApiService.delete_plan(this.item.id);
       this.router.navigate([/(.*?)(?=plan|$)/.exec(this.router.url)[0]]);
-      this.dialogRef.close(this._plans);
+      this.dialogRef.close();
     }
   }
 }

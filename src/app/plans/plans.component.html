@@ -12,9 +12,9 @@
           </button>
         </div>
       </div>
-<!--      <div class="item-statistic">-->
-<!--        <app-statistic [statistic$] = plan.statistic$ [isArchived] = plan.isArchived></app-statistic>-->
-<!--      </div>-->
+      <div class="item-statistic">
+        <app-statistic [statistic$] = plan.statistic$ [isArchived] = plan.isArchived></app-statistic>
+      </div>
     </mat-card>
     <div class="show-more">
       <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>

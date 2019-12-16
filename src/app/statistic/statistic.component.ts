@@ -13,6 +13,7 @@ export class StatisticComponent implements OnInit {
   @Input() statistic$: Promise<Statistic>;
   @Input() isArchived: boolean;
   statistic: Statistic;
+  statuses;
 
   constructor(public stance: StanceService,
               public palladiumApiService: PalladiumApiService,
@@ -20,6 +21,11 @@ export class StatisticComponent implements OnInit {
 
   async ngOnInit() {
     this.statistic = await this.statistic$;
+    this.palladiumApiService.statuses$.map(statuses => {
+      this.statuses = statuses;
+      this.cd.detectChanges();
+    }).subscribe();
+
     this.cd.detectChanges();
   }
 }

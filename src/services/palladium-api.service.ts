@@ -46,6 +46,9 @@ export class PalladiumApiService {
   plans$: ReplaySubject<StructuredPlans> = new ReplaySubject(1);
   private _plans: StructuredPlans = {};
 
+  statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
+  private _statuses: StructuredStatuses = {};
+
   plans: StructuredPlans = {};
   suites: StructuredSuites = {};
   resultSets: StructuredResultSets = {};
@@ -62,53 +65,52 @@ export class PalladiumApiService {
               private authenticationService: AuthenticationService) {
   }
 
-  //#region Status
+  // #region Status
   get_statuses(): void {
-    this.httpService.postData('/statuses', '').then(resp => {
-      this.statuses = {0: new Status({name: 'Untested', color: '#efefef', id: 0, 'block': true})};
+    this.httpService.postData('/statuses', '').map(resp => {
+      this._statuses = {0: new Status({name: 'Untested', color: '#efefef', id: 0, 'block': true})};
       Object.keys(resp['statuses']).forEach(key => {
         const statusNew = new Status(resp['statuses'][key]);
-        this.statuses[statusNew.id] = statusNew;
+        this._statuses[statusNew.id] = statusNew;
       });
-    }).then(() => {
-      this.statusObservable.next(this.statuses);
-    });
+      this.statuses$.next(this._statuses);
+    }).subscribe();
   }
 
-  get_status_by_id(id): Status {
-    return this.statuses[id] || this.statuses[0];
-  }
-
-  get_not_blocked_statuses(): Promise<Status[]> {
-    return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
-      const statuses = [];
-      Object.keys(resp['statuses']).forEach(key => {
-        statuses.push(new Status(resp['statuses'][key]));
-      });
-      return statuses;
-    });
-  }
-
-  block_status(id): Promise<JSON> {
-    return this.httpService.postData('/status_edit', {status_data: {id: id, block: true}}).then((resp: any) => {
-      return resp['status'];
-    });
-  }
-
-  update_status(id, name, color): Promise<Status> {
-    return this.httpService.postData('/status_edit', {status_data: {id, name, color}}).then((resp: any) => {
-      this.statuses[id] = new Status(resp['status']);
-      this.statusObservable.next(this.statuses);
-      return new Status(resp['status']);
-    });
-  }
-
-  async status_new(name, color) {
-    const resp = await this.httpService.postData('/status_new', {status_data: {color: color, name: name}});
-    return new Status(resp['status']);
-  }
-
-  //#endregion
+  // get_status_by_id(id): Status {
+  //   return this.statuses[id] || this.statuses[0];
+  // }
+  //
+  // get_not_blocked_statuses(): Promise<Status[]> {
+  //   return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
+  //     const statuses = [];
+  //     Object.keys(resp['statuses']).forEach(key => {
+  //       statuses.push(new Status(resp['statuses'][key]));
+  //     });
+  //     return statuses;
+  //   });
+  // }
+  //
+  // block_status(id): Promise<JSON> {
+  //   return this.httpService.postData('/status_edit', {status_data: {id: id, block: true}}).then((resp: any) => {
+  //     return resp['status'];
+  //   });
+  // }
+  //
+  // update_status(id, name, color): Promise<Status> {
+  //   return this.httpService.postData('/status_edit', {status_data: {id, name, color}}).then((resp: any) => {
+  //     this.statuses[id] = new Status(resp['status']);
+  //     this.statusObservable.next(this.statuses);
+  //     return new Status(resp['status']);
+  //   });
+  // }
+  //
+  // async status_new(name, color) {
+  //   const resp = await this.httpService.postData('/status_new', {status_data: {color: color, name: name}});
+  //   return new Status(resp['status']);
+  // }
+  //
+  // #endregion
 
   //#region Token
   async get_tokens() {
@@ -175,66 +177,66 @@ export class PalladiumApiService {
 
   //#endregion
 
-  //#region Cases
-  get_cases(id): Promise<any> {
-    return this.httpService.postData('/cases', {case_data: {suite_id: id}}).then((resp: any) => {
-      this.cases = [];
-      Object(resp['cases']).forEach(current_case => {
-        this.cases.push(new Case(current_case));
-      });
-      return this.cases;
-    }, (errors: any) => {
-      console.log(errors);
-    });
-  }
-
-  get_cases_by_run_id(run_id, product_id): Promise<any> {
-    return this.httpService.postData('/cases', {
-      case_data: {
-        run_id: run_id,
-        product_id: product_id
-      }
-    }).then((resp: any) => {
-      this.cases = [];
-      Object(resp['cases']).forEach(current_case => {
-        this.cases.push(new Case(current_case));
-      });
-      return this.cases;
-    }, (errors: any) => {
-      console.log(errors);
-    });
-  }
-
-  async edit_case_by_result_set_id(result_set_id, name): Promise<any> {
-    const resp = await this.httpService.postData('/case_edit', {case_data: {result_set_id: result_set_id, name: name}});
-    return new Case(resp['case']);
-  }
-
-  async edit_case(case_id, name) {
-    const resp = await this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}});
-    return new Case(resp['case']);
-  }
-
-  async delete_case(caseId, productId) {
-    const resp = await this.httpService.postData('/case_delete', {case_data: {id: caseId}});
-    const _case = new Case(resp['case']);
-    const _suite = this.suites[productId].find(suite => suite.id === _case.suite_id);
-    const statisticData = _suite.statistic.data;
-    statisticData[0] = statisticData[0] - 1;
-    _suite.statistic = new Statistic(statisticData);
-    return _case;
-  }
-
-  history = async (case_id) => {
-    const resp = await this.httpService.postData('/case_history', {case_data: {id: case_id}});
-    this.histories = [];
-    resp['result_sets_history'].forEach(data => {
-      this.histories.push(new History(data));
-    });
-    return this.histories;
-  };
-
-  //#endregion
+  // //#region Cases
+  // get_cases(id): Promise<any> {
+  //   return this.httpService.postData('/cases', {case_data: {suite_id: id}}).then((resp: any) => {
+  //     this.cases = [];
+  //     Object(resp['cases']).forEach(current_case => {
+  //       this.cases.push(new Case(current_case));
+  //     });
+  //     return this.cases;
+  //   }, (errors: any) => {
+  //     console.log(errors);
+  //   });
+  // }
+  //
+  // get_cases_by_run_id(run_id, product_id): Promise<any> {
+  //   return this.httpService.postData('/cases', {
+  //     case_data: {
+  //       run_id: run_id,
+  //       product_id: product_id
+  //     }
+  //   }).then((resp: any) => {
+  //     this.cases = [];
+  //     Object(resp['cases']).forEach(current_case => {
+  //       this.cases.push(new Case(current_case));
+  //     });
+  //     return this.cases;
+  //   }, (errors: any) => {
+  //     console.log(errors);
+  //   });
+  // }
+  //
+  // async edit_case_by_result_set_id(result_set_id, name): Promise<any> {
+  //   const resp = await this.httpService.postData('/case_edit', {case_data: {result_set_id: result_set_id, name: name}});
+  //   return new Case(resp['case']);
+  // }
+  //
+  // async edit_case(case_id, name) {
+  //   const resp = await this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}});
+  //   return new Case(resp['case']);
+  // }
+  //
+  // async delete_case(caseId, productId) {
+  //   const resp = await this.httpService.postData('/case_delete', {case_data: {id: caseId}});
+  //   const _case = new Case(resp['case']);
+  //   const _suite = this.suites[productId].find(suite => suite.id === _case.suite_id);
+  //   const statisticData = _suite.statistic.data;
+  //   statisticData[0] = statisticData[0] - 1;
+  //   _suite.statistic = new Statistic(statisticData);
+  //   return _case;
+  // }
+  //
+  // history = async (case_id) => {
+  //   const resp = await this.httpService.postData('/case_history', {case_data: {id: case_id}});
+  //   this.histories = [];
+  //   resp['result_sets_history'].forEach(data => {
+  //     this.histories.push(new History(data));
+  //   });
+  //   return this.histories;
+  // };
+  //
+  // //#endregion
 
   //#region Run
   get_runs(plan_id): Promise<any> {
@@ -401,100 +403,104 @@ export class PalladiumApiService {
     });
   }
 
-  async delete_plan(id) {
-    return await this.httpService.postData('/plan_delete', {plan_data: {id: id}})['plan'];
+  delete_plan(id): void {
+    this.httpService.postData('/plan_delete', {plan_data: {id}}).map(result => {
+      const productId = result['plan']['product_id'];
+      this._plans[productId] = this._plans[productId].filter(plan => plan.id !== id);
+      this.plans$.next(this._plans);
+    }).subscribe();
   }
 
   //#endregion
 
-  //#region Result Set
-  async get_result_sets(runId): Promise<any> {
-    const resp = await this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}});
-    this.resultSets[runId] = [];
-    Object(resp['result_sets']).forEach(resultSet => {
-      this.resultSets[runId].push(new ResultSet(resultSet));
-    });
-  }
+  // //#region Result Set
+  // async get_result_sets(runId): Promise<any> {
+  //   const resp = await this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}});
+  //   this.resultSets[runId] = [];
+  //   Object(resp['result_sets']).forEach(resultSet => {
+  //     this.resultSets[runId].push(new ResultSet(resultSet));
+  //   });
+  // }
+  //
+  // async delete_result_set(id) {
+  //   const result_set = await this.httpService.postData('/result_set_delete', {result_set_data: {id: id}});
+  //   return result_set['result_set']['id'];
+  // }
+  //
+  // //#endregion
 
-  async delete_result_set(id) {
-    const result_set = await this.httpService.postData('/result_set_delete', {result_set_data: {id: id}});
-    return result_set['result_set']['id'];
-  }
+  // //#region Result
+  // results = async (result_set_id) => {
+  //   const response = await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
+  //   this.response_results_data[result_set_id] = [];
+  //   Object(response['results']).forEach(result => {
+  //     this.response_results_data[result_set_id].push(new Result(result));
+  //   });
+  //   return this.response_results_data[result_set_id];
+  // };
+  //
+  // get_result(result_id): Promise<any> {
+  //   return this.httpService.postData('/result', {result_data: {id: result_id}})
+  //     .then(
+  //       result => {
+  //         return new Result(result['result']);
+  //       }, error => console.log(error));
+  // }
+  //
+  // async result_new(result_sets, description, status) {
+  //   if (result_sets.length == 0) {
+  //     return {};
+  //   }
+  //   const res = await this.httpService.postData('/result_new', {
+  //     result_data: {
+  //       message: description, status: status.name,
+  //       result_set_id: result_sets.map(obj => obj.id)
+  //     }
+  //   });
+  //   return this.reformat_response(res);
+  // }
+  //
+  // async result_new_by_case(cases, message, status, run_id) {
+  //   if (cases.length == 0) {
+  //     return {};
+  //   }
+  //   const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
+  //   for (const this_case of cases) {
+  //     params.result_set_data.name.push(this_case.name);
+  //   }
+  //   const res = await this.httpService.postData('/result_new', params);
+  //   return this.reformat_response(res);
+  // }
+  //
+  // //#endregion
 
-  //#endregion
-
-  //#region Result
-  results = async (result_set_id) => {
-    const response = await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
-    this.response_results_data[result_set_id] = [];
-    Object(response['results']).forEach(result => {
-      this.response_results_data[result_set_id].push(new Result(result));
-    });
-    return this.response_results_data[result_set_id];
-  };
-
-  get_result(result_id): Promise<any> {
-    return this.httpService.postData('/result', {result_data: {id: result_id}})
-      .then(
-        result => {
-          return new Result(result['result']);
-        }, error => console.log(error));
-  }
-
-  async result_new(result_sets, description, status) {
-    if (result_sets.length == 0) {
-      return {};
-    }
-    const res = await this.httpService.postData('/result_new', {
-      result_data: {
-        message: description, status: status.name,
-        result_set_id: result_sets.map(obj => obj.id)
-      }
-    });
-    return this.reformat_response(res);
-  }
-
-  async result_new_by_case(cases, message, status, run_id) {
-    if (cases.length == 0) {
-      return {};
-    }
-    const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
-    for (const this_case of cases) {
-      params.result_set_data.name.push(this_case.name);
-    }
-    const res = await this.httpService.postData('/result_new', params);
-    return this.reformat_response(res);
-  }
-
-  //#endregion
-
-  //#region Result
-  async generate_invite() {
-    const response = await this.httpService.postData('/create_invite_token', {});
-    return new Invite(response['invite_data']);
-  }
-
-  async get_invite() {
-    let invite = null;
-    const data = await this.httpService.postData('/get_invite_token', {});
-    if (data['invite_data']) {
-      invite = new Invite(data['invite_data']);
-    }
-    return invite;
-  }
-
-  reformat_response(res) {
-    const response = {};
-    if (res['result_sets']) {
-      response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
-    }
-    if (res['result']) {
-      response['result'] = new Result(res['result']);
-    }
-    return response;
-  }
-
-  //#endregion
+  // //#region Result
+  // async generate_invite() {
+  //   const response = await this.httpService.postData('/create_invite_token', {});
+  //   return new Invite(response['invite_data']);
+  // }
+  //
+  // async get_invite() {
+  //   let invite = null;
+  //   const data = await this.httpService.postData('/get_invite_token', {});
+  //   if (data['invite_data']) {
+  //     invite = new Invite(data['invite_data']);
+  //   }
+  //   return invite;
+  // }
+  //
+  // reformat_response(res) {
+  //   const response = {};
+  //   if (res['result_sets']) {
+  //     response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
+  //   }
+  //   if (res['result']) {
+  //     response['result'] = new Result(res['result']);
+  //   }
+  //   return response;
+  // }
+  //
+  // //#endregion
 
   //#region UserSettigns
   async get_user_setting() {
