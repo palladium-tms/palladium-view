@@ -312,17 +312,20 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  get_plans(productId): void {
-    let oldestPlan = 0;
+  get_plans(productId, planId): void {
+    const params = {plan_data: {product_id: productId}};
+    if (planId) {
+      params['plan_id'] = planId;
+    } else {
+      params['after_plan_id'] = this.oldest_plan(productId);
+    }
     if (this._plans[productId]) {
-      oldestPlan = this._plans[productId].reduce((min, p) => p.id < min ? p.id : min, this._plans[productId][0].id);
-      this.logger.debug('get_plans. oldestPlan: ' + oldestPlan);
+      this.logger.debug('get_plans. params: ' + params);
     } else {
       this._plans[productId] = [];
     }
-
-    this.httpService.postData('/plans', {plan_data: {product_id: productId, plan_id: oldestPlan}}).map(response => {
-      this.logger.debug('get_plans. productId: ' + productId + ' offset: ' + 0);
+    this.httpService.postData('/plans', params).map(response => {
+      this.logger.debug('get_plans. productId: ' + productId);
       Object(response['plans']).forEach(plan => {
         const _plan = new Plan(plan);
         this._plans[productId].push(_plan);
@@ -334,10 +337,14 @@ export class PalladiumApiService {
     this.get_suites(productId);
   }
 
-  init_plans(productId) {
+  oldest_plan(productId): number {
+    return this._plans[productId].reduce((min, p) => p.id < min ? p.id : min, this._plans[productId][0].id);
+  }
+
+  init_plans(productId: number, planId: (number | undefined)): void {
     this.logger.debug('init_plans. productId: ' + productId);
     if (!this._plans[productId]) {
-      this.get_plans(productId);
+      this.get_plans(productId, planId);
     }
   }
 

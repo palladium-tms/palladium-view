@@ -63,6 +63,8 @@ export class PlansComponent implements OnInit {
       return this.palladiumApiService.plans$.map((plans: StructuredPlans) => {
         this.plans = plans[id];
         if (this.stance.planId()) {
+          console.log(this.plans)
+          console.log(this.stance.planId())
           this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
         }
         this.cd.detectChanges();
@@ -83,7 +85,10 @@ export class PlansComponent implements OnInit {
   }
 
   init_plans(id) {
-      this.palladiumApiService.init_plans(id);
+    if(this.stance.planId()) {
+      this.palladiumApiService.init_plans(id, this.stance.planId());
+    }
+
   }
 
   // init_data() {
