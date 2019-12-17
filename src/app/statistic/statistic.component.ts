@@ -4,6 +4,7 @@ import {StanceService} from '../../services/stance.service';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {Observable, ReplaySubject} from "rxjs";
 import {Product} from "../models/product";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-statistic',
@@ -22,13 +23,17 @@ export class StatisticComponent implements OnInit {
               public palladiumApiService: PalladiumApiService,
               private cd: ChangeDetectorRef) { }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.statuses = this.palladiumApiService.statuses$.pipe();
-    this.statistic = this.statistic$.pipe();
     this.caseCount = this.palladiumApiService.products$.switchMap((products: Product[]) => {
       const product = products.find(product => product.id === this.stance.productId());
       return product.caseCount$;
     });
-    this.cd.detectChanges();
+    console.log('apdofaoids')
+    // this.statistic.map(x => {
+    //   console.log('statistic')
+    //   console.log(x)
+    //   this.cd.detectChanges();
+    // }).subscribe();
   }
 }

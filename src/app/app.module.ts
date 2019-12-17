@@ -28,7 +28,7 @@ const appRoutes: Routes = [
     MainComponent,
     DetailResultComponent,
   ],
-  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.DEBUG}),
+  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.OFF}),
     BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes),  BrowserAnimationsModule],
   providers: [AuthGuard, AuthenticationService, PalladiumApiService, HttpService,
     {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],

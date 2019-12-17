@@ -1,21 +1,21 @@
-<ng-container *ngIf="(statistic | async)">
+<ng-container *ngIf="(statistic$ | async) as statistic; else loading">
   <div class="statistic-bar">
-    <div class="status-elements-no-empty" [ngStyle]="{ 'width': (((statistic | async).all / (caseCount | async)) * 100) + '%'}">
-      <div *ngFor="let point of (statistic | async).points" class="status-element"
+    <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((statistic.all / (caseCount | async)) * 100) + '%'}">
+      <div *ngFor="let point of statistic.points" class="status-element"
            [ngStyle]="{ 'width': (point.attitude * 100) + '%',
                   'background-color': (statuses | async)[point.status].color}">
       </div>
     </div>
     <div *ngIf="!this.isArchived" class="status-element"
-         [ngStyle]="{ 'width': ((1 - (statistic | async).all / (caseCount | async)) * 100) + '%',
+         [ngStyle]="{ 'width': ((1 - statistic.all / (caseCount | async)) * 100) + '%',
                   'background-color': (statuses | async)['0'].color}"></div>
   </div>
-  <div *ngIf="statistic && !this.isArchived">{{(statistic | async).all / (caseCount | async) || 0 | percent}}</div>
+  <div *ngIf="statistic && !this.isArchived">{{statistic.all / (caseCount | async) || 0 | percent}}</div>
 
 </ng-container>
-<ng-container *ngIf="!(statistic | async)">
+<ng-template #loading>
   <div class="statistic-bar">
     <div class="status-element-loading"></div>
   </div>
   <div>&#8734;</div>
-</ng-container>
+</ng-template>

@@ -42,12 +42,14 @@ export class PlansComponent implements OnInit {
               private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
-              private cd: ChangeDetectorRef) {}
+              private cd: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
       this.productId = id;
       this.init_plans(id);
+      this.cd.detectChanges();
       return this.palladiumApiService.products$.map(products => {
         this.selectedProduct = products.find(product => product.id === id);
         if (this.selectedProduct) {
@@ -70,6 +72,18 @@ export class PlansComponent implements OnInit {
         this.cd.detectChanges();
       });
     }).subscribe();
+    //
+    // this.palladiumApiService.plans$.map((plans: StructuredPlans) => {
+    //   console.log('asdjkliasjdlksajdfkli');
+    //   this.plans = plans[this.stance.productId()];
+    //   if (this.stance.planId()) {
+    //     console.log(this.plans);
+    //     console.log(this.stance.planId());
+    //     this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
+    //   }
+    //   console.log(this.plans)
+    //   this.cd.detectChanges();
+    // }).subscribe();
   }
 
   clicked(event, plan) {
@@ -85,10 +99,7 @@ export class PlansComponent implements OnInit {
   }
 
   init_plans(id) {
-    if(this.stance.planId()) {
-      this.palladiumApiService.init_plans(id, this.stance.planId());
-    }
-
+    this.palladiumApiService.init_plans(id, this.stance.planId());
   }
 
   // init_data() {
@@ -133,8 +144,8 @@ export class PlansComponent implements OnInit {
   }
 
   async load_more_plans() {
-    console.log(this.productId)
-    this.palladiumApiService.get_plans(+this.productId);
+    console.log(this.productId);
+    this.palladiumApiService.get_more_plans(this.productId);
   }
 
   archive_open() {
