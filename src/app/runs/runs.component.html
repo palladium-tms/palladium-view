@@ -1,5 +1,9 @@
+<button mat-icon-button (click)="click()">
+  <mat-icon>refresh</mat-icon>
+</button>
 <div class="run-space">
-  <div class="toolbar" *ngIf="!loading">
+
+  <div class="toolbar">
     <div class="filters">
       <app-status-filter [point]=point (click)="select_filter(point)" *ngFor="let point of (statistic$ | async)?.points"></app-status-filter>
     </div>
@@ -9,38 +13,41 @@
       </button>
     </div>
   </div>
-<!--  <div class="item-list" [hidden]="loading">-->
-<!--    <mat-card class="item mat-elevation-z1"-->
-<!--              *ngFor="let object of runs_and_suites| statisticFilter:[filter, untestedCash]"-->
-<!--              (click)="clicked($event, object)"-->
-<!--              [ngClass]="{'selected': selected_object == object}">-->
-<!--      <div class="run-name">-->
-<!--        <div class="item-name">{{object.name}}</div>-->
-<!--        <div class="settings-menu">-->
-<!--          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">-->
-<!--            <mat-icon>more_vert</mat-icon>-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="item-statistic" *ngIf="object.statistic.existedStatuses && untestedCash[object.name]">-->
-<!--        <div class="status-elements-no-empty" [ngStyle]="{ 'width': (1 - untestedCash[object.name].attitude) * 100 + '%'}">-->
-<!--          <div *ngFor="let point of object.statistic.points"-->
-<!--               [ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': palladiumApiService.get_status_by_id(point.status).color}">-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div *ngIf="object.path === 'run'" [ngStyle]="{ 'width': untestedCash[object.name].attitude *100 + '%',-->
-<!--         'background-color': palladiumApiService.get_status_by_id(untestedCash[object.name].status).color}" >-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <mat-card-subtitle class="item-statistic">-->
-<!--        <app-point [point] = point *ngFor="let point of object.statistic.points" ></app-point>-->
-<!--        <app-point [point] = untestedCash[object.name] ></app-point>-->
-<!--      </mat-card-subtitle>-->
-<!--    </mat-card>-->
-<!--  </div>-->
-  <div [hidden]="!loading" class="loader">
-    <mat-spinner color="accent"></mat-spinner>
+  <div class="item-list" *ngIf="(runs$ | async) as runs; else loading">
+    <mat-card class="item mat-elevation-z1"
+              *ngFor="let object of runs| statisticFilter:[filter, untestedCash]"
+              (click)="clicked($event, object)"
+              [ngClass]="{'selected': selected_object == object}">
+      <div class="run-name">
+        <div class="item-name">{{object.name}}</div>
+        <div class="settings-menu">
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </div>
+      <!--<div class="item-statistic" *ngIf="object.statistic.existedStatuses && untestedCash[object.name]">-->
+        <!--<div class="status-elements-no-empty" [ngStyle]="{ 'width': (1 - untestedCash[object.name].attitude) * 100 + '%'}">-->
+          <!--<div *ngFor="let point of object.statistic.points"-->
+               <!--[ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': palladiumApiService.get_status_by_id(point.status).color}">-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div *ngIf="object.path === 'run'" [ngStyle]="{ 'width': untestedCash[object.name].attitude *100 + '%',-->
+         <!--'background-color': palladiumApiService.get_status_by_id(untestedCash[object.name].status).color}" >-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<mat-card-subtitle class="item-statistic">-->
+        <!--<app-point [point] = point *ngFor="let point of object.statistic.points" ></app-point>-->
+        <!--<app-point [point] = untestedCash[object.name] ></app-point>-->
+      <!--</mat-card-subtitle>-->
+    </mat-card>
   </div>
+  <ng-template #loading>
+    <div class="loader">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </ng-template>
+
 </div>
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="open_settings()">

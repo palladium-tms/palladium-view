@@ -18,8 +18,6 @@ export class StatusFilterComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log('this.point')
-    console.log(this.point)
     this.statuses$ = this.palladiumApi.statuses$.pipe();
   }
 

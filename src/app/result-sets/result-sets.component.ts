@@ -55,18 +55,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe(() => {
-      this.object = null;
-      this.searchValue = '';
-      this.filter = [];
-      this.get_result_sets_and_cases();
-    });
-
-    this.palladiumApiService.statusObservable.subscribe(() => {
-      this.statuses = Object.values(this.palladiumApiService.statuses);
-      this.notBlockedStatus = this.statuses.filter(status => !status.block);
-      this.cd.detectChanges();
-    });
+    // this.params = this.activatedRoute.params.subscribe(() => {
+    //   this.object = null;
+    //   this.searchValue = '';
+    //   this.filter = [];
+    //   this.get_result_sets_and_cases();
+    // });
+    //
+    // this.palladiumApiService.statusObservable.subscribe(() => {
+    //   this.statuses = Object.values(this.palladiumApiService.statuses);
+    //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
+    //   this.cd.detectChanges();
+    // });
   }
 
   select_filter(point) {
@@ -366,7 +366,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.cd.detach();
-    this.params.unsubscribe();
+    // this.params.unsubscribe();
   }
 }
 
