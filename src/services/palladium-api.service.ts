@@ -42,10 +42,6 @@ export interface StructuredResultSets {
   [key: number]: ResultSet[];
 }
 
-export interface StructuredPlansStatistic {
-  [key: number]: Statistic;
-}
-
 @Injectable()
 export class PalladiumApiService {
   products$: ReplaySubject<Product[]> = new ReplaySubject(1);
@@ -56,6 +52,9 @@ export class PalladiumApiService {
 
   runs$: ReplaySubject<StructuredRuns> = new ReplaySubject(1);
   private _runs: StructuredRuns = {};
+
+  resultSets$: ReplaySubject<StructuredResultSets> = new ReplaySubject(1);
+  private _resultSets: StructuredResultSets = {};
 
   statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
   private _statuses: StructuredStatuses = {};
@@ -272,6 +271,12 @@ export class PalladiumApiService {
           this.runs$.next(this._runs);
         }).subscribe();
   }
+
+  init_runs(planId: number): void {
+    if (!this._runs[planId]) {
+      this.get_runs(planId);
+    }
+  }
   //
   // create_run(run_name, plan_id): Promise<any> {
   //   return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
@@ -291,7 +296,7 @@ export class PalladiumApiService {
       this.runs$.next(this._runs);
     }).subscribe();
   }
-  //
+
   //#endregion
 
   //#region Products
@@ -326,7 +331,7 @@ export class PalladiumApiService {
   get_plans(params): void {
     const productId = params['plan_data']['product_id'];
       this.httpService.postData('/plans', params).map(response => {
-      this.logger.debug('get_plans. params: ' + params);
+        this.logger.debug('get_plans. params: ' + params);
       Object(response['plans']).forEach(plan => {
         const _plan = new Plan(plan);
         this._plans[productId].push(_plan);
@@ -393,8 +398,11 @@ export class PalladiumApiService {
       this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
       planIds.forEach(planId => {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
-        this.logger.debug('get_plans_statistic. statistic: ' + statistic);
-        this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+        this.logger.debug('get_plans_statistic. statistic:');
+        if (!this._runs[planId]) {
+          this.logger.debug('get_plans_statistic. Statistic sended runs is not  exist');
+          this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+        }
       });
     }).subscribe();
   }
@@ -439,19 +447,21 @@ export class PalladiumApiService {
   //#endregion
 
   // //#region Result Set
-  // async get_result_sets(runId): Promise<any> {
-  //   const resp = await this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}});
-  //   this.resultSets[runId] = [];
-  //   Object(resp['result_sets']).forEach(resultSet => {
-  //     this.resultSets[runId].push(new ResultSet(resultSet));
-  //   });
-  // }
-  //
+  get_result_sets(runId: number): void {
+    this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}}).map(response => {
+      this._resultSets[runId] = [];
+      response['result_sets'].forEach(resultSet => {
+        this._resultSets[runId].push(new ResultSet(resultSet));
+      });
+      this.resultSets$.next(this._resultSets);
+    }).subscribe();
+  }
+
   // async delete_result_set(id) {
   //   const result_set = await this.httpService.postData('/result_set_delete', {result_set_data: {id: id}});
   //   return result_set['result_set']['id'];
   // }
-  //
+
   // //#endregion
 
   // //#region Result

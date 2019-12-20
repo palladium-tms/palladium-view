@@ -20,11 +20,4 @@ export class StatusFilterComponent implements OnInit {
   ngOnInit() {
     this.statuses$ = this.palladiumApi.statuses$.pipe();
   }
-
-
-  get_background_color() {
-    if (this.point.active) {
-      return this.palladiumApi.statuses[this.point.status].color;
-    }
-  }
 }

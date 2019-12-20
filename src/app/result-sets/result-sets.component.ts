@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Point, Statistic} from '../models/statistic';
 import {ActivatedRoute, Router} from '@angular/router';
-import {PalladiumApiService} from '../../services/palladium-api.service';
+import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {ResultService} from '../../services/result.service';
@@ -10,6 +10,9 @@ import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
+import {ResultSet} from '../models/result_set';
+import {Observable, ReplaySubject} from 'rxjs';
+import {Run} from '../models/run';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -29,6 +32,14 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     status: new FormControl('', [Validators.required]),
     message: new FormControl('')
   });
+  resultSets$: Observable<ResultSet[]>;
+  resultSetCheckboxes = {};
+  statuses$: Observable<StructuredStatuses>;
+  statistic$: Observable<Statistic>;
+  activeRoute$: Observable<any>;
+  params;
+  activeElement: ResultSet;
+
   loading = true;
   addResultOpen = false;
   resultSets = [];
@@ -43,7 +54,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   filter: number[] = [];
   selectAllFlag = false;
   dropdownMenuItemSelect;
-  params;
   searchToggle: SearchToggle;
   searchValue;
 
@@ -55,13 +65,44 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.params = this.activatedRoute.params.subscribe(() => {
-    //   this.object = null;
-    //   this.searchValue = '';
-    //   this.filter = [];
-    //   this.get_result_sets_and_cases();
+    this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]);
+    this.statuses$ = this.palladiumApiService.statuses$;
+    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
+
+    // this.resultSets$.first().subscribe(resultSets => {
+    //   console.log('subscribe');
+    //   resultSets.forEach(rs => {
+    //     this.resultSetCheckboxes[rs.id] = false;
+    //   });
+    //   console.log(this.resultSetCheckboxes);
     // });
-    //
+
+    this.activeRoute$.map(id => {
+      this.palladiumApiService.get_result_sets(id);
+    }).map(() => this.cd.detectChanges()).subscribe( );
+
+    this.params = this.activeRoute$.switchMap(id => {
+      return this.palladiumApiService.runs$.map(runs => {
+        if (runs[this.stance.planId()].find(plan => plan.id === id)) {
+          this.statistic$ = runs[this.stance.planId()].find(run => run.id === id).statistic$;
+        }
+      });
+    }).map(() => {this.cd.detectChanges();}).subscribe();
+    this.activeRoute$.map(() => {
+      this.resultSets$.map(resultSets => {
+        if (resultSets) {
+            resultSets.forEach(rs => {
+              this.resultSetCheckboxes[rs.id] = false;
+            });
+            const resultSetId = this.stance.resultSetId();
+            if (resultSetId) {
+              this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
+              console.log(this.activeElement)
+            }
+        }
+      }).first().subscribe();
+    }).subscribe();
+
     // this.palladiumApiService.statusObservable.subscribe(() => {
     //   this.statuses = Object.values(this.palladiumApiService.statuses);
     //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
@@ -69,14 +110,19 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     // });
   }
 
+  log(a) {
+    this.palladiumApiService.resultSets$.next(this.palladiumApiService._resultSets)
+    console.log(a);
+  }
+
   select_filter(point) {
     this.filter = [];
     point.active = !point.active;
-    this.filter = Object.values(this.statistic.points).filter(elem => elem.active).map(elem => elem.status);
-    if (this.untestedPoint.active) {
-      this.filter.push(0);
-    }
-    // this.show_all();
+    this.statistic$.map(statistic => {
+      this.filter = Object.values(statistic.points).filter(elem => elem.active).map(elem => elem.status);
+      this.cd.detectChanges();
+    }).first().subscribe();
+
   }
 
   get_cases() {
@@ -365,8 +411,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.cd.detach();
-    // this.params.unsubscribe();
+    this.params.unsubscribe();
   }
 }
 

@@ -1,4 +1,5 @@
 import {ReplaySubject} from "rxjs";
+import {Statistic} from './statistic';
 
 export class Plan {
   id: number;
@@ -7,7 +8,7 @@ export class Plan {
   isArchived: string;
   created_at: number;
   updated_at: number;
-  statistic$;
+  statistic$: ReplaySubject<Statistic>;
   constructor (plan) {
       this.id = plan['id'];
       this.name = plan['name'];

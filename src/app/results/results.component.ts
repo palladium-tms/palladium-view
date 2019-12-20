@@ -23,19 +23,19 @@ export class ResultsComponent implements OnInit, OnDestroy {
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
-    this.params = this.activatedRoute.params.subscribe((params: Params) => {
-      this.resultSetId = params.id;
-      this.init_results();
-    });
-    this.news = this.resultservice.news().subscribe(data => {
-      this.add_result(data['result']);
-      this.cd.detectChanges();
-    });
-    this.timeZone = await this.palladiumApiService.timezoneOffset();
-    this.palladiumApiService.statusObservable.subscribe((statuses) => {
-      this.statuses = statuses;
-      this.cd.detectChanges();
-    });
+    // this.params = this.activatedRoute.params.subscribe((params: Params) => {
+    //   this.resultSetId = params.id;
+    //   this.init_results();
+    // });
+    // this.news = this.resultservice.news().subscribe(data => {
+    //   this.add_result(data['result']);
+    //   this.cd.detectChanges();
+    // });
+    // this.timeZone = await this.palladiumApiService.timezoneOffset();
+    // this.palladiumApiService.statusObservable.subscribe((statuses) => {
+    //   this.statuses = statuses;
+    //   this.cd.detectChanges();
+    // });
   }
 
   add_result(data) {
@@ -58,8 +58,8 @@ export class ResultsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.cd.detach();
-    this.news.unsubscribe();
-    this.params.unsubscribe();
+    // this.cd.detach();
+    // this.news.unsubscribe();
+    // this.params.unsubscribe();
   }
 }

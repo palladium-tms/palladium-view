@@ -1,6 +1,6 @@
 <div class="result-set-space" *ngIf="!addResultOpen">
-  <div class="toolbar" *ngIf="!loading">
-    <div class="filters" *ngIf="statistic">
+  <div class="toolbar">
+    <div class="filters" *ngIf="(statistic$ | async) as statistic">
       <app-status-filter [point]=point (click)="select_filter(point)"
                          *ngFor="let point of statistic.points.concat(untestedPoint)"></app-status-filter>
     </div>
@@ -25,28 +25,28 @@
       <!--</button>-->
     </div>
   </div>
-  <mat-card class="search-bar" *ngIf="searchToggle.toggle">
-    <mat-form-field color="accent" class="search-input" floatLabel="never">
-      <input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"
-             placeholder="Search" autofocus>
-      <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
-  </mat-card>
-  <div class="item-list" *ngIf="!loading">
+  <!--<mat-card class="search-bar" *ngIf="searchToggle.toggle">-->
+    <!--<mat-form-field color="accent" class="search-input" floatLabel="never">-->
+      <!--<input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"-->
+             <!--placeholder="Search" autofocus>-->
+      <!--<button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">-->
+        <!--<mat-icon>close</mat-icon>-->
+      <!--</button>-->
+    <!--</mat-form-field>-->
+  <!--</mat-card>-->
+  <div class="item-list" *ngIf="(resultSets$ | async) as resultSets">
     <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
       <mat-card class="item mat-elevation-z1"
-                *cdkVirtualFor="let object of resultSetsAndCases| statusFilter: filter| search: searchValue"
-                [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status).color}"
+                *cdkVirtualFor="let object of resultSets| statusFilter: filter| search: searchValue"
+                [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}"
                 [ngClass]="{'selected': object.active, 'case': object.path == 'case'}" style="height: 53px">
         <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
           <div class="result-set-checkbox">
-            <mat-checkbox [(ngModel)]="object.selected"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="resultSetCheckboxes[object.id]"></mat-checkbox>
           </div>
           <div class="item-name">{{object.name}}</div>
           <div class="status-name" *ngIf="!object.deleting">
-            <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
+            <b>{{(statuses$ | async)[object.status].name}}</b>
           </div>
           <div class="menu-button menu">
             <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
@@ -75,11 +75,10 @@
       </button>
     </mat-menu>
   </div>
-  <div [hidden]="!loading" class="loader">
-    <mat-spinner color="accent"></mat-spinner>
-  </div>
+  <!--<div [hidden]="!loading" class="loader">-->
+    <!--<mat-spinner color="accent"></mat-spinner>-->
+  <!--</div>-->
 </div>
-
 <div class="new-result-space" *ngIf="addResultOpen">
   <mat-card class="new-result-form-card mat-elevation-z1">
     <mat-card-content>

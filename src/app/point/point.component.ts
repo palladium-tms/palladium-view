@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PalladiumApiService} from '../../services/palladium-api.service';
+import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-point',
@@ -8,8 +9,12 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 })
 export class PointComponent implements OnInit {
   @Input() point;
+  statuses$: Observable<StructuredStatuses>;
+
   constructor(private palladiumApiService: PalladiumApiService,) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.statuses$ = this.palladiumApiService.statuses$;
+  }
 
 }

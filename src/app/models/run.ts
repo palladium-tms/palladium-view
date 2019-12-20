@@ -1,4 +1,5 @@
 import {Statistic} from './statistic';
+import {ReplaySubject} from 'rxjs';
 
 export class Run {
   id: number;
@@ -6,6 +7,7 @@ export class Run {
   plan_id: number;
   created_at: number;
   updated_at: number;
+  statistic$: ReplaySubject<Statistic> = new ReplaySubject(1);
   statistic: Statistic;
   path = 'run';
   constructor (run) {
@@ -18,6 +20,8 @@ export class Run {
       this.created_at = run['created_at'].split(' +')[0];
       this.updated_at = run['updated_at'].split(' +')[0];
       this.statistic = this.get_statistic(run);
+      // FIXME: delete cached data
+      this.statistic$.next(this.statistic);
     }
   }
 

@@ -20,8 +20,7 @@ export class StatisticComponent implements OnInit {
   caseCount;
 
   constructor(public stance: StanceService,
-              public palladiumApiService: PalladiumApiService,
-              private cd: ChangeDetectorRef) { }
+              public palladiumApiService: PalladiumApiService) { }
 
   ngOnInit() {
     this.statuses = this.palladiumApiService.statuses$.pipe();
@@ -29,11 +28,5 @@ export class StatisticComponent implements OnInit {
       const product = products.find(product => product.id === this.stance.productId());
       return product.caseCount$;
     });
-    console.log('apdofaoids')
-    // this.statistic.map(x => {
-    //   console.log('statistic')
-    //   console.log(x)
-    //   this.cd.detectChanges();
-    // }).subscribe();
   }
 }
