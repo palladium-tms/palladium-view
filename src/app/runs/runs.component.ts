@@ -23,6 +23,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   runs: Run[];
   runs$: Observable<Run[]>;
+  activeRoute$: Observable<{}>;
   params;
 
   runs_and_suites = [];
@@ -34,7 +35,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
   dataLoading = true;
-  selected_object: Run;
+  activeObject: Run;
   object_for_settings;
 
   constructor(private palladiumApiService: PalladiumApiService,
@@ -49,6 +50,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
     this.statuses$ = this.palladiumApiService.statuses$;
+    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
     this.runs$.switchMap((runs) => {
       this.dataLoading = false;
@@ -58,12 +60,12 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).subscribe(() => {this.dataLoading = false;});
 
-    this.params = this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
+    this.params = this.activeRoute$.switchMap(id => {
       this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
       this.runs$.first().subscribe(runs => {
         const runId = this.stance.runId();
         if (runId) {
-         this.selected_object = runs.find(run => run.id === +runId);
+         this.activeObject = runs.find(run => run.id === +runId);
         }
       });
 
@@ -74,11 +76,11 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).subscribe(() => this.cd.detectChanges());
 
-    this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
+    this.activeRoute$.map(id => {
       this.palladiumApiService.init_runs(id);
     }).subscribe();
 
-    // this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
+    // this.activeRoute$.map(id => {
     //
     //   // return this.palladiumApiService.runs$.map((plans: StructuredPlans) => {
     //   //
@@ -194,19 +196,19 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   select_object(object) {
-    if (this.selected_object === object || object.id === 0) {
+    if (this.activeObject === object || object.id === 0) {
       return;
     }
-    this.selected_object = object;
-    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
+    this.activeObject = object;
+    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.activeObject.path + '/' + this.activeObject.id]);
   }
 
   get_selected_object() {
     const part_of_url = /(run|suite)\/(\d+)/.exec(this.router.url);
     if (part_of_url) {
-      this.selected_object = this.runs_and_suites.find(element => element.path == part_of_url[1] && element.id == part_of_url[2]);
+      this.activeObject = this.runs_and_suites.find(element => element.path == part_of_url[1] && element.id == part_of_url[2]);
     } else {
-      this.selected_object = new Run(null);
+      this.activeObject = new Run(null);
     }
   }
 

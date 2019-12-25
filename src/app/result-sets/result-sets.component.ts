@@ -36,7 +36,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSetCheckboxes = {};
   statuses$: Observable<StructuredStatuses>;
   statistic$: Observable<Statistic>;
-  activeRoute$: Observable<any>;
+  activeRoute$: Observable<{}>;
   params;
   activeElement: ResultSet;
 

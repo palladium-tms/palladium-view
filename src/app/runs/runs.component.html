@@ -14,7 +14,7 @@
     <mat-card class="item mat-elevation-z1"
               *ngFor="let object of runs| statisticFilter:[filter, untestedCash]"
               (click)="clicked($event, object)"
-              [ngClass]="{'selected': selected_object == object}">
+              [ngClass]="{'selected': activeObject == object}">
       <div class="run-name">
         <div class="item-name">{{object.name}}</div>
         <div class="settings-menu">
