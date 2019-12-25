@@ -88,6 +88,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).map(() => {this.cd.detectChanges();}).subscribe();
+
     this.activeRoute$.map(() => {
       this.resultSets$.map(resultSets => {
         if (resultSets) {
@@ -247,8 +248,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   open_results(object) {
     this.reset_active();
-    object.active = true;
-    this.object = object;
+    this.activeElement = object;
     if (object.path === 'result_set') {
       this.router.navigate(['result_set', object.id], {relativeTo: this.activatedRoute});
     } else {

@@ -39,13 +39,13 @@
       <mat-card class="item mat-elevation-z1"
                 *cdkVirtualFor="let object of resultSets| statusFilter: filter| search: searchValue"
                 [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}"
-                [ngClass]="{'selected': object.active, 'case': object.path == 'case'}" style="height: 53px">
+                [ngClass]="{'selected': object.id === activeElement?.id, 'case': object.path == 'case'}" style="height: 53px">
         <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
           <div class="result-set-checkbox">
             <mat-checkbox [(ngModel)]="resultSetCheckboxes[object.id]"></mat-checkbox>
           </div>
           <div class="item-name">{{object.name}}</div>
-          <div class="status-name" *ngIf="!object.deleting">
+          <div class="status-name">
             <b>{{(statuses$ | async)[object.status].name}}</b>
           </div>
           <div class="menu-button menu">

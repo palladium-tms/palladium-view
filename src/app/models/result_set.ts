@@ -9,7 +9,6 @@ export class ResultSet {
   updated_at: number;
   path = 'result_set';
   selected = false;
-  active = false;
   constructor(resultSet) {
     if (resultSet === null) {
     } else if (resultSet.path === 'case') {
