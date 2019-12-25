@@ -78,6 +78,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     // });
 
     this.activeRoute$.map(id => {
+      this.resultSetCheckboxes = {};
       this.palladiumApiService.get_result_sets(id);
     }).map(() => this.cd.detectChanges()).subscribe( );
 
@@ -89,19 +90,17 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       });
     }).map(() => {this.cd.detectChanges();}).subscribe();
 
-    this.activeRoute$.map(() => {
-      this.resultSets$.map(resultSets => {
+    this.activeRoute$.switchMap(() => {
+      return this.resultSets$.map(resultSets => {
         if (resultSets) {
-            resultSets.forEach(rs => {
-              this.resultSetCheckboxes[rs.id] = false;
-            });
             const resultSetId = this.stance.resultSetId();
             if (resultSetId) {
               this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
-              console.log(this.activeElement)
+            } else {
+              this.activeElement = undefined;
             }
         }
-      }).first().subscribe();
+      });
     }).subscribe();
 
     // this.palladiumApiService.statusObservable.subscribe(() => {
@@ -109,11 +108,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
     //   this.cd.detectChanges();
     // });
-  }
-
-  log(a) {
-    this.palladiumApiService.resultSets$.next(this.palladiumApiService._resultSets)
-    console.log(a);
   }
 
   select_filter(point) {
@@ -201,12 +195,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     });
   }
 
-  select() {
-    let forSelect = this.searchPipe.transform(this.resultSetsAndCases, this.searchValue);
-    forSelect = this.statusPipe.transform(forSelect, this.filter);
-    forSelect.forEach(obj => {
-      obj.selected = this.selectAllFlag;
-    });
+  selectAll(event) {
+    if (!event.checked) {
+      this.resultSetCheckboxes = {};
+      return;
+    }
+    this.resultSets$.map(resultSets => {
+      let forSelect = this.searchPipe.transform(resultSets, this.searchValue);
+      forSelect = this.statusPipe.transform(forSelect, this.filter);
+      forSelect.forEach(obj => {
+        this.resultSetCheckboxes[obj.id] = true;
+      });
+    }).first().subscribe();
   }
 
   open_history_page() {

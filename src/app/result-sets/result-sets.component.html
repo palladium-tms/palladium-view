@@ -6,7 +6,7 @@
     </div>
     <div class="buttons">
       <div class="select_all_checkbox">
-        <mat-checkbox (change)="select()" [(ngModel)]="selectAllFlag"></mat-checkbox>
+        <mat-checkbox (change)="selectAll($event)"></mat-checkbox>
       </div>
       <button mat-button (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
         <mat-icon>library_add</mat-icon>
@@ -42,7 +42,7 @@
                 [ngClass]="{'selected': object.id === activeElement?.id, 'case': object.path == 'case'}" style="height: 53px">
         <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
           <div class="result-set-checkbox">
-            <mat-checkbox [(ngModel)]="resultSetCheckboxes[object.id]"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="resultSetCheckboxes[object.id]" (change)="resultSetCheckboxes[object.id] = $event.checked"></mat-checkbox>
           </div>
           <div class="item-name">{{object.name}}</div>
           <div class="status-name">
