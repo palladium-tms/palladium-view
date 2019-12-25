@@ -36,13 +36,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSetCheckboxes = {};
   statuses$: Observable<StructuredStatuses>;
   statistic$: Observable<Statistic>;
-  activeRoute$: Observable<{}>;
+  activeRoute$: Observable<number>;
   params;
   activeElement: ResultSet;
 
-  loading = true;
   addResultOpen = false;
-  resultSets = [];
   statistic: Statistic;
   untestedPoint: Point;
   cases;
@@ -108,6 +106,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
     //   this.cd.detectChanges();
     // });
+    this.resultSets$.map(resultSets => {
+      console.log(resultSets)
+    }).subscribe();
+
   }
 
   select_filter(point) {
@@ -128,14 +130,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   async get_result_sets_and_cases() {
     this.resultSetsAndCases = [];
-    this.loading = true;
     this.cd.detectChanges();
     Promise.all([this.get_cases(), this.palladiumApiService.get_result_sets(this.stance.runId())]).then(res => {
       this.cases = res[0];
       this.merge_result_sets_and_cases();
       this.select_object();
       this.get_statistic();
-      this.loading = false;
       if (this.statuses) {
         this.set_filters();
       }
@@ -154,24 +154,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   open_settings() {
-    const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
+    this.dialog.open(ResultSetsSettingsComponent, {
       data: {
         object: this.dropdownMenuItemSelect,
-        cases: this.cases,
-        result_sets: this.resultSets,
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.path === 'case') {
-          this.cases = this.cases.filter(obj => (obj.id !== result.id));
-        } else {
-           this.palladiumApiService.resultSets[this.stance.runId()]= this.palladiumApiService.resultSets[this.stance.runId()].filter(obj => (obj.id !== result.id));
-        }
-        this.navigate_to_run_show();
-        this.merge_result_sets_and_cases();
-        this.get_statistic();
       }
     });
   }
@@ -282,12 +267,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
-    this.filter = [];
-    this.get_result_sets_and_cases();
-    this.selectAllFlag = false;
-    if (this.resultComponent && this.stance.resultSetId()) {
-      this.resultComponent.init_results();
-    }
+    // this.filter = [];
+    this.palladiumApiService.get_result_sets(this.stance.runId());
+    // this.selectAllFlag = false;
   }
 
   onActivate(componentRef) {
@@ -424,7 +406,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
 export class ResultSetsSettingsComponent implements OnInit {
   object;
-  cases;
   objectForm = new FormGroup({
     name: new FormControl('', [Validators.required])
   });
@@ -435,7 +416,6 @@ export class ResultSetsSettingsComponent implements OnInit {
 
   ngOnInit() {
     this.object = this.data.object;
-    this.cases = this.data.cases;
     this.objectForm.patchValue({name: this.object.name});
   }
 
@@ -445,20 +425,20 @@ export class ResultSetsSettingsComponent implements OnInit {
 
   async edit_object() {
     if (this.object.path === 'result_set') {
-      await this.palladiumApiService.edit_case_by_result_set_id(this.object.id, this.name.value);
-      const caseForEdit = this.cases.find(currentCase => currentCase.name === this.object.name);
-      caseForEdit.name = this.name.value;
+      this.palladiumApiService.edit_case_by_result_set_id(this.object.id, this.stance.runId(), this.name.value);
+      // const caseForEdit = this.cases.find(currentCase => currentCase.name === this.object.name);
+      // caseForEdit.name = this.name.value;
     } else {
-      await this.palladiumApiService.edit_case(this.object.id, this.name.value);
+      // await this.palladiumApiService.edit_case(this.object.id, this.name.value);
     }
-    this.object.name = this.name.value;
+    // this.object.name = this.name.value;
     this.dialogRef.close();
   }
 
   async delete_object() {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'result_set') {
-        await this.palladiumApiService.delete_result_set(this.object.id);
+        await this.palladiumApiService.delete_result_set(this.object.id, this.stance.runId());
       } else {
         await this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
       }
@@ -478,8 +458,8 @@ export class ResultSetsSettingsComponent implements OnInit {
   }
 
   check_existing() {
-    if (this.name_is_existed()) {
-      this.objectForm.controls['name'].setErrors({'is_exist': true});
-    }
+    // if (this.name_is_existed()) {
+    //   this.objectForm.controls['name'].setErrors({'is_exist': true});
+    // }
   }
 }

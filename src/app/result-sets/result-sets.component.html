@@ -8,15 +8,15 @@
       <div class="select_all_checkbox">
         <mat-checkbox (change)="selectAll($event)"></mat-checkbox>
       </div>
-      <button mat-button (click)="add_result_open_menu()" [disabled]="this.loading  || get_selected_count() == 0">
+      <button mat-button (click)="add_result_open_menu()" [disabled]="get_selected_count() == 0">
         <mat-icon>library_add</mat-icon>
         {{get_selected_count()}}
       </button>
       <div class="divider"></div>
-      <button mat-icon-button (click)="update_click()" [disabled]=this.loading>
+      <button mat-icon-button (click)="update_click()">
         <mat-icon>refresh</mat-icon>
       </button>
-      <button mat-icon-button [disabled]=this.loading [color]="searchToggle.color" (click)="toggle_search()">
+      <button mat-icon-button [color]="searchToggle.color" (click)="toggle_search()">
         <mat-icon>search</mat-icon>
       </button>
       <!--<button mat-icon-button (click)="scroll.scrollToIndex(showAllElements.indexOf(object) - 3, 'auto')"-->

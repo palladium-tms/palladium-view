@@ -229,10 +229,12 @@ export class PalladiumApiService {
   //   });
   // }
   //
-  // async edit_case_by_result_set_id(result_set_id, name): Promise<any> {
-  //   const resp = await this.httpService.postData('/case_edit', {case_data: {result_set_id: result_set_id, name: name}});
-  //   return new Case(resp['case']);
-  // }
+  edit_case_by_result_set_id(resultSetId, runId, name): void {
+    this.httpService.postData('/case_edit', {case_data: {result_set_id: resultSetId, name}}).map(response => {
+      this._resultSets[runId][this._resultSets[runId].findIndex(x => x.id === resultSetId)].name = name;
+      this.resultSets$.next(this._resultSets);
+    }).subscribe();
+  }
   //
   // async edit_case(case_id, name) {
   //   const resp = await this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}});
@@ -270,6 +272,15 @@ export class PalladiumApiService {
           });
           this.runs$.next(this._runs);
         }).subscribe();
+  }
+
+  get_run(runId): void {
+    this.httpService.postData('/run', {run_data: {id: runId}}).map(
+      response => {
+        const newRun = new Run(response['run']);
+        this._runs[newRun.plan_id][this._runs[newRun.plan_id].findIndex(run => run.id === response['run']['id'])] = newRun;
+        this.runs$.next(this._runs);
+      }).subscribe();
   }
 
   init_runs(planId: number): void {
@@ -457,10 +468,14 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
-  // async delete_result_set(id) {
-  //   const result_set = await this.httpService.postData('/result_set_delete', {result_set_data: {id: id}});
-  //   return result_set['result_set']['id'];
-  // }
+  delete_result_set(id, runId): void {
+    this.httpService.postData('/result_set_delete', {result_set_data: {id}}).map(result_set => {
+      this.get_run(runId);
+      console.log(result_set)
+      this._resultSets[runId] = this._resultSets[runId].filter(resultSet => resultSet.id !== id);
+      this.resultSets$.next(this._resultSets);
+    }).subscribe();
+  }
 
   // //#endregion
 
