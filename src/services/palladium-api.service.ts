@@ -278,7 +278,9 @@ export class PalladiumApiService {
     this.httpService.postData('/run', {run_data: {id: runId}}).map(
       response => {
         const newRun = new Run(response['run']);
-        this._runs[newRun.plan_id][this._runs[newRun.plan_id].findIndex(run => run.id === response['run']['id'])] = newRun;
+        const oldRunIndex = this._runs[newRun.plan_id].findIndex(run => run.id === response['run']['id']);
+        newRun.update_point_statuses(this._runs[newRun.plan_id][oldRunIndex].statistic.points);
+        this._runs[newRun.plan_id][oldRunIndex] = newRun;
         this.runs$.next(this._runs);
       }).subscribe();
   }

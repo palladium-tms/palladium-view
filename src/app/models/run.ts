@@ -1,4 +1,4 @@
-import {Statistic} from './statistic';
+import {Point, Statistic} from './statistic';
 import {ReplaySubject} from 'rxjs';
 
 export class Run {
@@ -39,5 +39,18 @@ export class Run {
       statData[object['status']] = object['count'];
     });
     return new Statistic(statData);
+  }
+
+  update_point_statuses(points: Point[]): void {
+    const activePoints = [];
+    points.forEach(point => {
+      if (point.active) {
+        activePoints.push(point.status);
+      }
+    });
+    this.statistic.points.forEach(point => {
+      point.active = activePoints.includes(point.status);
+    });
+    this.statistic$.next(this.statistic);
   }
 }
