@@ -85,13 +85,13 @@
         <div class="new_result_form">
           <mat-form-field color="accent">
             <mat-select placeholder="Select status" formControlName="status">
-              <mat-option *ngFor="let status of notBlockedStatus"
+              <mat-option *ngFor="let status of notBlockedStatuses$ | async"
                           [value]="status"
                           [ngStyle]="{'border-right': '7px solid ' + status.color}">
                 {{status.name}}
               </mat-option>
             </mat-select>
-            <mat-icon matSuffix [ngStyle]="{'color': this.status ? this.status.color: '#ffffff'}">brightness_1
+            <mat-icon matSuffix [ngStyle]="{'color': this.status?.color || '#ffffff'}">brightness_1
             </mat-icon>
           </mat-form-field>
           <mat-form-field color="accent">
@@ -104,7 +104,7 @@
     <mat-card-actions class="new-result-buttons">
       <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
       <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
-              matBadge="{{get_selected_count()}}" matBadgePosition="after"
+              matBadge="{{selectedCount}}" matBadgePosition="after"
               (click)="add_result()" style="float: right">Add result
       </button>
     </mat-card-actions>
@@ -112,8 +112,8 @@
   <div class="item-list">
     <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
       <mat-card class="item mat-elevation-z1"
-                *cdkVirtualFor="let object of get_selected_for_add_result()"
-                [ngStyle]="{'border-right': '2px solid ' + palladiumApiService.get_status_by_id(object.status)}">
+                *cdkVirtualFor="let object of resultSetSelected"
+                [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}">
         <div class="result-set">
           <div class="result-set-delete">
             <button mat-icon-button (click)="unselect(object)">
@@ -122,7 +122,7 @@
           </div>
           <div class="item-name item-name-for-deleting">{{object.name}}</div>
           <div class="status-name status-padding" *ngIf="!object.deleting">
-            <b>{{palladiumApiService.get_status_by_id(object['status']).name}}</b>
+            <b>{{(statuses$ | async)[object.status].name}}</b>
           </div>
         </div>
       </mat-card>

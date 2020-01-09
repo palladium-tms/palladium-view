@@ -12,6 +12,7 @@ import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
 import {Observable} from 'rxjs';
+import {Status} from '../models/status';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -31,13 +32,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     status: new FormControl('', [Validators.required]),
     message: new FormControl('')
   });
+
   resultSets$: Observable<ResultSet[]>;
-  resultSetCheckboxes = {};
   statuses$: Observable<StructuredStatuses>;
+  notBlockedStatuses$: Observable<Status[]>;
   statistic$: Observable<Statistic>;
   activeRoute$: Observable<number>;
-  params;
   activeElement: ResultSet;
+
+  resultSetCheckboxes = {};
+  resultSetSelected = [];
+
+  params;
 
   addResultOpen = false;
   statistic: Statistic;
@@ -46,7 +52,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   object;
   resultComponent;
   statuses;
-  notBlockedStatus = [];
   resultSetsAndCases = [];
   filter: number[] = [];
   selectAllFlag = false;
@@ -65,6 +70,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]);
     this.statuses$ = this.palladiumApiService.statuses$;
+    this.notBlockedStatuses$ = this.statuses$.map((statuses: StructuredStatuses) => {
+      return Object.values(statuses).filter(status => !status.block);
+    });
+
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
     // this.resultSets$.first().subscribe(resultSets => {
@@ -76,9 +85,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     // });
 
     this.activeRoute$.map(id => {
-      this.resultSetCheckboxes = {};
       this.filter = [];
       this.selectAllFlag = false;
+      this.resultSetCheckboxes = {};
+      this.selectedCount = 0;
       this.palladiumApiService.get_result_sets(id);
     }).map(() => this.cd.detectChanges()).subscribe( );
 
@@ -93,12 +103,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.activeRoute$.switchMap(() => {
       return this.resultSets$.map(resultSets => {
         if (resultSets) {
-            const resultSetId = this.stance.resultSetId();
-            if (resultSetId) {
-              this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
-            } else {
-              this.activeElement = undefined;
-            }
+          const resultSetId = this.stance.resultSetId();
+          if (resultSetId) {
+            this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
+          } else {
+            this.activeElement = undefined;
+          }
         }
       });
     }).subscribe();
@@ -109,6 +119,15 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     //   this.cd.detectChanges();
     // });
   }
+
+  not_blocked_statuses() {
+    return this.statuses$.map(statuses => {
+      Object.values(statuses).filter(status => !status.blocked);
+      console.log(Object.values(statuses).filter(status => !status.block))
+      return Object.values(statuses).filter(status => !status.blocked);
+    });
+  }
+
 
   select_filter(filter) {
     this.filter = filter;
@@ -134,6 +153,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     });
   }
+
+
 
   merge_result_sets_and_cases() {
     this.resultSetsAndCases = [];
@@ -244,7 +265,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   select_object() {
-      if (/case_history\/(\d+)/.exec(this.router.url) !== null) {
+    if (/case_history\/(\d+)/.exec(this.router.url) !== null) {
       const id = +/case_history\/(\d+)/.exec(this.router.url)[1];
       const thisCase = this.cases.filter(object => object.id === id)[0];
       this.object = this.resultSetsAndCases.filter(obj => obj.name === thisCase.name)[0];
@@ -299,14 +320,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   unselect(object) {
-    object.selected = false;
-    if (this.get_selected_count() === 0) {
+    this.resultSetCheckboxes[object.id] = false;
+    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+    if (this.selectedCount === 0) {
       this.cancel_result_custom();
     }
-  }
-
-  get_selected_for_add_result() {
-    return this.resultSetsAndCases.filter(x => x.selected);
+    this.cd.detectChanges()
   }
 
   selected_result_sets() {
@@ -366,6 +385,17 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   add_result_open_menu() {
+    this.resultSets$.map(resultSets => {
+      const selectedIds = Object.keys(this.resultSetCheckboxes);
+      this.resultSetSelected = resultSets.filter(resultSet => {
+        selectedIds.includes(resultSet.id);
+      });
+      console.log(this.resultSetSelected)
+    }).first().subscribe();
+
+
+
+
     const selected = this.resultSetsAndCases.filter(obj => obj.selected);
     this.addResultOpen = true;
     if (selected.length === 1) {
@@ -389,6 +419,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (this.selectedCount === 0) {
       this.selectAllFlag = false;
     }
+    console.log(this.resultSetCheckboxes)
     this.cd.detectChanges();
   }
 

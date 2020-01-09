@@ -43,9 +43,14 @@ import {SearchPipe} from '../pipes/search/search.pipe';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ResultValueComponent} from 'app/page-component/result-value/result-value.component';
 import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
+import {SelectedElementPipe} from '../pipes/selected-element/selected-element.pipe';
 
 @NgModule({
-  declarations: [SortByUpdatedAtPipe, SortByCreatedAtPipe, StatusFilterPipe, StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, ResultValueComponent],
+  declarations: [SortByUpdatedAtPipe,
+    SelectedElementPipe,
+    SortByCreatedAtPipe,
+    StatusFilterPipe,
+    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -92,6 +97,7 @@ import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-a
     VirtualscrollPipe,
     SortByUpdatedAtPipe,
     SearchPipe,
+    SelectedElementPipe,
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
