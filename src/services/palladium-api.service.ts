@@ -473,7 +473,6 @@ export class PalladiumApiService {
   delete_result_set(id, runId): void {
     this.httpService.postData('/result_set_delete', {result_set_data: {id}}).map(result_set => {
       this.get_run(runId);
-      console.log(result_set)
       this._resultSets[runId] = this._resultSets[runId].filter(resultSet => resultSet.id !== id);
       this.resultSets$.next(this._resultSets);
     }).subscribe();

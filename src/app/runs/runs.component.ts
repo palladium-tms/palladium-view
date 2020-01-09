@@ -149,12 +149,8 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.runs_and_suites = this.runs.concat(suiteForAdd);
   }
 
-  select_filter(point) {
-    point.active = !point.active;
-    this.statistic$.map(statistic => {
-      this.filter = Object.values(statistic.points).filter(elem => elem.active).map(elem => elem.status);
-      this.cd.detectChanges();
-    }).first().subscribe();
+  select_filter(filter) {
+    this.filter = filter;
   }
 
   open_settings() {
