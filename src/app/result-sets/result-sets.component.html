@@ -5,7 +5,7 @@
     </div>
     <div class="buttons">
       <div class="select_all_checkbox">
-        <mat-checkbox (change)="selectAll($event)"></mat-checkbox>
+        <mat-checkbox (change)="selectAll($event)" [(ngModel)]="selectAllFlag"></mat-checkbox>
       </div>
       <button mat-button (click)="add_result_open_menu()" [disabled]="get_selected_count() == 0">
         <mat-icon>library_add</mat-icon>
