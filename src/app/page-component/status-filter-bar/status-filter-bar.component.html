@@ -1,0 +1,7 @@
+<ng-container>
+  <app-status-filter
+    *ngFor="let pointActivity of pointsActivity"
+    [pointActivity]=pointActivity
+    (click)="select_filter(pointActivity)">
+  </app-status-filter>
+</ng-container>

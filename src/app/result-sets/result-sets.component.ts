@@ -11,8 +11,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
-import {Observable, ReplaySubject} from 'rxjs';
-import {Run} from '../models/run';
+import {Observable} from 'rxjs';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -77,6 +76,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
     this.activeRoute$.map(id => {
       this.resultSetCheckboxes = {};
+      this.filter = [];
       this.palladiumApiService.get_result_sets(id);
     }).map(() => this.cd.detectChanges()).subscribe( );
 
@@ -106,20 +106,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
     //   this.cd.detectChanges();
     // });
-    this.resultSets$.map(resultSets => {
-      console.log(resultSets)
-    }).subscribe();
-
   }
 
-  select_filter(point) {
-    this.filter = [];
-    point.active = !point.active;
-    this.statistic$.map(statistic => {
-      this.filter = Object.values(statistic.points).filter(elem => elem.active).map(elem => elem.status);
-      this.cd.detectChanges();
-    }).first().subscribe();
-
+  select_filter(filter) {
+    this.filter = filter;
   }
 
   get_cases() {

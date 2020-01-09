@@ -1,8 +1,7 @@
 <div class="run-space">
-
   <div class="toolbar">
-    <div class="filters">
-      <app-status-filter [point]=point (click)="select_filter(point)" *ngFor="let point of (statistic$ | async)?.points"></app-status-filter>
+    <div class="filters" *ngIf="(statistic$ | async)">
+      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event)></app-status-filter-bar>
     </div>
     <div class="buttons">
       <button mat-icon-button (click)="update_click()" [disabled]=dataLoading>
@@ -14,7 +13,7 @@
     <mat-card class="item mat-elevation-z1"
               *ngFor="let object of runs| statisticFilter:[filter, untestedCash]"
               (click)="clicked($event, object)"
-              [ngClass]="{'selected': activeObject == object}">
+              [ngClass]="{'selected': activeObject?.is_a(object)}">
       <div class="run-name">
         <div class="item-name">{{object.name}}</div>
         <div class="settings-menu">

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {Point} from 'app/models/statistic';
 import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
-import {Observable, Subscription} from "rxjs";
+import {Observable} from "rxjs";
+import {PointActivityInterface} from '../../models/statistic';
 
 @Component({
   selector: 'app-status-filter',
@@ -10,7 +10,7 @@ import {Observable, Subscription} from "rxjs";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent implements OnInit {
-  @Input() point: Point;
+  @Input() pointActivity: PointActivityInterface;
   selected: boolean;
   statuses$: Observable<StructuredStatuses>;
 

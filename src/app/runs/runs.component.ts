@@ -27,7 +27,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   params;
 
   runs_and_suites = [];
-  params;
   ResultSetComponent;
   untestedCash = {};
   untestedPoint: Point;
@@ -42,7 +41,7 @@ export class RunsComponent implements OnInit, OnDestroy {
               private stance: StanceService,
               private activatedRoute: ActivatedRoute,
               private router: Router,
-              private statistic_service: StatisticService,
+              private statisticService: StatisticService,
               private dialog: MatDialog,
               private cd: ChangeDetectorRef) {
   }

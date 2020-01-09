@@ -1,10 +1,9 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Statistic} from '../models/statistic';
 import {StanceService} from '../../services/stance.service';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {Observable, ReplaySubject} from "rxjs";
 import {Product} from "../models/product";
-import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-statistic',

@@ -1,8 +1,7 @@
 <div class="result-set-space" *ngIf="!addResultOpen">
   <div class="toolbar">
-    <div class="filters" *ngIf="(statistic$ | async) as statistic">
-      <app-status-filter [point]=point (click)="select_filter(point)"
-                         *ngFor="let point of statistic.points.concat(untestedPoint)"></app-status-filter>
+    <div class="filters" *ngIf="(statistic$ | async)">
+      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event)></app-status-filter-bar>
     </div>
     <div class="buttons">
       <div class="select_all_checkbox">

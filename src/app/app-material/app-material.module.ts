@@ -36,6 +36,7 @@ import {
 import {SortByCreatedAtPipe} from '../pipes/sort-by-created-at/sort-by-created-at.pipe';
 import {StatusFilterPipe} from 'app/pipes/status_filter_pipe/status-filter.pipe';
 import {StatusFilterComponent} from '../page-component/status-filter/status-filter.component';
+import {StatusFilterBarComponent} from '../page-component/status-filter-bar/status-filter-bar.component';
 import {StatisticFilterPipe} from '../pipes/statistic-filter/statistic-filter.pipe';
 import {VirtualscrollPipe} from '../pipes/virtual-scroll/virtualscroll.pipe';
 import {SearchPipe} from '../pipes/search/search.pipe';
@@ -44,7 +45,7 @@ import {ResultValueComponent} from 'app/page-component/result-value/result-value
 import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
 
 @NgModule({
-  declarations: [SortByUpdatedAtPipe, SortByCreatedAtPipe, StatusFilterPipe, StatusFilterComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, ResultValueComponent],
+  declarations: [SortByUpdatedAtPipe, SortByCreatedAtPipe, StatusFilterPipe, StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -83,6 +84,7 @@ import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-a
   ],
   exports: [
     StatusFilterComponent,
+    StatusFilterBarComponent,
     ResultValueComponent,
     SortByCreatedAtPipe,
     StatusFilterPipe,

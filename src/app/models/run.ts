@@ -53,4 +53,8 @@ export class Run {
     });
     this.statistic$.next(this.statistic);
   }
+
+  is_a(object) {
+    return object.name === this.name && object.id === this.id && object.path === this.path;
+  }
 }
