@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy
 import {ActivatedRoute} from '@angular/router';
 import {Suite} from '../models/suite';
 import {Router} from '@angular/router';
-import {PalladiumApiService, StructuredPlans, StructuredStatuses} from '../../services/palladium-api.service';
+import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {Statistic, Point} from '../models/statistic';
@@ -29,7 +29,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   runs_and_suites = [];
   ResultSetComponent;
   untestedCash = {};
-  untestedPoint: Point;
   statistic$: ReplaySubject<Statistic>;
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses

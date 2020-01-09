@@ -50,6 +50,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSetsAndCases = [];
   filter: number[] = [];
   selectAllFlag = false;
+  selectedCount = 0;
   dropdownMenuItemSelect;
   searchToggle: SearchToggle;
   searchValue;
@@ -174,6 +175,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   selectAll(event) {
     if (!event.checked) {
       this.resultSetCheckboxes = {};
+      this.selectedCount = 0;
       return;
     }
     this.resultSets$.map(resultSets => {
@@ -182,7 +184,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       forSelect.forEach(obj => {
         this.resultSetCheckboxes[obj.id] = true;
       });
+      this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
     }).first().subscribe();
+
   }
 
   open_history_page() {
@@ -251,10 +255,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     } else {
       this.navigate_to_run_show();
     }
-  }
-
-  get_selected_count() {
-    return this.resultSetsAndCases.filter(obj => obj.selected).length;
   }
 
   update_click() {
@@ -381,6 +381,15 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (!this.searchToggle.toggle) {
       this.searchValue = '';
     }
+  }
+
+  checkbox_change($event, object) {
+    this.resultSetCheckboxes[object.id] = $event.checked;
+    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+    if (this.selectedCount === 0) {
+      this.selectAllFlag = false;
+    }
+    this.cd.detectChanges();
   }
 
   ngOnDestroy() {
