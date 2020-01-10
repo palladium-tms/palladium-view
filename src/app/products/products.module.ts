@@ -36,7 +36,7 @@ const productRoutes: Routes = [{
         }
       ]
     },
-    {path: 'settings', loadChildren: '../settings/settings.module#SettingsModule'}
+    {path: 'settings', loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)}
   ]
 }];
 

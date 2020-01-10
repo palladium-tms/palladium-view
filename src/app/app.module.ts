@@ -14,10 +14,10 @@ import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/materia
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 const appRoutes: Routes = [
-  {path: 'singin', loadChildren: './login/login.module#LoginModule'},
-  {path: 'registration', loadChildren: './registration/registration.module#RegistrationModule'},
+  {path: 'singin', loadChildren: () => import('./login/login.module').then(m => m.LoginModule)},
+  {path: 'registration', loadChildren: () => import('./registration/registration.module').then(m => m.RegistrationModule)},
   {
-    path: '', loadChildren: './products/products.module#ProductsModule', canActivate: [AuthGuard]
+    path: '', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule), canActivate: [AuthGuard]
   },
   {path: 'result/:id', component: DetailResultComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: '/404'},
