@@ -42,6 +42,15 @@ export interface StructuredResultSets {
   [key: number]: ResultSet[];
 }
 
+export interface StructuredResults {
+  [key: number]: Result[];
+}
+
+
+export interface UserSettings {
+  timeZone: ReplaySubject<string> ;
+}
+
 @Injectable()
 export class PalladiumApiService {
   products$: ReplaySubject<Product[]> = new ReplaySubject(1);
@@ -55,6 +64,13 @@ export class PalladiumApiService {
 
   resultSets$: ReplaySubject<StructuredResultSets> = new ReplaySubject(1);
   private _resultSets: StructuredResultSets = {};
+
+  results$: ReplaySubject<StructuredResults> = new ReplaySubject(1);
+  private _results: StructuredResults = {};
+
+  userSettings: UserSettings = {
+    timeZone: new ReplaySubject(1)
+  };
 
   statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
   private _statuses: StructuredStatuses = {};
@@ -481,22 +497,25 @@ export class PalladiumApiService {
   // //#endregion
 
   // //#region Result
-  // results = async (result_set_id) => {
-  //   const response = await this.httpService.postData('/results', {result_data: {result_set_id: result_set_id}});
-  //   this.response_results_data[result_set_id] = [];
-  //   Object(response['results']).forEach(result => {
-  //     this.response_results_data[result_set_id].push(new Result(result));
-  //   });
-  //   return this.response_results_data[result_set_id];
-  // };
-  //
-  // get_result(result_id): Promise<any> {
-  //   return this.httpService.postData('/result', {result_data: {id: result_id}})
-  //     .then(
-  //       result => {
-  //         return new Result(result['result']);
-  //       }, error => console.log(error));
-  // }
+  get_results(resultSetId) {
+    this.httpService.postData('/results', {result_data: {result_set_id: resultSetId}}).map(response => {
+      this._results[resultSetId] = [];
+      response['results'].forEach(result => {
+        this._results[resultSetId].push(new Result(result));
+      });
+      this.results$.next(this._results);
+
+    }).subscribe();
+  }
+
+
+  get_result(result_id): Promise<any> {
+    return this.httpService.postData('/result', {result_data: {id: result_id}})
+      .then(
+        result => {
+          return new Result(result['result']);
+        }, error => console.log(error));
+  }
   //
   // async result_new(result_sets, description, status) {
   //   if (result_sets.length == 0) {
@@ -554,17 +573,14 @@ export class PalladiumApiService {
   // //#endregion
 
   //#region UserSettigns
-  async get_user_setting() {
-    const response = await this.httpService.postData('/user_setting', {});
-    this._timeZone = response['timezone'];
-    return response;
+  get_user_setting() {
+    this.httpService.postData('/user_setting', {}).map(userSettings => {
+      this.userSettings.timeZone.next(userSettings['timezone']);
+    }).subscribe();
   }
 
-  async timezoneOffset(): Promise<string> {
-    if (!this._timeZone) {
-      await this.get_user_setting();
-    }
-    const offset = this._timeZone.match(new RegExp('([-+]).*'));
+  timeZoneOffset(timeZone): string {
+    const offset = timeZone.match(new RegExp('([-+]).*'));
     if (offset) {
       return offset[0];
     } else {

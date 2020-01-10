@@ -37,6 +37,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.palladiumApiService.get_statuses();
+    this.palladiumApiService.get_user_setting();
     this.palladiumApiService.get_products();
     this.authorize = (localStorage.getItem('auth_data') !== null);
     this.authenticationService.isAuthorized.next(this.authorize);

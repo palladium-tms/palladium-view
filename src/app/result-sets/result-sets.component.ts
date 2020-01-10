@@ -94,7 +94,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
       this.palladiumApiService.get_result_sets(id);
-    }).map(() => this.cd.detectChanges()).subscribe( );
+    }).map(() => this.cd.detectChanges()).subscribe();
 
     this.params = this.activeRoute$.switchMap(id => {
       return this.palladiumApiService.runs$.map(runs => {

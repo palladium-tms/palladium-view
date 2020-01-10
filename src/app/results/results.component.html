@@ -1,15 +1,24 @@
 <div class="result-space">
-  <div class="result-list item-list" [hidden]="loading">
-    <mat-accordion>
-      <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
+
+  <!--<mat-accordion *ngIf="(results$ | async) as results">-->
+    <!--<mat-expansion-panel class="result-item" *ngFor="let result of (results$ | async)"">-->
+      <!--<mat-expansion-panel-header>-->
+        <!--<mat-panel-description>-->
+<!--{{'asdasdas'}}        </mat-panel-description>-->
+      <!--</mat-expansion-panel-header>-->
+  <!--</mat-accordion>-->
+
+  <div class="result-list item-list">
+    <mat-accordion *ngIf="(results$ | async) as results">
+      <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc';  first as isFirst"
                            [expanded]="isFirst"
-                           [ngStyle]="{'border-color': palladiumApiService.get_status_by_id(result.status_id).color}">
+                           [ngStyle]="{'border-color': (statuses$ | async)[result.status_id].color}">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <b>{{palladiumApiService.get_status_by_id(result.status_id).name}}</b>
+            <b>{{(statuses$ | async)[result.status_id].name}}</b>
           </mat-panel-title>
           <mat-panel-description>
-            {{result.created_at | date:'long':timeZone }}
+            {{result.created_at | date:'mediumTime':(timeZoneOffset$ | async)}} {{result.created_at | date:'MMMM d, y' }}
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div class="result_content">
