@@ -31,4 +31,8 @@ export class ResultSet {
     this.created_at = thisCase['created_at'].split(' +')[0];
     this.updated_at = thisCase['updated_at'].split(' +')[0];
   }
+
+  is_a(object) {
+    return object.name === this.name && object.id === this.id && object.path === this.path;
+  }
 }

@@ -11,12 +11,19 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
-import {Observable} from 'rxjs';
+import {Observable, ReplaySubject} from 'rxjs';
 import {Status} from '../models/status';
 
 export interface SearchToggle {
   toggle: boolean;
   color: 'none' | 'accent';
+}
+
+export interface ObjectCheckbox {
+  number?: {
+    checked: boolean,
+    object: ResultSet
+  };
 }
 
 @Component({
@@ -34,13 +41,14 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   });
 
   resultSets$: Observable<ResultSet[]>;
+  selectedResultSet$ = new ReplaySubject(1);
   statuses$: Observable<StructuredStatuses>;
   notBlockedStatuses$: Observable<Status[]>;
   statistic$: Observable<Statistic>;
   activeRoute$: Observable<number>;
   activeElement: ResultSet;
 
-  resultSetCheckboxes = {};
+  resultSetCheckboxes: ObjectCheckbox;
   resultSetSelected = [];
 
   params;
@@ -70,9 +78,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]);
     this.statuses$ = this.palladiumApiService.statuses$;
-    this.notBlockedStatuses$ = this.statuses$.map((statuses: StructuredStatuses) => {
-      return Object.values(statuses).filter(status => !status.block);
-    });
+    // this.notBlockedStatuses$ = this.statuses$.map((statuses: StructuredStatuses) => {
+    //   return Object.values(statuses).filter(status => !status.block);
+    // });
 
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
@@ -120,15 +128,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  not_blocked_statuses() {
-    return this.statuses$.map(statuses => {
-      Object.values(statuses).filter(status => !status.blocked);
-      console.log(Object.values(statuses).filter(status => !status.block))
-      return Object.values(statuses).filter(status => !status.blocked);
-    });
-  }
-
-
   select_filter(filter) {
     this.filter = filter;
   }
@@ -153,8 +152,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     });
   }
-
-
 
   merge_result_sets_and_cases() {
     this.resultSetsAndCases = [];
@@ -202,12 +199,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.resultSets$.map(resultSets => {
       let forSelect = this.searchPipe.transform(resultSets, this.searchValue);
       forSelect = this.statusPipe.transform(forSelect, this.filter);
-      forSelect.forEach(obj => {
-        this.resultSetCheckboxes[obj.id] = true;
+      forSelect.forEach(object => {
+        this.resultSetCheckboxes[object.id] = {selected: true, object};
       });
       this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
     }).first().subscribe();
-
   }
 
   open_history_page() {
@@ -320,12 +316,16 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   unselect(object) {
-    this.resultSetCheckboxes[object.id] = false;
-    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+    this.resultSetCheckboxes[object.id].checked = false;
+    this.selectedResultSet$.next(this.get_selected_objects());
+    console.log(this.resultSetCheckboxes)
+    console.log(object)
+
+    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(resultSet => resultSet.checked).length;
     if (this.selectedCount === 0) {
       this.cancel_result_custom();
     }
-    this.cd.detectChanges()
+    this.cd.detectChanges();
   }
 
   selected_result_sets() {
@@ -382,27 +382,27 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   cancel_result_custom() {
     this.addResultOpen = false;
+    this.cd.detectChanges();
   }
 
   add_result_open_menu() {
-    this.resultSets$.map(resultSets => {
-      const selectedIds = Object.keys(this.resultSetCheckboxes);
-      this.resultSetSelected = resultSets.filter(resultSet => {
-        selectedIds.includes(resultSet.id);
-      });
-      console.log(this.resultSetSelected)
-    }).first().subscribe();
-
-
-
-
-    const selected = this.resultSetsAndCases.filter(obj => obj.selected);
+    this.selectedResultSet$.next(this.get_selected_objects());
     this.addResultOpen = true;
-    if (selected.length === 1) {
-      this.newResultForm.patchValue({status: this.palladiumApiService.get_status_by_id(selected[0].status)});
-    } else {
-      this.newResultForm.reset('status');
-    }
+    // if (selected.length === 1) {
+    //   this.newResultForm.patchValue({status: this.palladiumApiService.get_status_by_id(selected[0].status)});
+    // } else {
+    //   this.newResultForm.reset('status');
+    // }
+  }
+
+  get_selected_objects() {
+    const _selectedObjects = [];
+    Object.keys(this.resultSetCheckboxes).map(id => +id).forEach(id => {
+      if (this.resultSetCheckboxes[id].checked) {
+        _selectedObjects.push(this.resultSetCheckboxes[id].object);
+      }
+    });
+    return _selectedObjects;
   }
 
   toggle_search() {
@@ -414,8 +414,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   checkbox_change($event, object) {
-    this.resultSetCheckboxes[object.id] = $event.checked;
-    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+    this.resultSetCheckboxes[object.id] = {checked: $event.checked, object};
+    this.selectedCount = Object.values(this.resultSetCheckboxes).filter(checkbox => checkbox.checked).length;
     if (this.selectedCount === 0) {
       this.selectAllFlag = false;
     }
