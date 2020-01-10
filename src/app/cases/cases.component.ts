@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
 import {StatisticService} from '../../services/statistic.service';
 import {Statistic} from '../models/statistic';

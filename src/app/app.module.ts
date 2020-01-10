@@ -10,7 +10,7 @@ import {HttpService} from '../services/http-request.service';
 import {MainComponent} from './main/main.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 const appRoutes: Routes = [

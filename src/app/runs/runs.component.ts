@@ -7,7 +7,7 @@ import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {Statistic, Point} from '../models/statistic';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
 import {Observable, ReplaySubject} from 'rxjs';

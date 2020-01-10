@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSidenav} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSidenav } from '@angular/material/sidenav';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SidenavService} from '../../services/sidenav.service';

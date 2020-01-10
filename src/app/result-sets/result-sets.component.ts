@@ -7,7 +7,7 @@ import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {ResultService} from '../../services/result.service';
 import {ProductSettingsComponent} from '../products/products.component';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';

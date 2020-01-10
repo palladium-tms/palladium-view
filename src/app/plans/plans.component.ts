@@ -13,7 +13,7 @@ import {PalladiumApiService, StructuredPlans} from '../../services/palladium-api
 import {StanceService} from '../../services/stance.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {StatisticService} from '../../services/statistic.service';
 import {SidenavService} from '../../services/sidenav.service';
 import {Product} from "../models/product";
