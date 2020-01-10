@@ -43,13 +43,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSets$: Observable<ResultSet[]>;
   selectedResultSet$ = new ReplaySubject(1);
   statuses$: Observable<StructuredStatuses>;
-  notBlockedStatuses$: Observable<Status[]>;
+  notBlockedStatuses: Status[];
   statistic$: Observable<Statistic>;
   activeRoute$: Observable<number>;
   activeElement: ResultSet;
 
   resultSetCheckboxes: ObjectCheckbox;
-  resultSetSelected = [];
 
   params;
 
@@ -78,19 +77,16 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]);
     this.statuses$ = this.palladiumApiService.statuses$;
-    // this.notBlockedStatuses$ = this.statuses$.map((statuses: StructuredStatuses) => {
-    //   return Object.values(statuses).filter(status => !status.block);
-    // });
+    this.statuses$.map(statuses => {
+      this.notBlockedStatuses = [];
+      Object.values(statuses).forEach(status => {
+        if (!status.blocked) {
+          this.notBlockedStatuses.push(status);
+        }
+      });
+    }).subscribe();
 
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
-
-    // this.resultSets$.first().subscribe(resultSets => {
-    //   console.log('subscribe');
-    //   resultSets.forEach(rs => {
-    //     this.resultSetCheckboxes[rs.id] = false;
-    //   });
-    //   console.log(this.resultSetCheckboxes);
-    // });
 
     this.activeRoute$.map(id => {
       this.filter = [];
@@ -120,38 +116,26 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).subscribe();
-
-    // this.palladiumApiService.statusObservable.subscribe(() => {
-    //   this.statuses = Object.values(this.palladiumApiService.statuses);
-    //   this.notBlockedStatus = this.statuses.filter(status => !status.block);
-    //   this.cd.detectChanges();
-    // });
   }
 
   select_filter(filter) {
     this.filter = filter;
   }
 
-  get_cases() {
-    return this.palladiumApiService.get_cases_by_run_id(this.stance.runId(), this.stance.productId()).then(allCases => {
-      return allCases;
-    });
-  }
-
-  async get_result_sets_and_cases() {
-    this.resultSetsAndCases = [];
-    this.cd.detectChanges();
-    Promise.all([this.get_cases(), this.palladiumApiService.get_result_sets(this.stance.runId())]).then(res => {
-      this.cases = res[0];
-      this.merge_result_sets_and_cases();
-      this.select_object();
-      this.get_statistic();
-      if (this.statuses) {
-        this.set_filters();
-      }
-      this.cd.detectChanges();
-    });
-  }
+  // async get_result_sets_and_cases() {
+  //   this.resultSetsAndCases = [];
+  //   this.cd.detectChanges();
+  //   Promise.all([this.get_cases(), this.palladiumApiService.get_result_sets(this.stance.runId())]).then(res => {
+  //     this.cases = res[0];
+  //     this.merge_result_sets_and_cases();
+  //     this.select_object();
+  //     this.get_statistic();
+  //     if (this.statuses) {
+  //       this.set_filters();
+  //     }
+  //     this.cd.detectChanges();
+  //   });
+  // }
 
   merge_result_sets_and_cases() {
     this.resultSetsAndCases = [];
@@ -200,7 +184,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       let forSelect = this.searchPipe.transform(resultSets, this.searchValue);
       forSelect = this.statusPipe.transform(forSelect, this.filter);
       forSelect.forEach(object => {
-        this.resultSetCheckboxes[object.id] = {selected: true, object};
+        this.resultSetCheckboxes[object.id] = {checked: true, object};
       });
       this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
     }).first().subscribe();
@@ -318,9 +302,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   unselect(object) {
     this.resultSetCheckboxes[object.id].checked = false;
     this.selectedResultSet$.next(this.get_selected_objects());
-    console.log(this.resultSetCheckboxes)
-    console.log(object)
-
     this.selectedCount = Object.values(this.resultSetCheckboxes).filter(resultSet => resultSet.checked).length;
     if (this.selectedCount === 0) {
       this.cancel_result_custom();
@@ -344,21 +325,21 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     return this.newResultForm.get('message').value;
   }
 
-  async add_result() {
-    const resultSetsResultPromise = this.palladiumApiService.result_new(this.selected_result_sets(), this.message, this.status);
-    const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.stance.runId());
-    const resultSetsResult = await resultSetsResultPromise;
-    const casesResult = await casesResultPromise;
-    this.update_result_sets(resultSetsResult);
-    this.update_cases(casesResult);
-    if (this.object && this.object.selected) {
-      this.resultservice.update_results(resultSetsResult || casesResult);
-    }
-    this.get_statistic();
-    this.unselect_all();
-    this.newResultForm.reset(['name', 'status']);
-    this.addResultOpen = false;
-  }
+  // async add_result() {
+  //   const resultSetsResultPromise = this.palladiumApiService.result_new(this.selected_result_sets(), this.message, this.status);
+  //   const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.stance.runId());
+  //   const resultSetsResult = await resultSetsResultPromise;
+  //   const casesResult = await casesResultPromise;
+  //   this.update_result_sets(resultSetsResult);
+  //   this.update_cases(casesResult);
+  //   if (this.object && this.object.selected) {
+  //     this.resultservice.update_results(resultSetsResult || casesResult);
+  //   }
+  //   this.get_statistic();
+  //   this.unselect_all();
+  //   this.newResultForm.reset(['name', 'status']);
+  //   this.addResultOpen = false;
+  // }
 
   update_result_sets(resultSets) {
     if (!resultSets['result_sets']) {
@@ -419,7 +400,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (this.selectedCount === 0) {
       this.selectAllFlag = false;
     }
-    console.log(this.resultSetCheckboxes)
     this.cd.detectChanges();
   }
 
@@ -471,7 +451,7 @@ export class ResultSetsSettingsComponent implements OnInit {
       if (this.object.path === 'result_set') {
         await this.palladiumApiService.delete_result_set(this.object.id, this.stance.runId());
       } else {
-        await this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
+        // await this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
       }
       this.dialogRef.close(this.object);
     }

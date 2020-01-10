@@ -84,8 +84,8 @@
       <form [formGroup]="newResultForm">
         <div class="new_result_form">
           <mat-form-field color="accent">
-            <mat-select placeholder="Select status" formControlName="status">
-              <mat-option *ngFor="let status of notBlockedStatuses$ | async"
+            <mat-select placeholder="Select status" formControlName="status" #status>
+              <mat-option *ngFor="let status of notBlockedStatuses"
                           [value]="status"
                           [ngStyle]="{'border-right': '7px solid ' + status.color}">
                 {{status.name}}
