@@ -494,9 +494,9 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
-  // //#endregion
+  //#endregion
 
-  // //#region Result
+  //#region Result
   get_results(resultSetId) {
     this.httpService.postData('/results', {result_data: {result_set_id: resultSetId}}).map(response => {
       this._results[resultSetId] = [];
@@ -516,20 +516,35 @@ export class PalladiumApiService {
           return new Result(result['result']);
         }, error => console.log(error));
   }
-  //
-  // async result_new(result_sets, description, status) {
-  //   if (result_sets.length == 0) {
-  //     return {};
-  //   }
-  //   const res = await this.httpService.postData('/result_new', {
-  //     result_data: {
-  //       message: description, status: status.name,
-  //       result_set_id: result_sets.map(obj => obj.id)
-  //     }
-  //   });
-  //   return this.reformat_response(res);
-  // }
-  //
+
+  result_new(resultSets, description, status) {
+    if (resultSets.length === 0) {
+      return {};
+    }
+    this.httpService.postData('/result_new', {
+      result_data: {
+        message: description, status: status.name,
+        result_set_id: resultSets.map(obj => obj.id)
+      }
+    }).map(res => {
+      const newResult = new Result(res['result']);
+      res['result_sets'].forEach(resultSet => {
+        const newResultSet = new ResultSet(resultSet);
+
+        this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
+
+        if (this._results[newResultSet.id.toString()]) {
+          this._results[newResultSet.id.toString()].push(newResult);
+        }
+      });
+      this.resultSets$.next(this._resultSets);
+      if (this._results) {
+        this.results$.next(this._results);
+      }
+    }).subscribe();
+    // return this.reformat_response(res);
+  }
+
   // async result_new_by_case(cases, message, status, run_id) {
   //   if (cases.length == 0) {
   //     return {};
@@ -558,19 +573,19 @@ export class PalladiumApiService {
   //   }
   //   return invite;
   // }
-  //
-  // reformat_response(res) {
-  //   const response = {};
-  //   if (res['result_sets']) {
-  //     response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
-  //   }
-  //   if (res['result']) {
-  //     response['result'] = new Result(res['result']);
-  //   }
-  //   return response;
-  // }
-  //
-  // //#endregion
+
+  reformat_response(res) {
+    const response = {};
+    if (res['result_sets']) {
+      response['result_sets'] = res['result_sets'].map(result => new ResultSet(result));
+    }
+    if (res['result']) {
+      response['result'] = new Result(res['result']);
+    }
+    return response;
+  }
+
+  //#endregion
 
   //#region UserSettigns
   get_user_setting() {

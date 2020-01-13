@@ -85,6 +85,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).subscribe();
+    this.resultSets$.subscribe((x) => {
+      console.log(x)
+      this.cd.detectChanges();
+    })
 
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
@@ -167,13 +171,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
   }
 
-  unselect_all() {
-    this.selectAllFlag = false;
-    this.resultSetsAndCases.forEach(obj => {
-      obj.selected = false;
-    });
-  }
-
   selectAll(event) {
     if (!event.checked) {
       this.resultSetCheckboxes = {};
@@ -200,20 +197,20 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }
   }
 
-  get_statistic() {
-    const data = {};
-    this.palladiumApiService.resultSets[this.stance.runId()].forEach(resultSet => {
-      if (!data[resultSet.status]) {
-        data[resultSet.status] = 0;
-      }
-      data[resultSet.status] += 1;
-    });
-    this.statistic = new Statistic(data);
-    this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
-    this.untestedPoint = new Point('0', this.cases.length - this.palladiumApiService.resultSets[this.stance.runId()].length, this.palladiumApiService.resultSets[this.stance.runId()].length);
-    this.cd.detectChanges();
-    this.stat.update_run_statistic(this.statistic);
-  }
+  // get_statistic() {
+  //   const data = {};
+  //   this.palladiumApiService.resultSets[this.stance.runId()].forEach(resultSet => {
+  //     if (!data[resultSet.status]) {
+  //       data[resultSet.status] = 0;
+  //     }
+  //     data[resultSet.status] += 1;
+  //   });
+  //   this.statistic = new Statistic(data);
+  //   this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
+  //   this.untestedPoint = new Point('0', this.cases.length - this.palladiumApiService.resultSets[this.stance.runId()].length, this.palladiumApiService.resultSets[this.stance.runId()].length);
+  //   this.cd.detectChanges();
+  //   this.stat.update_run_statistic(this.statistic);
+  // }
 
   delete_filter_without_elements(data) {
     this.filter.forEach((element, index) => {
@@ -230,6 +227,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   open_results(object) {
     this.reset_active();
     this.activeElement = object;
+    this.cd.detectChanges();
     if (object.path === 'result_set') {
       this.router.navigate(['result_set', object.id], {relativeTo: this.activatedRoute});
     } else {
@@ -325,21 +323,21 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     return this.newResultForm.get('message').value;
   }
 
-  // async add_result() {
-  //   const resultSetsResultPromise = this.palladiumApiService.result_new(this.selected_result_sets(), this.message, this.status);
-  //   const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.stance.runId());
-  //   const resultSetsResult = await resultSetsResultPromise;
-  //   const casesResult = await casesResultPromise;
-  //   this.update_result_sets(resultSetsResult);
-  //   this.update_cases(casesResult);
-  //   if (this.object && this.object.selected) {
-  //     this.resultservice.update_results(resultSetsResult || casesResult);
-  //   }
-  //   this.get_statistic();
-  //   this.unselect_all();
-  //   this.newResultForm.reset(['name', 'status']);
-  //   this.addResultOpen = false;
-  // }
+  add_result() {
+    this.palladiumApiService.result_new(this.get_selected_objects(), this.message, this.status);
+    // const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.stance.runId());
+
+    // const resultSetsResult = await resultSetsResultPromise;
+    // const casesResult = await casesResultPromise;
+    // this.update_result_sets(resultSetsResult);
+    // this.update_cases(casesResult);
+    // if (this.object && this.object.selected) {
+    //   this.resultservice.update_results(resultSetsResult || casesResult);
+    // }
+    // this.unselect_all();
+    this.newResultForm.reset(['name', 'status']);
+    this.addResultOpen = false;
+  }
 
   update_result_sets(resultSets) {
     if (!resultSets['result_sets']) {

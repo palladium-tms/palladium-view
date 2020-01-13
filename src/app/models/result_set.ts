@@ -4,7 +4,8 @@ export class ResultSet {
   id: number;
   name: string;
   status: number;
-  run_id: string;
+  run_id: number;
+  plan_id: number;
   created_at: number;
   updated_at: number;
   path = 'result_set';
@@ -16,7 +17,8 @@ export class ResultSet {
     } else {
       this.id = resultSet['id'];
       this.name = resultSet['name'];
-      this.run_id = resultSet['plan_id'];
+      this.run_id = resultSet['run_id'];
+      this.plan_id = resultSet['plan_id'];
       this.status = resultSet['status'];
       this.created_at = resultSet['created_at'].split(' +')[0];
       this.updated_at = resultSet['updated_at'].split(' +')[0];
@@ -27,6 +29,7 @@ export class ResultSet {
     this.id = thisCase['id'];
     this.name = thisCase['name'];
     this.run_id = thisCase['plan_id'];
+    this.plan_id = thisCase['plan_id'];
     this.status = thisCase['status'];
     this.created_at = thisCase['created_at'].split(' +')[0];
     this.updated_at = thisCase['updated_at'].split(' +')[0];

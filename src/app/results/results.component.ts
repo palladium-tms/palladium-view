@@ -29,14 +29,14 @@ export class ResultsComponent implements OnInit, OnDestroy {
   constructor(private palladiumApiService: PalladiumApiService, private resultservice: ResultService,
               private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef, private stance: StanceService) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
 
     this.activeRoute$.map(id => {
       this.results$ = this.palladiumApiService.results$.map(results => results[id]);
       this.palladiumApiService.get_results(id);
-    }).subscribe(() => this.cd.detectChanges());
+    }).subscribe();
 
 
     //
