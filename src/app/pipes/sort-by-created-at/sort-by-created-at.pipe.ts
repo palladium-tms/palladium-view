@@ -7,6 +7,7 @@ export class SortByCreatedAtPipe implements PipeTransform {
 
   // asc desc
   transform(value: any[], args?: any): any {
+    console.log('pipe')
     if (!value) {
       return [];
     }

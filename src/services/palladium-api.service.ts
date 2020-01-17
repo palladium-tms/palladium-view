@@ -15,9 +15,9 @@ import {Invite} from '../app/models/invite';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
-import {map} from "rxjs/operators";
+import {map} from 'rxjs/operators';
 import {NGXLogger} from 'ngx-logger';
-import { delay } from 'rxjs/internal/operators';
+import {delay} from 'rxjs/internal/operators';
 
 export interface StructuredStatuses {
   [key: number]: Status;
@@ -48,7 +48,7 @@ export interface StructuredResults {
 
 
 export interface UserSettings {
-  timeZone: ReplaySubject<string> ;
+  timeZone: ReplaySubject<string>;
 }
 
 @Injectable()
@@ -200,6 +200,7 @@ export class PalladiumApiService {
       }
     });
   }
+
   //
   // // async delete_suite(suiteId):Promise<boolean> {
   // //   return this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).then(resp => {
@@ -251,6 +252,7 @@ export class PalladiumApiService {
       this.resultSets$.next(this._resultSets);
     }).subscribe();
   }
+
   //
   // async edit_case(case_id, name) {
   //   const resp = await this.httpService.postData('/case_edit', {case_data: {id: case_id, name: name}});
@@ -281,13 +283,13 @@ export class PalladiumApiService {
   //#region Run
   get_runs(planId): void {
     this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
-        response => {
-          this._runs[planId] = [];
-          response['runs'].forEach(run => {
-            this._runs[planId].push(new Run(run));
-          });
-          this.runs$.next(this._runs);
-        }).subscribe();
+      response => {
+        this._runs[planId] = [];
+        response['runs'].forEach(run => {
+          this._runs[planId].push(new Run(run));
+        });
+        this.runs$.next(this._runs);
+      }).subscribe();
   }
 
   get_run(runId): void {
@@ -306,6 +308,7 @@ export class PalladiumApiService {
       this.get_runs(planId);
     }
   }
+
   //
   // create_run(run_name, plan_id): Promise<any> {
   //   return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
@@ -332,7 +335,7 @@ export class PalladiumApiService {
   get_products(): void {
     this.httpService.postData('/products', '').map(response => {
       this._products = response['products'].map(product => new Product(product));
-       this.products$.next(this._products);
+      this.products$.next(this._products);
     }).subscribe();
   }
 
@@ -359,8 +362,8 @@ export class PalladiumApiService {
   //#region Plans
   get_plans(params): void {
     const productId = params['plan_data']['product_id'];
-      this.httpService.postData('/plans', params).map(response => {
-        this.logger.debug('get_plans. params: ' + params);
+    this.httpService.postData('/plans', params).map(response => {
+      this.logger.debug('get_plans. params: ' + params);
       Object(response['plans']).forEach(plan => {
         const _plan = new Plan(plan);
         this._plans[productId].push(_plan);
@@ -517,32 +520,32 @@ export class PalladiumApiService {
         }, error => console.log(error));
   }
 
-  result_new(resultSets, description, status) {
-    if (resultSets.length === 0) {
-      return {};
-    }
-    this.httpService.postData('/result_new', {
-      result_data: {
-        message: description, status: status.name,
-        result_set_id: resultSets.map(obj => obj.id)
-      }
-    }).map(res => {
-      const newResult = new Result(res['result']);
-      res['result_sets'].forEach(resultSet => {
-        const newResultSet = new ResultSet(resultSet);
-
-        this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
-
-        if (this._results[newResultSet.id.toString()]) {
-          this._results[newResultSet.id.toString()].push(newResult);
+  result_new(resultSets, description, status): void {
+    if (resultSets.length !== 0) {
+      this.httpService.postData('/result_new', {
+        result_data: {
+          message: description, status: status.name,
+          result_set_id: resultSets.map(obj => obj.id)
         }
-      });
-      this.resultSets$.next(this._resultSets);
-      if (this._results) {
-        this.results$.next(this._results);
-      }
-    }).subscribe();
-    // return this.reformat_response(res);
+      }).map(res => {
+        const newResult = new Result(res['result']);
+        res['result_sets'].forEach(resultSet => {
+          const newResultSet = new ResultSet(resultSet);
+
+          this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
+
+          if (this._results[newResultSet.id.toString()]) {
+            this._results[newResultSet.id.toString()].push(newResult);
+          }
+        });
+        this.resultSets$.next(this._resultSets);
+        if (this._results) {
+          this.results$.next(this._results);
+        }
+        this.get_run(res['result_sets'][0]['run_id']);
+      }).subscribe();
+      // return this.reformat_response(res);
+    }
   }
 
   // async result_new_by_case(cases, message, status, run_id) {

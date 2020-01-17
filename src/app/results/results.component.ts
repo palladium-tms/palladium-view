@@ -35,6 +35,9 @@ export class ResultsComponent implements OnInit, OnDestroy {
 
     this.activeRoute$.map(id => {
       this.results$ = this.palladiumApiService.results$.map(results => results[id]);
+      this.results$.map(x => {
+        console.log('asdasd')
+      }).subscribe();
       this.palladiumApiService.get_results(id);
     }).subscribe();
 
