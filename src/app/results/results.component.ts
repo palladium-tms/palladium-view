@@ -1,11 +1,10 @@
 import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
 import {Result} from '../models/result';
-import {Params, Router, ActivatedRoute} from '@angular/router';
-import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
+import {ActivatedRoute} from '@angular/router';
+import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../services/palladium-api.service';
 import {ResultService} from '../../services/result.service';
-import {Observable} from 'rxjs';
-import {ResultSet} from '../models/result_set';
-import {StanceService} from '../../services/stance.service';
+import {Observable, Subject} from 'rxjs';
+import {takeUntil} from "rxjs/operators";
 
 @Component({
   selector: 'app-results',
@@ -15,46 +14,35 @@ import {StanceService} from '../../services/stance.service';
 })
 
 export class ResultsComponent implements OnInit, OnDestroy {
+  private unsubscribe: Subject<void> = new Subject();
   activeRoute$: Observable<number>;
   statuses$: Observable<StructuredStatuses>;
   results$: Observable<Result[]>;
   timeZoneOffset$: Observable<string>;
 
-  statuses;
-  loading = false;
-  news;
-  params;
-  resultSetId;
-  timeZone;
-  constructor(private palladiumApiService: PalladiumApiService, private resultservice: ResultService,
-              private activatedRoute: ActivatedRoute, private router: Router,  private cd: ChangeDetectorRef, private stance: StanceService) {}
+  constructor(private palladiumApiService: PalladiumApiService, private resultService: ResultService,
+              private activatedRoute: ActivatedRoute, private cd: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
 
-    this.activeRoute$.map(id => {
-      this.results$ = this.palladiumApiService.results$.map(results => results[id]);
-      this.results$.map(x => {
-        console.log('asdasd')
-      }).subscribe();
-      this.palladiumApiService.get_results(id);
-    }).subscribe();
+    this.activeRoute$.map(
+      id => {
+        this.cd.detectChanges();
+        this.results$ = this.palladiumApiService.results$.map((results: StructuredResults) => results[id]);
+        this.palladiumApiService.get_results(id);
+      }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
 
 
-    //
-    // this.news = this.resultservice.news().subscribe(data => {
-    //   this.add_result(data['result']);
-    //   this.cd.detectChanges();
-    // });
     this.timeZoneOffset$ = this.palladiumApiService.userSettings.timeZone.map(timezone => {
       return this.palladiumApiService.timeZoneOffset(timezone);
     });
   }
 
   ngOnDestroy() {
-    // this.cd.detach();
-    // this.news.unsubscribe();
-    // this.params.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }

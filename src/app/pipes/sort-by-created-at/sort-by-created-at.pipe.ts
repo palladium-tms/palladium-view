@@ -1,20 +1,20 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import {Result} from "../../models/result";
 
 @Pipe({
-  name: 'sortByCreatedAt'
+  name: 'sortByCreatedAt',
+  pure: false
 })
 export class SortByCreatedAtPipe implements PipeTransform {
 
-  // asc desc
-  transform(value: any[], args?: any): any {
-    console.log('pipe')
+  transform(value: Result[], args?: ('asc' | 'desc')): Result[] {
     if (!value) {
       return [];
     }
     if (args === 'asc') {
-      value.sort(function(a, b) { return a.id - b.id; });
+      value.sort((a, b) => a.id - b.id);
     } else if (args === 'desc') {
-      value.sort(function(a, b) { return b.id - a.id; });
+      value.sort((a, b) => b.id - a.id);
     }
     return value;
   }

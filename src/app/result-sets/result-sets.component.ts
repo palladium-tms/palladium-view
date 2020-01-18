@@ -85,10 +85,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).subscribe();
-    this.resultSets$.subscribe((x) => {
-      console.log(x);
-      this.cd.detectChanges();
-    });
 
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 

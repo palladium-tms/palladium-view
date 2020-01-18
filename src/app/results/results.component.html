@@ -1,16 +1,8 @@
 <div class="result-space">
 
-  <!--<mat-accordion *ngIf="(results$ | async) as results">-->
-    <!--<mat-expansion-panel class="result-item" *ngFor="let result of (results$ | async)"">-->
-      <!--<mat-expansion-panel-header>-->
-        <!--<mat-panel-description>-->
-<!--{{'asdasdas'}}        </mat-panel-description>-->
-      <!--</mat-expansion-panel-header>-->
-  <!--</mat-accordion>-->
-
   <div class="result-list item-list">
-    <mat-accordion *ngIf="(results$ | async) as results">
-      <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc';  first as isFirst"
+    <mat-accordion *ngIf="(results$ | async) as results; else loading">
+      <mat-expansion-panel class="result-item" *ngFor="let result of (results$ | async) | sortByCreatedAt:'desc';  first as isFirst"
                            [expanded]="isFirst"
                            [ngStyle]="{'border-color': (statuses$ | async)[result.status_id].color}">
         <mat-expansion-panel-header>
@@ -38,7 +30,9 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div [hidden]="!loading" class="loader">
-    <mat-spinner color="accent"></mat-spinner>
-  </div>
+  <ng-template #loading>
+    <div class="loader">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </ng-template>
 </div>
