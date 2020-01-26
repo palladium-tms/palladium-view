@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/co
 import {AuthenticationService} from '../../services/authentication.service';
 import {Router} from '@angular/router';
 import {SidenavService} from '../../services/sidenav.service';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-top-toolbar',
@@ -11,17 +12,14 @@ import {SidenavService} from '../../services/sidenav.service';
 })
 export class TopToolbarComponent {
   authorize;
-  productName;
+  productName$: Observable<string>;
   username;
 
   constructor(private router: Router,
               private authenticationService: AuthenticationService,
               public sidenavService: SidenavService, private cd: ChangeDetectorRef) {
 
-    sidenavService.selectedProduct$.subscribe(product => {
-      this.productName = (product && product.name) || '';
-      this.cd.detectChanges();
-    });
+    this.productName$ = this.sidenavService.selectedProductName$;
 
     authenticationService.isAuthorized$.subscribe(status => {
       this.authorize = status;

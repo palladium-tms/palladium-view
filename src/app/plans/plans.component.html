@@ -1,8 +1,8 @@
 <div class="plan-space">
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of plans | sortByCreatedAt:'desc'"
-              [ngClass]="{'selected': selectedPlanId == plan.id}"
+              *ngFor="let plan of (plans$ | async) | sortByCreatedAt:'desc'"
+              [ngClass]="{'selected': stance.planId() == plan.id}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
         <div class="name">{{plan.name}}</div>

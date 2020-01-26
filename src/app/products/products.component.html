@@ -22,7 +22,7 @@
         <a class="product-item"
                   *ngFor="let product of products"
                   cdkDrag [cdkDragDisabled]=pinned
-                  [ngClass]="{'product-selected': selectedProduct.id == product.id, 'mat-elevation-z1': !pinned}"
+                  [ngClass]="{'product-selected': stance.productId() == product.id, 'mat-elevation-z1': !pinned}"
                   (click)="select_product(product)">
           {{product.name}}
         </a>
@@ -30,13 +30,13 @@
     </div>
   </mat-sidenav>
   <mat-sidenav-content class="sidebar-content">
-    <ng-container *ngIf="selectedProduct.id == 0">
-      <div  class="item-list item-list-main">
-        <mat-card  class="product-item product-item-main" *ngFor="let product of products" (click)="select_product(product)">
-          {{product.name}}
-        </mat-card>
-      </div>
-    </ng-container>
+<!--    <ng-container *ngIf="selectedProduct.id == 0">-->
+<!--      <div  class="item-list item-list-main">-->
+<!--        <mat-card  class="product-item product-item-main" *ngFor="let product of products" (click)="select_product(product)">-->
+<!--          {{product.name}}-->
+<!--        </mat-card>-->
+<!--      </div>-->
+<!--    </ng-container>-->
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

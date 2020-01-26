@@ -5,7 +5,7 @@ export class Plan {
   id: number;
   name: string;
   product_id: string;
-  isArchived: string;
+  isArchived: boolean;
   created_at: number;
   updated_at: number;
   statistic$: ReplaySubject<Statistic>;

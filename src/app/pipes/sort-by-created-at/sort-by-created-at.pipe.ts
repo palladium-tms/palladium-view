@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {Result} from "../../models/result";
+import {Plan} from "../../models/plan";
 
 @Pipe({
   name: 'sortByCreatedAt',
@@ -7,7 +8,7 @@ import {Result} from "../../models/result";
 })
 export class SortByCreatedAtPipe implements PipeTransform {
 
-  transform(value: Result[], args?: ('asc' | 'desc')): Result[] {
+  transform(value: (Result[] | Plan[]), args?: ('asc' | 'desc')): Result[] | Plan[] {
     if (!value) {
       return [];
     }

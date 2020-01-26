@@ -46,6 +46,10 @@ export interface StructuredResults {
   [key: number]: Result[];
 }
 
+// {productId: {run_name: [resultSet,  resultSet, resultSet]}}
+export interface StructuredHistoryPack {
+  [key: number]: {[key: string]: ResultSet[]};
+}
 
 export interface UserSettings {
   timeZone: ReplaySubject<string>;
@@ -67,6 +71,9 @@ export class PalladiumApiService {
 
   results$: ReplaySubject<StructuredResults> = new ReplaySubject(1);
   private _results: StructuredResults = {};
+
+  historyPack$: ReplaySubject<StructuredHistoryPack> = new ReplaySubject(1);
+  private _historyPack: StructuredHistoryPack = {};
 
   userSettings: UserSettings = {
     timeZone: new ReplaySubject(1)
@@ -189,17 +196,17 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
-  edit_suite(id, name): Promise<any> {
-    return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
-      if (resp['errors']) {
-        console.log('errors');
-        return Promise.reject(resp['errors']);
-      } else {
-        console.log('all right');
-        return Promise.resolve(new Suite(resp['suite']));
-      }
-    });
-  }
+  // edit_suite(id, name): Promise<any> {
+  //   return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
+  //     if (resp['errors']) {
+  //       console.log('errors');
+  //       return Promise.reject(resp['errors']);
+  //     } else {
+  //       console.log('all right');
+  //       return Promise.resolve(new Suite(resp['suite']));
+  //     }
+  //   });
+  // }
 
   //
   // // async delete_suite(suiteId):Promise<boolean> {
@@ -268,17 +275,20 @@ export class PalladiumApiService {
   //   _suite.statistic = new Statistic(statisticData);
   //   return _case;
   // }
-  //
-  // history = async (case_id) => {
-  //   const resp = await this.httpService.postData('/case_history', {case_data: {id: case_id}});
-  //   this.histories = [];
-  //   resp['result_sets_history'].forEach(data => {
-  //     this.histories.push(new History(data));
-  //   });
-  //   return this.histories;
-  // };
-  //
-  // //#endregion
+
+  get_history(caseData: ({id: number} | {result_set_id: number})): void {
+    this.httpService.postData('/case_history', {case_data: caseData}).map(resp => {
+      const productId  = resp['product_id'];
+      const suiteName  = resp['suite_name'];
+      this._historyPack[productId] = this._historyPack[productId] || {};
+      this._historyPack[productId][suiteName] = this._historyPack[productId][suiteName] || [];
+      resp['result_sets_history'].forEach(data => {
+        this._historyPack[productId][suiteName].push(new History(data));
+      });
+      this.historyPack$.next(this._historyPack);
+    }).subscribe();
+  }
+  //#endregion
 
   //#region Run
   get_runs(planId): void {
@@ -329,6 +339,9 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
+  run_name_by_id(runId: number, planId: number): string {
+    return this._runs[planId].find(run => run.id === runId).name;
+  }
   //#endregion
 
   //#region Products

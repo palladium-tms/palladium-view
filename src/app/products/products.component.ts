@@ -21,7 +21,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   products;
   authorize;
   pinned = true;
-  selectedProduct = {id: 0, name: ''};
 
   constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -46,21 +45,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
     });
     this.palladiumApiService.products$.subscribe(products => {
       this.products = products;
+      if (this.stance.productId()) {
+        this.sidenavService.selectedProductName$.next(this.products.find(product => product.id === this.stance.productId()).name);
+      } else {
+        this.sidenavService.selectedProductName$.next('');
+      }
       this.cd.detectChanges();
     });
 
-    this.sidenavService.close_product_subject$.subscribe(() => {
+    this.sidenavService.toggleProductSubject$.subscribe(() => {
       this.sidenav.toggle();
-      this.cd.detectChanges();
     });
-    this.sidenavService.selectedProduct$.subscribe(product => {
-      if (product) {
-        this.selectedProduct = product;
-      } else {
-        this.sidenavService.clear_product_name();
-      }
-      this.cd.detectChanges();
-      });
   }
 
   open_settings() {
@@ -86,6 +81,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   select_product(product) {
     this.sidenav.close();
+    this.sidenavService.selectedProductName$.next(product.name);
     this.router.navigate(['/product', product.id]);
   }
 

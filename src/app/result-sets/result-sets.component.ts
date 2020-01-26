@@ -5,13 +5,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
-import {ResultService} from '../../services/result.service';
 import {ProductSettingsComponent} from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
-import {Observable, ReplaySubject} from 'rxjs';
+import { Observable, ReplaySubject} from 'rxjs';
 import {Status} from '../models/status';
 
 export interface SearchToggle {
@@ -30,7 +29,7 @@ export interface ObjectCheckbox {
   selector: 'app-result-sets',
   templateUrl: './result-sets.component.html',
   styleUrls: ['./result-sets.component.scss'],
-  providers: [ResultService, SearchPipe, StatusFilterPipe],
+  providers: [SearchPipe, StatusFilterPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -69,7 +68,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   constructor(private activatedRoute: ActivatedRoute, public stat: StatisticService, private stance: StanceService,
               private palladiumApiService: PalladiumApiService, private router: Router,
-              private resultservice: ResultService, private dialog: MatDialog, private cd: ChangeDetectorRef,
+              private dialog: MatDialog, private cd: ChangeDetectorRef,
               private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe) {
     this.searchToggle = { 'toggle': false, 'color': 'none'};
   }
@@ -96,7 +95,15 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.palladiumApiService.get_result_sets(id);
     }).map(() => this.cd.detectChanges()).subscribe();
 
-    this.params = this.activeRoute$.switchMap(id => {
+    // this.params = this.activeRoute$.pipe(run$ => this.stance.run$, plan$ => this.stance.plan$).map(x => {
+    //   console.log(x)
+    // }).subscribe()
+
+
+
+
+      this.params = this.activeRoute$.switchMap(id => {
+
       return this.palladiumApiService.runs$.map(runs => {
         if (runs[this.stance.planId()].find(plan => plan.id === id)) {
           this.statistic$ = runs[this.stance.planId()].find(run => run.id === id).statistic$;
@@ -183,16 +190,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }).first().subscribe();
   }
 
-  open_history_page() {
-    const path = /\S*run\/(\d+)/.exec(this.router.url)[0] + '/case_history/';
-    if (this.dropdownMenuItemSelect.path === 'case') {
-      this.router.navigate([path, this.dropdownMenuItemSelect.id]);
-    } else {
-      const caseId = this.get_case_id_by_result_set(this.dropdownMenuItemSelect);
-      this.router.navigate([path, caseId]);
-    }
-  }
-
   // get_statistic() {
   //   const data = {};
   //   this.palladiumApiService.resultSets[this.stance.runId()].forEach(resultSet => {
@@ -254,7 +251,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   update_click() {
     // this.filter = [];
-    this.palladiumApiService.get_result_sets(this.stance.runId());
+    this.stance.run$.map(run => {
+      this.palladiumApiService.get_result_sets(run.id);
+    }).first().subscribe();
     // this.selectAllFlag = false;
   }
 
@@ -321,16 +320,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   add_result() {
     this.palladiumApiService.result_new(this.get_selected_objects(), this.message, this.status);
-    // const casesResultPromise = this.palladiumApiService.result_new_by_case(this.selected_cases(), this.message, this.status, this.stance.runId());
-
-    // const resultSetsResult = await resultSetsResultPromise;
-    // const casesResult = await casesResultPromise;
-    // this.update_result_sets(resultSetsResult);
-    // this.update_cases(casesResult);
-    // if (this.object && this.object.selected) {
-    //   this.resultservice.update_results(resultSetsResult || casesResult);
-    // }
-    // this.unselect_all();
     this.newResultForm.reset(['name', 'status']);
     this.addResultOpen = false;
   }
@@ -405,7 +394,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-result-sets',
   templateUrl: 'result-sets.settings.component.html',
-  providers: [ResultService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 

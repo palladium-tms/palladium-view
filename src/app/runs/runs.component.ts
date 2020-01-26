@@ -54,7 +54,9 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.dataLoading = false;
       return this.palladiumApiService.plans$.map(plans => {
         const plan = plans[this.stance.productId()].find(plan => plan.id === this.stance.planId());
-        plan.statistic$.next(this.get_statistic(runs));
+        if (plan.statistic$) {
+          plan.statistic$.next(this.get_statistic(runs));
+        }
       });
     }).subscribe(() => {this.dataLoading = false;});
 
@@ -74,7 +76,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).subscribe(() => this.cd.detectChanges());
 
-    this.activeRoute$.map(id => {
+    this.activeRoute$.map((id: number) => {
       this.palladiumApiService.init_runs(id);
     }).subscribe();
 
@@ -190,11 +192,8 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   select_object(object) {
-    if (this.activeObject === object || object.id === 0) {
-      return;
-    }
     this.activeObject = object;
-    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.activeObject.path + '/' + this.activeObject.id]);
+    this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + object.path + '/' + object.id]);
   }
 
   get_selected_object() {
@@ -235,8 +234,9 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.params.unsubscribe();
   }
 
-  log(a) {
-    console.log(a);
+  log() {
+    this.cd.detectChanges()
+    console.log('x')
   }
 }
 

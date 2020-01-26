@@ -4,7 +4,6 @@ import {
   Component,
   Inject,
   OnInit,
-  AfterViewInit,
   ViewEncapsulation
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
@@ -15,9 +14,8 @@ import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {StatisticService} from '../../services/statistic.service';
-import {SidenavService} from '../../services/sidenav.service';
-import {Product} from "../models/product";
 import {Plan} from "../models/plan";
+import {Observable, ReplaySubject} from "rxjs";
 
 @Component({
   selector: 'app-plans',
@@ -27,46 +25,31 @@ import {Plan} from "../models/plan";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlansComponent implements OnInit {
+  plans$: ReplaySubject<Plan[]> =  new ReplaySubject(1);
+  activeRoute$: Observable<{}>;
+
   plans: Plan[];
   selectedPlanId = 0;
-  productId;
   planForSettings;
   RUN_COMPONENT;
   loading = false;
   showMore = true;
-  selectedProduct: Product = {createdAt: 0, updatedAt: 0, id: 0, name: ''};
 
   constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
-              public sidenavService: SidenavService,
               private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
-      this.productId = id;
+    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => {
       this.init_plans(id);
-      return this.palladiumApiService.products$.map(products => {
-        this.selectedProduct = products.find(product => product.id === id);
-        if (this.selectedProduct) {
-          this.sidenavService.select_product(this.selectedProduct);
-        } else {
-          this.sidenavService.select_product(this.selectedProduct);
-          this.router.navigate(['/']);
-        }
-      });
-    }).subscribe();
+      return +id;
+    });
 
-    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
-      return this.palladiumApiService.plans$.map((plans: StructuredPlans) => {
-        this.plans = plans[id];
-        if (this.stance.planId()) {
-          this.selectedPlanId = this.plans.find(plan => plan.id === this.stance.planId()).id;
-        }
-        this.cd.detectChanges();
-      });
+    this.activeRoute$.switchMap((id: number) => {
+      return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
     }).subscribe();
   }
 
@@ -75,7 +58,6 @@ export class PlansComponent implements OnInit {
       if (this.selectedPlanId === plan.id) {
         return;
       }
-
       this.selectedPlanId = plan.id;
       this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute});
       this.cd.detectChanges();
@@ -83,7 +65,7 @@ export class PlansComponent implements OnInit {
   }
 
   init_plans(id) {
-      this.palladiumApiService.init_plans(id, this.stance.planId());
+    this.palladiumApiService.init_plans(id, this.stance.planId());
   }
 
   // init_data() {
@@ -120,15 +102,12 @@ export class PlansComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.palladiumApiService.plans[this.productId] = result;
         this.cd.detectChanges();
-      }
     });
   }
 
   async load_more_plans() {
-    this.palladiumApiService.get_plans_show_more(+this.productId);
+    this.palladiumApiService.get_plans_show_more(this.stance.productId());
   }
 
   archive_open() {
@@ -170,7 +149,7 @@ export class PlansSettingsComponent implements OnInit {
     if (!this.name_is_not_changed()) {
       this.palladiumApiService.edit_plan(this.item.id, this.name.value);
     }
-    this.dialogRef.close(this._plans);
+    this.dialogRef.close();
   }
 
   name_is_existed() {

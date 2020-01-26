@@ -32,3 +32,6 @@
 .hidden {
   display: none;
 }
+.group-tab {
+  width: 100%;
+}
