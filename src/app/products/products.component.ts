@@ -46,7 +46,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.palladiumApiService.products$.subscribe(products => {
       this.products = products;
       if (this.stance.productId()) {
-        this.sidenavService.selectedProductName$.next(this.products.find(product => product.id === this.stance.productId()).name);
+        const product = this.products.find(product => product.id === this.stance.productId());
+        if (product) {
+          this.sidenavService.selectedProductName$.next(product.name);
+        } else {
+          this.router.navigate(['/']);
+        }
       } else {
         this.sidenavService.selectedProductName$.next('');
       }
