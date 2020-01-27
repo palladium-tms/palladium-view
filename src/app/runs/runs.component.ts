@@ -10,7 +10,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
-import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {Observable, race, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -48,42 +48,90 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
-    this.statuses$ = this.palladiumApiService.statuses$;
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
+    this.statuses$ = this.palladiumApiService.statuses$;
 
-    this.runs$.switchMap((runs) => {
-      this.dataLoading = false;
-      return this.palladiumApiService.plans$.map(plans => {
-        const planId = this.stance.planId();
-        const plan = plans[this.stance.productId()].find(plan => plan.id === planId);
-        console.log(planId)
-        console.log(plan)
-        if (plan.statistic$) {
-          plan.statistic$.next(this.get_statistic(runs));
-        }
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {this.dataLoading = false;});
+    this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
+      this.init_active_object(id);
+      this.init_statistic(id);
+      this.runs$ = this.palladiumApiService.runs$.map(runs => runs[id]);
 
-    this.activeRoute$.switchMap(id => {
-      this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
-      this.runs$.first().subscribe(runs => {
-        const runId = this.stance.runId();
-        if (runId) {
-         this.activeObject = runs.find(run => run.id === +runId);
-        }
-      });
-
-      return this.palladiumApiService.plans$.map(plans => {
-        if (plans[this.stance.productId()].find(plan => plan.id === id)) {
-          this.statistic$ = plans[this.stance.productId()].find(plan => plan.id === id).statistic$;
-        }
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
-
-    this.activeRoute$.map((id: number) => {
       this.palladiumApiService.init_runs(id);
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+      this.dataLoading = false;
+      race(this.palladiumApiService.plans$, this.palladiumApiService.runs$).
+
+
+
+      //
+      // this.palladiumApiService.plans$.pipe().subscribe();
+      // console.log(this.palladiumApiService.plans$)
+
+
+      // this.palladiumApiService.plans$.map(plans => {
+      //   const planId = this.stance.planId();
+      //   const plan = plans[this.stance.productId()].find(plan => plan.id === planId);
+      //   console.log(plan);
+      //   this.cd.detectChanges();
+      //   // if (plan.statistic$) {
+      //   //   plan.statistic$.next(this.get_statistic(runs));
+      //   // }
+      //   console.log(1)
+      // }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+      //   console.log('plans$')
+      //     this.runs$ = this.palladiumApiService.runs$.map(runs => runs[id]);
+      //   this.cd.detectChanges();});
+
+    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+      console.log('asdasdasd')
+      this.dataLoading = false;
+      this.cd.detectChanges();
+    });
+
+    //
+    // this.activeRoute$.switchMap((id: number) => {
+    //   this.runs$ = this.palladiumApiService.runs$.map(runs => runs[id]);
+    //   this.init_active_object();
+    //
+    //   return this.init_statistic(id);
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
+
+    // this.activeRoute$.map((id: number) => {
+    //   this.palladiumApiService.init_runs(id);
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe();
+    //
+    // this.palladiumApiService.runs$.switchMap(runs => {
+    //   console.log('runs')
+    //   console.log(runs)
+    //   this.dataLoading = false;
+    //   return this.palladiumApiService.plans$.map(plans => {
+    //     const planId = this.stance.planId();
+    //     const plan = plans[this.stance.productId()].find(plan => plan.id === planId);
+    //     console.log(planId)
+    //     console.log(runs)
+    //     console.log('runs')
+    //     console.log(plan)
+    //     if (plan.statistic$) {
+    //       plan.statistic$.next(this.get_statistic(runs));
+    //     }
+    //   });
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {this.dataLoading = false;});
+
+
+    // this.palladiumApiService.plans$.switchMap(plans => {
+    //   console.log('runs')
+    //   console.log(plans)
+    //   this.dataLoading = false;
+    //   return this.runs$.map(runs => {
+    //     const planId = this.stance.planId();
+    //     const plan = plans[this.stance.productId()].find(plan => plan.id === planId);
+    //     console.log(planId)
+    //     console.log(runs)
+    //     console.log(plan)
+    //     if (plan.statistic$) {
+    //       plan.statistic$.next(this.get_statistic(runs));
+    //     }
+    //   });
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {this.dataLoading = false;});
 
     // this.activeRoute$.map(id => {
     //
@@ -126,6 +174,24 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
     return new Statistic(data);
     // this.untestedPoint = new Point('0', this.palladiumApiService.case_count(this.stance.productId()) - this.statistic.all, this.statistic.all);
+  }
+
+  init_active_object(id) {
+    this.palladiumApiService.runs$.map(runs => runs[id]).first().subscribe(runs => {
+      const runId = this.stance.runId();
+      if (runId) {
+        this.activeObject = runs.find(run => run.id === +runId);
+      }
+    });
+  }
+
+  init_statistic(id) {
+    this.palladiumApiService.plans$.map(plans => {
+      if (plans[this.stance.productId()].find(plan => plan.id === id)) {
+        this.statistic$ = plans[this.stance.productId()].find(plan => plan.id === id).statistic$;
+        console.log(this.statistic$)
+      }
+    });
   }
 
   update_click() {
