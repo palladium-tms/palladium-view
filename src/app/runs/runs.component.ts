@@ -10,7 +10,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
-import {Observable, ReplaySubject} from 'rxjs';
+import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-runs',
@@ -22,6 +23,7 @@ import {Observable, ReplaySubject} from 'rxjs';
 export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   runs: Run[];
+  private unsubscribe: Subject<void> = new Subject();
   runs$: Observable<Run[]>;
   activeRoute$: Observable<{}>;
   params;
@@ -53,14 +55,17 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.runs$.switchMap((runs) => {
       this.dataLoading = false;
       return this.palladiumApiService.plans$.map(plans => {
-        const plan = plans[this.stance.productId()].find(plan => plan.id === this.stance.planId());
+        const planId = this.stance.planId();
+        const plan = plans[this.stance.productId()].find(plan => plan.id === planId);
+        console.log(planId)
+        console.log(plan)
         if (plan.statistic$) {
           plan.statistic$.next(this.get_statistic(runs));
         }
       });
-    }).subscribe(() => {this.dataLoading = false;});
+    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {this.dataLoading = false;});
 
-    this.params = this.activeRoute$.switchMap(id => {
+    this.activeRoute$.switchMap(id => {
       this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
       this.runs$.first().subscribe(runs => {
         const runId = this.stance.runId();
@@ -74,11 +79,11 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.statistic$ = plans[this.stance.productId()].find(plan => plan.id === id).statistic$;
         }
       });
-    }).subscribe(() => this.cd.detectChanges());
+    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
 
     this.activeRoute$.map((id: number) => {
       this.palladiumApiService.init_runs(id);
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     // this.activeRoute$.map(id => {
     //
@@ -162,7 +167,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(takeUntil(this.unsubscribe)).subscribe(result => {
       if (result) {
         if (result.path === 'run') {
           // this.runs = this.runs.filter(currentRun => currentRun.id !== result.id);
@@ -231,7 +236,8 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.cd.detach();
-    this.params.unsubscribe();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   log() {

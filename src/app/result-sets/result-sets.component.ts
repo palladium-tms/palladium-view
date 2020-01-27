@@ -10,8 +10,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
-import { Observable, ReplaySubject} from 'rxjs';
+import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {Status} from '../models/status';
+import {takeUntil} from 'rxjs/operators';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -42,6 +43,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSets$: Observable<ResultSet[]>;
   selectedResultSet$ = new ReplaySubject(1);
   statuses$: Observable<StructuredStatuses>;
+  private unsubscribe: Subject<void> = new Subject();
+
   notBlockedStatuses: Status[];
   statistic$: Observable<Statistic>;
   activeRoute$: Observable<number>;
@@ -83,7 +86,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.notBlockedStatuses.push(status);
         }
       });
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
@@ -93,7 +96,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
       this.palladiumApiService.get_result_sets(id);
-    }).map(() => this.cd.detectChanges()).subscribe();
+    }).map(() => this.cd.detectChanges()).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     // this.params = this.activeRoute$.pipe(run$ => this.stance.run$, plan$ => this.stance.plan$).map(x => {
     //   console.log(x)
@@ -109,7 +112,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.statistic$ = runs[this.stance.planId()].find(run => run.id === id).statistic$;
         }
       });
-    }).map(() => {this.cd.detectChanges();}).subscribe();
+    }).map(() => {this.cd.detectChanges();}).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     this.activeRoute$.switchMap(() => {
       return this.resultSets$.map(resultSets => {
@@ -122,7 +125,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           }
         }
       });
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 
   select_filter(filter) {
@@ -250,11 +253,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
-    // this.filter = [];
-    this.stance.run$.map(run => {
-      this.palladiumApiService.get_result_sets(run.id);
-    }).first().subscribe();
-    // this.selectAllFlag = false;
+    this.palladiumApiService.get_result_sets(this.stance.runId());
   }
 
   onActivate(componentRef) {
@@ -387,8 +386,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.params.unsubscribe();
-  }
+    this.cd.detach();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();  }
 }
 
 @Component({

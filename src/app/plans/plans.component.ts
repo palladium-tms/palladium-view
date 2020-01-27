@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Inject,
+  Inject, OnDestroy,
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
@@ -15,7 +15,8 @@ import {ProductSettingsComponent} from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {StatisticService} from '../../services/statistic.service';
 import {Plan} from "../models/plan";
-import {Observable, ReplaySubject} from "rxjs";
+import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-plans',
@@ -24,9 +25,10 @@ import {Observable, ReplaySubject} from "rxjs";
   encapsulation: ViewEncapsulation.Emulated,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PlansComponent implements OnInit {
+export class PlansComponent implements OnInit, OnDestroy {
   plans$: ReplaySubject<Plan[]> =  new ReplaySubject(1);
   activeRoute$: Observable<{}>;
+  private unsubscribe: Subject<void> = new Subject();
 
   plans: Plan[];
   selectedPlanId = 0;
@@ -50,7 +52,7 @@ export class PlansComponent implements OnInit {
 
     this.activeRoute$.switchMap((id: number) => {
       return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 
   clicked(event, plan) {
@@ -101,7 +103,7 @@ export class PlansComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(takeUntil(this.unsubscribe)).subscribe(result => {
         this.cd.detectChanges();
     });
   }
@@ -114,6 +116,12 @@ export class PlansComponent implements OnInit {
     if (confirm('Attention!! You will can not to undo this action')) {
       this.palladiumApiService.archive_plane(this.planForSettings.id);
     }
+  }
+
+  ngOnDestroy() {
+    this.cd.detach();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
 

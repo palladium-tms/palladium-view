@@ -8,6 +8,8 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SidenavService} from '../../services/sidenav.service';
 import {StanceService} from '../../services/stance.service';
 import {AuthenticationService} from '../../services/authentication.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
@@ -21,6 +23,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
   products;
   authorize;
   pinned = true;
+  private unsubscribe: Subject<void> = new Subject();
+
 
   constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -40,10 +44,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.palladiumApiService.get_products();
     this.authorize = (localStorage.getItem('auth_data') !== null);
     this.authenticationService.isAuthorized.next(this.authorize);
-    this.activatedRoute.params.subscribe(() => {
+    this.activatedRoute.params.pipe(takeUntil(this.unsubscribe)).subscribe(() => {
       this.cd.detectChanges();
     });
-    this.palladiumApiService.products$.subscribe(products => {
+    this.palladiumApiService.products$.pipe(takeUntil(this.unsubscribe)).subscribe(products => {
       this.products = products;
       if (this.stance.productId()) {
         const product = this.products.find(product => product.id === this.stance.productId());
@@ -92,6 +96,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.cd.detach();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 }
 
