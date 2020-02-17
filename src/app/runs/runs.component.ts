@@ -93,7 +93,10 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     return this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
-      this.get_statistic(runs[this.stance.planId()]);
+      const _runs = runs[this.stance.planId()];
+      if (_runs) {
+        this.get_statistic(runs[this.stance.planId()]);
+      }
     });
   }
 
