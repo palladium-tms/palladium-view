@@ -41,18 +41,18 @@ export class StanceService {
         return +url[1];
       }
   }
-  
+
   caseId():number {
     const url = this.router.url.match(/case\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
-  
+
   is_current_result_set(object):boolean {
     return object.path === 'result_set' && object.id === this.resultSetId();
   }
-  
+
   is_current_case(object):boolean {
     return object.path === 'case' && object.id === this.caseId();
   }

@@ -6,7 +6,7 @@ import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {ProductSettingsComponent} from '../products/products.component';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SearchPipe} from '../pipes/search/search.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
@@ -42,11 +42,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   resultSets$: Observable<ResultSet[]>;
   selectedResultSet$ = new ReplaySubject(1);
+  statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   statuses$: Observable<StructuredStatuses>;
   private unsubscribe: Subject<void> = new Subject();
 
   notBlockedStatuses: Status[];
-  statistic$: Observable<Statistic>;
   activeRoute$: Observable<number>;
   activeElement: ResultSet;
 
@@ -73,7 +73,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
               private palladiumApiService: PalladiumApiService, private router: Router,
               private dialog: MatDialog, private cd: ChangeDetectorRef,
               private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe) {
-    this.searchToggle = { 'toggle': false, 'color': 'none'};
+    this.searchToggle = {'toggle': false, 'color': 'none'};
   }
 
   ngOnInit() {
@@ -98,26 +98,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.palladiumApiService.get_result_sets(id);
     }).map(() => this.cd.detectChanges()).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    // this.params = this.activeRoute$.pipe(run$ => this.stance.run$, plan$ => this.stance.plan$).map(x => {
-    //   console.log(x)
-    // }).subscribe()
-
-
-
-
-      this.params = this.activeRoute$.switchMap(id => {
-
-      return this.palladiumApiService.runs$.map(runs => {
-        if (runs[this.stance.planId()].find(plan => plan.id === id)) {
-          this.statistic$ = runs[this.stance.planId()].find(run => run.id === id).statistic$;
-        }
-      });
-    }).map(() => {this.cd.detectChanges();}).pipe(takeUntil(this.unsubscribe)).subscribe();
-
     this.activeRoute$.switchMap(() => {
       return this.resultSets$.map(resultSets => {
         if (resultSets) {
           const resultSetId = this.stance.resultSetId();
+          this.get_statistic(resultSets);
           if (resultSetId) {
             this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
           } else {
@@ -126,6 +111,28 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    this.activeRoute$.switchMap(id => {
+      return this.palladiumApiService.runs$.map(runs => {
+        const planId = this.stance.planId();
+        const run = runs[planId].find(plan => plan.id === id);
+        if (run) {
+          run.statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
+        }
+      });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    this.statistic$.switchMap(statistic => {
+      return this.palladiumApiService.runs$.map(runs => {
+        const planId = this.stance.planId();
+        const runId = this.stance.runId();
+        runs[planId].find(run => run.id === runId).statistic$.next(statistic);
+      });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    return this.palladiumApiService.resultSets$.pipe(takeUntil(this.unsubscribe)).subscribe(resultSets => {
+      this.get_statistic(resultSets[this.stance.runId()]);
+    });
   }
 
   select_filter(filter) {
@@ -193,20 +200,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }).first().subscribe();
   }
 
-  // get_statistic() {
-  //   const data = {};
-  //   this.palladiumApiService.resultSets[this.stance.runId()].forEach(resultSet => {
-  //     if (!data[resultSet.status]) {
-  //       data[resultSet.status] = 0;
-  //     }
-  //     data[resultSet.status] += 1;
-  //   });
-  //   this.statistic = new Statistic(data);
-  //   this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
-  //   this.untestedPoint = new Point('0', this.cases.length - this.palladiumApiService.resultSets[this.stance.runId()].length, this.palladiumApiService.resultSets[this.stance.runId()].length);
-  //   this.cd.detectChanges();
-  //   this.stat.update_run_statistic(this.statistic);
-  // }
+  get_statistic(resultSets) {
+    const data = {};
+    resultSets.forEach(resultSet => {
+      if (!data[resultSet.status]) {
+        data[resultSet.status] = 0;
+      }
+      data[resultSet.status] += 1;
+    });
+    this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
+    // this.untestedPoint = new Point('0', this.cases.length - this.palladiumApiService.resultSets[this.stance.runId()].length, this.palladiumApiService.resultSets[this.stance.runId()].length);
+    this.statistic$.next(new Statistic(data));
+  }
 
   delete_filter_without_elements(data) {
     this.filter.forEach((element, index) => {
@@ -388,7 +393,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.cd.detach();
     this.unsubscribe.next();
-    this.unsubscribe.complete();  }
+    this.unsubscribe.complete();
+  }
 }
 
 @Component({

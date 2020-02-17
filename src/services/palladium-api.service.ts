@@ -443,9 +443,12 @@ export class PalladiumApiService {
       this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
       planIds.forEach(planId => {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
-        this.logger.debug('get_plans_statistic. statistic:');
+        this.logger.debug('get_plans_statistic:');
+        this.logger.debug(statistic);
         if (!this._runs[planId]) {
           this.logger.debug('get_plans_statistic. Statistic sended runs is not  exist');
+          console.log('statistic Alive')
+
           this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
         }
       });
