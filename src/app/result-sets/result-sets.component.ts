@@ -131,7 +131,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     return this.palladiumApiService.resultSets$.pipe(takeUntil(this.unsubscribe)).subscribe(resultSets => {
-      this.get_statistic(resultSets[this.stance.runId()]);
+      const _resultSets = resultSets[this.stance.runId()];
+      if (_resultSets) {
+        this.get_statistic(resultSets[this.stance.runId()]);
+      }
     });
   }
 
