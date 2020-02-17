@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
+import {PalladiumApiService, Token} from '../../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-token',
@@ -24,23 +25,18 @@ export class TokenComponent {
 })
 
 export class TokenDialogComponent implements OnInit, OnDestroy {
-  mode: 'loading' | 'exist' | 'empty' = 'loading';
-  tokens;
+  tokens$: Observable<Token[]>;
   tokenForm = new FormGroup({
     name: new FormControl('',  [Validators.required])
   });
 
   constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
 
-  async ngOnInit() {
-    this.tokens = await this.palladiumApiService.get_tokens();
-    if (this.tokens) {
-      this.mode = 'empty';
-    }
-    this.cd.detectChanges();
+  ngOnInit() {
+    this.tokens$ = this.palladiumApiService.get_tokens();
   }
 
-    get name() { return this.tokenForm.get('name'); }
+  get name() { return this.tokenForm.get('name'); }
 
   create_token(): void {
     this.palladiumApiService.create_token(this.name.value).then(token => {

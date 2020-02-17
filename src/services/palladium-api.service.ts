@@ -48,11 +48,21 @@ export interface StructuredResults {
 
 // {productId: {run_name: [resultSet,  resultSet, resultSet]}}
 export interface StructuredHistoryPack {
-  [key: number]: {[key: string]: ResultSet[]};
+  [key: number]: { [key: string]: ResultSet[] };
 }
 
 export interface UserSettings {
   timeZone: ReplaySubject<string>;
+}
+
+export interface RequestToken {
+  tokens: Token[];
+}
+export interface Token {
+  id: number;
+  name: string;
+  token: string;
+  user_id: number;
 }
 
 @Injectable()
@@ -147,22 +157,18 @@ export class PalladiumApiService {
   // #endregion
 
   // //#region Token
-  // async get_tokens() {
-  //   return await this.httpService.postData('/tokens', '').then((resp: any) => {
-  //     return resp['tokens'];
-  //   }, (errors: any) => {
-  //     console.log(errors);
-  //     this.authenticationService.logout();
-  //     this.router.navigate(['/singin']);
-  //   });
-  // }
-  //
+  get_tokens(): Observable<Token[]> {
+    return this.httpService.postData('/tokens', '').map((resp: RequestToken) => {
+      return resp.tokens;
+    });
+  }
+
   // create_token(name: string): Promise<JSON> {
   //   return this.httpService.postData('/token_new', {token_data: {name: name}}).then((resp: any) => {
   //     return resp;
   //   });
   // }
-  //
+
   // //#endregion
   //
   // #region Suite
@@ -276,10 +282,10 @@ export class PalladiumApiService {
   //   return _case;
   // }
 
-  get_history(caseData: ({id: number} | {result_set_id: number})): void {
+  get_history(caseData: ({ id: number } | { result_set_id: number })): void {
     this.httpService.postData('/case_history', {case_data: caseData}).map(resp => {
-      const productId  = resp['product_id'];
-      const suiteName  = resp['suite_name'];
+      const productId = resp['product_id'];
+      const suiteName = resp['suite_name'];
       this._historyPack[productId] = this._historyPack[productId] || {};
       this._historyPack[productId][suiteName] = this._historyPack[productId][suiteName] || [];
       resp['result_sets_history'].forEach(data => {
@@ -288,6 +294,7 @@ export class PalladiumApiService {
       this.historyPack$.next(this._historyPack);
     }).subscribe();
   }
+
   //#endregion
 
   //#region Run
@@ -342,6 +349,7 @@ export class PalladiumApiService {
   run_name_by_id(runId: number, planId: number): string {
     return this._runs[planId].find(run => run.id === runId).name;
   }
+
   //#endregion
 
   //#region Products
