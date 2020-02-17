@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from './http-request.service';
 import {AuthenticationService} from './authentication.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {Suite} from '../app/models/suite';
 import {Run} from '../app/models/run';
 import {Product} from '../app/models/product';
@@ -447,8 +447,6 @@ export class PalladiumApiService {
         this.logger.debug(statistic);
         if (!this._runs[planId]) {
           this.logger.debug('get_plans_statistic. Statistic sended runs is not  exist');
-          console.log('statistic Alive')
-
           this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
         }
       });
