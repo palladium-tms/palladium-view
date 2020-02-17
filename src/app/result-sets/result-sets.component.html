@@ -24,15 +24,15 @@
       <!--</button>-->
     </div>
   </div>
-  <!--<mat-card class="search-bar" *ngIf="searchToggle.toggle">-->
-    <!--<mat-form-field color="accent" class="search-input" floatLabel="never">-->
-      <!--<input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"-->
-             <!--placeholder="Search" autofocus>-->
-      <!--<button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">-->
-        <!--<mat-icon>close</mat-icon>-->
-      <!--</button>-->
-    <!--</mat-form-field>-->
-  <!--</mat-card>-->
+  <mat-card class="search-bar" *ngIf="searchToggle.toggle">
+    <mat-form-field color="accent" class="search-input" floatLabel="never">
+      <input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"
+             placeholder="Search" autofocus>
+      <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </mat-card>
   <div class="item-list" *ngIf="(resultSets$ | async) as resultSets">
     <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
       <mat-card class="item mat-elevation-z1"
