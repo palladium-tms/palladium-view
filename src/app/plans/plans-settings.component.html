@@ -2,11 +2,8 @@
 <mat-dialog-content>
   <form autocomplete="off" [formGroup]="planForm">
     <mat-form-field color="accent" style="width: 100%">
-      <input (keyup)="check_existing()" matInput formControlName="name" placeholder="Plan name"
+      <input matInput formControlName="name" placeholder="Plan name"
              autocomplete="off" [value]="item.name">
-      <mat-error *ngIf="name.hasError('is_exist')">
-        PLan with this name is exist
-      </mat-error>
       <mat-error *ngIf="name.hasError('required')">
         Name is required
       </mat-error>

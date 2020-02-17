@@ -30,7 +30,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   activeRoute$: Observable<{}>;
   private unsubscribe: Subject<void> = new Subject();
 
-  plans: Plan[];
   selectedPlanId = 0;
   planForSettings;
   RUN_COMPONENT;
@@ -70,27 +69,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.palladiumApiService.init_plans(id, this.stance.planId());
   }
 
-  // init_data() {
-  //   this.loading = true;
-  //   this.cd.detectChanges();
-  //   this.selectedPlan = 0;
-  //   let promisePlans;
-  //   if (this.stance.planId()) {
-  //     promisePlans = this.palladiumApiService.get_plans_to_id(this.productId, this.stance.planId());
-  //   } else if (!this.palladiumApiService.plans[this.productId]) {
-  //     promisePlans = this.palladiumApiService.get_plans(this.productId, 0);
-  //   } else {
-  //     promisePlans = Promise.resolve(this.palladiumApiService.plans[this.productId]);
-  //   }
-  //   Promise.all([promisePlans]).then(() => {
-  //     if (this.stance.planId()) {
-  //       this.selectedPlan = this.palladiumApiService.plans[this.productId].find(plan => plan.id === this.stance.planId()).id;
-  //     }
-  //     this.loading = false;
-  //     this.cd.detectChanges();
-  //   });
-  // }
-
   onActivate(componentRef) {
     this.RUN_COMPONENT = componentRef;
   }
@@ -98,7 +76,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   open_settings() {
     const dialogRef = this.dialog.open(PlansSettingsComponent, {
       data: {
-        plans: this.plans,
         plan: this.planForSettings
       }
     });
@@ -144,7 +121,6 @@ export class PlansSettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._plans = this.data.plans;
     this.item = this.data.plan;
     this.planForm.patchValue({name: this.item.name});
   }
@@ -160,23 +136,8 @@ export class PlansSettingsComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  name_is_existed() {
-    if (this.item) {
-      if (this.name_is_not_changed()) {
-        return false;
-      }
-      return this._plans.some(product => product.name === this.name.value);
-    }
-  }
-
   name_is_not_changed() {
     return this.item.name === this.name.value;
-  }
-
-  check_existing() {
-    if (this.name_is_existed()) {
-      this.planForm.controls['name'].setErrors({'incorrect': true});
-    }
   }
 
   delete_plan() {
