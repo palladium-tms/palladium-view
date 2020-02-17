@@ -84,7 +84,6 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('asdasd')
     // this.cd.detach();
     // this.params.unsubscribe();
   }
