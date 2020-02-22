@@ -163,11 +163,11 @@ export class PalladiumApiService {
     });
   }
 
-  // create_token(name: string): Promise<JSON> {
-  //   return this.httpService.postData('/token_new', {token_data: {name: name}}).then((resp: any) => {
-  //     return resp;
-  //   });
-  // }
+  create_token(name: string): Observable<Token[]> {
+    return this.httpService.postData('/token_new', {token_data: {name}}).map(resp => {
+      return resp['token_data'];
+    });
+  }
 
   // //#endregion
   //

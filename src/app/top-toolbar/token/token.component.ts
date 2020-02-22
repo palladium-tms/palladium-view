@@ -39,9 +39,9 @@ export class TokenDialogComponent implements OnInit, OnDestroy {
   get name() { return this.tokenForm.get('name'); }
 
   create_token(): void {
-    this.palladiumApiService.create_token(this.name.value).then(token => {
-      this.tokens.push(token['token_data']);
-      this.cd.detectChanges();
+    this.palladiumApiService.create_token(this.name.value).subscribe(_ => {
+      this.tokens$ = this.palladiumApiService.get_tokens();
+        this.cd.detectChanges();
     });
   }
 
