@@ -141,13 +141,12 @@ export class PalladiumApiService {
   //   });
   // }
   //
-  // update_status(id, name, color): Promise<Status> {
-  //   return this.httpService.postData('/status_edit', {status_data: {id, name, color}}).then((resp: any) => {
-  //     this.statuses[id] = new Status(resp['status']);
-  //     this.statusObservable.next(this.statuses);
-  //     return new Status(resp['status']);
-  //   });
-  // }
+  update_status(id, name, color): void {
+    this.httpService.postData('/status_edit', {status_data: {id, name, color}}).subscribe(response => {
+      this._statuses[id] = new Status(response['status']);
+      this.statuses$.next(this._statuses);
+    });
+  }
   //
   // async status_new(name, color) {
   //   const resp = await this.httpService.postData('/status_new', {status_data: {color: color, name: name}});

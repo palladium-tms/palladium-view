@@ -55,20 +55,15 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  async save() {
+  save() {
     if (this.mode === 'editing') {
-      this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
-        this.selected.name = res.name;
-        this.selected.color = res.color;
-        this.mode = 'list_show';
-        this.cd.detectChanges();
-      });
+      this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value);
     } else {
-      const newStatus = await this.palladiumApiService.status_new(this.name.value, this.color.value);
-      this.statuses.push(newStatus);
-      this.mode = 'list_show';
-      this.empty_statuses_list();
-      this.cd.detectChanges();
+      // const newStatus = await this.palladiumApiService.status_new(this.name.value, this.color.value);
+      // this.statuses.push(newStatus);
+      // this.mode = 'list_show';
+      // this.empty_statuses_list();
+      // this.cd.detectChanges();
     }
     this.reset_form();
     this.cd.detectChanges();
