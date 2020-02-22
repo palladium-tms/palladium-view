@@ -124,6 +124,8 @@ export class RunsComponent implements OnInit, OnDestroy {
         this.activeObject.statistic$.map(x => {
           this.get_statistic(runs);
         }).subscribe();
+      } else {
+        this.activeObject = undefined;
       }
     });
   }
