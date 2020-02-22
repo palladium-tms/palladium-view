@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
+import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-status-settings',
@@ -22,9 +23,11 @@ export class StatusSettingsComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
-  mode: 'editing' | 'creating' | 'list_show' | 'empty' | 'loading' = 'loading';
+  mode: 'editing' | 'creating' | 'list_show' | 'empty' = 'list_show';
   statuses;
   selected;
+  statuses$: Observable<StructuredStatuses>;
+
   statusForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.maxLength(40)]),
     color: new FormControl('', [Validators.required])
@@ -40,14 +43,8 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
     return this.statusForm.get('color');
   }
 
-  async ngOnInit() {
-    this.mode = 'loading';
-    this.palladiumApiService.get_not_blocked_statuses().then(res => {
-      this.statuses = res;
-      this.mode = 'list_show';
-      this.empty_statuses_list();
-      this.cd.detectChanges();
-    });
+  ngOnInit() {
+    this.statuses$ = this.palladiumApiService.statuses$.map(statuses => Object.values(statuses).filter(status => !status.block));
   }
 
   edit(status) {
