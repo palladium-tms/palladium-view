@@ -1,4 +1,6 @@
 import {Statistic} from './statistic';
+import {ReplaySubject} from 'rxjs';
+import {Case} from './case';
 
 export class Suite {
   id: number;
@@ -6,6 +8,7 @@ export class Suite {
   product_id: number;
   created_at: string;
   updated_at: string;
+  cases$: ReplaySubject<Case[]> = new ReplaySubject(1);
   statistic: Statistic;
   path = 'suite';
   constructor (suite) {

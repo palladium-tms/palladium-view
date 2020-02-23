@@ -216,35 +216,32 @@ export class PalladiumApiService {
   // #endregion
 
   // //#region Cases
-  // get_cases(id): Promise<any> {
-  //   return this.httpService.postData('/cases', {case_data: {suite_id: id}}).then((resp: any) => {
-  //     this.cases = [];
-  //     Object(resp['cases']).forEach(current_case => {
-  //       this.cases.push(new Case(current_case));
-  //     });
-  //     return this.cases;
-  //   }, (errors: any) => {
-  //     console.log(errors);
-  //   });
-  // }
-  //
-  // get_cases_by_run_id(run_id, product_id): Promise<any> {
-  //   return this.httpService.postData('/cases', {
-  //     case_data: {
-  //       run_id: run_id,
-  //       product_id: product_id
-  //     }
-  //   }).then((resp: any) => {
-  //     this.cases = [];
-  //     Object(resp['cases']).forEach(current_case => {
-  //       this.cases.push(new Case(current_case));
-  //     });
-  //     return this.cases;
-  //   }, (errors: any) => {
-  //     console.log(errors);
-  //   });
-  // }
-  //
+  get_cases(id): void {
+    this.httpService.postData('/cases', {case_data: {suite_id: id}}).map(resp => {
+      const _cases = [];
+      Object(resp['cases']).forEach(currentCase => {
+        _cases.push(new Case(currentCase));
+      });
+      return this.cases;
+    }).subscribe();
+  }
+
+  get_cases_by_run_id(runId, productId): void {
+    this.httpService.postData('/cases', {
+      case_data: {
+        run_id: runId,
+        product_id: productId
+      }
+    }).map(resp => {
+      const _cases = [];
+      Object(resp['cases']).forEach(currentCase => {
+        _cases.push(new Case(currentCase));
+      });
+      const suite =  this._suites[resp['suite']['product_id']].find(suite => suite.id === resp['suite']['id']);
+      suite.cases$.next(_cases);
+    }).subscribe();
+  }
+
   edit_case_by_result_set_id(resultSetId, runId, name): void {
     this.httpService.postData('/case_edit', {case_data: {result_set_id: resultSetId, name}}).map(response => {
       this._resultSets[runId][this._resultSets[runId].findIndex(x => x.id === resultSetId)].name = name;
