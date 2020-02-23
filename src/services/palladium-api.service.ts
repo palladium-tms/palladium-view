@@ -364,7 +364,7 @@ export class PalladiumApiService {
   }
 
   send_product_position(productIds) {
-    return this.httpService.postData('/set_product_position', {product_position: productIds});
+    return this.httpService.postData('/set_product_position', {product_position: productIds}).subscribe();
   }
 
   //#endregion
