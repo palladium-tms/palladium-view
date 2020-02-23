@@ -164,10 +164,10 @@ export class PalladiumApiService {
       response['suites'].forEach(suite => {
         suites.push(new Suite(suite));
       });
-      const product = this._products.find(product => product.id === productId);
+      const product = this._products.find(product => product.id === +productId);
       this._suites[productId] = suites;
       if (product) {
-        this._products.find(product => product.id === productId).suites$.next(suites);
+        product.suites$.next(suites);
       }
     }).subscribe();
   }
@@ -342,6 +342,11 @@ export class PalladiumApiService {
   get_products(): void {
     this.httpService.postData('/products', '').map(response => {
       this._products = response['products'].map(product => new Product(product));
+      Object.keys(this._suites).forEach(productId => {
+        this._products.find(product => {
+          return product.id === +productId;
+        }).suites$.next(this._suites[productId]);
+      });
       this.products$.next(this._products);
     }).subscribe();
   }

@@ -33,6 +33,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   runs: Run[];
   private unsubscribe: Subject<void> = new Subject();
   runs$: Observable<Run[]>;
+  suites$: ReplaySubject<Suite[]>;
   activeRoute$: Observable<number>;
   params;
 
@@ -52,8 +53,7 @@ export class RunsComponent implements OnInit, OnDestroy {
               private router: Router,
               private statisticService: StatisticService,
               private dialog: MatDialog,
-              private cd: ChangeDetectorRef) {
-  }
+              private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
@@ -82,6 +82,13 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).subscribe();
 
+    this.activeRoute$.switchMap(() => {
+      return this.palladiumApiService.products$.map(products => {
+        const productId = this.stance.productId();
+        this.suites$ = products.find(product => product.id === productId).suites$;
+      });
+    }).subscribe();
+
     this.statistic$.switchMap(statistic => {
 
       return this.palladiumApiService.plans$.map(plans => {
@@ -92,7 +99,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    return this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
+    this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
       const _runs = runs[this.stance.planId()];
       if (_runs) {
         this.get_statistic(runs[this.stance.planId()]);

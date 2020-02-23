@@ -10,33 +10,50 @@
     </div>
   </div>
   <div class="item-list" *ngIf="(runs$ | async) as runs; else loading">
-    <mat-card class="item mat-elevation-z1"
-              *ngFor="let object of runs| statisticFilter:[filter, untestedCash]"
-              (click)="clicked($event, object)"
-              [ngClass]="{'selected': activeObject?.is_a(object)}">
-      <div class="run-name">
-        <div class="item-name">{{object.name}}</div>
-        <div class="settings-menu">
-          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div class="item-statistic" *ngIf="(statuses$ | async) as statuses">
-        <div class="status-elements-no-empty">
-          <div *ngFor="let point of (object.statistic$ | async).points"
-               [ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': statuses[point.status].color}">
+    <ng-container *ngIf="(runs$ | async) as runs; else loading">
+      <mat-card class="item mat-elevation-z1"
+                *ngFor="let object of runs| statisticFilter:[filter, untestedCash]"
+                (click)="clicked($event, object)"
+                [ngClass]="{'selected': activeObject?.is_a(object)}">
+        <div class="run-name">
+          <div class="item-name">{{object.name}}</div>
+          <div class="settings-menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
+              <mat-icon>more_vert</mat-icon>
+            </button>
           </div>
         </div>
-        <!--<div *ngIf="object.path === 'run'" [ngStyle]="{ 'width': untestedCash[object.name].attitude *100 + '%',-->
-         <!--'background-color': palladiumApiService.get_status_by_id(untestedCash[object.name].status).color}" >-->
-        <!--</div>-->
-      </div>
-      <mat-card-subtitle class="item-statistic">
-        <app-point [point] = point *ngFor="let point of (object.statistic$ | async).points" ></app-point>
-        <!--<app-point [point] = untestedCash[object.name] ></app-point>-->
-      </mat-card-subtitle>
-    </mat-card>
+        <div class="item-statistic" *ngIf="(statuses$ | async) as statuses">
+          <div class="status-elements-no-empty">
+            <div *ngFor="let point of (object.statistic$ | async).points"
+                 [ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': statuses[point.status].color}">
+            </div>
+          </div>
+          <!--<div *ngIf="object.path === 'run'" [ngStyle]="{ 'width': untestedCash[object.name].attitude *100 + '%',-->
+          <!--'background-color': palladiumApiService.get_status_by_id(untestedCash[object.name].status).color}" >-->
+          <!--</div>-->
+        </div>
+        <mat-card-subtitle class="item-statistic">
+          <app-point [point] = point *ngFor="let point of (object.statistic$ | async).points" ></app-point>
+          <!--<app-point [point] = untestedCash[object.name] ></app-point>-->
+        </mat-card-subtitle>
+      </mat-card>
+    </ng-container>
+    <ng-container *ngIf="(suites$ | async) as suites">
+      <mat-card class="item mat-elevation-z1"
+                *ngFor="let object of suites| runsFilter: (runs$ | async)| statisticFilter:[filter, untestedCash]"
+                (click)="clicked($event, object)"
+                [ngClass]="{'selected': activeObject?.is_a(object)}">
+        <div class="run-name">
+          <div class="item-name">{{object.name}}</div>
+          <div class="settings-menu">
+            <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    </ng-container>
   </div>
   <ng-template #loading>
     <div class="loader">
