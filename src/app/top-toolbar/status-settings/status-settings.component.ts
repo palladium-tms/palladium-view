@@ -44,7 +44,12 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.statuses$ = this.palladiumApiService.statuses$.map(statuses => Object.values(statuses).filter(status => !status.block));
+    this.statuses$ = this.palladiumApiService.statuses$.map(statuses => {
+      if (statuses === {}) {
+        this.mode = 'empty';
+      }
+      return Object.values(statuses).filter(status => !status.block);
+    });
   }
 
   edit(status) {
@@ -60,30 +65,14 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
       this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value);
     } else {
       this.palladiumApiService.status_new(this.name.value, this.color.value);
-      // this.statuses.push(newStatus);
-      // this.mode = 'list_show';
-      // this.empty_statuses_list();
-      // this.cd.detectChanges();
     }
-    // this.reset_form();
+    this.mode = 'list_show';
   }
 
   delete_status() {
     if (confirm('A u shuare?')) {
-      this.palladiumApiService.block_status(this.selected.id).then(res => {
-        this.statuses = this.statuses.filter(status => status.id !== res['id']);
-        this.mode = 'list_show';
-        this.selected = null;
-        this.empty_statuses_list();
-        this.statusForm.reset();
-        this.cd.detectChanges();
-      });
-    }
-  }
-
-  empty_statuses_list() {
-    if (!this.statuses.length) {
-      this.mode = 'empty';
+      this.palladiumApiService.block_status(this.selected.id);
+      this.mode = 'list_show';
     }
   }
 

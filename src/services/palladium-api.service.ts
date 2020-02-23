@@ -121,26 +121,13 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
-  // get_status_by_id(id): Status {
-  //   return this.statuses[id] || this.statuses[0];
-  // }
-  //
-  // get_not_blocked_statuses(): Promise<Status[]> {
-  //   return this.httpService.postData('/not_blocked_statuses', '').then((resp: any) => {
-  //     const statuses = [];
-  //     Object.keys(resp['statuses']).forEach(key => {
-  //       statuses.push(new Status(resp['statuses'][key]));
-  //     });
-  //     return statuses;
-  //   });
-  // }
-  //
-  // block_status(id): Promise<JSON> {
-  //   return this.httpService.postData('/status_edit', {status_data: {id: id, block: true}}).then((resp: any) => {
-  //     return resp['status'];
-  //   });
-  // }
-  //
+  block_status(id): void {
+    this.httpService.postData('/status_edit', {status_data: {id, block: true}}).subscribe(response => {
+      this._statuses[id] = new Status(response['status']);
+      this.statuses$.next(this._statuses);
+    });
+  }
+
   update_status(id, name, color): void {
     this.httpService.postData('/status_edit', {status_data: {id, name, color}}).subscribe(response => {
       this._statuses[id] = new Status(response['status']);
