@@ -11,13 +11,10 @@ import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
 import {History} from '../app/models/history_object';
 import {Status} from '../app/models/status';
-import {Invite} from '../app/models/invite';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
-import {map} from 'rxjs/operators';
 import {NGXLogger} from 'ngx-logger';
-import {delay} from 'rxjs/internal/operators';
 
 export interface StructuredStatuses {
   [key: number]: Status;
