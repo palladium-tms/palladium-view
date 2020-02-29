@@ -41,14 +41,14 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ResultValueComponent} from 'app/page-component/result-value/result-value.component';
 import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
 import {SelectedElementPipe} from '../pipes/selected-element/selected-element.pipe';
-import {RunsFilterPipe} from '../runs/runs-filter.pipe';
+import {UniqueNameFilterPipe} from '../runs/unique-name-filter.pipe';
 
 @NgModule({
   declarations: [SortByUpdatedAtPipe,
     SelectedElementPipe,
     SortByCreatedAtPipe,
     StatusFilterPipe,
-    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, RunsFilterPipe, ResultValueComponent],
+    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, UniqueNameFilterPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -94,7 +94,7 @@ import {RunsFilterPipe} from '../runs/runs-filter.pipe';
     StatisticFilterPipe,
     VirtualscrollPipe,
     SortByUpdatedAtPipe,
-    RunsFilterPipe,
+    UniqueNameFilterPipe,
     SearchPipe,
     SelectedElementPipe,
     MatAutocompleteModule,

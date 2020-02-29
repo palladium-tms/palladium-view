@@ -41,7 +41,7 @@
     </ng-container>
     <ng-container *ngIf="(suites$ | async) as suites">
       <mat-card class="item mat-elevation-z1"
-                *ngFor="let object of suites| runsFilter: (runs$ | async)| statisticFilter:[filter, untestedCash]"
+                *ngFor="let object of suites| uniqueNameFilter: runs| statisticFilter:[filter, untestedCash]"
                 (click)="clicked($event, object)"
                 [ngClass]="{'selected': activeObject?.is_a(object)}">
         <div class="run-name">
