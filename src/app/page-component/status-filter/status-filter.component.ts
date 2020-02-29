@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
 import {Observable} from "rxjs";
 import {PointActivityInterface} from '../../models/statistic';
@@ -14,8 +14,7 @@ export class StatusFilterComponent implements OnInit {
   selected: boolean;
   statuses$: Observable<StructuredStatuses>;
 
-  constructor(private palladiumApi: PalladiumApiService, private cd: ChangeDetectorRef) { }
-
+  constructor(private palladiumApi: PalladiumApiService) { }
 
   ngOnInit() {
     this.statuses$ = this.palladiumApi.statuses$.pipe();
