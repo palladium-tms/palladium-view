@@ -36,9 +36,9 @@ export class DetailResultComponent implements OnInit {
   }
 
   get_result() {
-    return this.ApiService.get_result(this.result_id).then(result => {
-      return result;
-    });
+    // return this.ApiService.get_result(this.result_id).then(result => {
+    //   return result;
+    // });
   }
   getStyles() {
       return {'border-right': '7px solid ' +  this.status.color};

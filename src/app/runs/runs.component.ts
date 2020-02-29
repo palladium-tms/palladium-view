@@ -18,7 +18,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
-import {Observable, of, race, ReplaySubject, Subject} from 'rxjs';
+import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -291,10 +291,10 @@ export class RunsSettingsComponent implements OnInit {
     if (this.run_opened) {
       this.palladiumApiService.edit_suite_by_run_id(this.object, this.name.value, this.stance.planId());
     } else {
-      this.palladiumApiService.edit_suite(this.object.id, this.object.name).then((suite: Suite) => {
-        this.object.name = suite.name;
-        this.object.updated_at = suite.updated_at;
-      });
+      // this.palladiumApiService.edit_suite(this.object.id, this.object.name).then((suite: Suite) => {
+      //   this.object.name = suite.name;
+      //   this.object.updated_at = suite.updated_at;
+      // });
     }
   }
 

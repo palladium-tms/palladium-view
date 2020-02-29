@@ -26,18 +26,18 @@ export class InviteDialogComponent implements OnInit, OnDestroy {
   constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
-    this.invite = await this.palladiumApiService.get_invite();
-    if (this.invite) {
-      this.mode = 'exist';
-    } else {
-      this.mode = 'empty';
-    }
+    // this.invite = await this.palladiumApiService.get_invite();
+    // if (this.invite) {
+    //   this.mode = 'exist';
+    // } else {
+    //   this.mode = 'empty';
+    // }
     this.cd.detectChanges();
   }
 
   async generate_invite() {
     this.mode = 'generating';
-    this.invite = await this.palladiumApiService.generate_invite();
+    // this.invite = await this.palladiumApiService.generate_invite();
     this.mode = 'exist';
     this.cd.detectChanges();
   }

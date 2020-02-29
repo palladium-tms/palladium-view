@@ -60,24 +60,24 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
 
   init_data(id) {
     this.loading = true;
-    this.history = [];
-    Promise.all([this.get_case_history(id)]).then(res => {
-      this.history = res[0];
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+    // this.history = [];
+    // Promise.all([this.get_case_history(id)]).then(res => {
+    //   this.history = res[0];
+    //   this.loading = false;
+    //   this.cd.detectChanges();
+    // });
   }
 
   get_case_history(id) {
-    return this.palladiumApiService.history(id);
+    // return this.palladiumApiService.history(id);
   }
 
   async get_results(history) {
     if (this.resultsData[history.id] === undefined) {
       history.object_status = 'loading';
-      const results = await this.palladiumApiService.results(history.id);
+      // const results = await this.palladiumApiService.results(history.id);
       history.object_status = 'closed';
-      this.resultsData[history.id] = {results};
+      // this.resultsData[history.id] = {results};
     }
     history.object_status === 'closed' ? history.object_status = 'opened' : history.object_status = 'closed';
     this.cd.detectChanges();

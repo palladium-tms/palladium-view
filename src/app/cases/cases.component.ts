@@ -35,11 +35,11 @@ export class CasesComponent implements OnInit {
 
   get_cases() {
     this.loading = true;
-    this.palladiumApiService.get_cases(this.suiteId).then(cases => {
-      this.cases = cases;
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+    // this.palladiumApiService.get_cases(this.suiteId).then(cases => {
+    //   this.cases = cases;
+    //   this.loading = false;
+    //   this.cd.detectChanges();
+    // });
   }
 
   update_click() {

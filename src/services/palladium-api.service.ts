@@ -473,9 +473,9 @@ export class PalladiumApiService {
   }
 
   async archive_plane(planId) {
-    return this.httpService.postData('/plan_archive', {plan_data: {id: planId}}).then(response => {
-      console.log(response);
-    });
+    // return this.httpService.postData('/plan_archive', {plan_data: {id: planId}}).then(response => {
+    //   console.log(response);
+    // });
   }
 
   delete_plan(id): void {
@@ -522,12 +522,12 @@ export class PalladiumApiService {
   }
 
 
-  get_result(result_id): Promise<any> {
-    return this.httpService.postData('/result', {result_data: {id: result_id}})
-      .then(
-        result => {
-          return new Result(result['result']);
-        }, error => console.log(error));
+  get_result(result_id) {
+    // return this.httpService.postData('/result', {result_data: {id: result_id}})
+    //   .then(
+    //     result => {
+    //       return new Result(result['result']);
+    //     }, error => console.log(error));
   }
 
   result_new(resultSets, description, status): void {

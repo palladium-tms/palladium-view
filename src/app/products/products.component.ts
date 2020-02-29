@@ -26,7 +26,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
 
-  constructor(private palladiumApiService: PalladiumApiService,
+  constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
               private activatedRoute: ActivatedRoute,
               public router: Router, private dialog: MatDialog,
