@@ -1,7 +1,7 @@
 <div class="run-space">
   <div class="toolbar">
     <div class="filters" *ngIf="(statistic$ | async)">
-      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event)></app-status-filter-bar>
+      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event) [caseCount$]=caseCount$></app-status-filter-bar>
     </div>
     <div class="buttons">
       <button mat-icon-button (click)="update_click()" [disabled]=dataLoading>

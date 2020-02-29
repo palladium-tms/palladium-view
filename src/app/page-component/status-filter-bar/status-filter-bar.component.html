@@ -4,4 +4,5 @@
     [pointActivity]=pointActivity
     (click)="select_filter(pointActivity)">
   </app-status-filter>
+  <app-status-filter *ngIf="untestedPointActivity" [pointActivity]=untestedPointActivity (click)="select_filter(untestedPointActivity)"></app-status-filter>
 </ng-container>

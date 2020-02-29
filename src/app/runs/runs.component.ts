@@ -41,6 +41,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   ResultSetComponent;
   untestedCash = {};
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
+  caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
   dataLoading = true;
@@ -85,7 +86,11 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.activeRoute$.switchMap(() => {
       return this.palladiumApiService.products$.map(products => {
         const productId = this.stance.productId();
-        this.suites$ = products.find(product => product.id === productId).suites$;
+        const product = products.find(product => product.id === productId);
+        product.caseCount$.first().subscribe(caseCount => {
+          this.caseCount$.next(caseCount);
+        });
+        this.suites$ = product.suites$;
       });
     }).subscribe();
 
