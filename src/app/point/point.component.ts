@@ -9,6 +9,7 @@ import {Observable} from 'rxjs';
 })
 export class PointComponent implements OnInit {
   @Input() point;
+  @Input() filter;
   statuses$: Observable<StructuredStatuses>;
 
   constructor(private palladiumApiService: PalladiumApiService,) { }

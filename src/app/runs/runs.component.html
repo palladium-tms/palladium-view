@@ -33,8 +33,8 @@
           </div>
         </div>
         <mat-card-subtitle class="item-statistic">
-          <app-point [point] = point *ngFor="let point of (object.statistic$ | async).points" ></app-point>
-          <app-point [point] = untestedSpace[object.name]?.point ></app-point>
+          <app-point [point] = point *ngFor="let point of (object.statistic$ | async).points" [filter] = filter></app-point>
+          <app-point [point] = untestedSpace[object.name]?.point [filter] = filter ></app-point>
         </mat-card-subtitle>
       </mat-card>
     </ng-container>
