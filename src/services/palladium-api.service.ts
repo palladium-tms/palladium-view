@@ -237,8 +237,11 @@ export class PalladiumApiService {
       Object(resp['cases']).forEach(currentCase => {
         _cases.push(new Case(currentCase));
       });
-      const suite =  this._suites[resp['suite']['product_id']].find(suite => suite.id === resp['suite']['id']);
-      suite.cases$.next(_cases);
+      const suites = this._suites[resp['suite']['product_id']];
+      if (suites) {
+        const suite =  suites.find(suite => suite.id === resp['suite']['id']);
+        suite.cases$.next(_cases);
+      }
     }).subscribe();
   }
 
