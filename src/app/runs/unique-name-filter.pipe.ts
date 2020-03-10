@@ -8,7 +8,11 @@ import {Suite} from "../models/suite";
 
 export class UniqueNameFilterPipe implements PipeTransform {
   transform(objectForFilter: Array<Suite | Run>, objectForNameGetting: Array<Suite | Run>): Array<Suite | Run> {
-    const runsName = objectForNameGetting.map(run => run.name);
-    return objectForFilter.filter(suite => !runsName.includes(suite.name));
+    if (objectForNameGetting) {
+      const runsName = objectForNameGetting.map(run => run.name);
+      return objectForFilter.filter(suite => !runsName.includes(suite.name));
+    } else {
+      return objectForFilter;
+    }
   }
 }

@@ -38,3 +38,8 @@
 .mat-card {
   padding: 0 0.7em 0.2em;
 }
+
+.all_statistic-bar {
+  display: flex;
+  flex: 1;
+}

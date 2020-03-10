@@ -34,6 +34,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
   runs$: Observable<Run[]>;
   suites$: ReplaySubject<Suite[]>;
+  untestedSpace;
   activeRoute$: Observable<number>;
   params;
 
@@ -61,12 +62,16 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.statuses$ = this.palladiumApiService.statuses$;
 
     this.activeRoute$.map((id: number) => {
+      this.untestedSpace = {};
       this.init_active_object(id);
       this.palladiumApiService.init_runs(id);
       this.dataLoading = false;
       this.runs$ = this.palladiumApiService.runs$.map(runs => {
         return runs[id];
       });
+      if (this.suites$) {
+        this.get_untested_space();
+      }
 
     }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {
       this.dataLoading = false;
@@ -81,7 +86,7 @@ export class RunsComponent implements OnInit, OnDestroy {
           plans[this.stance.productId()].find(plan => plan.id === id).statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
         }
       });
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     this.activeRoute$.switchMap(() => {
       return this.palladiumApiService.products$.map(products => {
@@ -91,8 +96,11 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.caseCount$.next(caseCount);
         });
         this.suites$ = product.suites$;
+        if (this.runs$) {
+          this.get_untested_space();
+        }
       });
-    }).subscribe();
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     this.statistic$.switchMap(statistic => {
 
@@ -135,7 +143,7 @@ export class RunsComponent implements OnInit, OnDestroy {
         this.activeObject = runs.find(run => run.id === +runId);
         this.activeObject.statistic$.map(x => {
           this.get_statistic(runs);
-        }).subscribe();
+        }).pipe(takeUntil(this.unsubscribe)).subscribe();
       } else {
         this.activeObject = undefined;
       }
@@ -255,8 +263,24 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   log() {
-    this.cd.detectChanges();
-    console.log('x');
+    // console.log('x');
+  }
+
+  get_untested_space() {
+    this.suites$.switchMap(suites => {
+      return this.runs$.map(runs => {
+          this.untestedSpace = {};
+          const suitesStatistic = {};
+          if (!suites || !runs) { return }
+          suites.map(suite => {
+            suitesStatistic[suite.name] = suite.statistic;
+          });
+          runs.map(run => {
+            this.untestedSpace[run.name] = {'attitude': (1-(run.statistic.all/suitesStatistic[run.name].all))*100,
+              'point': new Point(0, suitesStatistic[run.name].all - run.statistic.all, suitesStatistic[run.name].all)};
+          });
+      });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 }
 
