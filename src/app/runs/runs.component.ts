@@ -280,7 +280,7 @@ export class RunsComponent implements OnInit, OnDestroy {
               'point': new Point(0, suitesStatistic[run.name].all - run.statistic.all, suitesStatistic[run.name].all)};
           });
       });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+    }).first().subscribe();
   }
 }
 
