@@ -239,7 +239,7 @@ export class PalladiumApiService {
       });
       const suites = this._suites[resp['suite']['product_id']];
       if (suites) {
-        const suite =  suites.find(suite => suite.id === resp['suite']['id']);
+        const suite = suites.find(suite => suite.id === resp['suite']['id']);
         suite.cases$.next(_cases);
       }
     }).subscribe();

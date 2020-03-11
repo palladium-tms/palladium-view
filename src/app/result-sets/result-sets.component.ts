@@ -13,6 +13,7 @@ import {ResultSet} from '../models/result_set';
 import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {Status} from '../models/status';
 import {takeUntil} from 'rxjs/operators';
+import {Case} from '../models/case';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -41,6 +42,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   });
 
   resultSets$: Observable<ResultSet[]>;
+  cases$;
   selectedResultSet$ = new ReplaySubject(1);
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   statuses$: Observable<StructuredStatuses>;
@@ -57,7 +59,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   addResultOpen = false;
   statistic: Statistic;
   untestedPoint: Point;
-  cases;
   object;
   resultComponent;
   statuses;
@@ -95,9 +96,13 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.selectAllFlag = false;
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
-      this.palladiumApiService.get_result_sets(id);
-      this.palladiumApiService.get_cases_by_run_id(this.stance.runId(), this.stance.productId());
+      this.init_data(id);
     }).map(() => this.cd.detectChanges()).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    this.palladiumApiService.products$.map(products => {
+      const productId = this.stance.productId();
+      const a = products.find(product => product.id === productId);
+    }).subscribe();
 
     this.activeRoute$.switchMap(() => {
       return this.resultSets$.map(resultSets => {
@@ -157,6 +162,29 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   //     this.cd.detectChanges();
   //   });
   // }
+
+  log(a) {
+    console.log(a)
+  }
+
+  init_data(id) {
+    const runId = this.stance.runId();
+    const productId = this.stance.productId();
+    const planId = this.stance.planId();
+    this.palladiumApiService.get_result_sets(id);
+    this.palladiumApiService.get_cases_by_run_id(runId, productId);
+
+    this.cases$ = this.palladiumApiService.runs$.switchMap(runs => {
+      const run = runs[planId].find(run => run.id === runId);
+      return this.palladiumApiService.products$.switchMap(products => {
+        const suites = products.find(product => product.id === productId).suites$;
+        return suites.map(suites => {
+          console.log(suites);
+          return suites.find(suite => suite.name === run.name).cases$;
+        });
+      });
+    });
+  }
 
   merge_result_sets_and_cases() {
     this.resultSetsAndCases = [];
