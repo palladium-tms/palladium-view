@@ -1,7 +1,7 @@
 <div class="result-set-space" *ngIf="!addResultOpen">
   <div class="toolbar">
     <div class="filters" *ngIf="(statistic$ | async)">
-      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event)></app-status-filter-bar>
+      <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event) [caseCount$] = caseCount$></app-status-filter-bar>
     </div>
     <div class="buttons">
       <div class="select_all_checkbox">
@@ -36,12 +36,12 @@
   <div class="item-list" *ngIf="(resultSets$ | async) as resultSets">
     <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
       <mat-card class="item mat-elevation-z1"
-                *cdkVirtualFor="let object of resultSets| statusFilter: filter| search: searchValue"
+                *cdkVirtualFor="let object of resultSets | casefilling: cases | statusFilter: filter| search: searchValue"
                 [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}"
                 [ngClass]="{'selected': object.id === activeElement?.id, 'case': object.path == 'case'}" style="height: 53px">
         <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
           <div class="result-set-checkbox">
-            <mat-checkbox [ngModel]="resultSetCheckboxes[object.id]?.checked" (change)="checkbox_change($event, object)"></mat-checkbox>
+            <mat-checkbox [ngModel]="resultSetCheckboxes[object.name]?.checked" (change)="checkbox_change($event, object)"></mat-checkbox>
           </div>
           <div class="item-name">{{object.name}}</div>
           <div class="status-name">
@@ -58,10 +58,6 @@
           </div>
         </div>
       </mat-card>
-      <ng-container>
-        {{log(cases$)}}
-      </ng-container>
-
     </cdk-virtual-scroll-viewport>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="copy_result_set_name()">

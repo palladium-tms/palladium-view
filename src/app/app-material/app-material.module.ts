@@ -42,13 +42,14 @@ import {ResultValueComponent} from 'app/page-component/result-value/result-value
 import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
 import {SelectedElementPipe} from '../pipes/selected-element/selected-element.pipe';
 import {UniqueNameFilterPipe} from '../runs/unique-name-filter.pipe';
+import {CasefillingPipe} from '../result-sets/casefilling.pipe';
 
 @NgModule({
   declarations: [SortByUpdatedAtPipe,
     SelectedElementPipe,
     SortByCreatedAtPipe,
     StatusFilterPipe,
-    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, UniqueNameFilterPipe, ResultValueComponent],
+    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, UniqueNameFilterPipe, CasefillingPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -95,6 +96,7 @@ import {UniqueNameFilterPipe} from '../runs/unique-name-filter.pipe';
     VirtualscrollPipe,
     SortByUpdatedAtPipe,
     UniqueNameFilterPipe,
+    CasefillingPipe,
     SearchPipe,
     SelectedElementPipe,
     MatAutocompleteModule,
