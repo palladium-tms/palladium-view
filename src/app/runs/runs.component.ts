@@ -38,16 +38,12 @@ export class RunsComponent implements OnInit, OnDestroy {
   activeRoute$: Observable<number>;
   params;
 
-  runs_and_suites = [];
-  ResultSetComponent;
-  untestedCash = {};
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
   dataLoading = true;
   activeObject: Run;
-  object_for_settings;
 
   constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -159,24 +155,6 @@ export class RunsComponent implements OnInit, OnDestroy {
     // }
   }
 
-  merge_suites_and_runs() {
-    const suiteForAdd = [];
-    this.untestedCash = [];
-    this.suites.forEach(suite => {
-      const run = this.runs.find(run => run.name === suite.name);
-      if (run) {
-        if (run.statistic.points.length === 0) {
-          this.untestedCash[run.name] = this.suites.find(suite => suite.name === run.name).statistic.points[0];
-        } else {
-          this.untestedCash[run.name] = new Point(0, suite.statistic.all - run.statistic.all, suite.statistic.all);
-        }
-      } else {
-        suiteForAdd.push(suite);
-      }
-    });
-    this.runs_and_suites = this.runs.concat(suiteForAdd);
-  }
-
   select_filter(filter) {
     this.filter = filter;
   }
@@ -184,7 +162,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   open_settings() {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
       data: {
-        object: this.object_for_settings,
         suites: this.suites,
       }
     });
@@ -208,10 +185,6 @@ export class RunsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onActivate(componentRef) {
-    this.ResultSetComponent = componentRef;
-  }
-
   clicked(event, object) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
       this.select_object(object);
@@ -221,15 +194,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   select_object(object) {
     this.activeObject = object;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + object.path + '/' + object.id]);
-  }
-
-  get_selected_object() {
-    const part_of_url = /(run|suite)\/(\d+)/.exec(this.router.url);
-    if (part_of_url) {
-      this.activeObject = this.runs_and_suites.find(element => element.path == part_of_url[1] && element.id == part_of_url[2]);
-    } else {
-      this.activeObject = new Run(null);
-    }
   }
 
   // make_run() {
@@ -271,7 +235,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       return this.runs$.map(runs => {
           this.untestedSpace = {};
           const suitesStatistic = {};
-          if (!suites || !runs) { return }
+          if (!suites || !runs) { return; }
           suites.map(suite => {
             suitesStatistic[suite.name] = suite.statistic;
           });
