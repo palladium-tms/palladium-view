@@ -30,13 +30,13 @@ import {takeUntil} from 'rxjs/operators';
 })
 export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
-  runs: Run[];
   private unsubscribe: Subject<void> = new Subject();
   runs$: Observable<Run[]>;
   suites$: ReplaySubject<Suite[]>;
   untestedSpace;
   activeRoute$: Observable<number>;
   params;
+  object_for_settings;
 
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
@@ -162,6 +162,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   open_settings() {
     const dialogRef = this.dialog.open(RunsSettingsComponent, {
       data: {
+        object: this.object_for_settings,
         suites: this.suites,
       }
     });
