@@ -1,18 +1,20 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {Run} from "../models/run";
 import {Suite} from "../models/suite";
+import {ResultSet} from "../models/result_set";
+import {Case} from "../models/case";
 
 @Pipe({
-  name: 'uniqueNameFilter'
+  name: 'uniqueNameObjectFilter'
 })
 
-export class UniqueNameFilterPipe implements PipeTransform {
-  transform(objectForFilter: Array<Suite | Run>, objectForNameGetting: Array<Suite | Run>): Array<Suite | Run> {
-    if (objectForNameGetting) {
-      const runsName = objectForNameGetting.map(run => run.name);
-      return objectForFilter.filter(suite => !runsName.includes(suite.name));
-    } else {
-      return objectForFilter;
+export class UniqueNameObjectFilterPipe implements PipeTransform {
+  transform(objectForFilling: Array<Suite | Run | Case | ResultSet>, objectForAdding: Array<Suite | Run | Case | ResultSet>): unknown {
+    if (objectForAdding === []) {
+      return objectForFilling;
     }
+    const objNames = objectForFilling.map(obj => obj.name);
+    const objForAdding = objectForAdding.filter(_obj => !objNames.includes(_obj.name));
+    return objectForFilling.concat(objForAdding);
   }
 }

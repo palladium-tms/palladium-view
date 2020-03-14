@@ -41,7 +41,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ResultValueComponent} from 'app/page-component/result-value/result-value.component';
 import {SortByUpdatedAtPipe} from '../pipes/sort-by-created-at/sort-by-updated-at.pipe';
 import {SelectedElementPipe} from '../pipes/selected-element/selected-element.pipe';
-import {UniqueNameFilterPipe} from '../runs/unique-name-filter.pipe';
+import {UniqueNameObjectFilterPipe} from '../runs/unique-name-filter.pipe';
 import {CasefillingPipe} from '../result-sets/casefilling.pipe';
 
 @NgModule({
@@ -49,7 +49,7 @@ import {CasefillingPipe} from '../result-sets/casefilling.pipe';
     SelectedElementPipe,
     SortByCreatedAtPipe,
     StatusFilterPipe,
-    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, UniqueNameFilterPipe, CasefillingPipe, ResultValueComponent],
+    StatusFilterComponent, StatusFilterBarComponent, StatisticFilterPipe, VirtualscrollPipe, SearchPipe, UniqueNameObjectFilterPipe, CasefillingPipe, ResultValueComponent],
   imports: [
     CommonModule,
     MatAutocompleteModule,
@@ -95,7 +95,7 @@ import {CasefillingPipe} from '../result-sets/casefilling.pipe';
     StatisticFilterPipe,
     VirtualscrollPipe,
     SortByUpdatedAtPipe,
-    UniqueNameFilterPipe,
+    UniqueNameObjectFilterPipe,
     CasefillingPipe,
     SearchPipe,
     SelectedElementPipe,
