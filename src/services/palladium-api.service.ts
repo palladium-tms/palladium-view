@@ -11,7 +11,7 @@ import {ResultSet} from '../app/models/result_set';
 import {Result} from '../app/models/result';
 import {History} from '../app/models/history_object';
 import {Status} from '../app/models/status';
-import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
 import {NGXLogger} from 'ngx-logger';
@@ -284,15 +284,16 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Run
-  get_runs(planId): void {
-    this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
+  get_runs(planId) {
+    return this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
       response => {
         this._runs[planId] = [];
         response['runs'].forEach(run => {
           this._runs[planId].push(new Run(run));
         });
         this.runs$.next(this._runs);
-      }).subscribe();
+        return this._runs;
+      });
   }
 
   get_run(runId): void {
@@ -306,9 +307,13 @@ export class PalladiumApiService {
       }).subscribe();
   }
 
-  init_runs(planId: number): void {
-    if (!this._runs[planId]) {
-      this.get_runs(planId);
+  init_runs(planId: number): Observable<Run[]> {
+    if (this._runs[planId]) {
+      return of(this._runs[planId]);
+    } else {
+      return this.get_runs(planId).map(runs => {
+        return runs[planId];
+      });
     }
   }
 

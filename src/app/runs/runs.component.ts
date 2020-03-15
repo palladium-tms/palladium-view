@@ -31,8 +31,9 @@ import {takeUntil} from 'rxjs/operators';
 export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   private unsubscribe: Subject<void> = new Subject();
-  runs$: Observable<Run[]>;
+  runs$: ReplaySubject<Run[]> = new ReplaySubject(1);
   suites$: ReplaySubject<Suite[]>;
+  loading = true;
   untestedSpace;
   activeRoute$: Observable<number>;
   params;
@@ -53,62 +54,48 @@ export class RunsComponent implements OnInit, OnDestroy {
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
+    this.get_suites();
+
+
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
 
     this.activeRoute$.map((id: number) => {
-      this.untestedSpace = {};
+      this.loading = true;
+      this.get_runs(id);
       this.init_active_object(id);
-      this.palladiumApiService.init_runs(id);
-      this.runs$ = this.palladiumApiService.runs$.map(runs => {
-        return runs[id];
-      });
-      if (this.suites$) {
-        this.get_untested_space();
-      }
-
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    this.activeRoute$.switchMap(id => {
-      return this.palladiumApiService.plans$.map(plans => {
-        const productId = this.stance.productId();
+    // this.activeRoute$.switchMap(id => {
+    //   return this.palladiumApiService.plans$.map(plans => {
+    //     const productId = this.stance.productId();
+    //
+    //     if (plans[productId].find(plan => plan.id === id)) {
+    //       plans[this.stance.productId()].find(plan => plan.id === id).statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
+    //     }
+    //   });
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-        if (plans[productId].find(plan => plan.id === id)) {
-          plans[this.stance.productId()].find(plan => plan.id === id).statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
-        }
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    this.activeRoute$.switchMap(() => {
-      return this.palladiumApiService.products$.map(products => {
-        const productId = this.stance.productId();
-        const product = products.find(product => product.id === productId);
-        product.caseCount$.first().subscribe(caseCount => {
-          this.caseCount$.next(caseCount);
-        });
-        this.suites$ = product.suites$;
-        if (this.runs$) {
-          this.get_untested_space();
-        }
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    this.statistic$.switchMap(statistic => {
-
-      return this.palladiumApiService.plans$.map(plans => {
-        const productId = this.stance.productId();
-        const planId = this.stance.planId();
-
-        plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
-      const _runs = runs[this.stance.planId()];
-      if (_runs) {
-        this.get_statistic(runs[this.stance.planId()]);
-      }
+    this.runs$.subscribe(runs => {
+      this.get_statistic(runs);
     });
+
+    // this.statistic$.switchMap(statistic => {
+    //
+    //   return this.palladiumApiService.plans$.map(plans => {
+    //     const productId = this.stance.productId();
+    //     const planId = this.stance.planId();
+    //
+    //     plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+    //   });
+    // }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    // this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
+    //   const _runs = runs[this.stance.planId()];
+    //   // if (_runs) {
+    //   //   this.get_statistic(runs[this.stance.planId()]);
+    //   // }
+    // });
   }
 
   get_statistic(runs) {
@@ -124,7 +111,36 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     });
     this.statistic$.next(new Statistic(data));
-    // this.untestedPoint = new Point('0', this.palladiumApiService.case_count(this.stance.productId()) - this.statistic.all, this.statistic.all);
+  }
+
+  get_runs(id) {
+    this.untestedSpace = {};
+    this.palladiumApiService.init_runs(id).subscribe( runs => {
+      this.loading = false;
+      this.runs$.next(runs);
+      if (this.suites) {
+        this.get_untested_space();
+      }
+      this.cd.detectChanges();
+    });
+  }
+
+  get_suites() {
+      this.palladiumApiService.products$.map(products => {
+        const productId = this.stance.productId();
+        const product = products.find(product => product.id === productId);
+        product.caseCount$.first().subscribe(caseCount => {
+          this.caseCount$.next(caseCount);
+        });
+        this.suites$ = product.suites$;
+        if (this.runs$) {
+          this.get_untested_space();
+        }
+      }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    if (this.suites$) {
+      this.get_untested_space();
+    }
   }
 
   init_active_object(id) {
@@ -132,9 +148,6 @@ export class RunsComponent implements OnInit, OnDestroy {
       const runId = this.stance.runId();
       if (runId) {
         this.activeObject = runs.find(run => run.id === +runId);
-        this.activeObject.statistic$.map(x => {
-          this.get_statistic(runs);
-        }).pipe(takeUntil(this.unsubscribe)).subscribe();
       } else {
         this.activeObject = undefined;
       }
