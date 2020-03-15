@@ -42,7 +42,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
-  dataLoading = true;
   activeObject: Run;
 
   constructor(private palladiumApiService: PalladiumApiService,
@@ -61,7 +60,6 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.untestedSpace = {};
       this.init_active_object(id);
       this.palladiumApiService.init_runs(id);
-      this.dataLoading = false;
       this.runs$ = this.palladiumApiService.runs$.map(runs => {
         return runs[id];
       });
@@ -69,10 +67,7 @@ export class RunsComponent implements OnInit, OnDestroy {
         this.get_untested_space();
       }
 
-    }).pipe(takeUntil(this.unsubscribe)).subscribe(() => {
-      this.dataLoading = false;
-      this.cd.detectChanges();
-    });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
     this.activeRoute$.switchMap(id => {
       return this.palladiumApiService.plans$.map(plans => {
@@ -147,8 +142,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
-    this.dataLoading = true;
-    this.palladiumApiService.get_runs(this.stance.planId());
+   this.palladiumApiService.get_runs(this.stance.planId());
     this.cd.detectChanges();
     // if (this.ResultSetComponent && this.stance.runId()) {
     //   this.ResultSetComponent.update_click();

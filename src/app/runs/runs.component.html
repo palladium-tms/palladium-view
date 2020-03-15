@@ -4,7 +4,7 @@
       <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event) [caseCount$]=caseCount$></app-status-filter-bar>
     </div>
     <div class="buttons">
-      <button mat-icon-button (click)="update_click()" [disabled]=dataLoading>
+      <button mat-icon-button (click)="update_click()">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>

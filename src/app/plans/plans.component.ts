@@ -60,7 +60,7 @@ export class PlansComponent implements OnInit, OnDestroy {
         return;
       }
       this.selectedPlanId = plan.id;
-      this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute});
+      this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute}).then(() => { this.cd.detectChanges()});
       this.cd.detectChanges();
     }
   }
