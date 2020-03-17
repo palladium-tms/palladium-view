@@ -45,7 +45,7 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
   select_filter(point: PointActivityInterface): void {
     point.active = !point.active;
     const _filter = this.pointsActivity.filter(key => key.active).map(pointActivity => pointActivity.point.status);
-    if (this.untestedPointActivity.active) {
+    if (this.untestedPointActivity?.active) {
       _filter.push(this.untestedPointActivity.point.status);
     }
     this.selected.emit(_filter);
