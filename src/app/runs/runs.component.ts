@@ -32,7 +32,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   private unsubscribe: Subject<void> = new Subject();
   runs$: ReplaySubject<Run[]> = new ReplaySubject(1);
-  suites$: ReplaySubject<Suite[]>;
+  suites$: ReplaySubject<Suite[]> = new ReplaySubject(1);
   loading = true;
   untestedSpace;
   activeRoute$: Observable<number>;

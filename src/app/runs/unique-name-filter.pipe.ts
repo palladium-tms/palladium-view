@@ -10,7 +10,7 @@ import {Case} from "../models/case";
 
 export class UniqueNameObjectFilterPipe implements PipeTransform {
   transform(objectForFilling: Array<Suite | Run | Case | ResultSet>, objectForAdding: Array<Suite | Run | Case | ResultSet>): unknown {
-    if (objectForAdding === []) {
+    if (objectForAdding === [] || objectForAdding == null) {
       return objectForFilling;
     }
     const objNames = objectForFilling.map(obj => obj.name);

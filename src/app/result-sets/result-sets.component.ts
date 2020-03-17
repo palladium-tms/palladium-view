@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Point, Statistic} from '../models/statistic';
+import {Statistic} from '../models/statistic';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {StanceService} from '../../services/stance.service';
 import {ProductSettingsComponent} from '../products/products.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SearchPipe} from '../pipes/search/search.pipe';
-import {CasefillingPipe} from '../result-sets/casefilling.pipe';
+import {CasefillingPipe} from './casefilling.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
 import {Observable, ReplaySubject, Subject} from 'rxjs';
