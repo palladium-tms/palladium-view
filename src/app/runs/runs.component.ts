@@ -56,7 +56,6 @@ export class RunsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.get_suites();
 
-
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
 
@@ -66,39 +65,28 @@ export class RunsComponent implements OnInit, OnDestroy {
       this.init_active_object(id);
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    // this.activeRoute$.switchMap(id => {
-    //   return this.palladiumApiService.plans$.map(plans => {
-    //     const productId = this.stance.productId();
-    //
-    //     if (plans[productId].find(plan => plan.id === id)) {
-    //       plans[this.stance.productId()].find(plan => plan.id === id).statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
-    //     }
-    //   });
-    // }).pipe(takeUntil(this.unsubscribe)).subscribe();
+    // update plan statistic after adding new result
+    this.activeRoute$.switchMap(id => {
+      return this.palladiumApiService.plans$.switchMap(plans => {
+        const productId = this.stance.productId();
+        if (plans[productId].find(plan => plan.id === id)) {
+          return this.statistic$.map(statistic => {
+            plans[this.stance.productId()].find(plan => plan.id === id).statistic$.next(statistic)
+          });
+        }
+      });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    this.runs$.subscribe(runs => {
-      this.get_statistic(runs);
+    // update statistic after adding new result
+    this.palladiumApiService.runs$.subscribe(runs => {
+      if (runs[this.stance.planId()]) {
+        const statistic = this.get_statistic(runs[this.stance.planId()]);
+        this.statistic$.next(statistic);
+      }
     });
-
-    // this.statistic$.switchMap(statistic => {
-    //
-    //   return this.palladiumApiService.plans$.map(plans => {
-    //     const productId = this.stance.productId();
-    //     const planId = this.stance.planId();
-    //
-    //     plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
-    //   });
-    // }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    // this.palladiumApiService.runs$.pipe(takeUntil(this.unsubscribe)).subscribe(runs => {
-    //   const _runs = runs[this.stance.planId()];
-    //   // if (_runs) {
-    //   //   this.get_statistic(runs[this.stance.planId()]);
-    //   // }
-    // });
   }
 
-  get_statistic(runs) {
+  get_statistic(runs: Run[]): Statistic {
     const data = {};
     runs.forEach(run => {
       run.statistic$.first().subscribe(statistic => {
@@ -110,7 +98,7 @@ export class RunsComponent implements OnInit, OnDestroy {
         });
       });
     });
-    this.statistic$.next(new Statistic(data));
+    return new Statistic(data);
   }
 
   get_runs(id) {
@@ -137,10 +125,6 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.get_untested_space();
         }
       }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    if (this.suites$) {
-      this.get_untested_space();
-    }
   }
 
   init_active_object(id) {
