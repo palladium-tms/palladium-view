@@ -21,7 +21,7 @@ export interface SearchToggle {
 }
 
 export interface ObjectCheckbox {
-  number?: {
+  string?: {
     checked: boolean,
     object: ResultSet
   };
@@ -359,9 +359,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   get_selected_objects() {
     const _selectedObjects = [];
-    Object.keys(this.resultSetCheckboxes).map(id => +id).forEach(id => {
-      if (this.resultSetCheckboxes[id].checked) {
-        _selectedObjects.push(this.resultSetCheckboxes[id].object);
+    Object.keys(this.resultSetCheckboxes).forEach(name => {
+      if (this.resultSetCheckboxes[name]?.checked) {
+        _selectedObjects.push(this.resultSetCheckboxes[name].object);
       }
     });
     return _selectedObjects;
