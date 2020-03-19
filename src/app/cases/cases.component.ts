@@ -4,7 +4,9 @@ import {PalladiumApiService} from '../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
 import {ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
 import {StatisticService} from '../../services/statistic.service';
-import {Statistic} from '../models/statistic';
+import {ReplaySubject} from "rxjs";
+import {StanceService} from "../../services/stance.service";
+import {Case} from "../models/case";
 
 @Component({
   selector: 'app-cases',
@@ -13,37 +15,40 @@ import {Statistic} from '../models/statistic';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CasesComponent implements OnInit {
-  cases = [];
+  cases$: ReplaySubject<(Case[])> = new ReplaySubject();
   statuses;
   object;
-  suiteId;
   loading = false;
   dropdownMenuItemSelect;
 
   constructor(private activatedRoute: ActivatedRoute,
               private palladiumApiService: PalladiumApiService, private router: Router,
               private dialog: MatDialog, public stat: StatisticService,
-              private cd: ChangeDetectorRef) {
+              private cd: ChangeDetectorRef, private stance: StanceService,) {
   }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
-      this.suiteId = params.id;
-      this.get_cases();
+    this.activatedRoute.params.pluck('id').map(id => +id).switchMap(id => {
+      this.palladiumApiService.get_cases(id, this.stance.productId());
+      return this.get_cases(id);
+    }).subscribe();
+  }
+
+  get_cases(id) {
+    return this.palladiumApiService.products$.switchMap(products => {
+      const productId = this.stance.productId();
+      return products.find(product => product.id === productId).suites$.map(suites => {
+        suites.find(suite => suite.id === id).cases$.map(cases => {
+          if (cases) {
+            this.cases$.next(cases);
+          }
+        }).first().subscribe();
+      });
     });
   }
 
-  get_cases() {
-    this.loading = true;
-    // this.palladiumApiService.get_cases(this.suiteId).then(cases => {
-    //   this.cases = cases;
-    //   this.loading = false;
-    //   this.cd.detectChanges();
-    // });
-  }
-
   update_click() {
-    this.get_cases();
+    this.get_cases(this.stance.suiteId());
   }
 
   copy_name() {

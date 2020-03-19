@@ -35,6 +35,11 @@ export interface StructuredSuites {
   [key: number]: Suite[];
 }
 
+// key is a suite id
+export interface StructuredCases {
+  [key: number]: Case[];
+}
+
 export interface StructuredResultSets {
   [key: number]: ResultSet[];
 }
@@ -90,6 +95,8 @@ export class PalladiumApiService {
   private _statuses: StructuredStatuses = {};
 
   private _suites: StructuredSuites = {};
+
+  private _cases: StructuredCases = {};
 
   plans: StructuredPlans = {};
   resultSets: StructuredResultSets = {};
@@ -166,6 +173,12 @@ export class PalladiumApiService {
       });
       const product = this._products.find(product => product.id === +productId);
       this._suites[productId] = suites;
+      this._suites[productId].forEach(suite => {
+        if (this._cases[suite.id]){
+          suite.cases$.next(this._cases[suite.id]);
+
+        }
+      });
       if (product) {
         product.suites$.next(suites);
       }
@@ -216,12 +229,16 @@ export class PalladiumApiService {
   // #endregion
 
   // //#region Cases
-  get_cases(id): void {
+  get_cases(id, productId): void {
     this.httpService.postData('/cases', {case_data: {suite_id: id}}).map(resp => {
-      const _cases = [];
+      this._cases[id] = [];
       Object(resp['cases']).forEach(currentCase => {
-        _cases.push(new Case(currentCase));
+        this._cases[id].push(new Case(currentCase));
       });
+      const suite = this._suites[productId]?.find(suite => suite.id === id);
+      if (suite) {
+        suite.cases$.next(this._cases[id]);
+      }
       return this.cases;
     }).subscribe();
   }

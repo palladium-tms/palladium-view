@@ -15,7 +15,7 @@
         <mat-card class="item mat-elevation-z1"
                   *cdkVirtualFor="let object of runs| uniqueNameObjectFilter: (suites$ | async)| statisticFilter: [filter, untestedSpace]"
                   (click)="clicked($event, object)"
-                  [ngClass]="{'selected': activeObject?.is_a(object), 'suite': object.path === 'suite'}">
+                  [ngClass]="{'suite': object.path === 'suite', 'selected': activeObject?.is_a(object)}">
           <div class="run-name">
             <div class="item-name">{{object.name}}</div>
             <div class="settings-menu">
