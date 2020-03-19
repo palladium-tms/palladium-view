@@ -8,6 +8,7 @@ import {Case} from "../models/case";
   name: 'uniqueNameObjectFilter'
 })
 
+// this is pipe for adding suite to run list, or cases to result_set list.
 export class UniqueNameObjectFilterPipe implements PipeTransform {
   transform(objectForFilling: Array<Suite | Run | Case | ResultSet>, objectForAdding: Array<Suite | Run | Case | ResultSet>): unknown {
     if (objectForAdding === [] || objectForAdding == null) {
