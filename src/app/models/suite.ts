@@ -10,6 +10,7 @@ export class Suite {
   updated_at: string;
   cases$: ReplaySubject<Case[]> = new ReplaySubject(1);
   statistic: Statistic;
+  statistic$: ReplaySubject<Statistic> = new ReplaySubject(1);
   path = 'suite';
   constructor (suite) {
     if (suite == null) {
@@ -23,6 +24,7 @@ export class Suite {
     this.created_at = suite['created_at'].split(' +')[0];
     this.updated_at = suite['updated_at'].split(' +')[0];
     this.statistic = new Statistic({0: suite['statistic'][0]['count']});
+    this.statistic$.next(this.statistic);
   }
   create_default_suite() {
     return {'id': 'id_loading', 'name': 'name_loading', 'path': 'suite',
