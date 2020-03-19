@@ -38,4 +38,8 @@ export class Suite {
       'created_at': suite['created_at'].split(' +')[0], 'updated_at': suite['updated_at'].split(' +')[0],
       'statistic': {0: 0}};
   }
+
+  is_a(object) {
+    return object.name === this.name && object.id === this.id && object.path === this.path;
+  }
 }
