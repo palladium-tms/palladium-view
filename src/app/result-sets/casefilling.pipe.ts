@@ -8,7 +8,7 @@ import {ResultSet} from '../models/result_set';
 export class CasefillingPipe implements PipeTransform {
 
   transform(resultSets: Array<Case | ResultSet>, cases: Case[]): Array<Case | ResultSet> {
-    if (cases === []) {
+    if (!cases || cases === []) {
       return resultSets;
     }
     const resultSetsNames = resultSets.map(resultSet => resultSet.name);
