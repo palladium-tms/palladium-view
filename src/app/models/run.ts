@@ -41,16 +41,18 @@ export class Run {
     return new Statistic(statData);
   }
 
-  update_point_statuses(points: Point[]): void {
+  update_point_statuses(data): void {
+    const statistic = new Statistic(data);
     const activePoints = [];
-    points.forEach(point => {
+    this.statistic.points.forEach(point => {
       if (point.active) {
         activePoints.push(point.status);
       }
     });
-    this.statistic.points.forEach(point => {
+    statistic.points.forEach(point => {
       point.active = activePoints.includes(point.status);
     });
+    this.statistic = statistic;
     this.statistic$.next(this.statistic);
   }
 

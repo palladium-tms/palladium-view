@@ -94,20 +94,22 @@ export class PalladiumApiService {
   statuses$: ReplaySubject<StructuredStatuses> = new ReplaySubject(1);
   private _statuses: StructuredStatuses = {};
 
+  suites$: ReplaySubject<StructuredSuites> = new ReplaySubject(1);
   private _suites: StructuredSuites = {};
 
+  cases$: ReplaySubject<StructuredCases> = new ReplaySubject(1);
   private _cases: StructuredCases = {};
 
-  plans: StructuredPlans = {};
+  // plans: StructuredPlans = {};
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
-  statusObservable = new BehaviorSubject(this.statuses);
-  response_results_data = {};
-  response_runs_data = {};
+  // statusObservable = new BehaviorSubject(this.statuses);
+  // response_results_data = {};
+  // response_runs_data = {};
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
-  histories: ResultSet[] = [];
-  _timeZone: string;
+  // histories: ResultSet[] = [];
+  // _timeZone: string;
 
   constructor(private router: Router, private httpService: HttpService,
               private authenticationService: AuthenticationService, private logger: NGXLogger) {
@@ -171,18 +173,21 @@ export class PalladiumApiService {
       response['suites'].forEach(suite => {
         suites.push(new Suite(suite));
       });
-      const product = this._products.find(product => product.id === +productId);
       this._suites[productId] = suites;
-      this._suites[productId].forEach(suite => {
-        if (this._cases[suite.id]){
-          suite.cases$.next(this._cases[suite.id]);
-
-        }
-      });
-      if (product) {
-        product.suites$.next(suites);
-      }
+      this.suites$.next(this._suites);
+      this.case_count(productId);
     }).subscribe();
+  }
+
+  case_count(productId) {
+    this.products$.first().subscribe(products => {
+      const product = products.find(product => product.id === +productId);
+      let count = 0;
+      this._suites[productId].forEach(suite => {
+        count += suite.statistic.all;
+      });
+      product.caseCount$.next(count);
+    });
   }
 
 
@@ -235,11 +240,13 @@ export class PalladiumApiService {
       Object(resp['cases']).forEach(currentCase => {
         this._cases[id].push(new Case(currentCase));
       });
-      const suite = this._suites[productId]?.find(suite => suite.id === id);
-      if (suite) {
-        suite.cases$.next(this._cases[id]);
-      }
-      return this.cases;
+      console.log('444')
+      this.cases$.next(this._cases);
+      // const suite = this._suites[productId]?.find(suite => suite.id === id);
+      // if (suite) {
+      //   suite.cases$.next(this._cases[id]);
+      // }
+      // return this.cases;
     }).subscribe();
   }
 
@@ -254,11 +261,14 @@ export class PalladiumApiService {
       Object(resp['cases']).forEach(currentCase => {
         _cases.push(new Case(currentCase));
       });
-      const suites = this._suites[resp['suite']['product_id']];
-      if (suites) {
-        const suite = suites.find(suite => suite.id === resp['suite']['id']);
-        suite.cases$.next(_cases);
-      }
+      this._cases[resp['suite']['id']] = _cases;
+      this.cases$.next(this._cases);
+      //
+      // const suites = this._suites[resp['suite']['product_id']];
+      // if (suites) {
+      //   const suite = suites.find(suite => suite.id === resp['suite']['id']);
+      //   suite.cases$.next(_cases);
+      // }
     }).subscribe();
   }
 
@@ -324,14 +334,8 @@ export class PalladiumApiService {
       }).subscribe();
   }
 
-  init_runs(planId: number): Observable<Run[]> {
-    if (this._runs[planId]) {
-      return of(this._runs[planId]);
-    } else {
-      return this.get_runs(planId).map(runs => {
-        return runs[planId];
-      });
-    }
+  init_runs(planId: number): void {
+    this.get_runs(planId).subscribe();
   }
 
   //
@@ -364,11 +368,11 @@ export class PalladiumApiService {
   get_products(): void {
     this.httpService.postData('/products', '').map(response => {
       this._products = response['products'].map(product => new Product(product));
-      Object.keys(this._suites).forEach(productId => {
-        this._products.find(product => {
-          return product.id === +productId;
-        }).suites$.next(this._suites[productId]);
-      });
+      // Object.keys(this._suites).forEach(productId => {
+      //   this._products.find(product => {
+      //     return product.id === +productId;
+      //   }).suites$.next(this._suites[productId]);
+      // });
       this.products$.next(this._products);
     }).subscribe();
   }
@@ -518,17 +522,51 @@ export class PalladiumApiService {
         this._resultSets[runId].push(new ResultSet(resultSet));
       });
       this.resultSets$.next(this._resultSets);
+      this.update_run_statistic(runId);
     }).subscribe();
   }
 
   delete_result_set(id, runId): void {
-    this.httpService.postData('/result_set_delete', {result_set_data: {id}}).map(result_set => {
-      this.get_run(runId);
+    this.httpService.postData('/result_set_delete', {result_set_data: {id}}).map(_ => {
+      // this.get_run(runId);
       this._resultSets[runId] = this._resultSets[runId].filter(resultSet => resultSet.id !== id);
       this.resultSets$.next(this._resultSets);
+      this.update_run_statistic(runId);
     }).subscribe();
   }
 
+  update_run_statistic(runId) {
+    const statisticData = {};
+    this._resultSets[runId].forEach(resultSet => {
+      if (!statisticData[resultSet.status]) {
+        statisticData[resultSet.status] = 0;
+      }
+      statisticData[resultSet.status] += 1;
+    });
+    const planId = this._resultSets[runId][0].plan_id;
+    this.runs$.first().subscribe(runs => {
+      runs[planId].find(run => run.id === runId).update_point_statuses(statisticData);
+      this.update_plan_statistic(planId);
+    });
+  }
+
+  update_plan_statistic(planId) {
+    const data = {};
+    this._runs[planId].forEach(run => {
+      run.statistic$.first().subscribe(statistic => {
+        statistic.points.forEach(point => {
+          if (!data[point.status]) {
+            data[point.status] = 0;
+          }
+          data[point.status] += point.count;
+        });
+      });
+    });
+    const statistic = new Statistic(data);
+    this.plans$.first().subscribe(plans => {
+      ([] as Plan[]).concat(...Object.values(plans)).find(plan => plan.id === planId).statistic$.next(statistic);
+    });
+  }
   //#endregion
 
   //#region Result
@@ -544,13 +582,13 @@ export class PalladiumApiService {
   }
 
 
-  get_result(result_id) {
+  // get_result(result_id) {
     // return this.httpService.postData('/result', {result_data: {id: result_id}})
     //   .then(
     //     result => {
     //       return new Result(result['result']);
     //     }, error => console.log(error));
-  }
+  // }
 
   result_new(resultSets, description, status): void {
     if (resultSets.length !== 0) {
@@ -571,10 +609,11 @@ export class PalladiumApiService {
           }
         });
         this.resultSets$.next(this._resultSets);
+        this.update_run_statistic(res['result_sets'][0]['run_id']);
         if (this._results) {
           this.results$.next(this._results);
         }
-        this.get_run(res['result_sets'][0]['run_id']);
+        // this.get_run(res['result_sets'][0]['run_id']);
       }).subscribe();
       // return this.reformat_response(res);
     }

@@ -15,7 +15,9 @@ export class UniqueNameObjectFilterPipe implements PipeTransform {
       return objectForFilling;
     }
     const objNames = objectForFilling.map(obj => obj.name);
-    const objForAdding = objectForAdding.filter(_obj => !objNames.includes(_obj.name));
+    const objForAdding = objectForAdding.filter(_obj => {
+      return !objNames.includes(_obj.name);
+    });
     return objectForFilling.concat(objForAdding);
   }
 }

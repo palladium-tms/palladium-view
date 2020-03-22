@@ -45,7 +45,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
   caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
-  statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
+  statistic$: ReplaySubject<(Statistic)>;
   statuses$: Observable<StructuredStatuses>;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -88,9 +88,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
 
+    // get result sets and cases
     this.activeRoute$.map(id => {
       this.filter = [];
       this.cases = [];
@@ -104,60 +104,53 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       return this.resultSets$.map(resultSets => {
         if (resultSets) {
           const resultSetId = this.stance.resultSetId();
-          this.get_statistic(resultSets);
           if (resultSetId) {
             this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
           } else {
             this.activeElement = undefined;
           }
+          this.cd.detectChanges();
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
+    // get cases
+    this.activeRoute$.switchMap(() => {
+      return this.palladiumApiService.runs$.switchMap(runs => {
+        const productId = this.stance.productId();
+        const planId = this.stance.planId();
+        const runId = this.stance.runId();
+        const run = runs[planId].find(run => run.id === runId);
+        return this.palladiumApiService.cases$.switchMap(cases => {
+          return this.palladiumApiService.suites$.map(suites => suites[productId]).map(suites => {
+            const suite = suites.find(suite => suite.name === run.name);
+            if (suite) {
+              this.cases = cases[suite.id];
+              this.caseCount$.next(this.cases?.length);
+              this.cd.detectChanges();
+            }
+          });
+        });
+      });
+    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+    // get statistic
     this.activeRoute$.switchMap(id => {
       return this.palladiumApiService.runs$.map(runs => {
         const planId = this.stance.planId();
         const run = runs[planId].find(plan => plan.id === id);
         if (run) {
-          run.statistic$.first().subscribe(statistic => this.statistic$.next(statistic));
+          this.statistic$ = run.statistic$;
+          this.cd.detectChanges();
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-    this.statistic$.switchMap(statistic => {
-      return this.palladiumApiService.runs$.map(runs => {
-        const planId = this.stance.planId();
-        const runId = this.stance.runId();
-        runs[planId].find(run => run.id === runId).statistic$.next(statistic);
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    this.palladiumApiService.resultSets$.pipe(takeUntil(this.unsubscribe)).subscribe(resultSets => {
-      const _resultSets = resultSets[this.stance.runId()];
-      if (_resultSets) {
-        this.get_statistic(resultSets[this.stance.runId()]);
-      }
-    });
   }
 
   select_filter(filter) {
     this.filter = filter;
   }
-
-  // async get_result_sets_and_cases() {
-  //   this.resultSetsAndCases = [];
-  //   this.cd.detectChanges();
-  //   Promise.all([this.get_cases(), this.palladiumApiService.get_result_sets(this.stance.runId())]).then(res => {
-  //     this.cases = res[0];
-  //     this.merge_result_sets_and_cases();
-  //     this.select_object();
-  //     this.get_statistic();
-  //     if (this.statuses) {
-  //       this.set_filters();
-  //     }
-  //     this.cd.detectChanges();
-  //   });
-  // }
 
   log(a) {
     console.log('log');
@@ -167,23 +160,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   init_data(id) {
     const runId = this.stance.runId();
     const productId = this.stance.productId();
-    const planId = this.stance.planId();
     this.palladiumApiService.get_result_sets(id);
     this.palladiumApiService.get_cases_by_run_id(runId, productId);
-    this.palladiumApiService.runs$.switchMap(runs => {
-      const run = runs[planId].find(run => run.id === runId);
-      return this.palladiumApiService.products$.switchMap(products => {
-        const suites = products.find(product => product.id === productId).suites$;
-        return suites.switchMap(suites => {
-          return suites.find(suite => suite.name === run.name).cases$.switchMap(cases => {
-            this.cases = cases;
-            this.caseCount$.next(cases.length);
-            this.cd.detectChanges();
-            return cases;
-          });
-        });
-      });
-    }).first().subscribe();
   }
 
   open_settings() {
@@ -225,8 +203,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       data[resultSet.status] += 1;
     });
     this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
-    // this.untestedPoint = new Point('0', this.cases.length - this.palladiumApiService.resultSets[this.stance.runId()].length, this.palladiumApiService.resultSets[this.stance.runId()].length);
-    this.statistic$.next(new Statistic(data));
   }
 
   delete_filter_without_elements(data) {
@@ -428,10 +404,10 @@ export class ResultSetsSettingsComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async delete_object() {
+  delete_object() {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'result_set') {
-        await this.palladiumApiService.delete_result_set(this.object.id, this.stance.runId());
+        this.palladiumApiService.delete_result_set(this.object.id, this.stance.runId());
       } else {
         // await this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
       }

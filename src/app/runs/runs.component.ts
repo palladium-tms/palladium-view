@@ -31,9 +31,8 @@ import {takeUntil} from 'rxjs/operators';
 export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
   private unsubscribe: Subject<void> = new Subject();
-  runs$: ReplaySubject<Run[]> = new ReplaySubject(1);
-  suites$: ReplaySubject<Suite[]> = new ReplaySubject(1);
-  loading = true;
+  runs$: Observable<Run[]>;
+  suites$: Observable<Suite[]>;
   untestedSpace;
   activeRoute$: Observable<number>;
   params;
@@ -54,77 +53,44 @@ export class RunsComponent implements OnInit, OnDestroy {
               private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.get_suites();
-
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
+    this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
+    this.suites$ = this.palladiumApiService.suites$.map(suites => suites[this.stance.productId()]);
+
+    this.runs$.switchMap( runs => {
+      return this.suites$.map(suites => {
+        if (runs && suites) {
+          this.get_untested_space(runs, suites);
+        }
+      });
+    }).subscribe();
+
+    this.palladiumApiService.products$.map(product => product[this.stance.productId()]).first().subscribe(product => {
+      product.caseCount$.subscribe(count => {
+        this.caseCount$.next(count);
+      });
+    });
+
 
     this.activeRoute$.map((id: number) => {
-      this.loading = true;
       this.get_runs(id);
       this.init_active_object(id);
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    // update plan statistic after adding new result
-    this.activeRoute$.switchMap(id => {
-      return this.palladiumApiService.plans$.switchMap(plans => {
-        const productId = this.stance.productId();
-        if (plans[productId].find(plan => plan.id === id)) {
-          return this.statistic$.map(statistic => {
-            plans[this.stance.productId()].find(plan => plan.id === id).statistic$.next(statistic)
-          });
+    }).switchMap(() => {
+      return this.palladiumApiService.plans$.map(allPlans => {
+        const plans = allPlans[this.stance.productId()];
+        const plan = plans.find(plan => plan.id === this.stance.planId());
+        if (plan?.statistic$) {
+          this.statistic$ = plan.statistic$;
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    // update statistic after adding new result
-    this.palladiumApiService.runs$.subscribe(runs => {
-      if (runs[this.stance.planId()]) {
-        const statistic = this.get_statistic(runs[this.stance.planId()]);
-        this.statistic$.next(statistic);
-      }
-    });
   }
 
-  get_statistic(runs: Run[]): Statistic {
-    const data = {};
-    runs.forEach(run => {
-      run.statistic$.first().subscribe(statistic => {
-        statistic.points.forEach(point => {
-          if (!data[point.status]) {
-            data[point.status] = 0;
-          }
-          data[point.status] += point.count;
-        });
-      });
-    });
-    return new Statistic(data);
-  }
 
   get_runs(id) {
     this.untestedSpace = {};
-    this.palladiumApiService.init_runs(id).subscribe( runs => {
-      this.loading = false;
-      this.runs$.next(runs);
-      if (this.suites) {
-        this.get_untested_space();
-      }
-      this.cd.detectChanges();
-    });
-  }
-
-  get_suites() {
-      this.palladiumApiService.products$.map(products => {
-        const productId = this.stance.productId();
-        const product = products.find(product => product.id === productId);
-        product.caseCount$.first().subscribe(caseCount => {
-          this.caseCount$.next(caseCount);
-        });
-        this.suites$ = product.suites$;
-        if (this.runs$) {
-          this.get_untested_space();
-        }
-      }).pipe(takeUntil(this.unsubscribe)).subscribe();
+    this.palladiumApiService.init_runs(id);
   }
 
   init_active_object(id) {
@@ -222,9 +188,7 @@ export class RunsComponent implements OnInit, OnDestroy {
     // console.log('x');
   }
 
-  get_untested_space() {
-    this.suites$.switchMap(suites => {
-      return this.runs$.map(runs => {
+  get_untested_space(runs, suites) {
           this.untestedSpace = {};
           const suitesStatistic = {};
           if (!suites || !runs) { return; }
@@ -235,8 +199,6 @@ export class RunsComponent implements OnInit, OnDestroy {
             this.untestedSpace[run.name] = {'attitude': (1-(run.statistic.all/suitesStatistic[run.name].all))*100,
               'point': new Point(0, suitesStatistic[run.name].all - run.statistic.all, suitesStatistic[run.name].all)};
           });
-      });
-    }).first().subscribe();
   }
 }
 
