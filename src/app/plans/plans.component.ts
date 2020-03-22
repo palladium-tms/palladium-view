@@ -17,6 +17,7 @@ import {StatisticService} from '../../services/statistic.service';
 import {Plan} from "../models/plan";
 import {Observable, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {Product} from '../models/product';
 
 @Component({
   selector: 'app-plans',
@@ -27,6 +28,7 @@ import {takeUntil} from 'rxjs/operators';
 })
 export class PlansComponent implements OnInit, OnDestroy {
   plans$: ReplaySubject<Plan[]> =  new ReplaySubject(1);
+  caseCount$: ReplaySubject<number>;
   activeRoute$: Observable<{}>;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -52,6 +54,11 @@ export class PlansComponent implements OnInit, OnDestroy {
     this.activeRoute$.switchMap((id: number) => {
       return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
+
+     this.palladiumApiService.products$.map((products: Product[]) => {
+      const product = products.find(product => product.id === this.stance.productId());
+       this.caseCount$ = product.caseCount$;
+    }).subscribe();
   }
 
   clicked(event, plan) {

@@ -190,14 +190,9 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   get_untested_space(runs, suites) {
           this.untestedSpace = {};
-          const suitesStatistic = {};
           if (!suites || !runs) { return; }
           suites.map(suite => {
-            suitesStatistic[suite.name] = suite.statistic;
-          });
-          runs.map(run => {
-            this.untestedSpace[run.name] = {'attitude': (1-(run.statistic.all/suitesStatistic[run.name].all))*100,
-              'point': new Point(0, suitesStatistic[run.name].all - run.statistic.all, suitesStatistic[run.name].all)};
+            this.untestedSpace[suite.name] = suite.caseCount$;
           });
   }
 }

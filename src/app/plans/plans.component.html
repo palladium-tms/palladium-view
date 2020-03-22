@@ -12,9 +12,7 @@
           </button>
         </div>
       </div>
-      <div class="item-statistic">
-        <app-statistic [statistic$] = plan.statistic$ [isArchived] = plan.isArchived></app-statistic>
-      </div>
+      <app-statistic-bar [statistic$] = plan.statistic$ [caseCount$] = caseCount$></app-statistic-bar>
     </mat-card>
     <div class="show-more">
       <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>

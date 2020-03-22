@@ -21,7 +21,8 @@ import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {CasesComponent} from '../cases/cases.component';
 import {PointComponent} from '../point/point.component';
-import {StatisticComponent} from '../statistic/statistic.component';
+import {StatisticBarComponent} from '../statistic-bar/statistic-bar.component';
+import { StatisticComponent } from '../statistic/statistic.component';
 
 const productRoutes: Routes = [{
   path: '', component: ProductsComponent, children: [
@@ -45,7 +46,7 @@ const productRoutes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent, StatisticComponent,
+  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent, StatisticBarComponent, StatisticComponent,
     TopToolbarComponent,
     TokenComponent, TokenDialogComponent,
     InviteComponent, InviteDialogComponent,

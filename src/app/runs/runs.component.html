@@ -24,19 +24,22 @@
               </button>
             </div>
           </div>
-          <div class="item-statistic" *ngIf="{statuses: statuses$ | async, statistic: object.statistic$ | async} as data">
-            <div class="status-elements-no-empty">
-              <div class="all_statistic-bar" [style.padding-right]="untestedSpace[object.name]?.attitude + '%'">
-                <div *ngFor="let point of data.statistic?.points"
-                     [ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': data.statuses[point.status].color}">
-                </div>
-              </div>
-            </div>
-          </div>
-          <mat-card-subtitle class="item-statistic">
-            <app-point [point] = point *ngFor="let point of (object.statistic$ | async)?.points" [filter] = filter></app-point>
-            <app-point [point] = untestedSpace[object.name]?.point [filter] = filter ></app-point>
-          </mat-card-subtitle>
+          <app-statistic [statistic$] = object.statistic$ [filter] = filter [caseCount$]="untestedSpace[object.name]"></app-statistic>
+
+
+
+          <!--<div class="item-statistic" *ngIf="{statuses: statuses$ | async, statistic: object.statistic$ | async} as data">-->
+            <!--<div class="status-elements-no-empty">-->
+              <!--<div class="all_statistic-bar" [style.padding-right]="untestedSpace[object.name]?.attitude + '%'">-->
+                <!--<div *ngFor="let point of data.statistic?.points"-->
+                     <!--[ngStyle]="{ 'width': (point.attitude * 100) + '%', 'background-color': data.statuses[point.status].color}">-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--<mat-card-subtitle class="item-statistic">-->
+            <!--<app-statistic [statistic$] = statistic$ [filter] = filter></app-statistic>-->
+          <!--</mat-card-subtitle>-->
         </mat-card>
       </cdk-virtual-scroll-viewport>
     </div>

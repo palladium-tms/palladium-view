@@ -19,11 +19,6 @@
   display: block;
 }
 
-.item-statistic {
-  margin-bottom: 0;
-  display: flex;
-}
-
 .toolbar {
   margin-bottom: 0.7em;
   padding-left: 1px;
