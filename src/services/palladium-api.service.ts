@@ -184,7 +184,7 @@ export class PalladiumApiService {
       const product = products.find(product => product.id === +productId);
       let count = 0;
       this._suites[productId].forEach(suite => {
-        count += suite.statistic.all;
+        count += suite.caseCount;
       });
       product.caseCount$.next(count);
     });
