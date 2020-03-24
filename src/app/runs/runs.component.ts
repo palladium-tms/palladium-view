@@ -66,10 +66,15 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
     }).subscribe();
 
-    this.palladiumApiService.products$.map(product => product[this.stance.productId()]).first().subscribe(product => {
-      product.caseCount$.subscribe(count => {
-        this.caseCount$.next(count);
-      });
+    this.palladiumApiService.products$.map(products => {
+      const productId = this.stance.productId();
+      return products.find(product => product.id === productId);
+    }).first().subscribe(product => {
+      if (product) {
+        product.caseCount$.subscribe(count => {
+          this.caseCount$.next(count);
+        });
+      }
     });
 
 

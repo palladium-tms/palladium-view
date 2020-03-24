@@ -37,6 +37,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   RUN_COMPONENT;
   loading = false;
   showMore = true;
+  currentProduct$: Observable<Product>;
 
   constructor(public palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -55,10 +56,10 @@ export class PlansComponent implements OnInit, OnDestroy {
       return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
 
-     this.palladiumApiService.products$.map((products: Product[]) => {
-      const product = products.find(product => product.id === this.stance.productId());
-       this.caseCount$ = product.caseCount$;
-    }).subscribe();
+     this.currentProduct$ = this.palladiumApiService.products$.map((products: Product[]) => {
+       const productId = this.stance.productId();
+      return products.find(product => product.id === productId);
+    });
   }
 
   clicked(event, plan) {
