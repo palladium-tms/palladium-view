@@ -55,7 +55,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   resultSetCheckboxes: ObjectCheckbox;
 
-  params;
+  loading = false;
 
   addResultOpen = false;
   statistic: Statistic;
@@ -78,7 +78,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]);
+    this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]).map(x => {
+      this.loading = false;
+      this.cd.markForCheck();
+      return x;
+    });
     this.statuses$ = this.palladiumApiService.statuses$;
     this.statuses$.map(statuses => {
       this.notBlockedStatuses = [];
@@ -88,7 +92,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
+    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id).map(x => { this.loading = true; return x; });
 
     // get result sets and cases
     this.activeRoute$.map(id => {

@@ -9,7 +9,7 @@
       </button>
     </div>
   </div>
-  <ng-container>
+  <ng-container *ngIf="!loading">
     <div class="item-list" *ngIf="(runs$ | async) as runs">
       <cdk-virtual-scroll-viewport [itemSize]="83" style="height: 100%; width: 100%">
         <mat-card class="item mat-elevation-z1"
@@ -30,13 +30,16 @@
       </cdk-virtual-scroll-viewport>
     </div>
   </ng-container>
-
+  <ng-container *ngIf="loading">
+    <div class="loader">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </ng-container>
 </div>
 <mat-menu #menu="matMenu">
   <button mat-menu-item (click)="open_settings()">
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
   </button>
-
 </mat-menu>
 <router-outlet></router-outlet>

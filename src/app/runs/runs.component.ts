@@ -30,6 +30,7 @@ import {takeUntil} from 'rxjs/operators';
 })
 export class RunsComponent implements OnInit, OnDestroy {
   suites = [];
+  loading = false;
   private unsubscribe: Subject<void> = new Subject();
   runs$: Observable<Run[]>;
   suites$: Observable<Suite[]>;
@@ -55,7 +56,11 @@ export class RunsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
-    this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]);
+    this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]).map(x => {
+      this.loading = false;
+      this.cd.markForCheck();
+      return x;
+    });
     this.suites$ = this.palladiumApiService.suites$.map(suites => suites[this.stance.productId()]);
 
     this.runs$.switchMap( runs => {
@@ -79,6 +84,7 @@ export class RunsComponent implements OnInit, OnDestroy {
 
 
     this.activeRoute$.map((id: number) => {
+      this.start_loading();
       this.get_runs(id);
       this.init_active_object(id);
     }).switchMap(() => {
@@ -92,6 +98,9 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 
+  start_loading() {
+    this.loading = true;
+  }
 
   get_runs(id) {
     this.untestedSpace = {};
