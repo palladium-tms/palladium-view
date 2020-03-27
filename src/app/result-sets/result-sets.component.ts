@@ -10,7 +10,7 @@ import {SearchPipe} from '../pipes/search/search.pipe';
 import {CasefillingPipe} from './casefilling.pipe';
 import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
 import {ResultSet} from '../models/result_set';
-import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
 import {Status} from '../models/status';
 import {takeUntil} from 'rxjs/operators';
 import {Case} from '../models/case';
@@ -44,7 +44,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSets$: Observable<ResultSet[]>;
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
-  caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
+  caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
   statistic$: ReplaySubject<(Statistic)>;
   statuses$: Observable<StructuredStatuses>;
   private unsubscribe: Subject<void> = new Subject();

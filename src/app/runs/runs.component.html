@@ -13,7 +13,8 @@
     <div class="item-list" *ngIf="(runs$ | async) as runs">
       <cdk-virtual-scroll-viewport [itemSize]="83" style="height: 100%; width: 100%">
         <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of runs| uniqueNameObjectFilter: (suites$ | async)| statisticFilter: [filter, untestedSpace]"
+                  *cdkVirtualFor="let object of runs| uniqueNameObjectFilter: (suites$ | async) |
+                   statisticFilter: [filter, untestedSpace] | async"
                   (click)="clicked($event, object)"
                   [ngClass]="{'suite': object.path === 'suite', 'selected': activeObject?.is_a(object)}">
           <div class="run-name">

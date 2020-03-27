@@ -18,7 +18,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
 import {Run} from '../models/run';
-import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
 @Component({
@@ -39,7 +39,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   object_for_settings;
 
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
-  caseCount$: ReplaySubject<(number)> = new ReplaySubject<number>();
+  caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
   activeObject: Run;

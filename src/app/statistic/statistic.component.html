@@ -1,6 +1,5 @@
 <app-statistic-bar [statistic$] = statistic$ [caseCount$] = caseCount$></app-statistic-bar>
 <div class="item-statistic">
   <app-point [point] = point *ngFor="let point of (statistic$ | async)?.points" [filter] = filter></app-point>
-  <!--<app-point [point] = untestedSpace[object.name]?.point [filter] = filter ></app-point>-->
+  <app-point [point] = untestedPoint [filter] = filter ></app-point>
 </div>
-<!--<app-point [point] = untestedSpace[object.name]?.point [filter] = filter ></app-point>-->
