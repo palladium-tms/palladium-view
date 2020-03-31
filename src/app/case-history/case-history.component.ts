@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params} from '@angular/router';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import { Location } from '@angular/common';
@@ -14,7 +14,7 @@ export interface StructuredHistoryPack {
   styleUrls: ['./case-history.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CaseHistoryComponent implements OnInit, OnDestroy {
+export class CaseHistoryComponent implements OnInit {
   history$: Observable<ResultSet[]>;
   statuses$: Observable<StructuredStatuses>;
 
@@ -30,7 +30,12 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
 
     this.history$ = this.palladiumApiService.historyPack$.map((historyPack: StructuredHistoryPack) => {
       const runName = this.palladiumApiService.run_name_by_id(this.stance.runId(), this.stance.planId());
-      return historyPack[this.stance.productId()][runName];
+      const currenthistoryPack = historyPack[this.stance.productId()];
+      if (currenthistoryPack && currenthistoryPack[runName]) {
+        return historyPack[this.stance.productId()][runName];
+      } else {
+        return [];
+      }
     });
 
     // this.history$ = this.stance.product$.switchMap(product => {
@@ -81,10 +86,5 @@ export class CaseHistoryComponent implements OnInit, OnDestroy {
     }
     history.object_status === 'closed' ? history.object_status = 'opened' : history.object_status = 'closed';
     this.cd.detectChanges();
-  }
-
-  ngOnDestroy() {
-    // this.cd.detach();
-    // this.params.unsubscribe();
   }
 }

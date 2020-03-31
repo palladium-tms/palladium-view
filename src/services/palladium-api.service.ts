@@ -97,15 +97,11 @@ export class PalladiumApiService {
   suites$: ReplaySubject<StructuredSuites> = new ReplaySubject(1);
   private _suites: StructuredSuites = {};
 
-  cases$: ReplaySubject<StructuredCases> = new ReplaySubject(1);
+  cases$: BehaviorSubject<StructuredCases> = new BehaviorSubject({});
   private _cases: StructuredCases = {};
 
-  // plans: StructuredPlans = {};
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
-  // statusObservable = new BehaviorSubject(this.statuses);
-  // response_results_data = {};
-  // response_runs_data = {};
   cases: Case[] = [];
   result_sets: ResultSet[] = [];
   // histories: ResultSet[] = [];
@@ -201,7 +197,7 @@ export class PalladiumApiService {
       runNew.updated_at = response['suite']['updated_at'];
       suite.name = response['suite']['name'];
       suite.updated_at = response['suite']['updated_at'];
-      this._products.find(product => product.id === productId).suites$.next(this._suites[productId]);
+      this.suites$.next(this._suites);
       this.runs$.next(this._runs);
     }).subscribe();
   }
@@ -234,19 +230,13 @@ export class PalladiumApiService {
   // #endregion
 
   // //#region Cases
-  get_cases(id, productId): void {
+  get_cases(id): void {
     this.httpService.postData('/cases', {case_data: {suite_id: id}}).map(resp => {
       this._cases[id] = [];
       Object(resp['cases']).forEach(currentCase => {
         this._cases[id].push(new Case(currentCase));
       });
-      console.log('444')
       this.cases$.next(this._cases);
-      // const suite = this._suites[productId]?.find(suite => suite.id === id);
-      // if (suite) {
-      //   suite.cases$.next(this._cases[id]);
-      // }
-      // return this.cases;
     }).subscribe();
   }
 

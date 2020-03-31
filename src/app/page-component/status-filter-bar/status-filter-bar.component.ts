@@ -12,8 +12,9 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
   @Input() caseCount$: BehaviorSubject<number>;
   @Output() selected = new EventEmitter<number[]>();
   pointsActivity: PointActivityInterface[] = [];
+  pointsActivityCache = {};
   pointsActivity$: Observable<PointActivityInterface[]>;
-  untestedPointActivity$: Observable<{ active: boolean; point: Point }>;
+  // untestedPointActivity$: Observable<{ active: boolean; point: Point }>;
   untestedPointActivity: PointActivityInterface;
 
   constructor(private cd: ChangeDetectorRef) {
@@ -23,17 +24,15 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.pointsActivity$ = this.statistic$.map(statistic => {
+      this.update_pointsActivityCache();
       this.pointsActivity = [];
       let allResults = 0;
       statistic.points.forEach(point => {
         allResults += point.count;
-        this.pointsActivity.push({point, active: false});
+        this.pointsActivity.push({point, active: this.pointsActivityCache[point.status]});
       });
-
-      this.untestedPointActivity$ = this.caseCount$.map(caseCount => {
-        return {point: new Point(0, caseCount - allResults, caseCount), active: false};
-      });
-      this.untestedPointActivity = {point: new Point(0, this.caseCount$.value - allResults, this.caseCount$.value), active: false};
+      this.untestedPointActivity = {point: new Point(0, this.caseCount$.value - allResults, this.caseCount$.value), active: this.untested_is_active()};
+      this.clear_empty_filter();
       return this.pointsActivity;
     });
   }
@@ -46,5 +45,23 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
     }
     this.selected.emit(_filter);
     this.cd.detectChanges();
+  }
+
+  untested_is_active(): boolean {
+    return this.untestedPointActivity?.active;
+  }
+
+  update_pointsActivityCache() {
+    this.pointsActivity.forEach(act => {
+      this.pointsActivityCache[act.point.status] = act.active;
+    });
+  }
+
+  clear_empty_filter() {
+    const _filter = this.pointsActivity.filter(key => key.active).map(pointActivity => pointActivity.point.status);
+    if (this.untestedPointActivity.active) {
+      _filter.push(0);
+    }
+    this.selected.emit(_filter);
   }
 }

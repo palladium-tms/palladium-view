@@ -131,30 +131,32 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   open_settings() {
-    const dialogRef = this.dialog.open(RunsSettingsComponent, {
-      data: {
-        object: this.object_for_settings,
-        suites: this.suites,
-      }
-    });
-
-    dialogRef.afterClosed().pipe(takeUntil(this.unsubscribe)).subscribe(result => {
-      if (result) {
-        if (result.path === 'run') {
-          // this.runs = this.runs.filter(currentRun => currentRun.id !== result.id);
-          // const object = this.suites.find(suite => suite.name === result.name);
-          // this.merge_suites_and_runs();
-          // this.select_object(object);
-          // this.get_statistic();
-        } else {
-          // this.suites = this.suites.filter(currentSuite => currentSuite.id !== result.id);
-          this.router.navigate([this.router.url.replace(/\/suite.*/, '')]);
-          // this.merge_suites_and_runs();
-          // this.get_statistic();
+    this.suites$.first().switchMap(suites => {
+      const dialogRef = this.dialog.open(RunsSettingsComponent, {
+        data: {
+          object: this.object_for_settings,
+          suites,
         }
-      }
-      this.cd.detectChanges();
-    });
+      });
+
+      return dialogRef.afterClosed().map(result => {
+        if (result) {
+          if (result.path === 'run') {
+            // this.runs = this.runs.filter(currentRun => currentRun.id !== result.id);
+            // const object = this.suites.find(suite => suite.name === result.name);
+            // this.merge_suites_and_runs();
+            // this.select_object(object);
+            // this.get_statistic();
+          } else {
+            // this.suites = this.suites.filter(currentSuite => currentSuite.id !== result.id);
+            this.router.navigate([this.router.url.replace(/\/suite.*/, '')]);
+            // this.merge_suites_and_runs();
+            // this.get_statistic();
+          }
+        }
+        this.cd.detectChanges();
+      });
+    }).subscribe();
   }
 
   clicked(event, object) {

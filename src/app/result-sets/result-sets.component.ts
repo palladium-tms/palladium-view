@@ -183,8 +183,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   selectAll(event) {
     if (!event.checked) {
-      this.resultSetCheckboxes = {};
-      this.selectedCount = 0;
+      this.unselect_all();
       return;
     }
     this.resultSets$.map(resultSets => {
@@ -196,6 +195,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       });
       this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
     }).first().subscribe();
+  }
+
+  unselect_all() {
+    this.resultSetCheckboxes = {};
+    this.selectedCount = 0;
   }
 
   get_statistic(resultSets) {
@@ -299,27 +303,8 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   add_result() {
     this.palladiumApiService.result_new(this.get_selected_objects(), this.message, this.status);
     this.newResultForm.reset(['name', 'status']);
+    this.unselect_all();
     this.addResultOpen = false;
-  }
-
-  update_result_sets(resultSets) {
-    if (!resultSets['result_sets']) {
-      return;
-    }
-    resultSets['result_sets'].forEach(element => {
-      this.resultSetsAndCases.find(object => object.name === element.name && object.path === 'result_set').status = element.status;
-    });
-  }
-
-  update_cases(cases) {
-    if (!cases['result_sets']) {
-      return;
-    }
-    cases['result_sets'].forEach(element => {
-      this.palladiumApiService.resultSets[this.stance.runId()].push(element);
-      const index = this.resultSetsAndCases.findIndex(object => object.name === element.name && object.path === 'case');
-      this.resultSetsAndCases[index] = element;
-    });
   }
 
   cancel_result_custom() {
@@ -330,11 +315,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   add_result_open_menu() {
     this.selectedResultSet$.next(this.get_selected_objects());
     this.addResultOpen = true;
-    // if (selected.length === 1) {
-    //   this.newResultForm.patchValue({status: this.palladiumApiService.get_status_by_id(selected[0].status)});
-    // } else {
-    //   this.newResultForm.reset('status');
-    // }
   }
 
   get_selected_objects() {
@@ -396,7 +376,7 @@ export class ResultSetsSettingsComponent implements OnInit {
     return this.objectForm.get('name');
   }
 
-  async edit_object() {
+  edit_object() {
     if (this.object.path === 'result_set') {
       this.palladiumApiService.edit_case_by_result_set_id(this.object.id, this.stance.runId(), this.name.value);
       // const caseForEdit = this.cases.find(currentCase => currentCase.name === this.object.name);
