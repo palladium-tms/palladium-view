@@ -140,20 +140,6 @@ export class RunsComponent implements OnInit, OnDestroy {
       });
 
       return dialogRef.afterClosed().map(result => {
-        if (result) {
-          if (result.path === 'run') {
-            // this.runs = this.runs.filter(currentRun => currentRun.id !== result.id);
-            // const object = this.suites.find(suite => suite.name === result.name);
-            // this.merge_suites_and_runs();
-            // this.select_object(object);
-            // this.get_statistic();
-          } else {
-            // this.suites = this.suites.filter(currentSuite => currentSuite.id !== result.id);
-            this.router.navigate([this.router.url.replace(/\/suite.*/, '')]);
-            // this.merge_suites_and_runs();
-            // this.get_statistic();
-          }
-        }
         this.cd.detectChanges();
       });
     }).subscribe();
@@ -246,13 +232,10 @@ export class RunsSettingsComponent implements OnInit {
   }
 
   editing() {
-    if (this.run_opened) {
+    if (this.object.path === 'run') {
       this.palladiumApiService.edit_suite_by_run_id(this.object, this.name.value, this.stance.planId());
     } else {
-      // this.palladiumApiService.edit_suite(this.object.id, this.object.name).then((suite: Suite) => {
-      //   this.object.name = suite.name;
-      //   this.object.updated_at = suite.updated_at;
-      // });
+      this.palladiumApiService.edit_suite(this.object.id, this.name.value);
     }
   }
 
@@ -260,15 +243,14 @@ export class RunsSettingsComponent implements OnInit {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'run') {
         this.palladiumApiService.delete_run(this.object);
+        if (this.stance.runId() === this.object.id) {
+          this.router.navigate(['/product/' + this.stance.productId() + '/plan/' + this.stance.planId()]);
+        }
       } else {
-        // await this.ApiService.delete_suite(this.object.id);
+        this.palladiumApiService.delete_suite(this.object.id);
       }
       this.dialogRef.close(this.object);
     }
-  }
-
-  run_opened() {
-    return this.router.url.indexOf('run') >= 0;
   }
 
   name_is_existed() {

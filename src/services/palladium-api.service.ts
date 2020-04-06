@@ -190,43 +190,37 @@ export class PalladiumApiService {
   edit_suite_by_run_id(run, name, planId): void {
     const params = {suite_data: {run_id: run.id, name}};
     this.httpService.postData('/suite_edit', params).map(response => {
-      const productId = response['suite']['product_id'];
-      const suite = this._suites[productId][this._suites[productId].findIndex(x => x.id === response['suite'].id)];
+      this.update_suite(response);
       const runNew = this._runs[planId].find(currentRun => currentRun.name === run.name);
       runNew.name = response['suite']['name'];
       runNew.updated_at = response['suite']['updated_at'];
-      suite.name = response['suite']['name'];
-      suite.updated_at = response['suite']['updated_at'];
-      this.suites$.next(this._suites);
       this.runs$.next(this._runs);
     }).subscribe();
   }
 
-  // edit_suite(id, name): Promise<any> {
-  //   return this.httpService.postData('/suite_edit', {suite_data: {name: name, id: id}}).then((resp: any) => {
-  //     if (resp['errors']) {
-  //       console.log('errors');
-  //       return Promise.reject(resp['errors']);
-  //     } else {
-  //       console.log('all right');
-  //       return Promise.resolve(new Suite(resp['suite']));
-  //     }
-  //   });
-  // }
+  update_suite(response) {
+    const productId = response['suite']['product_id'];
+    const suite = this._suites[productId][this._suites[productId].findIndex(x => x.id === response['suite'].id)];
+    suite.name = response['suite']['name'];
+    suite.updated_at = response['suite']['updated_at'];
+    this.suites$.next(this._suites);
+  }
 
-  //
-  // // async delete_suite(suiteId):Promise<boolean> {
-  // //   return this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).then(resp => {
-  // //     if (resp.errors == null) {
-  // //       console.log(this.suites[resp.suite.product_id]);
-  // //       this.suites[resp.suite.product_id] = this.suites[resp.suite.product_id].filter(suite => suite.id !== suiteId);
-  // //       return true;
-  // //     } else {
-  // //       return false
-  // //     }
-  // //   });
-  // // }
-  //
+  edit_suite(id, name): void {
+    this.httpService.postData('/suite_edit', {suite_data: {name, id}}).map(response => {
+      this.update_suite(response);
+    }).subscribe();
+  }
+
+
+  delete_suite(suiteId): void {
+    this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).map(response => {
+      const productId = response['suite']['product_id'];
+      this._suites[productId] = this._suites[productId].filter(suite => suite.id !== response['suite']['id']);
+      this.suites$.next(this._suites);
+    }).subscribe();
+  }
+
   // #endregion
 
   // //#region Cases
