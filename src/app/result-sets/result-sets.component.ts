@@ -92,7 +92,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id).map(x => { this.loading = true; return x; });
+    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id).map(x => {
+      this.loading = true;
+      return x;
+    });
 
     // get result sets and cases
     this.activeRoute$.map(id => {
