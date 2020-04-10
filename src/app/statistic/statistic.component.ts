@@ -24,6 +24,9 @@ export class StatisticComponent implements OnInit, OnChanges {
     this.statistic$?.subscribe(() => {
       this.get_untested_point();
     });
+    this.caseCount$.subscribe(_ =>{
+      this.get_untested_point();
+    });
   }
 
   ngOnChanges() {

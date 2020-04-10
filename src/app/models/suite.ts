@@ -1,6 +1,4 @@
-import {Statistic} from './statistic';
-import {BehaviorSubject, ReplaySubject} from 'rxjs';
-import {Case} from './case';
+import {BehaviorSubject} from 'rxjs';
 
 export class Suite {
   id: number;
@@ -8,7 +6,6 @@ export class Suite {
   product_id: number;
   created_at: string;
   updated_at: string;
-  cases$: ReplaySubject<Case[]> = new ReplaySubject(1);
   caseCount$: BehaviorSubject<number> = new BehaviorSubject(0);
   caseCount: number;
   path = 'suite';
@@ -39,7 +36,8 @@ export class Suite {
       'statistic': {0: 0}};
   }
 
-  is_a(object) {
-    return object.name === this.name && object.id === this.id && object.path === this.path;
+  decrease_case_count() {
+    this.caseCount -=1;
+    this.caseCount$.next(this.caseCount);
   }
 }

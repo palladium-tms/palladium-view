@@ -14,15 +14,26 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
   pointsActivity: PointActivityInterface[] = [];
   pointsActivityCache = {};
   pointsActivity$: Observable<PointActivityInterface[]>;
-  // untestedPointActivity$: Observable<{ active: boolean; point: Point }>;
   untestedPointActivity: PointActivityInterface;
 
   constructor(private cd: ChangeDetectorRef) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.caseCount$.subscribe(caseCount => {
+      if (this.untestedPointActivity) {
+        const resultSetCount = (1/this.untestedPointActivity.point.attitude * this.untestedPointActivity.point.count - this.untestedPointActivity.point.count);
+        this.untestedPointActivity = {point: new Point(0, caseCount - resultSetCount, caseCount), active: this.untested_is_active()};
+        this.clear_empty_filter();
+      }
+    });
+  }
 
   ngOnChanges() {
+    this.init_point_activity();
+  }
+
+  init_point_activity() {
     this.pointsActivity$ = this.statistic$.map(statistic => {
       this.update_pointsActivityCache();
       this.pointsActivity = [];

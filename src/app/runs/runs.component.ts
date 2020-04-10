@@ -248,6 +248,9 @@ export class RunsSettingsComponent implements OnInit {
         }
       } else {
         this.palladiumApiService.delete_suite(this.object.id);
+        if (this.stance.suiteId() === this.object.id) {
+          this.router.navigate(['/product/' + this.stance.productId() + '/plan/' + this.stance.planId()]);
+        }
       }
       this.dialogRef.close(this.object);
     }

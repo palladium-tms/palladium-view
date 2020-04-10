@@ -1,5 +1,7 @@
-<mat-card class="status-wrapper mat-elevation-z1" *ngIf="pointActivity.point && pointActivity.point.count > 0"
-     [ngStyle]="{'background-color': (this.pointActivity.active?(statuses$ | async)[this.pointActivity.point.status].color: ''), 'border-right': 'solid 4px ' + (statuses$ | async)[this.pointActivity.point.status].color}"
-     [ngClass]="{'mat-elevation-z7': pointActivity.active}">
-  <span class="status-text">{{pointActivity.point.count}} {{(statuses$ | async)[pointActivity.point.status].name}}</span>
-</mat-card>
+<ng-container *ngIf="(statuses$ | async) as statuses">
+  <mat-card class="status-wrapper mat-elevation-z1" *ngIf="pointActivity.point && pointActivity.point.count > 0"
+            [ngStyle]="{'background-color': (this.pointActivity.active?statuses[this.pointActivity.point.status].color: ''), 'border-right': 'solid 4px ' + statuses[this.pointActivity.point.status].color}"
+            [ngClass]="{'mat-elevation-z7': pointActivity.active}">
+    <span class="status-text">{{pointActivity.point.count}} {{statuses[pointActivity.point.status].name}}</span>
+  </mat-card>
+</ng-container>

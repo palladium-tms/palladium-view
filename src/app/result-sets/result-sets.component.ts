@@ -366,7 +366,7 @@ export class ResultSetsSettingsComponent implements OnInit {
     name: new FormControl('', [Validators.required])
   });
 
-  constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>, private cd: ChangeDetectorRef,
+  constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>, private cd: ChangeDetectorRef, private router: Router,
               private palladiumApiService: PalladiumApiService, @Inject(MAT_DIALOG_DATA) public data, private stance: StanceService) {
   }
 
@@ -395,8 +395,11 @@ export class ResultSetsSettingsComponent implements OnInit {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'result_set') {
         this.palladiumApiService.delete_result_set(this.object.id, this.stance.runId());
+        if (this.object.id === this.stance.resultSetId()) {
+          this.router.navigate([/.*run\/\d+/.exec(this.router.url)[0]]);
+        }
       } else {
-        // await this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
+        this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
       }
       this.dialogRef.close(this.object);
     }

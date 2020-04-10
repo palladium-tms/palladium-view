@@ -269,15 +269,17 @@ export class PalladiumApiService {
   //   return new Case(resp['case']);
   // }
   //
-  // async delete_case(caseId, productId) {
-  //   const resp = await this.httpService.postData('/case_delete', {case_data: {id: caseId}});
-  //   const _case = new Case(resp['case']);
-  //   const _suite = this.suites[productId].find(suite => suite.id === _case.suite_id);
-  //   const statisticData = _suite.statistic.data;
-  //   statisticData[0] = statisticData[0] - 1;
-  //   _suite.statistic = new Statistic(statisticData);
-  //   return _case;
-  // }
+  delete_case(caseId, productId): void {
+    this.httpService.postData('/case_delete', {case_data: {id: caseId}}).map(response => {
+      const suiteId = response['case']['suite_id'];
+      this._cases[suiteId] = this._cases[suiteId].filter(_case => _case.id !== caseId);
+      this.cases$.next(this._cases);
+      const suite = this._suites[productId].find(suite => suite.id === suiteId);
+      suite.decrease_case_count();
+      this.suites$.next(this._suites);
+      this.case_count(productId);
+    }).subscribe();
+  }
 
   get_history(caseData: ({ id: number } | { result_set_id: number })): void {
     this.httpService.postData('/case_history', {case_data: caseData}).map(resp => {
