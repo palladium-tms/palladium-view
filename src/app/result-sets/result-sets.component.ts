@@ -312,7 +312,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   cancel_result_custom() {
     this.addResultOpen = false;
-    console.log(this.resultSetCheckboxes);
     this.cd.detectChanges();
   }
 
