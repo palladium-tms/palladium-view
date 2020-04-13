@@ -312,6 +312,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   cancel_result_custom() {
     this.addResultOpen = false;
+    console.log(this.resultSetCheckboxes);
     this.cd.detectChanges();
   }
 
@@ -339,7 +340,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   checkbox_change($event, object) {
-    this.resultSetCheckboxes[object.id] = {checked: $event.checked, object};
+    this.resultSetCheckboxes[object.name] = {checked: $event.checked, object};
     this.selectedCount = Object.values(this.resultSetCheckboxes).filter(checkbox => checkbox.checked).length;
     if (this.selectedCount === 0) {
       this.selectAllFlag = false;
