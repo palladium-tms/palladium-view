@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PalladiumApiService} from '../../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
+import {Observable} from "rxjs";
+import {Invite} from "../../models/invite";
 
 @Component({
   selector: 'app-invite',
@@ -21,25 +23,14 @@ export class InviteComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InviteDialogComponent implements OnInit, OnDestroy {
-  mode: 'empty' | 'exist' | 'loading' | 'generating' = 'loading';
-  invite;
+  invite$: Observable<Invite>;
   constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
 
-  async ngOnInit() {
-    // this.invite = await this.palladiumApiService.get_invite();
-    // if (this.invite) {
-    //   this.mode = 'exist';
-    // } else {
-    //   this.mode = 'empty';
-    // }
-    this.cd.detectChanges();
-  }
-
-  async generate_invite() {
-    this.mode = 'generating';
-    // this.invite = await this.palladiumApiService.generate_invite();
-    this.mode = 'exist';
-    this.cd.detectChanges();
+  ngOnInit() {
+    this.palladiumApiService.generate_invite();
+    this.invite$ = this.palladiumApiService.invite$.map(x => {
+      return x;
+    });
   }
 
   ngOnDestroy(): void {

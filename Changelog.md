@@ -6,6 +6,7 @@
 ## Changed
     * Style for selected items
     * No routing after click to selected object
+    * Now new invite will generated every time, when you open this menu 
 ## Fixed
     * Fix untested filter
     * Fix: show more button is hided after click

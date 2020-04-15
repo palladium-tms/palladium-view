@@ -3,10 +3,12 @@ export class Invite {
   expiration_data;
   token;
   link;
-  constructor (current_invite) {
-    this.created_at = current_invite['created_at'];
-    this.expiration_data = current_invite['expiration_data'];
-    this.token = current_invite['token'];
-    this.link = location.host + '/registration?invite=' + this.token;
+  constructor (currentData) {
+    if (currentData !== {}) {
+      this.created_at = currentData['created_at'];
+      this.expiration_data = currentData['expiration_data'];
+      this.token = currentData['token'];
+      this.link = location.host + '/registration?invite=' + this.token;
+    }
   }
 }

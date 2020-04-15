@@ -15,6 +15,7 @@ import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {Statistic} from '../app/models/statistic';
 import 'rxjs/Rx';
 import {NGXLogger} from 'ngx-logger';
+import {Invite} from "../app/models/invite";
 
 export interface StructuredStatuses {
   [key: number]: Status;
@@ -99,6 +100,8 @@ export class PalladiumApiService {
 
   cases$: BehaviorSubject<StructuredCases> = new BehaviorSubject({});
   private _cases: StructuredCases = {};
+
+  invite$: ReplaySubject<Invite> = new ReplaySubject(1);
 
   resultSets: StructuredResultSets = {};
   statuses: StructuredStatuses = {0: new Status({name: 'Untested', color: '#ffffff5c', id: 0, 'blocked': true})};
@@ -618,23 +621,21 @@ export class PalladiumApiService {
     });
   }
 
-  //
-  // //#endregion
 
-  // //#region Result
-  // async generate_invite() {
-  //   const response = await this.httpService.postData('/create_invite_token', {});
-  //   return new Invite(response['invite_data']);
-  // }
-  //
-  // async get_invite() {
-  //   let invite = null;
-  //   const data = await this.httpService.postData('/get_invite_token', {});
-  //   if (data['invite_data']) {
-  //     invite = new Invite(data['invite_data']);
-  //   }
-  //   return invite;
-  // }
+  //#endregion
+
+  //#region Result
+  generate_invite(): void {
+    this.httpService.postData('/create_invite_token', {}).map(res => {
+      this.invite$.next(new Invite(res['invite_data']));
+    }).subscribe();
+  }
+
+  get_invite(): void {
+    this.httpService.postData('/get_invite_token', {}).map(res => {
+      this.invite$.next(new Invite(res['invite_data']));
+    }).subscribe();
+  }
 
   reformat_response(res) {
     const response = {};
