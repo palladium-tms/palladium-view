@@ -13,7 +13,7 @@
         {{selectedCount}}
       </button>
       <div class="divider"></div>
-      <button mat-icon-button (click)="update_click()">
+      <button mat-icon-button (click)="update_click()" [disabled] = "refreshButtonStatus == 'disabled'">
         <mat-icon>refresh</mat-icon>
       </button>
       <button mat-icon-button [color]="searchToggle.color" (click)="toggle_search()">

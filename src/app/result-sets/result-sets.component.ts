@@ -56,6 +56,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSetCheckboxes: ObjectCheckbox;
 
   loading = false;
+  refreshButtonStatus: ('disabled' | 'active') = 'disabled';
 
   addResultOpen = false;
   statistic: Statistic;
@@ -80,6 +81,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]).map(x => {
       this.loading = false;
+      this.refreshButtonStatus = 'active';
       this.cd.markForCheck();
       return x;
     });
@@ -94,6 +96,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id).map(x => {
       this.loading = true;
+      this.refreshButtonStatus = 'disabled';
       return x;
     });
 
@@ -205,17 +208,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.selectedCount = 0;
   }
 
-  get_statistic(resultSets) {
-    const data = {};
-    resultSets.forEach(resultSet => {
-      if (!data[resultSet.status]) {
-        data[resultSet.status] = 0;
-      }
-      data[resultSet.status] += 1;
-    });
-    this.delete_filter_without_elements(data); // clear empty filters because need to keep results list no empty
-  }
-
   delete_filter_without_elements(data) {
     this.filter.forEach((element, index) => {
       if (!data[element]) {
@@ -243,6 +235,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
+    this.refreshButtonStatus = 'disabled';
     this.palladiumApiService.get_result_sets(this.stance.runId());
   }
 
