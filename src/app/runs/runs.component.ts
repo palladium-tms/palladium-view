@@ -13,7 +13,7 @@ import {Router} from '@angular/router';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
 import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
-import {Statistic, Point} from '../models/statistic';
+import {Statistic} from '../models/statistic';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ProductSettingsComponent} from '../products/products.component';
@@ -37,7 +37,8 @@ export class RunsComponent implements OnInit, OnDestroy {
   untestedSpace;
   activeRoute$: Observable<number>;
   params;
-  object_for_settings;
+  refreshButtonStatus: ('disabled' | 'active') = 'disabled';
+  objectForSettings;
 
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
@@ -58,6 +59,7 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.statuses$ = this.palladiumApiService.statuses$;
     this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]).map(x => {
       this.loading = false;
+      this.refreshButtonStatus = 'active';
       this.cd.markForCheck();
       return x;
     });
@@ -119,7 +121,8 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
-   this.palladiumApiService.get_runs(this.stance.planId());
+    this.refreshButtonStatus = 'disabled';
+    this.palladiumApiService.get_runs(this.stance.planId()).subscribe();
     this.cd.detectChanges();
     // if (this.ResultSetComponent && this.stance.runId()) {
     //   this.ResultSetComponent.update_click();
@@ -134,12 +137,12 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.suites$.first().switchMap(suites => {
       const dialogRef = this.dialog.open(RunsSettingsComponent, {
         data: {
-          object: this.object_for_settings,
+          object: this.objectForSettings,
           suites,
         }
       });
 
-      return dialogRef.afterClosed().map(result => {
+      return dialogRef.afterClosed().map(() => {
         this.cd.detectChanges();
       });
     }).subscribe();

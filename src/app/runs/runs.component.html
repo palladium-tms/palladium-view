@@ -4,7 +4,7 @@
       <app-status-filter-bar [statistic$] = statistic$ (selected) = select_filter($event) [caseCount$]=caseCount$></app-status-filter-bar>
     </div>
     <div class="buttons">
-      <button mat-icon-button (click)="update_click()">
+      <button mat-icon-button (click)="update_click()" [disabled] = "refreshButtonStatus == 'disabled'">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
@@ -20,7 +20,7 @@
           <div class="run-name">
             <div class="item-name">{{object.name}}</div>
             <div class="settings-menu">
-              <button mat-icon-button [matMenuTriggerFor]="menu" (click)="object_for_settings = object">
+              <button mat-icon-button [matMenuTriggerFor]="menu" (click)="objectForSettings = object">
                 <mat-icon>more_vert</mat-icon>
               </button>
             </div>
