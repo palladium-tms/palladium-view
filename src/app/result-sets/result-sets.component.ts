@@ -304,10 +304,32 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   add_result() {
-    this.palladiumApiService.result_new(this.get_selected_objects(), this.message, this.status);
+    this.loading = true;
+    const selectedObjects = this.get_selected_objects();
+    const selectedResultSets = selectedObjects.filter(obj => !obj.suite_id);
+    const selectedCases = selectedObjects.filter(obj => obj.suite_id);
+    let resultStatus = false;
+
+    if (selectedResultSets.length !== 0) {
+      this.palladiumApiService.result_new(selectedResultSets, this.message, this.status).subscribe(() => {
+        if (selectedCases.length === 0 || resultStatus) {
+          this.addResultOpen = false;
+        }
+        resultStatus = true;
+        this.cd.detectChanges();
+      });
+    }
+    if (selectedCases.length !== 0) {
+      this.palladiumApiService.result_new_by_case(selectedCases, this.message, this.status, this.stance.runId()).subscribe(() => {
+        if (selectedResultSets.length === 0 || resultStatus) {
+          this.addResultOpen = false;
+        }
+        resultStatus = true;
+        this.cd.detectChanges();
+      });
+    }
     this.newResultForm.reset(['name', 'status']);
     this.unselect_all();
-    this.addResultOpen = false;
   }
 
   cancel_result_custom() {

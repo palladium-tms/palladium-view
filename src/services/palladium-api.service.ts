@@ -456,7 +456,7 @@ export class PalladiumApiService {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
         this.logger.debug('get_plans_statistic:');
         this.logger.debug(statistic);
-          this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+        this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
       });
     }).subscribe();
   }
@@ -553,6 +553,7 @@ export class PalladiumApiService {
       ([] as Plan[]).concat(...Object.values(plans)).find(plan => plan.id === planId).statistic$.next(statistic);
     });
   }
+
   //#endregion
 
   //#region Result
@@ -569,53 +570,54 @@ export class PalladiumApiService {
 
 
   // get_result(result_id) {
-    // return this.httpService.postData('/result', {result_data: {id: result_id}})
-    //   .then(
-    //     result => {
-    //       return new Result(result['result']);
-    //     }, error => console.log(error));
+  // return this.httpService.postData('/result', {result_data: {id: result_id}})
+  //   .then(
+  //     result => {
+  //       return new Result(result['result']);
+  //     }, error => console.log(error));
   // }
 
-  result_new(resultSets, description, status): void {
-    if (resultSets.length !== 0) {
-      this.httpService.postData('/result_new', {
-        result_data: {
-          message: description, status: status.name,
-          result_set_id: resultSets.map(obj => obj.id)
-        }
-      }).map(res => {
-        const newResult = new Result(res['result']);
-        res['result_sets'].forEach(resultSet => {
-          const newResultSet = new ResultSet(resultSet);
+  result_new(resultSets, description, status) {
+    return this.httpService.postData('/result_new', {
+      result_data: {
+        message: description, status: status.name,
+        result_set_id: resultSets.map(obj => obj.id)
+      }
+    }).map(res => {
+      const newResult = new Result(res['result']);
+      res['result_sets'].forEach(resultSet => {
+        const newResultSet = new ResultSet(resultSet);
 
-          this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
+        this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
 
-          if (this._results[newResultSet.id.toString()]) {
-            this._results[newResultSet.id.toString()].push(newResult);
-          }
-        });
-        this.resultSets$.next(this._resultSets);
-        this.update_run_statistic(res['result_sets'][0]['run_id']);
-        if (this._results) {
-          this.results$.next(this._results);
+        if (this._results[newResultSet.id.toString()]) {
+          this._results[newResultSet.id.toString()].push(newResult);
         }
-        // this.get_run(res['result_sets'][0]['run_id']);
-      }).subscribe();
-      // return this.reformat_response(res);
-    }
+      });
+      this.resultSets$.next(this._resultSets);
+      this.update_run_statistic(res['result_sets'][0]['run_id']);
+      if (this._results) {
+        this.results$.next(this._results);
+      }
+      // this.get_run(res['result_sets'][0]['run_id']);
+    });
+    // return this.reformat_response(res);
   }
 
-  // async result_new_by_case(cases, message, status, run_id) {
-  //   if (cases.length == 0) {
-  //     return {};
-  //   }
-  //   const params = {result_set_data: {run_id: run_id, name: []}, result_data: {message: message, status: status.name}};
-  //   for (const this_case of cases) {
-  //     params.result_set_data.name.push(this_case.name);
-  //   }
-  //   const res = await this.httpService.postData('/result_new', params);
-  //   return this.reformat_response(res);
-  // }
+  result_new_by_case(cases, message, status, runId) {
+    const params = {result_set_data: {run_id: runId, name: []}, result_data: {message, status: status.name}};
+    cases.forEach(currentCase => {
+      params.result_set_data.name.push(currentCase.name);
+    });
+    return this.httpService.postData('/result_new', params).map(res => {
+      res['result_sets'].forEach(resultSet => {
+        this._resultSets[res['run'].id].push(new ResultSet(resultSet));
+      });
+      this.resultSets$.next(this._resultSets);
+      this.update_run_statistic(runId);
+    });
+  }
+
   //
   // //#endregion
 

@@ -80,54 +80,62 @@
   </div>
 </div>
 <div class="new-result-space" *ngIf="addResultOpen">
-  <mat-card class="new-result-form-card mat-elevation-z1">
-    <mat-card-content>
-      <form [formGroup]="newResultForm">
-        <div class="new_result_form">
-          <mat-form-field color="accent">
-            <mat-select placeholder="Select status" formControlName="status" #status>
-              <mat-option *ngFor="let status of notBlockedStatuses"
-                          [value]="status"
-                          [ngStyle]="{'border-right': '7px solid ' + status.color}">
-                {{status.name}}
-              </mat-option>
-            </mat-select>
-            <mat-icon matSuffix [ngStyle]="{'color': this.status?.color || '#ffffff'}">brightness_1
-            </mat-icon>
-          </mat-form-field>
-          <mat-form-field color="accent">
+  <ng-container *ngIf="!loading">
+    <mat-card class="new-result-form-card mat-elevation-z1">
+      <mat-card-content>
+        <form [formGroup]="newResultForm">
+          <div class="new_result_form">
+            <mat-form-field color="accent">
+              <mat-select placeholder="Select status" formControlName="status" #status>
+                <mat-option *ngFor="let status of notBlockedStatuses"
+                            [value]="status"
+                            [ngStyle]="{'border-right': '7px solid ' + status.color}">
+                  {{status.name}}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix [ngStyle]="{'color': this.status?.color || '#ffffff'}">brightness_1
+              </mat-icon>
+            </mat-form-field>
+            <mat-form-field color="accent">
             <textarea cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="5" matInput
                       placeholder="Leave a comment" formControlName="message"></textarea>
-          </mat-form-field>
-        </div>
-      </form>
-    </mat-card-content>
-    <mat-card-actions class="new-result-buttons">
-      <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
-      <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
-              matBadge="{{selectedCount}}" matBadgePosition="after"
-              (click)="add_result()" style="float: right">Add result
-      </button>
-    </mat-card-actions>
-  </mat-card>
-  <div class="item-list">
-    <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
-      <mat-card class="item mat-elevation-z1"
-                *cdkVirtualFor="let object of (selectedResultSet$ | async)"
-                [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}">
-        <div class="result-set">
-          <div class="result-set-delete">
-            <button mat-icon-button (click)="unselect(object)">
-              <mat-icon>clear</mat-icon>
-            </button>
+            </mat-form-field>
           </div>
-          <div class="item-name item-name-for-deleting">{{object.name}}</div>
-          <div class="status-name status-padding" *ngIf="!object.deleting">
-            <b>{{(statuses$ | async)[object.status].name}}</b>
+        </form>
+      </mat-card-content>
+      <mat-card-actions class="new-result-buttons">
+        <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
+        <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
+                matBadge="{{selectedCount}}" matBadgePosition="after"
+                (click)="add_result()" style="float: right">Add result
+        </button>
+      </mat-card-actions>
+    </mat-card>
+    <div class="item-list">
+      <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
+        <mat-card class="item mat-elevation-z1"
+                  *cdkVirtualFor="let object of (selectedResultSet$ | async)"
+                  [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}">
+          <div class="result-set">
+            <div class="result-set-delete">
+              <button mat-icon-button (click)="unselect(object)">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+            <div class="item-name item-name-for-deleting">{{object.name}}</div>
+            <div class="status-name status-padding" *ngIf="!object.deleting">
+              <b>{{(statuses$ | async)[object.status].name}}</b>
+            </div>
           </div>
-        </div>
-      </mat-card>
-    </cdk-virtual-scroll-viewport>
-  </div>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="loading">
+    <div class="loader">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+  </ng-container>
+
 </div>
 <router-outlet (activate)="onActivate($event)"></router-outlet>
