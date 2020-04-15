@@ -38,7 +38,7 @@
     <ng-container *ngIf="!loading">
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
         <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of resultSets | casefilling: cases | statusFilter: filter| search: searchValue"
+                  *cdkVirtualFor="let object of resultSets | casefilling: cases | statusFilter: filter| search: searchValue| sortByCreatedAt: 'desc'"
                   [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}"
                   [ngClass]="{'selected': object.id === activeElement?.id, 'case': object.path == 'case'}"
                   style="height: 53px">
@@ -82,7 +82,6 @@
 <div class="new-result-space" *ngIf="addResultOpen">
   <ng-container *ngIf="!loading">
     <mat-card class="new-result-form-card mat-elevation-z1">
-      <mat-card-content>
         <form [formGroup]="newResultForm">
           <div class="new_result_form">
             <mat-form-field color="accent">
@@ -102,7 +101,6 @@
             </mat-form-field>
           </div>
         </form>
-      </mat-card-content>
       <mat-card-actions class="new-result-buttons">
         <button mat-raised-button (click)="cancel_result_custom()">Cancel</button>
         <button mat-raised-button color="accent" [disabled]="!newResultForm.valid"
