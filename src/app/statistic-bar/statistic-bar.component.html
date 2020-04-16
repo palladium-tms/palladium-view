@@ -1,4 +1,4 @@
-<ng-container *ngIf="(statistic$ | async) as statistic; else loading">
+<ng-container *ngIf="(statistic$ | async) as statistic">
   <div class="statistic-bar">
     <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((statistic.all / (caseCount$ | async)) * 100) + '%'}">
       <div *ngFor="let point of statistic.points" class="status-element"

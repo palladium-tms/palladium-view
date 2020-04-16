@@ -136,7 +136,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
             const suite = suites.find(suite => suite.name === run.name);
             if (suite) {
               this.cases = cases[suite.id];
-              this.caseCount$.next(this.cases?.length);
+              if (this.cases) {
+                this.caseCount$.next(this.cases.length);
+              }
               this.cd.detectChanges();
             }
           });

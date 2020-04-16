@@ -532,11 +532,13 @@ export class PalladiumApiService {
       }
       statisticData[resultSet.status] += 1;
     });
-    const planId = this._resultSets[runId][0].plan_id;
-    this.runs$.first().subscribe(runs => {
-      runs[planId].find(run => run.id === runId).update_point_statuses(statisticData);
-      this.update_plan_statistic(planId);
-    });
+    const planId = this._resultSets[runId][0]?.plan_id;
+    if (planId) {
+      this.runs$.first().subscribe(runs => {
+        runs[planId].find(run => run.id === runId).update_point_statuses(statisticData);
+        this.update_plan_statistic(planId);
+      });
+    }
   }
 
   update_plan_statistic(planId) {
