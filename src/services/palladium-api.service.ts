@@ -327,17 +327,18 @@ export class PalladiumApiService {
     this.get_runs(planId).subscribe();
   }
 
-  //
-  // create_run(run_name, plan_id): Promise<any> {
-  //   return this.httpService.postData('/run_new', {run_data: {plan_id: plan_id, name: run_name}})
-  //     .then(
-  //       (resp: any) => {
-  //         return new Run(resp['run']);
-  //       }, (errors: any) => {
-  //         console.log(errors);
-  //       });
-  // }
-  //
+
+  create_run(runName, planI): Observable<Run> {
+    return this.httpService.postData('/run_new', {run_data: {plan_id: planI, name: runName}}).map(res => {
+      // change link to array for trigger unpure pipes
+      const newRun = new Run(res['run']);
+      this._runs[res['plan']['id']] = this._runs[res['plan']['id']].slice(0);
+      this._runs[res['plan']['id']].push(newRun);
+      this.runs$.next(this._runs);
+      return newRun;
+    });
+  }
+
   delete_run(run: Run): void {
     this.httpService.postData('/run_delete', {run_data: {id: run.id}}).map(result => {
       console.log(run.plan_id);

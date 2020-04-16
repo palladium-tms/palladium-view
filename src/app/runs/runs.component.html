@@ -41,5 +41,9 @@
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
   </button>
+  <button mat-menu-item (click)="make_run()" *ngIf="objectForSettings?.path == 'suite'">
+    <mat-icon>add_to_queue</mat-icon>
+    <span>Make Run</span>
+  </button>
 </mat-menu>
 <router-outlet></router-outlet>

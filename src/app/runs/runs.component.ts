@@ -159,29 +159,14 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + object.path + '/' + object.id]);
   }
 
-  // make_run() {
-  //   const creatingRunPromise = this.palladiumApiService.create_run(this.object_for_settings.name, this.stance.planId());
-  //   const newRun = new Run(null);
-  //   newRun.name = this.object_for_settings.name;
-  //   newRun.statistic = new Statistic({});
-  //   this.runs.push(newRun);
-  //   if (this.selected_object.name === this.object_for_settings.name) {
-  //     this.selected_object = newRun;
-  //   }
-  //   this.merge_suites_and_runs();
-  //   this.cd.detectChanges();
-  //   creatingRunPromise.then(result => {
-  //     const obj = this.runs_and_suites.find(object => object.name === result.name);
-  //     obj.id = result.id;
-  //     obj.created_at = result.created_at;
-  //     obj.updated_at = result.updated_at;
-  //     if (this.selected_object.name === obj.name) {
-  //       this.selected_object = obj;
-  //     }
-  //     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + this.selected_object.path + '/' + this.selected_object.id]);
-  //     this.cd.detectChanges();
-  //   });
-  // }
+  make_run() {
+    this.palladiumApiService.create_run(this.objectForSettings.name, this.stance.planId()).subscribe(run => {
+      if (this.stance.suiteId() === this.objectForSettings.id) {
+        this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/run/' + run.id]);
+        this.activeObject = run;
+      }
+    });
+  }
 
   ngOnDestroy() {
     this.cd.detach();
