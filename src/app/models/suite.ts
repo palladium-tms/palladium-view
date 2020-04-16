@@ -40,4 +40,8 @@ export class Suite {
     this.caseCount -=1;
     this.caseCount$.next(this.caseCount);
   }
+
+  is_a(object) {
+    return object.name === this.name && object.id === this.id && object.path === this.path;
+  }
 }
