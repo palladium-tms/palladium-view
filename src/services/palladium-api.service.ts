@@ -289,7 +289,7 @@ export class PalladiumApiService {
       const productId = resp['product_id'];
       const suiteName = resp['suite_name'];
       this._historyPack[productId] = this._historyPack[productId] || {};
-      this._historyPack[productId][suiteName] = this._historyPack[productId][suiteName] || [];
+      this._historyPack[productId][suiteName] = [];
       resp['result_sets_history'].forEach(data => {
         this._historyPack[productId][suiteName].push(new History(data));
       });
@@ -564,24 +564,24 @@ export class PalladiumApiService {
 
   //#region Result
   get_results(resultSetId) {
-    this.httpService.postData('/results', {result_data: {result_set_id: resultSetId}}).map(response => {
+    this.get_results_obs(resultSetId).subscribe();
+  }
+
+  get_results_obs(resultSetId) {
+    return this.httpService.postData('/results', {result_data: {result_set_id: resultSetId}}).map(response => {
       this._results[resultSetId] = [];
       response['results'].forEach(result => {
         this._results[resultSetId].push(new Result(result));
       });
       this.results$.next(this._results);
-
-    }).subscribe();
+      return resultSetId;
+    });
   }
 
 
-  // get_result(result_id) {
-  // return this.httpService.postData('/result', {result_data: {id: result_id}})
-  //   .then(
-  //     result => {
-  //       return new Result(result['result']);
-  //     }, error => console.log(error));
-  // }
+  get_result(resultId) {
+    return this.httpService.postData('/result', {result_data: {id: resultId}}).map(res => new Result(res['result']));
+  }
 
   result_new(resultSets, description, status) {
     return this.httpService.postData('/result_new', {

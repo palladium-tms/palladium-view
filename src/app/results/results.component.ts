@@ -1,9 +1,10 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy} from '@angular/core';
+import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {Result} from '../models/result';
 import {ActivatedRoute} from '@angular/router';
 import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../services/palladium-api.service';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from "rxjs/operators";
+import {MatTabGroup} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-results',
@@ -18,6 +19,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
   statuses$: Observable<StructuredStatuses>;
   results$: Observable<Result[]>;
   timeZoneOffset$: Observable<string>;
+  @ViewChild("tabs", { static: false }) tabs: MatTabGroup;
 
   constructor(private palladiumApiService: PalladiumApiService,
               private activatedRoute: ActivatedRoute, private cd: ChangeDetectorRef) {
@@ -29,6 +31,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
 
     this.activeRoute$.map(
       id => {
+        this.open_result_tab(this.tabs);
         this.cd.detectChanges();
         this.results$ = this.palladiumApiService.results$.map((results: StructuredResults) => results[id]);
         this.palladiumApiService.get_results(id);
@@ -44,6 +47,11 @@ export class ResultsComponent implements OnInit, OnDestroy {
     if ($event.index === 1) {
       this.palladiumApiService.get_history({result_set_id: this.activatedRoute.snapshot.params['id']});
     }
+  }
+
+  open_result_tab(tabGroup: MatTabGroup) {
+    if (!tabGroup || !(tabGroup instanceof MatTabGroup) || (tabGroup.selectedIndex === 0)) return;
+    tabGroup.selectedIndex = 0;
   }
 
   ngOnDestroy() {

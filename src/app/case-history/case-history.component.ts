@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params} from '@angular/router';
-import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
+import {ActivatedRoute} from '@angular/router';
+import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../services/palladium-api.service';
 import { Location } from '@angular/common';
-import {forkJoin, Observable} from "rxjs";
+import { Observable, ReplaySubject} from "rxjs";
 import {ResultSet} from "../models/result_set";
 import {StanceService} from "../../services/stance.service";
 export interface StructuredHistoryPack {
@@ -17,12 +17,12 @@ export interface StructuredHistoryPack {
 export class CaseHistoryComponent implements OnInit {
   history$: Observable<ResultSet[]>;
   statuses$: Observable<StructuredStatuses>;
+  results$: ReplaySubject<StructuredResults>;
+  historySliderStatus = {};
 
   statuses;
-  loading = true;
-  resultsData = {};
   params;
-  constructor( private activatedRoute: ActivatedRoute, private location: Location,
+  constructor(private activatedRoute: ActivatedRoute, private location: Location,
                private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef, private stance: StanceService) { }
 
   ngOnInit() {
@@ -30,61 +30,29 @@ export class CaseHistoryComponent implements OnInit {
 
     this.history$ = this.palladiumApiService.historyPack$.map((historyPack: StructuredHistoryPack) => {
       const runName = this.palladiumApiService.run_name_by_id(this.stance.runId(), this.stance.planId());
-      const currenthistoryPack = historyPack[this.stance.productId()];
-      if (currenthistoryPack && currenthistoryPack[runName]) {
+      const currentHistoryPack = historyPack[this.stance.productId()];
+      if (currentHistoryPack && currentHistoryPack[runName]) {
         return historyPack[this.stance.productId()][runName];
       } else {
         return [];
       }
     });
 
-    // this.history$ = this.stance.product$.switchMap(product => {
-    //   return this.stance.run$.switchMap(run => {
-    //     return this.palladiumApiService.historyPack$.map(historyPack => {
-    //       historyPack[product.id]
-    //     });
-    //   });
-    //   })
+    this.results$ = this.palladiumApiService.results$;
 
-    // this.history$ = this.palladiumApiService.historyPack$.map(historyPack => {
-    //
-    //   historyPack[this.stance.]
-    // });
-    //
-    // this.params = this.activatedRoute.params.subscribe((params: Params) => {
-    //   console.log('asdasd')
-    //   this.init_data(params['id']);
-    //   this.cd.detectChanges();
-    // });
-    //
-    // this.palladiumApiService.statusObservable.subscribe(() => {
-    //   this.statuses = Object.values(this.palladiumApiService.statuses);
-    //   this.cd.detectChanges();
-    // });
   }
 
-  init_data(id) {
-    this.loading = true;
-    // this.history = [];
-    // Promise.all([this.get_case_history(id)]).then(res => {
-    //   this.history = res[0];
-    //   this.loading = false;
-    //   this.cd.detectChanges();
-    // });
-  }
-
-  get_case_history(id) {
-    // return this.palladiumApiService.history(id);
-  }
-
-  async get_results(history) {
-    if (this.resultsData[history.id] === undefined) {
-      history.object_status = 'loading';
-      // const results = await this.palladiumApiService.results(history.id);
-      history.object_status = 'closed';
-      // this.resultsData[history.id] = {results};
+  get_results(history) {
+    if (this.historySliderStatus[history.id] === 'opened') {
+      this.historySliderStatus[history.id] = 'close';
+    }else {
+      this.historySliderStatus[history.id] = 'loading';
+      this.palladiumApiService.get_results_obs(history.id).subscribe(id => {
+        console.log(id)
+        console.log(this.historySliderStatus)
+        this.historySliderStatus[id] = 'opened';
+        this.cd.detectChanges();
+      });
     }
-    history.object_status === 'closed' ? history.object_status = 'opened' : history.object_status = 'closed';
-    this.cd.detectChanges();
   }
 }

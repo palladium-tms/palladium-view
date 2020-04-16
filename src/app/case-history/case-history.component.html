@@ -1,6 +1,6 @@
-<div class="history-space" *ngIf="(history$ | async)">
-  <div class="item-list">
-      <mat-card class="history" *ngFor="let result_set of (history$ | async) | SortByUpdatedAt:'desc'">
+  <div *ngIf="(history$ | async) as history; else loading" class="history-space">
+    <div class="item-list">
+      <mat-card class="history" *ngFor="let result_set of history | SortByUpdatedAt:'desc'">
         <div class="history-item">
           <div class="history-status"
                [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[result_set.status].color}">
@@ -10,18 +10,18 @@
             {{result_set.plan.name}}
           </div>
           <button mat-icon-button (click)="get_results(result_set)">
-            <mat-icon>{{result_set.object_status === 'closed' ? 'expand_more' : 'expand_less'}}</mat-icon>
+            <mat-icon>{{historySliderStatus[result_set.id] === 'opened' ? 'expand_less' : 'expand_more'}}</mat-icon>
           </button>
         </div>
-        <mat-progress-bar mode="indeterminate" color="accent" *ngIf="result_set.object_status === 'loading'"></mat-progress-bar>
-        <div class="loaded-results" *ngIf="resultsData[result_set.id] && result_set.object_status === 'opened'">
+        <mat-progress-bar mode="indeterminate" color="accent" *ngIf="historySliderStatus[result_set.id] === 'loading'"></mat-progress-bar>
+        <div class="loaded-results" *ngIf="historySliderStatus[result_set.id] == 'opened'">
           <mat-accordion>
             <mat-expansion-panel class="result-item"
-                                 *ngFor="let result of resultsData[result_set.id].results | sortByCreatedAt:'desc'"
-                                 [ngStyle]="{'border-color': (statuses$ | async)[result_set.status].color}">
+                                 *ngFor="let result of (results$ | async)[result_set.id] | sortByCreatedAt:'desc'"
+                                 [ngStyle]="{'border-color': (statuses$ | async)[result.status_id].color}">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  <b>{{(statuses$ | async)[result_set.status].name}}</b>
+                  <b>{{(statuses$ | async)[result.status_id].name}}</b>
                 </mat-panel-title>
                 <mat-panel-description>
                   {{result.created_at | date:'HH:MM:SS' }} {{result.created_at | date:'MMMM d, y' }}
@@ -47,8 +47,11 @@
           </mat-accordion>
         </div>
       </mat-card>
+    </div>
   </div>
-  <div [hidden]="!loading" class="loader">
+
+<ng-template #loading>
+  <div class="loader">
     <mat-spinner color="accent"></mat-spinner>
   </div>
-</div>
+</ng-template>
