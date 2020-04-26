@@ -33,7 +33,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
   selectedPlanId = 0;
-  planForSettings;
+  planForSettings: Plan;
   RUN_COMPONENT;
   loading = false;
   showMore = true;
@@ -118,7 +118,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
 export class PlansSettingsComponent implements OnInit {
   plan;
-  item;
+  item: Plan;
   _plans;
   planForm = new FormGroup({
     name: new FormControl('', [Validators.required])

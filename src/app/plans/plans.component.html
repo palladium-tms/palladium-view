@@ -2,7 +2,7 @@
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
               *ngFor="let plan of (plans$ | async) | sortByCreatedAt:'desc'"
-              [ngClass]="{'selected': stance.planId() == plan.id}"
+              [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
         <div class="name">{{plan.name}}</div>
@@ -23,7 +23,7 @@
   </div>
 </div>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="archive_open()">
+  <button mat-menu-item (click)="archive_open()" *ngIf="!planForSettings?.isArchived">
     <mat-icon>archive</mat-icon>
     <span>Archive</span>
   </button>

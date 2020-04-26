@@ -488,10 +488,11 @@ export class PalladiumApiService {
       }).subscribe();
   }
 
-  async archive_plane(planId) {
-    // return this.httpService.postData('/plan_archive', {plan_data: {id: planId}}).then(response => {
-    //   console.log(response);
-    // });
+  archive_plane(planId) {
+    this.httpService.postData('/plan_archive', {plan_data: {id: planId}}).map(res => {
+        console.log(res);
+      }
+    ).subscribe();
   }
 
   delete_plan(id): void {

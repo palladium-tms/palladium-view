@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {Statistic} from '../models/statistic';
 import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
-import {Observable, ReplaySubject} from "rxjs";
+import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
 
 @Component({
   selector: 'app-statistic-bar',
@@ -11,7 +11,7 @@ import {Observable, ReplaySubject} from "rxjs";
 })
 export class StatisticBarComponent implements OnInit {
   @Input() statistic$: ReplaySubject<Statistic>;
-  @Input() caseCount$: ReplaySubject<number>;
+  @Input() caseCount$: BehaviorSubject<number>;
   statuses: Observable<StructuredStatuses>;
 
   constructor(public palladiumApiService: PalladiumApiService) { }
