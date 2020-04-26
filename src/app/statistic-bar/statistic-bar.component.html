@@ -7,7 +7,7 @@
       </div>
     </div>
   </div>
-  <div>{{statistic.all / (caseCount$ | async) || 0 | percent}}</div>
-
+    <div *ngIf="(caseCount$ | async) != 0">{{statistic.all / (caseCount$ | async) || 0 | percent}}</div>
+    <div *ngIf="(caseCount$ | async) == 0">{{(statistic.all-(statistic.data[0] || 0))/statistic.all || 0 | percent}}</div>
 </ng-container>
 

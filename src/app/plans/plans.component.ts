@@ -15,7 +15,7 @@ import {ProductSettingsComponent} from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {StatisticService} from '../../services/statistic.service';
 import {Plan} from "../models/plan";
-import {Observable, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Product} from '../models/product';
 
@@ -28,7 +28,8 @@ import {Product} from '../models/product';
 })
 export class PlansComponent implements OnInit, OnDestroy {
   plans$: ReplaySubject<Plan[]> =  new ReplaySubject(1);
-  caseCount$: ReplaySubject<number>;
+  zoroCaseCount$ = new BehaviorSubject(0);
+
   activeRoute$: Observable<{}>;
   private unsubscribe: Subject<void> = new Subject();
 
