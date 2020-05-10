@@ -23,7 +23,7 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
     this.caseCount$.subscribe(caseCount => {
       if (this.untestedPointActivity) {
         const resultSetCount = (1/this.untestedPointActivity.point.attitude * this.untestedPointActivity.point.count - this.untestedPointActivity.point.count);
-        this.untestedPointActivity = {point: new Point(0, caseCount - resultSetCount, caseCount), active: this.untested_is_active()};
+        this.untestedPointActivity = {point: new Point(0, Math.trunc(caseCount - resultSetCount), caseCount), active: this.untested_is_active()};
         this.clear_empty_filter();
       }
     });
