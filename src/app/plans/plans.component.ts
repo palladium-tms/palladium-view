@@ -41,7 +41,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   currentProduct$: Observable<Product>;
 
   constructor(public palladiumApiService: PalladiumApiService,
-              private stance: StanceService,
+              public stance: StanceService,
               private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
