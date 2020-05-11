@@ -300,7 +300,7 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Run
-  get_runs(planId) {
+  get_runs(planId: number): Observable<StructuredRuns> {
     return this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
       response => {
         this._runs[planId] = [];
@@ -328,8 +328,8 @@ export class PalladiumApiService {
   }
 
 
-  create_run(runName, planI): Observable<Run> {
-    return this.httpService.postData('/run_new', {run_data: {plan_id: planI, name: runName}}).map(res => {
+  create_run(runName: string, planId: number): Observable<Run> {
+    return this.httpService.postData('/run_new', {run_data: {plan_id: planId, name: runName}}).map(res => {
       // change link to array for trigger unpure pipes
       const newRun = new Run(res['run']);
       this._runs[res['plan']['id']] = this._runs[res['plan']['id']].slice(0);
