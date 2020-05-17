@@ -43,9 +43,11 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
   caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
+  zoroCaseCount$ = new BehaviorSubject(0); // for good statistic if plan is archived
   statuses$: Observable<StructuredStatuses>;
   filter: number[] = []; // ids of active statuses
   activeObject: Run | Suite;
+  planisArchived = false;
 
   constructor(private palladiumApiService: PalladiumApiService,
               private stance: StanceService,
@@ -85,9 +87,11 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.statistic$ = plan.statistic$;
         }
         if (plan?.isArchived) {
+          this.planisArchived = true;
           this.caseCount$.next(0);
         } else {
           this.get_case_count()
+          this.planisArchived = false;
         }
 
       });

@@ -9,7 +9,7 @@ import {Observable, of} from "rxjs";
 })
 export class StatisticFilterPipe implements PipeTransform {
 
-  transform(value, data: [number[], {}]): Observable<Array<Run | Suite>> {
+  transform(value, data: [number[], {}, boolean]): Observable<Array<Run | Suite>> {
     // not use 0 status because it is untested, and it will filtered in next pipe
     if (data[0].length === 0 || data[1] === {}) {
       return of(value);
@@ -25,15 +25,25 @@ export class StatisticFilterPipe implements PipeTransform {
   filtered_with_untested_value(value, data) {
     const filters = data[0];
     const countes = data[1];
+    const planisArchived = data[2];
     return of(value).map(elements => {
       const newElementPack = [];
-      elements.forEach(element => {
-        if (this.is_suite(element) ||
-            this.is_not_full_complete(element, countes[element.name]) ||
-            this.contain_filtered_status(element, filters)) {
-          newElementPack.push(element);
-        }
-      });
+      if (planisArchived) {
+        console.log('aaa')
+        elements.forEach(element => {
+          if (element.statistic.data[0] > 0) {
+            newElementPack.push(element);
+          }
+        });
+      } else {
+        elements.forEach(element => {
+          if (this.is_suite(element) ||
+              this.is_not_full_complete(element, countes[element.name]) ||
+              this.contain_filtered_status(element, filters)) {
+            newElementPack.push(element);
+          }
+        });
+      }
       return newElementPack;
     });
   }

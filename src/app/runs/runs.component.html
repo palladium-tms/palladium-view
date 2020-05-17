@@ -13,8 +13,8 @@
     <div class="item-list" *ngIf="(runs$ | async) as runs">
       <cdk-virtual-scroll-viewport [itemSize]="83" style="height: 100%; width: 100%">
         <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of runs| uniqueNameObjectFilter: (suites$ | async) |
-                   statisticFilter: [filter, untestedSpace] | async"
+                  *cdkVirtualFor="let object of runs| uniqueNameObjectFilter: (planisArchived?[]:(suites$ | async)) |
+                   statisticFilter: [filter, untestedSpace, planisArchived] | async"
                   (click)="clicked($event, object)"
                   [ngClass]="{'suite': object.path === 'suite', 'selected': activeObject?.is_a(object)}">
           <div class="run-name">
@@ -25,7 +25,7 @@
               </button>
             </div>
           </div>
-          <app-statistic [statistic$] = object.statistic$ [filter] = filter [caseCount$]="untestedSpace[object.name]"></app-statistic>
+          <app-statistic [statistic$] = object.statistic$ [filter] = filter [caseCount$]="planisArchived?zoroCaseCount$:untestedSpace[object.name]"></app-statistic>
         </mat-card>
       </cdk-virtual-scroll-viewport>
     </div>
