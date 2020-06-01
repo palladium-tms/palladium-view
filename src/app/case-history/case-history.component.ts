@@ -45,11 +45,9 @@ export class CaseHistoryComponent implements OnInit {
   get_results(history) {
     if (this.historySliderStatus[history.id] === 'opened') {
       this.historySliderStatus[history.id] = 'close';
-    }else {
+    } else {
       this.historySliderStatus[history.id] = 'loading';
       this.palladiumApiService.get_results_obs(history.id).subscribe(id => {
-        console.log(id)
-        console.log(this.historySliderStatus)
         this.historySliderStatus[id] = 'opened';
         this.cd.detectChanges();
       });
