@@ -14,6 +14,9 @@
     * Fix: error plan name change
     * Fix: product list not updated after name changing
     * Fix: product not selected after opening by link
+## [0.6.5]
+## Changed 
+    * Style of created_at in result because need to show tomesoze from settings
 ## [0.6.4]
 ## Added
     * Plan statistic update
