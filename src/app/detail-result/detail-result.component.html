@@ -5,7 +5,7 @@
         <div class="small-block" [ngStyle]="getStyles()">
           <div class="sub-blocks-holder">
             <div class="sub-block"><b>{{status.name}}</b></div>
-            <div class="sub-block">{{result.created_at | date:'medium' }}</div>
+            <div class="sub-block">{{result.created_at | date:'long' }}</div>
             <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}
             </div>
           </div>
