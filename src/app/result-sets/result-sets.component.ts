@@ -416,7 +416,7 @@ export class ResultSetsSettingsComponent implements OnInit {
           this.router.navigate([/.*run\/\d+/.exec(this.router.url)[0]]);
         }
       } else {
-        this.palladiumApiService.delete_case(this.object.id, this.stance.productId());
+        this.palladiumApiService.delete_case(this.object.id, this.stance.productId(), this.stance.planId());
       }
       this.dialogRef.close(this.object);
     }

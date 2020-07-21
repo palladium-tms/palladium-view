@@ -272,8 +272,8 @@ export class PalladiumApiService {
   //   return new Case(resp['case']);
   // }
   //
-  delete_case(caseId, productId): void {
-    this.httpService.postData('/case_delete', {case_data: {id: caseId}}).map(response => {
+  delete_case(caseId, productId, planId): void {
+    this.httpService.postData('/case_delete', {case_data: {id: caseId, plan_id: planId}}).map(response => {
       const suiteId = response['case']['suite_id'];
       this._cases[suiteId] = this._cases[suiteId].filter(_case => _case.id !== caseId);
       this.cases$.next(this._cases);
