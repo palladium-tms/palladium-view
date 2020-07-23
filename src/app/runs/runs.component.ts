@@ -34,14 +34,14 @@ interface untestedSpaceInterface {
 export class RunsComponent implements OnInit, OnDestroy {
   loading = false;
   private unsubscribe: Subject<void> = new Subject();
-  runs$: Observable<Run[]>;
+  runs$: Observable<{}>;
   suites$: Observable<Suite[]>;
   untestedSpace: untestedSpaceInterface;
   activeRoute$: Observable<number>;
   refreshButtonStatus: ('disabled' | 'active') = 'disabled';
   objectForSettings: Run | Suite;
 
-  statistic$: ReplaySubject<(Statistic)> = new ReplaySubject<Statistic>();
+  statistic$: ReplaySubject<(Statistic)>;
   caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
   zoroCaseCount$ = new BehaviorSubject(0); // for good statistic if plan is archived
   statuses$: Observable<StructuredStatuses>;
@@ -59,56 +59,58 @@ export class RunsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
     this.statuses$ = this.palladiumApiService.statuses$;
-    this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]).map(x => {
-      this.loading = false;
-      this.refreshButtonStatus = 'active';
-      this.cd.markForCheck();
-      return x;
-    });
-    this.suites$ = this.palladiumApiService.suites$.map(suites => suites[this.stance.productId()]);
 
-    this.runs$.switchMap( runs => {
-      return this.suites$.map(suites => {
-        if (runs && suites) {
-          this.get_untested_space(runs, suites);
-        }
-      });
-    }).subscribe();
+    // this.runs$ = this.palladiumApiService.runs$.map(runs => runs[this.stance.planId()]).map(x => {
+    //   this.refreshButtonStatus = 'active';
+    //   this.cd.markForCheck();
+    //   return x;
+    // });
+    // this.suites$ = this.palladiumApiService.suites$.map(suites => suites[this.stance.productId()]);
+    // this.suites$ = this.palladiumApiService.get_suite_imp(this.stance.productId(), this.stance.planId());
+
+    // this.runs$.switchMap( runs => {
+    //   return this.suites$.map(suites => {
+    //     if (runs && suites) {
+    //       this.get_untested_space(runs, suites);
+    //     }
+    //   });
+    // }).subscribe();
 
     this.activeRoute$.map((id: number) => {
-      this.loading = true;
       this.get_runs(id);
       this.init_active_object(id);
     }).switchMap(() => {
       return this.palladiumApiService.plans$.map(allPlans => {
         const plans = allPlans[this.stance.productId()];
         const plan = plans.find(plan => plan.id === this.stance.planId());
-        if (plan?.statistic$) {
-          this.statistic$ = plan.statistic$;
-        }
-        if (plan?.isArchived) {
-          this.planisArchived = true;
-          this.caseCount$.next(0);
-        } else {
-          this.get_case_count()
-          this.planisArchived = false;
-        }
+        this.statistic$ = plan.statistic$;
+        this.suites$ = plan.suites$;
 
+        this.runs$ = plan.runs$.map(runs => {
+          let object = {};
+          runs.forEach(run => {
+            object[run.name] = run;
+          })
+          return object;
+        });
+
+        this.caseCount$ = plan.caseCount$;
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
-  get_case_count(): void {
-    this.palladiumApiService.products$.map(products => {
-      const productId = this.stance.productId();
-      return products.find(product => product.id === productId);
-    }).first().subscribe(product => {
-      if (product) {
-        product.caseCount$.subscribe(count => {
-          this.caseCount$.next(count);
-        });
-      }
-    });
-  }
+
+  // get_case_count(): void {
+  //   this.palladiumApiService.products$.map(products => {
+  //     const productId = this.stance.productId();
+  //     return products.find(product => product.id === productId);
+  //   }).first().subscribe(product => {
+  //     if (product) {
+  //       product.caseCount$.subscribe(count => {
+  //         this.caseCount$.next(count);
+  //       });
+  //     }
+  //   });
+  // }
 
   get_runs(id: number): void {
     this.untestedSpace = {};
@@ -151,14 +153,14 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).subscribe();
   }
 
-  clicked(event, object: Run | Suite): void {
+  clicked(event, object: Run | Suite, suite: Suite): void {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
-      this.select_object(object);
+      this.select_object(object, suite);
     }
   }
 
-  select_object(object: Run | Suite): void {
-    this.activeObject = object;
+  select_object(object: Run | Suite, suite: Suite): void {
+    this.activeObject = suite;
     this.router.navigate([/(.*)plan\/\d+/.exec(this.router.url)[0] + '/' + object.path + '/' + object.id]);
   }
 

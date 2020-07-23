@@ -1,19 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Statistic} from '../models/statistic';
-import {ActivatedRoute, Router} from '@angular/router';
-import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
-import {StanceService} from '../../services/stance.service';
-import {ProductSettingsComponent} from '../products/products.component';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {SearchPipe} from '../pipes/search/search.pipe';
-import {CasefillingPipe} from './casefilling.pipe';
-import {StatusFilterPipe} from '../pipes/status_filter_pipe/status-filter.pipe';
-import {ResultSet} from '../models/result_set';
-import {BehaviorSubject, Observable, ReplaySubject, Subject} from 'rxjs';
-import {Status} from '../models/status';
-import {takeUntil} from 'rxjs/operators';
-import {Case} from '../models/case';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Statistic } from '../models/statistic';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PalladiumApiService, StructuredStatuses } from '../../services/palladium-api.service';
+import { StanceService } from '../../services/stance.service';
+import { ProductSettingsComponent } from '../products/products.component';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SearchPipe } from '../pipes/search/search.pipe';
+import { CasefillingPipe } from './casefilling.pipe';
+import { StatusFilterPipe } from '../pipes/status_filter_pipe/status-filter.pipe';
+import { ResultSet } from '../models/result_set';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Status } from '../models/status';
+import { takeUntil } from 'rxjs/operators';
+import { Case } from '../models/case';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -41,11 +41,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     message: new FormControl('')
   });
 
-  resultSets$: Observable<ResultSet[]>;
+  resultSets$: Observable<{}>;
+  cases$: Observable<Case[]>;
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
-  caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
-  statistic$: ReplaySubject<(Statistic)>;
+  caseCount$: Observable<(number)>;
+  statistic$: Observable<(Statistic)>;
   statuses$: Observable<StructuredStatuses>;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -72,19 +73,30 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   searchValue;
 
   constructor(private activatedRoute: ActivatedRoute, private stance: StanceService,
-              private palladiumApiService: PalladiumApiService, private router: Router,
-              private dialog: MatDialog, private cd: ChangeDetectorRef,
-              private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe, private casefillingPipe: CasefillingPipe) {
-    this.searchToggle = {'toggle': false, 'color': 'none'};
+    private palladiumApiService: PalladiumApiService, private router: Router,
+    private dialog: MatDialog, private cd: ChangeDetectorRef,
+    private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe, private casefillingPipe: CasefillingPipe) {
+    this.searchToggle = { 'toggle': false, 'color': 'none' };
   }
 
   ngOnInit() {
-    this.resultSets$ = this.palladiumApiService.resultSets$.map(resultSets => resultSets[this.stance.runId()]).map(x => {
-      this.loading = false;
-      this.refreshButtonStatus = 'active';
-      this.cd.markForCheck();
-      return x;
+    this.resultSets$ = this.palladiumApiService.currentResultSets$.map(resultSets => {
+      const resultSetId = this.stance.resultSetId();
+      if (resultSetId) {
+        this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
+      } else {
+        this.activeElement = undefined;
+      }
+      let object = {};
+      resultSets.forEach(retulsSet => {
+        object[retulsSet.name] = retulsSet;
+      })
+      return object;
     });
+
+    this.cases$ = this.palladiumApiService.currentCases$;
+    this.caseCount$ = this.cases$.map(cases => cases.length);
+
     this.statuses$ = this.palladiumApiService.statuses$;
     this.statuses$.map(statuses => {
       this.notBlockedStatuses = [];
@@ -94,70 +106,28 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id).map(x => {
-      this.loading = true;
-      this.refreshButtonStatus = 'disabled';
-      return x;
-    });
+    this.activeRoute$ = this.activatedRoute.params.pluck('id');
 
     // get result sets and cases
-    this.activeRoute$.map(id => {
+
+    this.activeRoute$.map((id: number) => {
       this.filter = [];
       this.cases = [];
       this.selectAllFlag = false;
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
       this.init_data(id);
-    }).map(() => this.cd.detectChanges()).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    this.activeRoute$.switchMap(() => {
-      return this.resultSets$.map(resultSets => {
-        if (resultSets) {
-          const resultSetId = this.stance.resultSetId();
-          if (resultSetId) {
-            this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
-          } else {
-            this.activeElement = undefined;
-          }
-          this.cd.detectChanges();
-        }
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    // get cases
-    this.activeRoute$.switchMap(() => {
-      return this.palladiumApiService.runs$.switchMap(runs => {
-        const productId = this.stance.productId();
-        const planId = this.stance.planId();
-        const runId = this.stance.runId();
-        const run = runs[planId].find(run => run.id === runId);
-        return this.palladiumApiService.cases$.switchMap(cases => {
-          return this.palladiumApiService.suites$.map(suites => suites[productId]).map(suites => {
-            const suite = suites.find(suite => suite.name === run.name);
-            if (suite) {
-              this.cases = cases[suite.id];
-              if (this.cases) {
-                this.caseCount$.next(this.cases.length);
-              }
-              this.cd.detectChanges();
-            }
-          });
-        });
-      });
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
-    // get statistic
-    this.activeRoute$.switchMap(id => {
-      return this.palladiumApiService.runs$.map(runs => {
-        const planId = this.stance.planId();
-        const run = runs[planId].find(plan => plan.id === id);
-        if (run) {
+    }).switchMap(() => {
+      return this.palladiumApiService.plans$.switchMap(allPlans => {
+        const plans = allPlans[this.stance.productId()];
+        const plan = plans.find(plan => plan.id === this.stance.planId());
+        return plan.runs$.map(runs => {
+          let run = runs.find(run => run.id === this.stance.runId())
           this.statistic$ = run.statistic$;
           this.cd.detectChanges();
-        }
+        })
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
-
   }
 
   select_filter(filter) {
@@ -172,8 +142,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   init_data(id) {
     const runId = this.stance.runId();
     const productId = this.stance.productId();
+    const planId = this.stance.planId();
     this.palladiumApiService.get_result_sets(id);
-    this.palladiumApiService.get_cases_by_run_id(runId, productId);
+    this.palladiumApiService.get_cases_by_run_id(runId, productId, planId);
   }
 
   open_settings() {
@@ -186,7 +157,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   navigate_to_run_show() {
-    this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+    this.router.navigate([/\S*run\/(\d+)/.exec(this.router.url)[0]], { relativeTo: this.activatedRoute });
   }
 
   selectAll(event) {
@@ -195,12 +166,12 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       return;
     }
     this.resultSets$.map(resultSets => {
-      let forSelect = this.casefillingPipe.transform(resultSets, this.cases);
-      forSelect = this.searchPipe.transform(forSelect, this.searchValue);
-      forSelect = this.statusPipe.transform(forSelect, this.filter);
-      forSelect.forEach(object => {
-        this.resultSetCheckboxes[object.name] = {checked: true, object};
-      });
+      // let forSelect = this.casefillingPipe.transform(resultSets, this.cases);
+      // forSelect = this.searchPipe.transform(forSelect, this.searchValue);
+      // forSelect = this.statusPipe.transform(forSelect, this.filter);
+      // forSelect.forEach(object => {
+      //   this.resultSetCheckboxes[object.name] = {checked: true, object};
+      // });
       this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
     }).first().subscribe();
   }
@@ -223,9 +194,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.activeElement = object;
     this.cd.detectChanges();
     if (object.path === 'result_set') {
-      this.router.navigate(['result_set', object.id], {relativeTo: this.activatedRoute});
+      this.router.navigate(['result_set', object.id], { relativeTo: this.activatedRoute });
     } else {
-      this.router.navigate(['case', object.id], {relativeTo: this.activatedRoute});
+      this.router.navigate(['case', object.id], { relativeTo: this.activatedRoute });
     }
   }
 
@@ -356,7 +327,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   checkbox_change($event, object) {
-    this.resultSetCheckboxes[object.name] = {checked: $event.checked, object};
+    this.resultSetCheckboxes[object.name] = { checked: $event.checked, object };
     this.selectedCount = Object.values(this.resultSetCheckboxes).filter(checkbox => checkbox.checked).length;
     if (this.selectedCount === 0) {
       this.selectAllFlag = false;
@@ -384,12 +355,12 @@ export class ResultSetsSettingsComponent implements OnInit {
   });
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>, private cd: ChangeDetectorRef, private router: Router,
-              private palladiumApiService: PalladiumApiService, @Inject(MAT_DIALOG_DATA) public data, private stance: StanceService) {
+    private palladiumApiService: PalladiumApiService, @Inject(MAT_DIALOG_DATA) public data, private stance: StanceService) {
   }
 
   ngOnInit() {
     this.object = this.data.object;
-    this.objectForm.patchValue({name: this.object.name});
+    this.objectForm.patchValue({ name: this.object.name });
   }
 
   get name() {
@@ -435,7 +406,7 @@ export class ResultSetsSettingsComponent implements OnInit {
 
   check_existing() {
     if (this.name_is_existed()) {
-      this.objectForm.controls['name'].setErrors({'is_exist': true});
+      this.objectForm.controls['name'].setErrors({ 'is_exist': true });
     }
   }
 }

@@ -1,6 +1,7 @@
 import {ReplaySubject, BehaviorSubject} from "rxjs";
 import {Statistic} from './statistic';
-import { Case } from './case';
+import { Suite } from './suite';
+import { Run } from './run';
 
 export class Plan {
   id: number;
@@ -10,6 +11,8 @@ export class Plan {
   created_at: number;
   updated_at: number;
   caseCount$: BehaviorSubject<number> = new BehaviorSubject(0);
+  suites$: ReplaySubject<Suite[]>
+  runs$: ReplaySubject<Run[]>
   statistic$: ReplaySubject<Statistic>;
   constructor (plan) {
       this.id = plan['id'];
@@ -19,6 +22,8 @@ export class Plan {
       this.created_at = plan['created_at'].split(' +')[0];
       this.updated_at = plan['updated_at'].split(' +')[0];
       this.statistic$ = new ReplaySubject(1);
+      this.suites$ = new ReplaySubject(1);
+      this.runs$ = new ReplaySubject(1);
       this.caseCount$.next(plan['case_count'])
   }
 }

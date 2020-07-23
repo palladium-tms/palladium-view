@@ -1,6 +1,6 @@
 <div class="result-set-space" *ngIf="!addResultOpen">
   <div class="toolbar">
-    <div class="filters" *ngIf="(statistic$ | async)">
+    <div class="filters" *ngIf="statistic$">
       <app-status-filter-bar [statistic$]=statistic$ (selected)=select_filter($event)
                              [caseCount$]=caseCount$></app-status-filter-bar>
     </div>
@@ -38,18 +38,18 @@
     <ng-container *ngIf="!loading">
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
         <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of resultSets | casefilling: cases | statusFilter: filter| search: searchValue| sortByCreatedAt: 'desc'"
-                  [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[object.status].color}"
-                  [ngClass]="{'selected': object.id === activeElement?.id, 'case': object.path == 'case'}"
+                  *cdkVirtualFor="let object of (cases$ | async) | statusFilter: filter| search: searchValue| sortByCreatedAt: 'desc'"
+                  [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[(resultSets[object.name]?resultSets[object.name]:object).status].color}"
+                  [ngClass]="{'selected': (resultSets[object.name]?resultSets[object.name]:object).id === activeElement?.id, 'case': !resultSets[object.name]}"
                   style="height: 53px">
-          <div class="result-set" (click)="clicked($event, object)" [ngClass]="{'pointer': object.path != 'case'}">
+          <div class="result-set" (click)="clicked($event, resultSets[object.name]?resultSets[object.name]:object)" [ngClass]="{'pointer': resultSets[object.name]}">
             <div class="result-set-checkbox">
               <mat-checkbox [ngModel]="resultSetCheckboxes[object.name]?.checked"
-                            (change)="checkbox_change($event, object)"></mat-checkbox>
+                            (change)="checkbox_change($event, resultSets[object.name]?resultSets[object.name]:object)"></mat-checkbox>
             </div>
             <div class="item-name">{{object.name}}</div>
             <div class="status-name">
-              <b>{{(statuses$ | async)[object.status].name}}</b>
+              <b>{{(statuses$ | async)[(resultSets[object.name]?resultSets[object.name]:object).status].name}}</b>
             </div>
             <div class="menu-button menu">
               <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"

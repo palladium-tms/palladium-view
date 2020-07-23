@@ -100,6 +100,8 @@ export class PalladiumApiService {
 
   cases$: BehaviorSubject<StructuredCases> = new BehaviorSubject({});
   private _cases: StructuredCases = {};
+  currentCases$: ReplaySubject<Case[]> = new ReplaySubject(1);
+  currentResultSets$: ReplaySubject<ResultSet[]> = new ReplaySubject(1);
 
   invite$: ReplaySubject<Invite> = new ReplaySubject(1);
 
@@ -237,25 +239,21 @@ export class PalladiumApiService {
     }).subscribe();
   }
 
-  get_cases_by_run_id(runId, productId): void {
+  get_cases_by_run_id(runId, productId, planId): void {
     this.httpService.postData('/cases', {
       case_data: {
         run_id: runId,
-        product_id: productId
+        product_id: productId,
+        plan_id: planId
       }
     }).map(resp => {
       const _cases = [];
       Object(resp['cases']).forEach(currentCase => {
         _cases.push(new Case(currentCase));
       });
+      this.currentCases$.next(_cases);
       this._cases[resp['suite']['id']] = _cases;
       this.cases$.next(this._cases);
-      //
-      // const suites = this._suites[resp['suite']['product_id']];
-      // if (suites) {
-      //   const suite = suites.find(suite => suite.id === resp['suite']['id']);
-      //   suite.cases$.next(_cases);
-      // }
     }).subscribe();
   }
 
@@ -304,12 +302,28 @@ export class PalladiumApiService {
     return this.httpService.postData('/runs', {run_data: {plan_id: planId}}).map(
       response => {
         this._runs[planId] = [];
+        const plan = this._plans[response['plan']['product_id']].find(plan => plan.id == response['plan']['id']);
+        let newSuites = [];
+        response['suites'].forEach(suite => {
+          newSuites.push(new Suite(suite));
+        });
+        plan.suites$.next(newSuites);
+
+
+        this._products.find(product => product.id == response['plan']['product_id'])
         response['runs'].forEach(run => {
           this._runs[planId].push(new Run(run));
         });
+        plan.runs$.next(this._runs[planId]);
+
         this.runs$.next(this._runs);
         return this._runs;
       });
+  }
+
+  get_suite_imp(product, planId) {
+    console.log('asdasd')
+    return this._plans[product].find(plan => plan.id === planId).suites$;
   }
 
   get_run(runId): void {
@@ -400,7 +414,7 @@ export class PalladiumApiService {
       const plansId = Object(response['plans']).map(plan => plan.id);
       this.get_plans_statistic(plansId, productId);
     }).subscribe();
-    this.get_suites(productId);
+    // this.get_suites(productId);
   }
 
   oldest_plan(productId): number {
@@ -512,8 +526,9 @@ export class PalladiumApiService {
       response['result_sets'].forEach(resultSet => {
         this._resultSets[runId].push(new ResultSet(resultSet));
       });
+      this.currentResultSets$.next(this._resultSets[runId]);
       this.resultSets$.next(this._resultSets);
-      this.update_run_statistic(runId);
+      // this.update_run_statistic(runId);
     }).subscribe();
   }
 

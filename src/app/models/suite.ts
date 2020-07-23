@@ -20,8 +20,10 @@ export class Suite {
     this.product_id = suite['product_id'];
     this.created_at = suite['created_at'].split(' +')[0];
     this.updated_at = suite['updated_at'].split(' +')[0];
-    this.caseCount = suite['statistic'][0]['count'];
-    this.caseCount$.next(this.caseCount);
+    if (suite['statistic']) {
+      this.caseCount = suite['statistic'][0]['count'];
+      this.caseCount$.next(this.caseCount);
+    }
   }
   create_default_suite() {
     return {'id': 'id_loading', 'name': 'name_loading', 'path': 'suite',
