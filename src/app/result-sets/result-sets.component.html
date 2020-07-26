@@ -53,7 +53,7 @@
             </div>
             <div class="menu-button menu">
               <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
-                      (click)="dropdownMenuItemSelect = object">
+                      (click)="dropdownMenuItemSelect = resultSets[object.name]?resultSets[object.name]:object">
                 <mat-icon class="menu">more_vert</mat-icon>
               </button>
             </div>

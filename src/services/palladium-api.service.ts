@@ -218,19 +218,22 @@ export class PalladiumApiService {
   }
 
 
-  delete_suite(suiteId): void {
-    this.httpService.postData('/suite_delete', {suite_data: {id: suiteId}}).map(response => {
-      const productId = response['suite']['product_id'];
-      this._suites[productId] = this._suites[productId].filter(suite => suite.id !== response['suite']['id']);
-      this.suites$.next(this._suites);
+  delete_suite(suiteId, plan): void {
+    this.httpService.postData('/suite_delete', {suite_data: {id: suiteId, plan_id: plan.id}}).map(response => {
+      plan.suites$.take(1).map((suites: Suite[]) => {
+        plan.suites$.next(suites.filter(suite => suite.id !== response['suite']['id']));
+      }).subscribe()
+      // const productId = response['suite']['product_id'];
+      // this._suites[productId] = this._suites[productId].filter(suite => suite.id !== response['suite']['id']);
+      // this.suites$.next(this._suites);
     }).subscribe();
   }
 
   // #endregion
 
   // //#region Cases
-  get_cases(id): void {
-    this.httpService.postData('/cases', {case_data: {suite_id: id}}).map(resp => {
+  get_cases(id, planId): void {
+    this.httpService.postData('/cases', {case_data: {suite_id: id, plan_id: planId}}).map(resp => {
       this._cases[id] = [];
       Object(resp['cases']).forEach(currentCase => {
         this._cases[id].push(new Case(currentCase));
@@ -353,11 +356,13 @@ export class PalladiumApiService {
     });
   }
 
-  delete_run(run: Run): void {
+  delete_run(run: Run, plan: Plan): void {
     this.httpService.postData('/run_delete', {run_data: {id: run.id}}).map(result => {
-      console.log(run.plan_id);
+      plan.runs$.take(1).map(runs => {
+        console.log(runs.filter(currentRun => currentRun.id !== run.id))
+        plan.runs$.next(runs.filter(currentRun => currentRun.id !== run.id))
+      }).subscribe()
       this._runs[run.plan_id] = this._runs[run.plan_id].filter(currentRun => currentRun.id !== run.id);
-      console.log(result);
       this.runs$.next(this._runs);
     }).subscribe();
   }

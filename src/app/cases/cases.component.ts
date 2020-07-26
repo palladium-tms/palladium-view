@@ -29,14 +29,14 @@ export class CasesComponent implements OnInit {
   ngOnInit() {
     this.cases$ = this.palladiumApiService.cases$.map(cases => cases[this.stance.suiteId()]).map(x => { this.loading = false; return x; });
     this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
-      this.palladiumApiService.get_cases(id,);
+      this.palladiumApiService.get_cases(id, this.stance.planId());
     }).subscribe();
   }
 
   get_cases() {
     this.loading = true;
     this.cd.markForCheck();
-    this.palladiumApiService.get_cases(this.stance.suiteId());
+    this.palladiumApiService.get_cases(this.stance.suiteId(), this.stance.planId());
   }
 
   update_click() {
