@@ -43,6 +43,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   resultSets$: Observable<{}>;
   cases$: Observable<Case[]>;
+  filteredCases$: Observable<Case[]>;
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
   caseCount$: Observable<(number)>;
@@ -66,6 +67,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   statuses;
   resultSetsAndCases = [];
   filter: number[] = [];
+  filter$: ReplaySubject< number[]> = new ReplaySubject(1);
   selectAllFlag = false;
   selectedCount = 0;
   dropdownMenuItemSelect;
@@ -77,6 +79,28 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog, private cd: ChangeDetectorRef,
     private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe, private casefillingPipe: CasefillingPipe) {
     this.searchToggle = { 'toggle': false, 'color': 'none' };
+
+    this.filteredCases$ = this.filter$.switchMap(filter => {
+      return this.cases$.switchMap(cases => {
+        return this.resultSets$.map(resultSets => {
+          let newElementPack = []
+          cases.forEach(currentCase => {
+            if (this.contain_filtered_status(resultSets[currentCase.name], filter) || filter.length == 0) {
+              newElementPack.push(currentCase);
+            }
+          });
+          return newElementPack;
+        })
+      })
+    })
+  }
+
+  contain_filtered_status(element, filters) {
+    if (element) {
+      return filters.indexOf(+element.status) >= 0;
+    } else {
+      return filters.indexOf(0) > -1
+    }
   }
 
   ngOnInit() {
@@ -132,6 +156,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
   select_filter(filter) {
     this.filter = filter;
+    this.filter$.next(filter);
   }
 
   log(a) {
@@ -163,17 +188,14 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   selectAll(event) {
     if (!event.checked) {
       this.unselect_all();
-      return;
+    } else {
+      this.filteredCases$.map(objects => {
+        objects.forEach(object => {
+           this.resultSetCheckboxes[object.name] = {checked: true, object};
+         });
+        this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+      }).first().subscribe();
     }
-    this.resultSets$.map(resultSets => {
-      // let forSelect = this.casefillingPipe.transform(resultSets, this.cases);
-      // forSelect = this.searchPipe.transform(forSelect, this.searchValue);
-      // forSelect = this.statusPipe.transform(forSelect, this.filter);
-      // forSelect.forEach(object => {
-      //   this.resultSetCheckboxes[object.name] = {checked: true, object};
-      // });
-      this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
-    }).first().subscribe();
   }
 
   unselect_all() {

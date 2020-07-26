@@ -38,7 +38,7 @@
     <ng-container *ngIf="!loading">
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
         <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of (cases$ | async) | statusFilter: filter| search: searchValue| sortByCreatedAt: 'desc'"
+                  *cdkVirtualFor="let object of (filteredCases$ | async) | search: searchValue| sortByCreatedAt: 'desc'"
                   [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[(resultSets[object.name]?resultSets[object.name]:object).status].color}"
                   [ngClass]="{'selected': (resultSets[object.name]?resultSets[object.name]:object).id === activeElement?.id, 'case': !resultSets[object.name]}"
                   style="height: 53px">
