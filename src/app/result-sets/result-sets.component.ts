@@ -190,11 +190,13 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     if (!event.checked) {
       this.unselect_all();
     } else {
-      this.filteredCases$.map(objects => {
-        objects.forEach(object => {
-           this.resultSetCheckboxes[object.name] = {checked: true, object};
-         });
-        this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+      this.filteredCases$.switchMap(objects => {
+        return this.resultSets$.map(resultSet => {
+          objects.forEach(object => {
+            this.resultSetCheckboxes[object.name] = {checked: true, object: resultSet[object.name]?resultSet[object.name]:object};
+          });
+         this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
+        })
       }).first().subscribe();
     }
   }
@@ -202,6 +204,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   unselect_all() {
     this.resultSetCheckboxes = {};
     this.selectedCount = 0;
+    this.selectAllFlag = false;
   }
 
   delete_filter_without_elements(data) {
@@ -271,7 +274,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   unselect(object) {
-    this.resultSetCheckboxes[object.id].checked = false;
+    this.resultSetCheckboxes[object.name].checked = false;
     this.selectedResultSet$.next(this.get_selected_objects());
     this.selectedCount = Object.values(this.resultSetCheckboxes).filter(resultSet => resultSet.checked).length;
     if (this.selectedCount === 0) {
@@ -293,24 +296,23 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   add_result() {
-    this.loading = true;
     const selectedObjects = this.get_selected_objects();
     const selectedResultSets = selectedObjects.filter(obj => !obj.suite_id);
     const selectedCases = selectedObjects.filter(obj => obj.suite_id);
     let resultStatus = false;
-
     if (selectedResultSets.length !== 0) {
-      this.palladiumApiService.result_new(selectedResultSets, this.message, this.status).subscribe(() => {
-        if (selectedCases.length === 0 || resultStatus) {
+      this.add_one_more_results_for_cases(selectedResultSets).subscribe(() => {
+        if (selectedCases.length == 0 || resultStatus) {
           this.addResultOpen = false;
         }
         resultStatus = true;
         this.cd.detectChanges();
-      });
+      })
     }
     if (selectedCases.length !== 0) {
+      this.add_results_for_cases(selectedCases)
       this.palladiumApiService.result_new_by_case(selectedCases, this.message, this.status, this.stance.runId()).subscribe(() => {
-        if (selectedResultSets.length === 0 || resultStatus) {
+        if (selectedResultSets.length == 0 || resultStatus) {
           this.addResultOpen = false;
         }
         resultStatus = true;
@@ -319,6 +321,38 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }
     this.newResultForm.reset(['name', 'status']);
     this.unselect_all();
+  }
+
+  add_one_more_results_for_cases(selectedResultSets) {
+    return this.palladiumApiService.result_new(selectedResultSets, this.message, this.status).map(results => {
+      this.palladiumApiService.currentResultSets$.take(1).map(resultSets => {
+        results['result_sets'].forEach(resultSet => {
+          console.log(results)
+          console.log(resultSets)
+          const newResultSet = new ResultSet(resultSet);
+
+          resultSets.find(x => x.id == newResultSet.id).status = newResultSet.status;
+
+          // resultSets.find((element: ResultSet[]) => element.name == newResultSet.name) = newResultSet;
+        });
+        this.palladiumApiService.currentResultSets$.next(resultSets)
+        // this.resultSets$.next(resultSets);
+      }).subscribe();
+    });
+  }
+
+  add_results_for_cases(selectedCases) {
+    return this.palladiumApiService.result_new_by_case(selectedCases, this.message, this.status, this.stance.runId()).map(results => {
+      this.palladiumApiService.currentResultSets$.take(1).map(resultSets => {
+        results['result_sets'].forEach(resultSet => {
+          console.log(results)
+          console.log(resultSets)
+          const newResultSet = new ResultSet(resultSet);
+          resultSets.push(newResultSet);
+        });
+        this.palladiumApiService.currentResultSets$.next(resultSets)
+      }).subscribe();
+    });
   }
 
   cancel_result_custom() {

@@ -626,6 +626,7 @@ export class PalladiumApiService {
       if (this._results) {
         this.results$.next(this._results);
       }
+      return res;
       // this.get_run(res['result_sets'][0]['run_id']);
     });
     // return this.reformat_response(res);
