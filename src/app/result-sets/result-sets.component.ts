@@ -115,6 +115,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       resultSets.forEach(retulsSet => {
         object[retulsSet.name] = retulsSet;
       })
+      this.refreshButtonStatus = 'active';
       return object;
     });
 
