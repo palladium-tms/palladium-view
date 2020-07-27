@@ -1,4 +1,4 @@
-import {ReplaySubject, BehaviorSubject} from "rxjs";
+import {ReplaySubject, BehaviorSubject, merge} from "rxjs";
 import {Statistic} from './statistic';
 import { Suite } from './suite';
 import { Run } from './run';
@@ -25,5 +25,27 @@ export class Plan {
       this.suites$ = new ReplaySubject(1);
       this.runs$ = new ReplaySubject(1);
       this.caseCount$.next(plan['case_count'])
+      this.runs$.switchMap(runs => {
+        let all_statistics = [];
+        runs.forEach(run => {
+          all_statistics.push(run.statistic$);
+        })
+        return merge(...all_statistics).map(() => {
+          this.update_statistic(runs)
+        })
+      }).subscribe()
+  }
+
+  update_statistic(runs: Run[]) {
+    const data = {};
+    runs.forEach((run: Run) => {
+      run.statistic.points.forEach(point => {
+        if (!data[point.status]) {
+          data[point.status] = 0;
+        }
+        data[point.status] += point.count;
+      });
+    })
+    this.statistic$.next(new Statistic(data))
   }
 }

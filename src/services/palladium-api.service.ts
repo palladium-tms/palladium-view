@@ -310,15 +310,14 @@ export class PalladiumApiService {
         response['suites'].forEach(suite => {
           newSuites.push(new Suite(suite));
         });
-        plan.suites$.next(newSuites);
-
 
         this._products.find(product => product.id == response['plan']['product_id'])
         response['runs'].forEach(run => {
           this._runs[planId].push(new Run(run));
         });
-        plan.runs$.next(this._runs[planId]);
 
+        plan.suites$.next(newSuites);
+        plan.runs$.next(this._runs[planId]);
         this.runs$.next(this._runs);
         return this._runs;
       });
@@ -525,62 +524,26 @@ export class PalladiumApiService {
   //#endregion
 
   // //#region Result Set
-  get_result_sets(runId: number): void {
-    this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}}).map(response => {
-      this._resultSets[runId] = [];
-      response['result_sets'].forEach(resultSet => {
-        this._resultSets[runId].push(new ResultSet(resultSet));
-      });
-      this.currentResultSets$.next(this._resultSets[runId]);
-      this.resultSets$.next(this._resultSets);
+  get_result_sets(runId: number, planId: number, productId: number): void {
+    this.httpService.postData('/result_sets', {result_set_data: {run_id: runId}}).switchMap(response => {
+      return this.plans$.switchMap((strPlans: StructuredPlans) => {
+        return strPlans[productId].find(plan => plan.id == response['run']['plan_id']).runs$.map(runs => {
+          this._resultSets[runId] = [];
+          response['result_sets'].forEach(resultSet => {
+            this._resultSets[runId].push(new ResultSet(resultSet));
+          });
+          runs.find(run => run.id == runId).resultSets$.next(this._resultSets[runId])
+          this.currentResultSets$.next(this._resultSets[runId]);
+          this.resultSets$.next(this._resultSets);
+        })
+        })
       // this.update_run_statistic(runId);
     }).subscribe();
   }
 
-  delete_result_set(id, runId): void {
-    this.httpService.postData('/result_set_delete', {result_set_data: {id}}).map(_ => {
-      // this.get_run(runId);
-      this._resultSets[runId] = this._resultSets[runId].filter(resultSet => resultSet.id !== id);
-      this.resultSets$.next(this._resultSets);
-      this.update_run_statistic(runId);
-    }).subscribe();
+  delete_result_set(id, runId) {
+    return this.httpService.postData('/result_set_delete', {result_set_data: {id}});
   }
-
-  update_run_statistic(runId) {
-    const statisticData = {};
-    this._resultSets[runId].forEach(resultSet => {
-      if (!statisticData[resultSet.status]) {
-        statisticData[resultSet.status] = 0;
-      }
-      statisticData[resultSet.status] += 1;
-    });
-    const planId = this._resultSets[runId][0]?.plan_id;
-    if (planId) {
-      this.runs$.first().subscribe(runs => {
-        runs[planId].find(run => run.id === runId).update_point_statuses(statisticData);
-        this.update_plan_statistic(planId);
-      });
-    }
-  }
-
-  update_plan_statistic(planId) {
-    const data = {};
-    this._runs[planId].forEach(run => {
-      run.statistic$.first().subscribe(statistic => {
-        statistic.points.forEach(point => {
-          if (!data[point.status]) {
-            data[point.status] = 0;
-          }
-          data[point.status] += point.count;
-        });
-      });
-    });
-    const statistic = new Statistic(data);
-    this.plans$.first().subscribe(plans => {
-      ([] as Plan[]).concat(...Object.values(plans)).find(plan => plan.id === planId).statistic$.next(statistic);
-    });
-  }
-
   //#endregion
 
   //#region Result
@@ -611,25 +574,11 @@ export class PalladiumApiService {
         result_set_id: resultSets.map(obj => obj.id)
       }
     }).map(res => {
-      const newResult = new Result(res['result']);
-      res['result_sets'].forEach(resultSet => {
-        const newResultSet = new ResultSet(resultSet);
-
-        this._resultSets[newResultSet.run_id.toString()][this._resultSets[newResultSet.run_id.toString()].findIndex(x => x.id === newResultSet.id)].status = newResultSet.status;
-
-        if (this._results[newResultSet.id.toString()]) {
-          this._results[newResultSet.id.toString()].push(newResult);
-        }
-      });
-      this.resultSets$.next(this._resultSets);
-      this.update_run_statistic(res['result_sets'][0]['run_id']);
       if (this._results) {
         this.results$.next(this._results);
       }
       return res;
-      // this.get_run(res['result_sets'][0]['run_id']);
     });
-    // return this.reformat_response(res);
   }
 
   result_new_by_case(cases, message, status, runId) {
@@ -638,14 +587,9 @@ export class PalladiumApiService {
       params.result_set_data.name.push(currentCase.name);
     });
     return this.httpService.postData('/result_new', params).map(res => {
-      res['result_sets'].forEach(resultSet => {
-        this._resultSets[res['run'].id].push(new ResultSet(resultSet));
-      });
-      this.resultSets$.next(this._resultSets);
-      this.update_run_statistic(runId);
+      return res;
     });
   }
-
 
   //#endregion
 
