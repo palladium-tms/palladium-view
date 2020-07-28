@@ -78,7 +78,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   contain_filtered_status(element, filters, caseCount) {
     if (element) {
       return element?.statistic?.existedStatuses.some((status: number) => filters.indexOf(+status) >= 0) ||
-      (caseCount > element?.statistic.all && filters.indexOf(0) > -1);
+        (caseCount > element?.statistic.all && filters.indexOf(0) > -1);
     } else {
       return filters.indexOf(0) > -1
     }
@@ -90,7 +90,6 @@ export class RunsComponent implements OnInit, OnDestroy {
 
     this.activeRoute$.map((id: number) => {
       this.get_runs(id);
-      this.init_active_object(id);
     }).switchMap(() => {
       return this.palladiumApiService.plans$.map(allPlans => {
         const plans = allPlans[this.stance.productId()];
@@ -109,6 +108,8 @@ export class RunsComponent implements OnInit, OnDestroy {
 
         this.caseCount$ = this.currentPlan.caseCount$;
       });
+    }).map(() => {
+      this.init_active_object();
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 
@@ -117,15 +118,16 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.palladiumApiService.init_runs(id);
   }
 
-  init_active_object(id: number): void {
-    this.palladiumApiService.runs$.map(runs => runs[id]).first().subscribe(runs => {
-      const runId = this.stance.runId();
-      if (runId) {
-        this.activeObject = runs.find(run => run.id === +runId);
-      } else {
-        this.activeObject = undefined;
-      }
-    });
+  init_active_object(): void {
+    const runId = this.stance.runId();
+    this.currentPlan.runs$.first().switchMap((runs: Run[]) => {
+      return this.suites$.map(suites => {
+        const runName = runs.find(run => run.id === +runId)?.name;
+        if (runName) {
+          this.activeObject = suites.find(suite => suite.name == runName);
+        }
+      })
+    }).subscribe();
   }
 
   update_click(): void {
