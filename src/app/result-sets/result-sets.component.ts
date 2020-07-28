@@ -106,21 +106,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.resultSets$ = this.palladiumApiService.currentResultSets$.map(resultSets => {
-    //   const resultSetId = this.stance.resultSetId();
-    //   if (resultSetId) {
-    //     this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
-    //   } else {
-    //     this.activeElement = undefined;
-    //   }
-    //   let object = {};
-    //   resultSets.forEach(retulsSet => {
-    //     object[retulsSet.name] = retulsSet;
-    //   })
-    //   this.refreshButtonStatus = 'active';
-    //   return object;
-    // });
-
     this.cases$ = this.palladiumApiService.currentCases$;
     this.caseCount$ = this.cases$.map(cases => cases.length);
 
@@ -164,10 +149,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
             this.refreshButtonStatus = 'active';
             return object;
           });
-
-
-
-
           this.statistic$ = this.run.statistic$;
           this.cd.detectChanges();
         })
@@ -345,7 +326,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   add_one_more_results_for_cases(selectedResultSets) {
-    return this.palladiumApiService.result_new(selectedResultSets, this.message, this.status).map(results => {
+    return this.palladiumApiService.result_new(selectedResultSets, this.message, this.status, this.activeElement).map(results => {
       this.run.resultSets$.take(1).map(resultSets => {
         results['result_sets'].forEach(resultSet => {
           const newResultSet = new ResultSet(resultSet);
@@ -359,7 +340,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   add_results_for_cases(selectedCases) {
     return this.palladiumApiService.result_new_by_case(selectedCases, this.message, this.status, this.stance.runId()).map(results => {
       this.run.resultSets$.take(1).map(resultSets => {
-        console.log(resultSets.length)
         results['result_sets'].forEach(resultSet => {
           const newResultSet = new ResultSet(resultSet);
           resultSets.push(newResultSet);

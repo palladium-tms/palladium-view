@@ -91,7 +91,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
   }
 
-  async load_more_plans() {
+  load_more_plans() {
     this.palladiumApiService.get_plans_show_more(this.stance.productId());
   }
 

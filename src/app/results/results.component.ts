@@ -5,6 +5,7 @@ import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from "rxjs/operators";
 import {MatTabGroup} from "@angular/material/tabs";
+import { StanceService } from 'services/stance.service';
 
 @Component({
   selector: 'app-results',
@@ -22,7 +23,9 @@ export class ResultsComponent implements OnInit, OnDestroy {
   @ViewChild("tabs", { static: false }) tabs: MatTabGroup;
 
   constructor(private palladiumApiService: PalladiumApiService,
-              private activatedRoute: ActivatedRoute, private cd: ChangeDetectorRef) {
+              private activatedRoute: ActivatedRoute,
+              private stance: StanceService,
+              private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -35,6 +38,18 @@ export class ResultsComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
         this.results$ = this.palladiumApiService.results$.map((results: StructuredResults) => results[id]);
         this.palladiumApiService.get_results(id);
+        return id;
+      }).switchMap(resultSetId => {
+        return this.palladiumApiService.plans$.switchMap(allPlans => {
+          const plans = allPlans[this.stance.productId()];
+          const plan = plans.find(plan => plan.id === this.stance.planId());
+          return plan.runs$.switchMap(runs => {
+            let run = runs.find(run => run.id === this.stance.runId())
+            return run.resultSets$.map(resultSets => {
+              this.results$ = resultSets.find(resultSet => resultSet.id === resultSetId).results$
+            });
+          })
+        });
       }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
 
 

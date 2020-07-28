@@ -1,4 +1,5 @@
 import {BehaviorSubject} from 'rxjs';
+import { Result } from './result';
 
 export class ResultSet {
   id: number;
@@ -10,6 +11,7 @@ export class ResultSet {
   updated_at: number;
   path = 'result_set';
   selected = false;
+  results$: BehaviorSubject<Result[]>;
   constructor(resultSet) {
     if (resultSet === null) {
     } else if (resultSet.path === 'case') {
@@ -22,6 +24,7 @@ export class ResultSet {
       this.status = resultSet['status'];
       this.created_at = resultSet['created_at'].split(' +')[0];
       this.updated_at = resultSet['updated_at'].split(' +')[0];
+      this.results$ = new BehaviorSubject([]);
     }
   }
 
