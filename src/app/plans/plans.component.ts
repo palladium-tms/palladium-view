@@ -65,9 +65,6 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
-      if (this.selectedPlanId === plan.id) {
-        return;
-      }
       this.selectedPlanId = plan.id;
       this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute}).then(() => { this.cd.detectChanges()});
       this.cd.detectChanges();
