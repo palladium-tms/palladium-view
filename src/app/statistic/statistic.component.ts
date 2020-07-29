@@ -40,10 +40,10 @@ export class StatisticComponent implements OnInit, OnChanges {
         return this.caseCount$.map(caseCount => {
           this.untestedPoint = new Point(0, caseCount - statistic.all, caseCount);
         });
-      }).first().subscribe();
+      }).take(1).subscribe();
     } else if (this.caseCount$) {
       // is a suite
-      this.caseCount$.first().subscribe(caseCount => {
+      this.caseCount$.take(1).subscribe(caseCount => {
         this.untestedPoint = new Point(0, caseCount, caseCount);
       });
     }

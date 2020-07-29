@@ -120,7 +120,7 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   init_active_object(): void {
     const runId = this.stance.runId();
-    this.currentPlan.runs$.first().switchMap((runs: Run[]) => {
+    this.currentPlan.runs$.take(1).switchMap((runs: Run[]) => {
       return this.suites$.map(suites => {
         const runName = runs.find(run => run.id === +runId)?.name;
         if (runName) {
@@ -142,7 +142,7 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   open_settings(): void {
-    this.suites$.first().switchMap(suites => {
+    this.suites$.take(1).switchMap(suites => {
       const dialogRef = this.dialog.open(RunsSettingsComponent, {
         data: {
           object: this.objectForSettings,

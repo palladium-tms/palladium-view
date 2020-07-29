@@ -198,7 +198,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           });
           this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
         })
-      }).first().subscribe();
+      }).take(1).subscribe(x =>{
+        console.log('2222222222222222222')
+      });
     }
   }
 
@@ -427,9 +429,12 @@ export class ResultSetsSettingsComponent implements OnInit {
   delete_object() {
     if (confirm('A u shuare?')) {
       if (this.object.path === 'result_set') {
-        this.delete_result_set(this.object.id, this.stance.runId())
         if (this.object.id === this.stance.resultSetId()) {
-          this.router.navigate([/.*run\/\d+/.exec(this.router.url)[0]]);
+          this.router.navigate([/.*run\/\d+/.exec(this.router.url)[0]]).then(() =>{
+            this.delete_result_set(this.object.id, this.stance.runId())
+          });
+        } else {
+          this.delete_result_set(this.object.id, this.stance.runId())
         }
       } else {
         this.palladiumApiService.delete_case(this.object.id, this.stance.productId(), this.stance.planId());

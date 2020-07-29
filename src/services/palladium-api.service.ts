@@ -182,7 +182,7 @@ export class PalladiumApiService {
   }
 
   case_count(productId) {
-    this.products$.first().subscribe(products => {
+    this.products$.take(1).subscribe(products => {
       const product = products.find(product => product.id === +productId);
       let count = 0;
       this._suites[productId].forEach(suite => {
@@ -555,14 +555,15 @@ export class PalladiumApiService {
 
   get_results_obs(resultSetId: number) {
     return this.httpService.postData('/results', { result_data: { result_set_id: resultSetId } }).switchMap(response => {
-      return this.plans$.switchMap((strPlans: StructuredPlans) => {
-        return strPlans[response['product_id']].find(plan => plan.id == response['result_set']['plan_id']).runs$.switchMap(runs => {
-          return runs.find(run => run.id == response['result_set']['run_id']).resultSets$.map(resultSets => {
+      return this.plans$.take(1).switchMap((strPlans: StructuredPlans) => {
+        return strPlans[response['product_id']].find(plan => plan.id == response['result_set']['plan_id']).runs$.take(1).switchMap(runs => {
+          return runs.find(run => run.id == response['result_set']['run_id']).resultSets$.take(1).map(resultSets => {
             let resultSet = resultSets.find(resultSet => resultSet.id == resultSetId)
             let results = [];
             response['results'].forEach(result => {
               results.push(new Result(result));
             });
+            console.log('asdasasd')
             resultSet.results$.next(results)
             return resultSet.id
           })
@@ -608,7 +609,7 @@ export class PalladiumApiService {
     }).map(response => {
       if (response['result_sets'].some(rs => rs['id'] == activeResultSet?.id)) {
 
-        activeResultSet.results$.first().subscribe(results => {
+        activeResultSet.results$.take(1).subscribe(results => {
           let newResults = [...results]
           let newResult = new Result(response['result'])
           newResults.push(newResult)
