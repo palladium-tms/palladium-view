@@ -10,7 +10,7 @@ import { SearchPipe } from '../pipes/search/search.pipe';
 import { CasefillingPipe } from './casefilling.pipe';
 import { StatusFilterPipe } from '../pipes/status_filter_pipe/status-filter.pipe';
 import { ResultSet } from '../models/result_set';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { Status } from '../models/status';
 import { takeUntil } from 'rxjs/operators';
 import { Case } from '../models/case';
@@ -326,15 +326,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   add_one_more_results_for_cases(selectedResultSets) {
-    return this.palladiumApiService.result_new(selectedResultSets, this.message, this.status, this.activeElement).map(results => {
-      this.run.resultSets$.take(1).map(resultSets => {
-        results['result_sets'].forEach(resultSet => {
-          const newResultSet = new ResultSet(resultSet);
-          resultSets.find(x => x.id == newResultSet.id).status = newResultSet.status;
-        });
-        this.run.resultSets$.next(resultSets)
-      }).subscribe();
-    });
+    return this.palladiumApiService.result_new(selectedResultSets, this.message, this.status, this.activeElement, this.run)
   }
 
   add_results_for_cases(selectedCases) {

@@ -1,13 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../services/palladium-api.service';
-import { Location } from '@angular/common';
-import { Observable, ReplaySubject} from "rxjs";
+import { Observable, BehaviorSubject} from "rxjs";
 import {ResultSet} from "../models/result_set";
-import {StanceService} from "../../services/stance.service";
-export interface StructuredHistoryPack {
-  [key: number]: {[key: string]: ResultSet[]};
-}
+
 @Component({
   selector: 'app-case-history',
   templateUrl: './case-history.component.html',
@@ -17,28 +12,17 @@ export interface StructuredHistoryPack {
 export class CaseHistoryComponent implements OnInit {
   history$: Observable<ResultSet[]>;
   statuses$: Observable<StructuredStatuses>;
-  results$: ReplaySubject<StructuredResults>;
+  results$: BehaviorSubject<StructuredResults>;
   historySliderStatus = {};
 
-  statuses;
-  params;
-  constructor(private activatedRoute: ActivatedRoute, private location: Location,
-               private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef, private stance: StanceService) { }
+  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.statuses$ = this.palladiumApiService.statuses$;
 
-    this.history$ = this.palladiumApiService.historyPack$.map((historyPack: StructuredHistoryPack) => {
-      const runName = this.palladiumApiService.run_name_by_id(this.stance.runId(), this.stance.planId());
-      const currentHistoryPack = historyPack[this.stance.productId()];
-      if (currentHistoryPack && currentHistoryPack[runName]) {
-        return historyPack[this.stance.productId()][runName];
-      } else {
-        return [];
-      }
-    });
+    this.history$ = this.palladiumApiService.historyPack$;
 
-    this.results$ = this.palladiumApiService.results$;
+    this.results$ = this.palladiumApiService.historyResults$;
 
   }
 
@@ -47,7 +31,7 @@ export class CaseHistoryComponent implements OnInit {
       this.historySliderStatus[history.id] = 'close';
     } else {
       this.historySliderStatus[history.id] = 'loading';
-      this.palladiumApiService.get_results_obs(history.id).subscribe(id => {
+      this.palladiumApiService.get_results_for_history(history.id).subscribe(id => {
         this.historySliderStatus[id] = 'opened';
         this.cd.detectChanges();
       });

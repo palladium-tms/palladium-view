@@ -85,7 +85,8 @@ export class PalladiumApiService {
   results$: ReplaySubject<StructuredResults> = new ReplaySubject(1);
   private _results: StructuredResults = {};
 
-  historyPack$: ReplaySubject<StructuredHistoryPack> = new ReplaySubject(1);
+  historyPack$: ReplaySubject<ResultSet[]> = new ReplaySubject(1);
+  historyResults$: BehaviorSubject<StructuredResults> = new BehaviorSubject({});
   private _historyPack: StructuredHistoryPack = {};
 
   userSettings: UserSettings = {
@@ -291,10 +292,11 @@ export class PalladiumApiService {
       const suiteName = resp['suite_name'];
       this._historyPack[productId] = this._historyPack[productId] || {};
       this._historyPack[productId][suiteName] = [];
+      let history = []
       resp['result_sets_history'].forEach(data => {
-        this._historyPack[productId][suiteName].push(new History(data));
+        history.push(new History(data));
       });
-      this.historyPack$.next(this._historyPack);
+      this.historyPack$.next(history);
     }).subscribe();
   }
 
@@ -324,7 +326,6 @@ export class PalladiumApiService {
   }
 
   get_suite_imp(product, planId) {
-    console.log('asdasd')
     return this._plans[product].find(plan => plan.id === planId).suites$;
   }
 
@@ -419,7 +420,6 @@ export class PalladiumApiService {
         const plansId = Object(response['plans']).map(plan => plan.id);
         this.get_plans_statistic(plansId, productId);
       }
-      console.log('asdasd')
     }).subscribe();
   }
 
@@ -571,19 +571,49 @@ export class PalladiumApiService {
     });
   }
 
+  get_results_for_history(resultSetId: number) {
+    return this.httpService.postData('/results', { result_data: { result_set_id: resultSetId } }).map(response => {
+      let historicalResults = [];
+      response['results'].forEach(result => {
+        historicalResults.push(new Result(result));
+      });
+      let newHistoryResults = this.historyResults$.getValue();
+      newHistoryResults[response['result_set']['id']] = historicalResults
+      this.historyResults$.next(newHistoryResults);
+      return response['result_set']['id'];
+    });
+  }
+
   get_result(resultId) {
     return this.httpService.postData('/result', { result_data: { id: resultId } }).map(res => new Result(res['result']));
   }
 
-  result_new(resultSets, description, status, activeResultSet) {
+  result_new(resultSets, description, status, activeResultSet, activeRun) {
     return this.httpService.postData('/result_new', {
       result_data: {
         message: description, status: status.name,
         result_set_id: resultSets.map(obj => obj.id)
       }
+    }).map(responce => {
+
+      activeRun.resultSets$.take(1).map(resultSets => {
+        responce['result_sets'].forEach(resultSet => {
+          const newResultSet = new ResultSet(resultSet);
+          resultSets.find(x => x.id == newResultSet.id).status = newResultSet.status;
+        });
+        activeRun.resultSets$.next(resultSets)
+      }).subscribe();
+
+      return responce;
     }).map(response => {
       if (response['result_sets'].some(rs => rs['id'] == activeResultSet?.id)) {
-        activeResultSet.results$.next(activeResultSet.results$.getValue().concat([new Result(response['result'])]))
+
+        activeResultSet.results$.first().subscribe(results => {
+          let newResults = [...results]
+          let newResult = new Result(response['result'])
+          newResults.push(newResult)
+          activeResultSet.results$.next(newResults)
+        })
       }
       return response;
     });
