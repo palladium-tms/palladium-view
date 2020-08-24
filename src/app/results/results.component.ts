@@ -35,6 +35,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
     this.activeRoute$.map(
       id => {
         this.open_result_tab(this.tabs);
+        this.cd.detectChanges();
         this.palladiumApiService.get_results(id);
         return id;
       }).switchMap(resultSetId => {
@@ -42,10 +43,9 @@ export class ResultsComponent implements OnInit, OnDestroy {
           const plans = allPlans[this.stance.productId()];
           const plan = plans.find(plan => plan.id === this.stance.planId());
           return plan.runs$.switchMap(runs => {
-
             let run = runs.find(run => run.id === this.stance.runId())
             return run.resultSets$.map(resultSets => {
-              this.results$ = resultSets.find(resultSet => resultSet.id === resultSetId).results$
+              this.results$ = resultSets.find(resultSet => resultSet.id === resultSetId)?.results$
             });
           })
         });

@@ -105,7 +105,6 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.refreshButtonStatus = 'active';
           return object;
         });
-
         this.caseCount$ = this.currentPlan.caseCount$;
       });
     }).map(() => {
@@ -130,10 +129,22 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).subscribe();
   }
 
-  update_click(): void {
+  update_click() {
     this.refreshButtonStatus = 'disabled';
-    this.palladiumApiService.get_runs(this.stance.planId()).subscribe();
+    this.palladiumApiService.get_runs(this.stance.planId()).take(1).map(() => {
+      if (this.stance.runId()) {
+        this.update_result_sets()
+      }
+    }).subscribe();
     this.cd.detectChanges();
+  }
+
+  update_result_sets() {
+    this.palladiumApiService.get_result_sets(this.stance.runId(), this.stance.productId()).take(1).map(() => {
+      if (this.stance.resultSetId()) {
+        this.palladiumApiService.get_results(this.stance.resultSetId());
+      }
+    }).subscribe()
   }
 
   select_filter(filter: Array<number>): void {

@@ -219,11 +219,12 @@ export class PalladiumApiService {
   }
 
 
-  delete_suite(suiteId, plan): void {
+  delete_suite(suiteId: number, plan: Plan): void {
     this.httpService.postData('/suite_delete', { suite_data: { id: suiteId, plan_id: plan.id } }).map(response => {
       plan.suites$.take(1).map((suites: Suite[]) => {
         plan.suites$.next(suites.filter(suite => suite.id !== response['suite']['id']));
       }).subscribe()
+      plan.caseCount$.next(response['plan']['case_count']);
       // const productId = response['suite']['product_id'];
       // this._suites[productId] = this._suites[productId].filter(suite => suite.id !== response['suite']['id']);
       // this.suites$.next(this._suites);
@@ -303,25 +304,22 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Run
-  get_runs(planId: number): Observable<StructuredRuns> {
+  get_runs(planId: number): Observable<ReplaySubject<Run[]>> {
     return this.httpService.postData('/runs', { run_data: { plan_id: planId } }).map(
       response => {
-        this._runs[planId] = [];
+        let runs = []
         const plan = this._plans[response['plan']['product_id']].find(plan => plan.id == response['plan']['id']);
         let newSuites = [];
         response['suites'].forEach(suite => {
           newSuites.push(new Suite(suite));
         });
-
-        this._products.find(product => product.id == response['plan']['product_id'])
         response['runs'].forEach(run => {
-          this._runs[planId].push(new Run(run));
+          runs.push(new Run(run));
         });
 
         plan.suites$.next(newSuites);
-        plan.runs$.next(this._runs[planId]);
-        this.runs$.next(this._runs);
-        return this._runs;
+        plan.runs$.next(runs);
+        return plan.runs$;
       });
   }
 
@@ -344,6 +342,13 @@ export class PalladiumApiService {
     this.get_runs(planId).subscribe();
   }
 
+  update_runs(planId: number) {
+    this.get_runs(planId).take(1).switchMap(runs$ => {
+      return runs$.map(x => {
+        console.log(x)
+      })
+    }).subscribe();
+  }
 
   create_run(runName: string, planId: number): Observable<Run> {
     return this.httpService.postData('/run_new', { run_data: { plan_id: planId, name: runName } }).map(res => {
@@ -526,21 +531,18 @@ export class PalladiumApiService {
   //#endregion
 
   // //#region Result Set
-  get_result_sets(runId: number, planId: number, productId: number): void {
-    this.httpService.postData('/result_sets', { result_set_data: { run_id: runId } }).switchMap(response => {
+  get_result_sets(runId: number, productId: number) {
+    return this.httpService.postData('/result_sets', { result_set_data: { run_id: runId } }).switchMap(response => {
       return this.plans$.switchMap((strPlans: StructuredPlans) => {
-        return strPlans[productId].find(plan => plan.id == response['run']['plan_id']).runs$.map(runs => {
+        return strPlans[productId].find(plan => plan.id == response['run']['plan_id']).runs$.take(1).map(runs => {
           this._resultSets[runId] = [];
           response['result_sets'].forEach(resultSet => {
             this._resultSets[runId].push(new ResultSet(resultSet));
           });
           runs.find(run => run.id == runId).resultSets$.next(this._resultSets[runId])
-          this.currentResultSets$.next(this._resultSets[runId]);
-          this.resultSets$.next(this._resultSets);
         })
       })
-      // this.update_run_statistic(runId);
-    }).subscribe();
+    });
   }
 
   delete_result_set(id, runId) {
@@ -554,7 +556,12 @@ export class PalladiumApiService {
   }
 
   get_results_obs(resultSetId: number) {
-    return this.httpService.postData('/results', { result_data: { result_set_id: resultSetId } }).switchMap(response => {
+    return this.httpService.postData('/results', { result_data: { result_set_id: resultSetId } }).map(response => {
+      if (response['errors']) {
+        throw response['errors'];
+      }
+      return response
+    }).switchMap(response => {
       return this.plans$.take(1).switchMap((strPlans: StructuredPlans) => {
         return strPlans[response['product_id']].find(plan => plan.id == response['result_set']['plan_id']).runs$.take(1).switchMap(runs => {
           return runs.find(run => run.id == response['result_set']['run_id']).resultSets$.take(1).map(resultSets => {
@@ -563,9 +570,8 @@ export class PalladiumApiService {
             response['results'].forEach(result => {
               results.push(new Result(result));
             });
-            console.log('asdasasd')
             resultSet.results$.next(results)
-            return resultSet.id
+            return resultSet.results$
           })
         })
       })

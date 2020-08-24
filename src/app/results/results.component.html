@@ -1,9 +1,8 @@
 <mat-tab-group animationDuration="0ms" (selectedTabChange)="open_history_page($event)" class="group-tab" color="accent" #tabs>
-
   <mat-tab label="Results">
     <div class="result-space">
       <div class="result-list item-list">
-        <mat-accordion *ngIf="(results$ | async) as results; else loading">
+        <mat-accordion *ngIf="(results$ | async) as results">
           <mat-expansion-panel class="result-item"
                                *ngFor="let result of results | sortByCreatedAt:'desc';  first as isFirst"
                                [expanded]="isFirst"
