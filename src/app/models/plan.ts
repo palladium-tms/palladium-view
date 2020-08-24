@@ -34,6 +34,13 @@ export class Plan {
           this.update_statistic(runs)
         })
       }).subscribe()
+      this.suites$.map(suites => {
+        let caseCount = 0;
+        suites.forEach(suite => {
+          caseCount += suite.caseCount;
+        })
+        this.caseCount$.next(caseCount);
+      }).subscribe()
   }
 
   update_statistic(runs: Run[]) {
