@@ -34,7 +34,7 @@ export class CaseHistoryComponent implements OnInit {
       this.palladiumApiService.get_results_for_history(history.id).subscribe(id => {
         this.historySliderStatus[id] = 'opened';
         this.cd.detectChanges();
-      });
+      }, x => {console.log('ERROR: + ' + x)});
     }
   }
 }
