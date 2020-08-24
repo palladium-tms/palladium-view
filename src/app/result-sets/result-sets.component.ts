@@ -139,6 +139,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
             const resultSetId = this.stance.resultSetId();
             if (resultSetId) {
               this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
+              if (!this.activeElement) {
+                this.navigate_to_run_show();
+              }
             } else {
               this.activeElement = undefined;
             }
@@ -169,7 +172,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   init_data(id) {
     const productId = this.stance.productId();
     const planId = this.stance.planId();
-    this.palladiumApiService.get_result_sets(id, planId, productId);
+    this.palladiumApiService.get_result_sets(id, productId).subscribe();
     this.palladiumApiService.get_cases_by_run_id(id, productId, planId);
   }
 
@@ -198,9 +201,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           });
           this.selectedCount = Object.values(this.resultSetCheckboxes).filter(Boolean).length;
         })
-      }).take(1).subscribe(x =>{
-        console.log('2222222222222222222')
-      });
+      }).take(1).subscribe();
     }
   }
 
@@ -240,7 +241,11 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     const productId = this.stance.productId();
     const planId = this.stance.planId();
     this.refreshButtonStatus = 'disabled';
-    this.palladiumApiService.get_result_sets(this.stance.runId(), planId, productId);
+    this.palladiumApiService.get_result_sets(this.stance.runId(), productId).subscribe(() => {
+      if (this.activeElement?.path === 'result_set') {
+        this.palladiumApiService.get_results(this.activeElement.id);
+      }
+    });
   }
 
   onActivate(componentRef) {
