@@ -275,15 +275,17 @@ export class PalladiumApiService {
   //   return new Case(resp['case']);
   // }
   //
-  delete_case(caseId, productId, planId): void {
-    this.httpService.postData('/case_delete', { case_data: { id: caseId, plan_id: planId } }).map(response => {
+  delete_case(caseId, productId, plan_id): void {
+    this.httpService.postData('/case_delete', { case_data: { id: caseId, plan_id: plan_id } }).map(response => {
       const suiteId = response['case']['suite_id'];
       this._cases[suiteId] = this._cases[suiteId].filter(_case => _case.id !== caseId);
       this.cases$.next(this._cases);
-      const suite = this._suites[productId].find(suite => suite.id === suiteId);
-      suite.decrease_case_count();
-      this.suites$.next(this._suites);
-      this.case_count(productId);
+      this.currentCases$.next(this._cases[suiteId]);
+      const plan = this._plans[productId].find(plan => plan.id == plan_id);
+      plan.suites$.take(1).map(suites => {
+        suites.find(suite => suite.id == suiteId).decrease_case_count();
+        plan.recalculate_case_count();
+      }).subscribe()
     }).subscribe();
   }
 

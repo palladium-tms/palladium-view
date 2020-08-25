@@ -442,7 +442,7 @@ export class ResultSetsSettingsComponent implements OnInit {
           this.delete_result_set(this.object.id, this.stance.runId())
         }
       } else {
-        this.palladiumApiService.delete_case(this.object.id, this.stance.productId(), this.stance.planId());
+        this.delete_case(this.object.id, this.stance.productId(), this.stance.planId());
       }
       this.dialogRef.close(this.object);
     }
@@ -454,6 +454,10 @@ export class ResultSetsSettingsComponent implements OnInit {
         this.run.resultSets$.next(resultSets.filter(resultSet => resultSet.id !== id))
       }).subscribe();
     }).subscribe();
+  }
+
+  delete_case(id: number, productId: number, planId: number) {
+    this.palladiumApiService.delete_case(id, productId, planId);
   }
 
   name_is_existed() {

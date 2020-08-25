@@ -43,6 +43,16 @@ export class Plan {
       }).subscribe()
   }
 
+  recalculate_case_count(): void {
+    this.suites$.take(1).map(suites => {
+      let caseCount = 0;
+      suites.forEach(suite => {
+        caseCount += suite.caseCount;
+      })
+      this.caseCount$.next(caseCount);
+    }).subscribe()
+  }
+
   update_statistic(runs: Run[]) {
     const data = {};
     runs.forEach((run: Run) => {
