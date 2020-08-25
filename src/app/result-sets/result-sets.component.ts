@@ -91,6 +91,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
               newElementPack.push(currentCase);
             }
           });
+          if (newElementPack.length === 0) {
+            newElementPack = cases;
+            this.select_filter([]);
+          }
           return newElementPack;
         })
       })
@@ -209,14 +213,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.resultSetCheckboxes = {};
     this.selectedCount = 0;
     this.selectAllFlag = false;
-  }
-
-  delete_filter_without_elements(data) {
-    this.filter.forEach((element, index) => {
-      if (!data[element]) {
-        this.filter.splice(index, 1);
-      }
-    });
   }
 
   open_results(object) {

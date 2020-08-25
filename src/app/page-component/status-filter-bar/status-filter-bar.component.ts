@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter, ChangeDetectorRef, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Point, PointActivityInterface, Statistic } from '../../models/statistic';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
   templateUrl: './status-filter-bar.component.html'
 })
 
-export class StatusFilterBarComponent implements OnInit, OnChanges {
+export class StatusFilterBarComponent implements OnInit {
   @Input() statistic$: Observable<Statistic>;
   @Input() caseCount$: BehaviorSubject<number>;
   @Output() selected = new EventEmitter<number[]>();
@@ -20,21 +20,11 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.caseCount$.subscribe(caseCount => {
-      if (this.untestedPointActivity) {
-        const resultSetCount = (1 / this.untestedPointActivity.point.attitude * this.untestedPointActivity.point.count - this.untestedPointActivity.point.count);
-        this.untestedPointActivity = { point: new Point(0, Math.trunc(caseCount - resultSetCount), caseCount), active: this.untested_is_active() };
-        this.clear_empty_filter();
-      }
-    });
-  }
-
-  ngOnChanges() {
     this.init_point_activity();
   }
 
   init_point_activity() {
-    this.pointsActivity$ = this.statistic$?.switchMap(statistic => {
+    this.pointsActivity$ = this.statistic$.switchMap(statistic => {
       return this.caseCount$.map(caseCount => {
         this.update_pointsActivityCache();
         this.pointsActivity = [];
@@ -43,7 +33,11 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
           allResults += point.count;
           this.pointsActivity.push({ point, active: this.pointsActivityCache[point.status] });
         });
-        this.untestedPointActivity = { point: new Point(0, caseCount - allResults, caseCount), active: this.untested_is_active() };
+        const newUntestedPoint = new Point(0, caseCount - allResults, caseCount);
+        this.untestedPointActivity = { point: newUntestedPoint, active: this.untested_is_active() };
+        if (this.untestedPointActivity?.point?.count === 0) {
+          this.untestedPointActivity.active = false;
+        }
         this.clear_empty_filter();
         return this.pointsActivity;
       })
@@ -61,7 +55,7 @@ export class StatusFilterBarComponent implements OnInit, OnChanges {
   }
 
   untested_is_active(): boolean {
-    return this.untestedPointActivity?.active;
+    return !!this.untestedPointActivity?.active;
   }
 
   update_pointsActivityCache() {
