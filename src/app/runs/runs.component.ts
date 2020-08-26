@@ -69,6 +69,10 @@ export class RunsComponent implements OnInit, OnDestroy {
               newElementPack.push(suite);
             }
           });
+          if (newElementPack.length === 0) {
+            newElementPack = suites;
+            this.select_filter([]);
+          }
           return newElementPack;
         })
       })

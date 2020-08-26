@@ -29,6 +29,7 @@ export class StatusFilterBarComponent implements OnInit {
         this.update_pointsActivityCache();
         this.pointsActivity = [];
         let allResults = 0;
+        this.unactivate_empty_activity_from_cache(statistic);
         statistic.points.forEach(point => {
           allResults += point.count;
           this.pointsActivity.push({ point, active: this.pointsActivityCache[point.status] });
@@ -42,6 +43,14 @@ export class StatusFilterBarComponent implements OnInit {
         return this.pointsActivity;
       })
     });
+  }
+
+  unactivate_empty_activity_from_cache(statistic: Statistic): void {
+    Object.keys(this.pointsActivityCache).forEach(statusKeyId => {
+      if (statistic.existedStatuses.indexOf(statusKeyId) === -1) {
+        this.pointsActivityCache[statusKeyId] = false;
+      }
+    })
   }
 
   select_filter(pointActivity: PointActivityInterface): void {
