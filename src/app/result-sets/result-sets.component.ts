@@ -48,7 +48,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
   caseCount$: Observable<(number)>;
-  statistic$: Observable<(Statistic)>;
+  statistic$: ReplaySubject<(Statistic)> = new ReplaySubject(1);
   statuses$: Observable<StructuredStatuses>;
   run: Run;
   private unsubscribe: Subject<void> = new Subject();
@@ -156,7 +156,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
             this.refreshButtonStatus = 'active';
             return object;
           });
-          this.statistic$ = this.run.statistic$;
+          this.run.statistic$.take(1).subscribe(statistic => {
+          this.statistic$.next(statistic);
+          })
           this.cd.detectChanges();
         })
       });
