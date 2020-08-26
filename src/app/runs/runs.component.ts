@@ -21,10 +21,6 @@ import { BehaviorSubject, Observable, ReplaySubject, Subject, merge, of } from '
 import { takeUntil } from 'rxjs/operators';
 import { Plan } from 'app/models/plan';
 
-interface untestedSpaceInterface {
-  string?: Observable<number>
-}
-
 @Component({
   selector: 'app-runs',
   templateUrl: './runs.component.html',
@@ -38,13 +34,12 @@ export class RunsComponent implements OnInit, OnDestroy {
   runs$: Observable<{}>;
   suites$: Observable<Suite[]>;
   currentPlan: Plan;
-  untestedSpace: untestedSpaceInterface;
   activeRoute$: Observable<number>;
   refreshButtonStatus: ('disabled' | 'active') = 'disabled';
   objectForSettings: Run | Suite;
   filteredSuites: Observable<Suite[]>;
 
-  statistic$: ReplaySubject<(Statistic)>;
+  statistic$: ReplaySubject<(Statistic)> = new ReplaySubject(1);
   caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
   zoroCaseCount$ = new BehaviorSubject(0); // for good statistic if plan is archived
   statuses$: Observable<StructuredStatuses>;
@@ -93,12 +88,23 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.statuses$ = this.palladiumApiService.statuses$;
 
     this.activeRoute$.map((id: number) => {
-      this.get_runs(id);
+      this.loading = true;
+      this.palladiumApiService.get_runs(id).subscribe(() => {
+        this.loading = false;
+      });
     }).switchMap(() => {
       return this.palladiumApiService.plans$.map(allPlans => {
         const plans = allPlans[this.stance.productId()];
         this.currentPlan = plans.find(plan => plan.id === this.stance.planId());
-        this.statistic$ = this.currentPlan.statistic$;
+
+        this.currentPlan.caseCount$.take(1).subscribe(caseCount => {
+          this.caseCount$.next(caseCount);
+        });
+
+        this.currentPlan.statistic$.take(1).subscribe(statistic => {
+          this.statistic$.next(statistic);
+        });
+
         this.suites$ = this.currentPlan.suites$;
 
         this.runs$ = this.currentPlan.runs$.map(runs => {
@@ -106,18 +112,14 @@ export class RunsComponent implements OnInit, OnDestroy {
           runs.forEach(run => {
             object[run.name] = run;
           })
-          this.refreshButtonStatus = 'active';
           return object;
         });
-        this.caseCount$ = this.currentPlan.caseCount$;
+        this.init_active_object();
       });
-    }).map(() => {
-      this.init_active_object();
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
   }
 
   get_runs(id: number): void {
-    this.untestedSpace = {};
     this.palladiumApiService.init_runs(id);
   }
 
@@ -134,11 +136,12 @@ export class RunsComponent implements OnInit, OnDestroy {
   }
 
   update_click() {
-    this.refreshButtonStatus = 'disabled';
+    this.loading = true;
     this.palladiumApiService.get_runs(this.stance.planId()).take(1).map(() => {
       if (this.stance.runId()) {
         this.update_result_sets()
       }
+      this.loading = false;
     }).subscribe();
     this.cd.detectChanges();
   }
@@ -196,18 +199,6 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.cd.detach();
     this.unsubscribe.next();
     this.unsubscribe.complete();
-  }
-
-  log() {
-    // console.log('x');
-  }
-
-  get_untested_space(runs: Run[], suites: Suite[]): void {
-    this.untestedSpace = {};
-    if (!suites || !runs) { return; }
-    suites.map(suite => {
-      this.untestedSpace[suite.name] = suite.caseCount$;
-    });
   }
 }
 

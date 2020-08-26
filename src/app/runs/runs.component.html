@@ -4,7 +4,7 @@
       <app-status-filter-bar *ngIf="statistic$ | async" [statistic$] = statistic$ (selected) = select_filter($event) [caseCount$]=caseCount$></app-status-filter-bar>
     </div>
     <div class="buttons">
-      <button mat-icon-button (click)="update_click()" [disabled] = "refreshButtonStatus == 'disabled'">
+      <button mat-icon-button (click)="update_click()" [disabled] = "loading">
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
