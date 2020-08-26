@@ -79,7 +79,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute, private stance: StanceService,
     private palladiumApiService: PalladiumApiService, private router: Router,
     private dialog: MatDialog, private cd: ChangeDetectorRef,
-    private searchPipe: SearchPipe, private statusPipe: StatusFilterPipe, private casefillingPipe: CasefillingPipe) {
+    private searchPipe: SearchPipe) {
     this.searchToggle = { 'toggle': false, 'color': 'none' };
 
     this.filteredCases$ = this.filter$.switchMap(filter => {
