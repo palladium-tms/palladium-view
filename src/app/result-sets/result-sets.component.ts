@@ -132,6 +132,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.selectAllFlag = false;
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
+      this.loading = true;
       this.init_data(id);
     }).switchMap(() => {
       return this.palladiumApiService.plans$.switchMap(allPlans => {
@@ -178,7 +179,10 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   init_data(id) {
     const productId = this.stance.productId();
     const planId = this.stance.planId();
-    this.palladiumApiService.get_result_sets(id, productId).subscribe();
+    this.palladiumApiService.get_result_sets(id, productId).subscribe(() => {
+      this.loading = false;
+      this.cd.detectChanges();
+    });
     this.palladiumApiService.get_cases_by_run_id(id, productId, planId);
   }
 
@@ -238,11 +242,13 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   update_click() {
     const productId = this.stance.productId();
     const planId = this.stance.planId();
-    this.refreshButtonStatus = 'disabled';
+    this.loading = true;
     this.palladiumApiService.get_result_sets(this.stance.runId(), productId).subscribe(() => {
       if (this.activeElement?.path === 'result_set') {
         this.palladiumApiService.get_results(this.activeElement.id);
       }
+      this.loading = false;
+      this.cd.detectChanges();
     });
   }
 
