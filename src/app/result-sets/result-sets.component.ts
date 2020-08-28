@@ -320,6 +320,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.addResultOpen = false;
         }
         resultStatus = true;
+        this.run.statistic$.take(1).subscribe(statistic => {
+          this.statistic$.next(statistic);
+          })
         this.cd.detectChanges();
       })
     }

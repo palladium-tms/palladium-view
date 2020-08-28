@@ -137,9 +137,16 @@ export class RunsComponent implements OnInit, OnDestroy {
 
   update_click() {
     this.loading = true;
-    this.palladiumApiService.get_runs(this.stance.planId()).take(1).map(() => {
+    const planId = this.stance.planId();
+    const productId = this.stance.productId();
+    this.palladiumApiService.get_runs(planId).take(1).map(() => {
       if (this.stance.runId()) {
-        this.update_result_sets()
+        this.update_result_sets();
+        this.palladiumApiService.get_plans_statistic_obj([planId], productId).subscribe(plans => {
+          plans[planId].statistic$.take(1).subscribe(statistic => {
+            this.statistic$.next(statistic);
+          })
+        });
       }
       this.loading = false;
     }).subscribe();

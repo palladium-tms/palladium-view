@@ -481,15 +481,24 @@ export class PalladiumApiService {
   }
 
   get_plans_statistic(planIds: number[], productId: number): void {
-    this.httpService.postData('/plans_statistic', { plan_data: planIds }).map(response => {
+    this.get_plans_statistic_obj(planIds, productId).subscribe();
+  }
+
+  get_plans_statistic_obj(planIds: number[], productId: number) {
+    return this.httpService.postData('/plans_statistic', { plan_data: planIds }).map(response => {
       this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
+      let plans = {};
       planIds.forEach(planId => {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
         this.logger.debug('get_plans_statistic:');
         this.logger.debug(statistic);
-        this._plans[productId].find(plan => plan.id === planId).statistic$.next(statistic);
+        console.log(this._plans);
+        const plan = this._plans[productId].find(plan => plan.id === planId);
+        plan.statistic$.next(statistic);
+        plans[planId] = plan;
       });
-    }).subscribe();
+      return plans;
+    });
   }
 
   // method for reformat statistic data from [{plan_id: 1, count:2, status:3}, {}, {}] to
