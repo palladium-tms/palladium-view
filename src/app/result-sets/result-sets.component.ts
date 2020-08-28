@@ -15,6 +15,7 @@ import { Status } from '../models/status';
 import { takeUntil } from 'rxjs/operators';
 import { Case } from '../models/case';
 import { Run } from 'app/models/run';
+import { Plan } from 'app/models/plan';
 
 export interface SearchToggle {
   toggle: boolean;
@@ -51,6 +52,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject(1);
   statuses$: Observable<StructuredStatuses>;
   run: Run;
+  plan: Plan;
   private unsubscribe: Subject<void> = new Subject();
 
   notBlockedStatuses: Status[];
@@ -137,8 +139,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }).switchMap(() => {
       return this.palladiumApiService.plans$.switchMap(allPlans => {
         const plans = allPlans[this.stance.productId()];
-        const plan = plans.find(plan => plan.id === this.stance.planId());
-        return plan.runs$.map(runs => {
+        this.plan = plans.find(plan => plan.id === this.stance.planId());
+        console.log(this.plan.runs$);
+        return this.plan.runs$.map(runs => {
           this.run = runs.find(run => run.id === this.stance.runId())
           this.resultSets$ = this.run.resultSets$.map(resultSets => {
             const resultSetId = this.stance.resultSetId();
@@ -166,9 +169,9 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   update_run_statistic_from_filter(run) {
-    run.statistic$.take(1).subscribe(statistic => {
+    run.statistic$.take(1).map(statistic => {
       this.statistic$.next(statistic);
-    })
+    }).subscribe()
   }
 
   select_filter(filter) {

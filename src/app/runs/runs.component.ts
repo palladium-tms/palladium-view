@@ -40,6 +40,8 @@ export class RunsComponent implements OnInit, OnDestroy {
   filteredSuites: Observable<Suite[]>;
 
   statistic$: ReplaySubject<(Statistic)> = new ReplaySubject(1);
+  statisticSubscribtion$;
+  caseCountSubscribtion$;
   caseCount$: BehaviorSubject<(number)> = new BehaviorSubject(0);
   zoroCaseCount$ = new BehaviorSubject(0); // for good statistic if plan is archived
   statuses$: Observable<StructuredStatuses>;
@@ -97,11 +99,15 @@ export class RunsComponent implements OnInit, OnDestroy {
         const plans = allPlans[this.stance.productId()];
         this.currentPlan = plans.find(plan => plan.id === this.stance.planId());
 
-        this.currentPlan.caseCount$.take(1).subscribe(caseCount => {
+        this.caseCountSubscribtion$?.unsubscribe();
+        this.currentPlan.caseCount$.subscribe(caseCount => {
           this.caseCount$.next(caseCount);
         });
 
-        this.run_statistin_in_filter_update(this.currentPlan)
+        this.statisticSubscribtion$?.unsubscribe();
+        this.statisticSubscribtion$ = this.currentPlan.statistic$.subscribe(statistic => {
+          this.statistic$.next(statistic);
+        })
 
         this.suites$ = this.currentPlan.suites$;
 
@@ -133,12 +139,6 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).subscribe();
   }
 
-  run_statistin_in_filter_update(plan: Plan) {
-    plan.statistic$.take(1).subscribe(statistic => {
-      this.statistic$.next(statistic);
-    })
-  }
-
   update_click() {
     this.loading = true;
     const planId = this.stance.planId();
@@ -146,9 +146,7 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.palladiumApiService.get_runs(planId).take(1).map(() => {
       if (this.stance.runId()) {
         this.update_result_sets();
-        this.palladiumApiService.get_plans_statistic_obj([planId], productId).subscribe(plans => {
-          this.run_statistin_in_filter_update(plans[planId]);
-        });
+        this.palladiumApiService.get_plans_statistic_obj([planId], productId).subscribe();
       }
       this.loading = false;
     }).subscribe();
