@@ -157,13 +157,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
             this.refreshButtonStatus = 'active';
             return object;
           });
-          this.run.statistic$.take(1).subscribe(statistic => {
-          this.statistic$.next(statistic);
-          })
+          this.update_run_statistic_from_filter(this.run);
+
           this.cd.detectChanges();
         })
       });
     }).pipe(takeUntil(this.unsubscribe)).subscribe();
+  }
+
+  update_run_statistic_from_filter(run) {
+    run.statistic$.take(1).subscribe(statistic => {
+      this.statistic$.next(statistic);
+    })
   }
 
   select_filter(filter) {
@@ -192,6 +197,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         object: this.dropdownMenuItemSelect,
         cases: this.cases,
         run: this.run,
+        statistic$: this.statistic$
       }
     });
   }
@@ -320,9 +326,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.addResultOpen = false;
         }
         resultStatus = true;
-        this.run.statistic$.take(1).subscribe(statistic => {
-          this.statistic$.next(statistic);
-          })
+        this.update_run_statistic_from_filter(this.run);
         this.cd.detectChanges();
       })
     }
@@ -332,6 +336,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
           this.addResultOpen = false;
         }
         resultStatus = true;
+        this.update_run_statistic_from_filter(this.run);
         this.cd.detectChanges();
       });
     }
@@ -408,6 +413,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 export class ResultSetsSettingsComponent implements OnInit {
   object;
   run: Run;
+  statistic$: ReplaySubject<Statistic>;
   objectForm = new FormGroup({
     name: new FormControl('', [Validators.required])
   });
@@ -419,6 +425,7 @@ export class ResultSetsSettingsComponent implements OnInit {
   ngOnInit() {
     this.object = this.data.object;
     this.run = this.data.run;
+    this.statistic$ = this.data.statistic$;
     this.objectForm.patchValue({ name: this.object.name });
   }
 
@@ -455,11 +462,14 @@ export class ResultSetsSettingsComponent implements OnInit {
     }
   }
 
-  delete_result_set(id, runId) {
+  delete_result_set(id: number, runId: number): void {
     this.palladiumApiService.delete_result_set(id, runId).map(() => {
       this.run.resultSets$.take(1).map(resultSets => {
         this.run.resultSets$.next(resultSets.filter(resultSet => resultSet.id !== id))
       }).subscribe();
+      this.run.statistic$.take(1).subscribe(statistic => {
+        this.statistic$.next(statistic);
+      })
     }).subscribe();
   }
 

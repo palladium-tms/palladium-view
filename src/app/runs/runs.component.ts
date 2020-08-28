@@ -101,9 +101,7 @@ export class RunsComponent implements OnInit, OnDestroy {
           this.caseCount$.next(caseCount);
         });
 
-        this.currentPlan.statistic$.take(1).subscribe(statistic => {
-          this.statistic$.next(statistic);
-        });
+        this.run_statistin_in_filter_update(this.currentPlan)
 
         this.suites$ = this.currentPlan.suites$;
 
@@ -135,6 +133,12 @@ export class RunsComponent implements OnInit, OnDestroy {
     }).subscribe();
   }
 
+  run_statistin_in_filter_update(plan: Plan) {
+    plan.statistic$.take(1).subscribe(statistic => {
+      this.statistic$.next(statistic);
+    })
+  }
+
   update_click() {
     this.loading = true;
     const planId = this.stance.planId();
@@ -143,9 +147,7 @@ export class RunsComponent implements OnInit, OnDestroy {
       if (this.stance.runId()) {
         this.update_result_sets();
         this.palladiumApiService.get_plans_statistic_obj([planId], productId).subscribe(plans => {
-          plans[planId].statistic$.take(1).subscribe(statistic => {
-            this.statistic$.next(statistic);
-          })
+          this.run_statistin_in_filter_update(plans[planId]);
         });
       }
       this.loading = false;
