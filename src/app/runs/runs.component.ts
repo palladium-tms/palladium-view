@@ -91,11 +91,14 @@ export class RunsComponent implements OnInit, OnDestroy {
 
     this.activeRoute$.map((id: number) => {
       this.loading = true;
-      this.palladiumApiService.get_runs(id).subscribe(() => {
-        this.loading = false;
-      });
-    }).switchMap(() => {
+      return id;
+    }).switchMap(id => {
       return this.palladiumApiService.plans$.map(allPlans => {
+
+        this.palladiumApiService.get_runs(id).subscribe(() => {
+          this.loading = false;
+        });
+        
         const plans = allPlans[this.stance.productId()];
         this.currentPlan = plans.find(plan => plan.id === this.stance.planId());
 

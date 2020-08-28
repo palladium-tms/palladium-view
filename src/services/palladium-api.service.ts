@@ -492,7 +492,6 @@ export class PalladiumApiService {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
         this.logger.debug('get_plans_statistic:');
         this.logger.debug(statistic);
-        console.log(this._plans);
         const plan = this._plans[productId].find(plan => plan.id === planId);
         plan.statistic$.next(statistic);
         plans[planId] = plan;
