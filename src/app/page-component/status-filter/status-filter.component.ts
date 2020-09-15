@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {Point} from 'app/models/statistic';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
+import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
+import {Observable} from "rxjs";
+import {PointActivityInterface} from '../../models/statistic';
 
 @Component({
   selector: 'app-status-filter',
@@ -9,16 +10,13 @@ import {PalladiumApiService} from '../../../services/palladium-api.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusFilterComponent implements OnInit {
-  @Input() point: Point;
+  @Input() pointActivity: PointActivityInterface;
   selected: boolean;
+  statuses$: Observable<StructuredStatuses>;
+
   constructor(private palladiumApi: PalladiumApiService) { }
 
   ngOnInit() {
-  }
-
-  get_background_color() {
-    if (this.point.active) {
-      return this.palladiumApi.statuses[this.point.status].color;
-    }
+    this.statuses$ = this.palladiumApi.statuses$.pipe();
   }
 }

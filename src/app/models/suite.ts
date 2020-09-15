@@ -1,4 +1,4 @@
-import {Statistic} from './statistic';
+import {BehaviorSubject} from 'rxjs';
 
 export class Suite {
   id: number;
@@ -6,7 +6,8 @@ export class Suite {
   product_id: number;
   created_at: string;
   updated_at: string;
-  statistic: Statistic;
+  caseCount$: BehaviorSubject<number> = new BehaviorSubject(0);
+  caseCount: number;
   path = 'suite';
   constructor (suite) {
     if (suite == null) {
@@ -19,7 +20,10 @@ export class Suite {
     this.product_id = suite['product_id'];
     this.created_at = suite['created_at'].split(' +')[0];
     this.updated_at = suite['updated_at'].split(' +')[0];
-    this.statistic = new Statistic({0: suite['statistic'][0]['count']});
+    if (suite['statistic']) {
+      this.caseCount = suite['statistic'][0]['count'];
+      this.caseCount$.next(this.caseCount);
+    }
   }
   create_default_suite() {
     return {'id': 'id_loading', 'name': 'name_loading', 'path': 'suite',
@@ -32,5 +36,14 @@ export class Suite {
       'product_id': 0,
       'created_at': suite['created_at'].split(' +')[0], 'updated_at': suite['updated_at'].split(' +')[0],
       'statistic': {0: 0}};
+  }
+
+  decrease_case_count() {
+    this.caseCount -=1;
+    this.caseCount$.next(this.caseCount);
+  }
+
+  is_a(object) {
+    return object.name === this.name && object.id === this.id && object.path === this.path;
   }
 }

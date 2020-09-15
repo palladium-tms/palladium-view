@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
-import {MatDialog} from '@angular/material';
+import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
+import { MatDialog } from '@angular/material/dialog';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-status-settings',
@@ -22,9 +23,11 @@ export class StatusSettingsComponent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
-  mode: 'editing' | 'creating' | 'list_show' | 'empty' | 'loading' = 'loading';
+  mode: 'editing' | 'creating' | 'list_show' | 'empty' = 'list_show';
   statuses;
   selected;
+  statuses$: Observable<StructuredStatuses>;
+
   statusForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.maxLength(40)]),
     color: new FormControl('', [Validators.required])
@@ -40,13 +43,12 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
     return this.statusForm.get('color');
   }
 
-  async ngOnInit() {
-    this.mode = 'loading';
-    this.palladiumApiService.get_not_blocked_statuses().then(res => {
-      this.statuses = res;
-      this.mode = 'list_show';
-      this.empty_statuses_list();
-      this.cd.detectChanges();
+  ngOnInit() {
+    this.statuses$ = this.palladiumApiService.statuses$.map(statuses => {
+      if (statuses === {}) {
+        this.mode = 'empty';
+      }
+      return Object.values(statuses).filter(status => !status.block);
     });
   }
 
@@ -58,41 +60,19 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  async save() {
+  save() {
     if (this.mode === 'editing') {
-      this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value).then(res => {
-        this.selected.name = res.name;
-        this.selected.color = res.color;
-        this.mode = 'list_show';
-        this.cd.detectChanges();
-      });
+      this.palladiumApiService.update_status(this.selected.id, this.name.value, this.color.value);
     } else {
-      const newStatus = await this.palladiumApiService.status_new(this.name.value, this.color.value);
-      this.statuses.push(newStatus);
-      this.mode = 'list_show';
-      this.empty_statuses_list();
-      this.cd.detectChanges();
+      this.palladiumApiService.status_new(this.name.value, this.color.value);
     }
-    this.reset_form();
-    this.cd.detectChanges();
+    this.mode = 'list_show';
   }
 
   delete_status() {
     if (confirm('A u shuare?')) {
-      this.palladiumApiService.block_status(this.selected.id).then(res => {
-        this.statuses = this.statuses.filter(status => status.id !== res['id']);
-        this.mode = 'list_show';
-        this.selected = null;
-        this.empty_statuses_list();
-        this.statusForm.reset();
-        this.cd.detectChanges();
-      });
-    }
-  }
-
-  empty_statuses_list() {
-    if (!this.statuses.length) {
-      this.mode = 'empty';
+      this.palladiumApiService.block_status(this.selected.id);
+      this.mode = 'list_show';
     }
   }
 

@@ -1,42 +1,46 @@
 <mat-card-title>Statuses</mat-card-title>
-<mat-card-content *ngIf="mode == 'loading'">
-  <mat-spinner color="accent"></mat-spinner>
-</mat-card-content>
+<ng-template #loading>
+  <mat-card-content>
+    <mat-spinner color="accent"></mat-spinner>
+  </mat-card-content>
+</ng-template>
 
-<mat-dialog-content *ngIf="mode == 'list_show'">
-  <mat-nav-list>
+<div [ngSwitch]="mode">
+
+</div>
+
+<mat-dialog-content [ngSwitch]="mode" *ngIf="(statuses$ | async) as statuses else loading">
+  <mat-nav-list *ngSwitchCase="'list_show'">
     <a [ngStyle]="getStyles(status)" mat-list-item *ngFor="let status of statuses" (click)="edit(status)">
       {{status.name}}
     </a>
   </mat-nav-list>
+
+  <mat-dialog-content *ngSwitchCase="'empty'">
+    <p>Create first status</p>
+  </mat-dialog-content>
+
+  <mat-dialog-content *ngSwitchCase="'editing'">
+    <form #StatusForm [formGroup]="statusForm" (ngSubmit)="save()" id="status_form">
+      <mat-form-field color="accent" style="width: 100%">
+        <input matInput formControlName="name" placeholder="Status name" autocomplete="off">
+        <mat-error [hidden]="!name.hasError('maxlength')">
+          Can not be more than 40 characters
+        </mat-error>
+      </mat-form-field>
+      <div></div>
+      <mat-form-field color="accent" style="width: 100%">
+        <input matInput formControlName="color" placeholder="Status color" #Color autocomplete="off">
+        <mat-icon matSuffix [ngStyle]="{'color': Color.value}">brightness_1</mat-icon>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
 </mat-dialog-content>
 
-<mat-dialog-content *ngIf="mode == 'empty'">
-  <p>Create first status</p>
-</mat-dialog-content>
-
-<mat-dialog-content *ngIf="mode == 'creating'">
-  <p>Create first status</p>
-</mat-dialog-content>
-
-<mat-dialog-content *ngIf="mode != 'list_show' && mode != 'loading'">
-  <form #StatusForm [formGroup]="statusForm" (ngSubmit)="save()" id="status_form">
-    <mat-form-field color="accent" style="width: 100%">
-      <input matInput formControlName="name" placeholder="Status name" autocomplete="off">
-      <mat-error [hidden]="!name.hasError('maxlength')">
-        Can not be more than 40 characters
-      </mat-error>
-    </mat-form-field>
-    <div></div>
-    <mat-form-field color="accent" style="width: 100%">
-      <input matInput formControlName="color" placeholder="Status color" #Color autocomplete="off">
-      <mat-icon matSuffix [ngStyle]="{'color': Color.value}">brightness_1</mat-icon>
-    </mat-form-field>
-  </form>
-</mat-dialog-content>
-<mat-dialog-actions *ngIf="mode != 'loading'">
+<mat-dialog-actions>
   <button mat-raised-button (click)="back_to_show_all()" *ngIf="mode == 'editing' || mode == 'creating'">Back</button>
-  <button mat-raised-button color="accent" (click)="mode = 'creating'" *ngIf="mode == 'list_show'">Create new</button>
+  <button mat-raised-button color="accent" (click)="mode = 'editing'" *ngIf="mode == 'list_show'">Create new</button>
   <button mat-raised-button color="warn" (click)="delete_status()" *ngIf="mode == 'editing'">Delete</button>
   <button mat-raised-button color="accent" type="submit" form="status_form" [disabled]="!statusForm.valid"
           *ngIf="mode != 'list_show'">Save

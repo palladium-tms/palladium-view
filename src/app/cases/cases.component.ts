@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {PalladiumApiService} from '../../services/palladium-api.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
-import {StatisticService} from '../../services/statistic.service';
-import {Statistic} from '../models/statistic';
+import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
+import {StanceService} from "../../services/stance.service";
+import {Case} from "../models/case";
 
 @Component({
   selector: 'app-cases',
@@ -13,33 +14,29 @@ import {Statistic} from '../models/statistic';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CasesComponent implements OnInit {
-  cases = [];
+  cases$: Observable<(Case[])>;
   statuses;
   object;
-  suiteId;
   loading = false;
   dropdownMenuItemSelect;
 
   constructor(private activatedRoute: ActivatedRoute,
               private palladiumApiService: PalladiumApiService, private router: Router,
-              private dialog: MatDialog, public stat: StatisticService,
-              private cd: ChangeDetectorRef) {
+              private dialog: MatDialog,
+              private cd: ChangeDetectorRef, private stance: StanceService,) {
   }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe((params: Params) => {
-      this.suiteId = params.id;
-      this.get_cases();
-    });
+    this.cases$ = this.palladiumApiService.cases$.map(cases => cases[this.stance.suiteId()]).map(x => { this.loading = false; return x; });
+    this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
+      this.palladiumApiService.get_cases(id, this.stance.planId());
+    }).subscribe();
   }
 
   get_cases() {
     this.loading = true;
-    this.palladiumApiService.get_cases(this.suiteId).then(cases => {
-      this.cases = cases;
-      this.loading = false;
-      this.cd.detectChanges();
-    });
+    this.cd.markForCheck();
+    this.palladiumApiService.get_cases(this.stance.suiteId(), this.stance.planId());
   }
 
   update_click() {
@@ -72,28 +69,14 @@ export class CasesComponent implements OnInit {
     const dialogRef = this.dialog.open(ResultSetsSettingsComponent, {
       data: {
         object: this.dropdownMenuItemSelect,
-        cases: this.cases
       }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.cases = this.cases.filter(obj => (obj.id !== result.id));
+        // this.cases = this.cases$.value().filter(obj => (obj.id !== result.id));
         this.router.navigate([/\S*suite\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
-        this.update_statistic();
       }
       this.cd.detectChanges();
     });
-  }
-
-  update_statistic() {
-    const statData = {};
-    this.cases.forEach(object => {
-      if (object['status'] in statData) {
-        statData[object['status']] += 1;
-      } else {
-        statData[object['status']] = 1;
-      }
-    });
-    // this.stat.update_parant_statistic(new Statistic(statData));
   }
 }

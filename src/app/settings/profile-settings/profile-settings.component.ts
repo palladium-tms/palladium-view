@@ -29,9 +29,9 @@ export class ProfileSettingsComponent implements OnInit {
 
   async ngOnInit() {
     const userSettings = await this.palladiumApiService.get_user_setting();
-    if (userSettings) {
-      this.timezoneForm.controls['timezoneGroup'].setValue(userSettings['timezone']);
-    }
+    // if (userSettings) {
+    //   this.timezoneForm.controls['timezoneGroup'].setValue(userSettings['timezone']);
+    // }
     this.timezoneGroupOptions$ = this.timezoneForm.get('timezoneGroup')!.valueChanges
       .pipe(
         startWith(''),

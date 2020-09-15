@@ -4,7 +4,7 @@
     <button mat-icon-button (click)="product_list_toggle()">
       <mat-icon class="md-light">menu</mat-icon>
     </button>
-    <div class="product_name">{{productName}}</div>
+    <div class="product_name">{{productName$ | async}}</div>
     <span class="spacer"></span>
       <button mat-button [matMenuTriggerFor]="menu">{{username}}</button>
       <mat-menu #menu="matMenu">

@@ -1,20 +1,18 @@
 <div class="plan-space">
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of this.palladiumApiService.plans[productId] | sortByCreatedAt:'desc'"
-              [ngClass]="{'selected': selectedPlan.id == plan.id}"
+              *ngFor="let plan of (plans$ | async) | sortByCreatedAt:'desc'"
+              [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
         <div class="name">{{plan.name}}</div>
         <div class="settings-menu">
-          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="plan_for_settings = plan">
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="planForSettings = plan">
             <mat-icon>more_vert</mat-icon>
           </button>
         </div>
       </div>
-      <div class="item-statistic">
-        <app-statistic [statistic$] = plan.statistic$></app-statistic>
-      </div>
+      <app-statistic-bar [statistic$] = plan.statistic$ [caseCount$] = "plan.caseCount$"></app-statistic-bar>
     </mat-card>
     <div class="show-more">
       <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
@@ -25,6 +23,10 @@
   </div>
 </div>
 <mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="archive_open()" *ngIf="!planForSettings?.isArchived">
+    <mat-icon>archive</mat-icon>
+    <span>Archive</span>
+  </button>
   <button mat-menu-item (click)="open_settings()">
     <mat-icon>settings</mat-icon>
     <span>Settings</span>

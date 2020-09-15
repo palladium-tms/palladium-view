@@ -19,11 +19,6 @@
   display: block;
 }
 
-.item-statistic {
-  margin-bottom: 0;
-  display: flex;
-}
-
 .toolbar {
   margin-bottom: 0.7em;
   padding-left: 1px;
@@ -37,4 +32,13 @@
 }
 .mat-card {
   padding: 0 0.7em 0.2em;
+}
+
+.all_statistic-bar {
+  display: flex;
+  flex: 1;
+}
+
+.suite {
+  background: #f0f2f300;
 }

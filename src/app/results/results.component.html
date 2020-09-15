@@ -1,35 +1,47 @@
-<div class="result-space">
-  <div class="result-list item-list" [hidden]="loading">
-    <mat-accordion>
-      <mat-expansion-panel class="result-item" *ngFor="let result of results | sortByCreatedAt:'desc'; first as isFirst"
-                           [expanded]="isFirst"
-                           [ngStyle]="{'border-color': palladiumApiService.get_status_by_id(result.status_id).color}">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <b>{{palladiumApiService.get_status_by_id(result.status_id).name}}</b>
-          </mat-panel-title>
-          <mat-panel-description>
-            {{result.created_at | date:'long':timeZone }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="result_content">
-          <div class="small-block" [ngClass]="{'hidden': !result.subdescriber.length}">
-            <div class="sub-blocks-holder">
-              <div class="sub-block" *ngFor="let element of result.subdescriber"><b>{{element.title}}</b><br>{{element.value}}</div>
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="open_history_page($event)" class="group-tab" color="accent" #tabs>
+  <mat-tab label="Results">
+    <div class="result-space">
+      <div class="result-list item-list">
+        <mat-accordion *ngIf="(results$ | async) as results">
+          <mat-expansion-panel class="result-item"
+                               *ngFor="let result of results | sortByCreatedAt:'desc';  first as isFirst"
+                               [expanded]="isFirst"
+                               [ngStyle]="{'border-color': (statuses$ | async)[result.status_id].color}">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <b>{{(statuses$ | async)[result.status_id].name}}</b>
+              </mat-panel-title>
+              <mat-panel-description>
+                {{result.created_at | date:'mediumTime':(timeZoneOffset$ | async)}} {{result.created_at | date:'MMMM d, y' }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="result_content">
+              <div class="small-block" [ngClass]="{'hidden': !result.subdescriber.length}">
+                <div class="sub-blocks-holder">
+                  <div class="sub-block" *ngFor="let element of result.subdescriber">
+                    <b>{{element.title}}</b><br>{{element.value}}</div>
+                </div>
+                <div class="divider"></div>
+              </div>
+              <div class="big-block">
+                <div class="message" *ngFor="let data of result.describer">
+                  <span><b>{{data["title"]}}:</b></span>
+                  <app-result-value [value]='data["value"]' [type]='data["type"]'
+                                    [note]='data["note"]'></app-result-value>
+                </div>
+              </div>
             </div>
-            <div class="divider"></div>
-          </div>
-          <div class="big-block">
-            <div class="message" *ngFor="let data of result.describer">
-              <span><b>{{data["title"]}}:</b></span>
-              <app-result-value [value] = 'data["value"]' [type] = 'data["type"]' [note] = 'data["note"]'></app-result-value>
-            </div>
-          </div>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-  <div [hidden]="!loading" class="loader">
-    <mat-spinner color="accent"></mat-spinner>
-  </div>
-</div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <ng-template #loading>
+        <mat-spinner color="accent" class="loader"></mat-spinner>
+      </ng-template>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="History">
+    <app-case-history></app-case-history>
+  </mat-tab>
+</mat-tab-group>
+

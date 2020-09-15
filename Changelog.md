@@ -1,12 +1,13 @@
 # Changelog
 ## master (unreleased)
-## [0.6.5]
+## [0.7.0]
 ## Added
     * Added async loading for plan object and statistic
     * Added new button in suite menu - "Make Run". It need for make run from suite, and adding results for case by interface
 ## Changed
     * Style for selected items
     * No routing after click to selected object
+    * Now new invite will generated every time, when you open this menu 
     * Style of created_at in result because need to show tomesoze from settings
 ## Fixed
     * Fix untested filter

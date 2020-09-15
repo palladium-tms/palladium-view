@@ -1,29 +1,11 @@
 :host {
+  display: block;
+}
+
+.item-statistic {
   display: flex;
-}
-.statistic-bar {
-  height: 0.3em;
-  flex: 1;
-  margin: auto 0.3em auto auto;
-  display: flex;
-}
-
-@keyframes loading {
-  from {
-    opacity: 100%;
-  }
-  50% {
-    opacity: 0;
-
-  }
-  to {
-    opacity: 100%;
-  }
-}
-
-.status-element-loading {
-  opacity: 100%;
-  width: 100%;
-  background-color: #00acc1;
-  animation: loading 2s ease-in infinite;
+  min-height: 0.3em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,.54);
+  font-size: 14px;
 }

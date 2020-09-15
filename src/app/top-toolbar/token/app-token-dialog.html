@@ -1,7 +1,9 @@
 <h2>Tokens</h2>
-<mat-card-content *ngIf="mode == 'loading'"><mat-spinner color="accent"></mat-spinner></mat-card-content>
+<ng-template #loading>
+  <mat-card-content><mat-spinner color="accent"></mat-spinner></mat-card-content>
+</ng-template>
 
-<mat-dialog-content *ngIf="mode != 'loading'">
+<mat-dialog-content>
   <form [formGroup]="tokenForm" (ngSubmit)="create_token()">
     <mat-form-field color="accent">
       <input formControlName="name" matInput placeholder="Token name">
@@ -9,7 +11,7 @@
     <button mat-raised-button type="submit" [disabled]="!tokenForm.valid">Create new</button>
   </form>
 </mat-dialog-content>
-<mat-dialog-content>
+<mat-dialog-content *ngIf="(tokens$ | async) as tokens else loading">
   <div *ngFor="let current_token of tokens" class="token-item">
     <div class="token-describe">
         <div class="token_name"><b>{{current_token['name']}}</b></div>

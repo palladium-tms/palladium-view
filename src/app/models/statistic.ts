@@ -2,6 +2,11 @@ export interface StatisticInterface {
   [key: number]: number;
 }
 
+export interface PointActivityInterface {
+  active: boolean;
+  point: Point;
+}
+
 export class Statistic {
   all: number;
   points: Point[] = [];

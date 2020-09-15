@@ -1,12 +1,17 @@
+import {Suite} from "./suite";
+import {BehaviorSubject, ReplaySubject} from "rxjs";
+
 export class Product {
   id: number;
   name: string;
-  created_at: number;
-  updated_at: number;
+  createdAt: number;
+  updatedAt: number;
+  caseCount$: BehaviorSubject<number> = new BehaviorSubject(0);
+
   constructor(product) {
       this.id = product['id'];
       this.name = product['name'];
-      this.created_at = product['created_at'].split(' +')[0];
-      this.updated_at = product['updated_at'].split(' +')[0];
+      this.createdAt = product['created_at'].split(' +')[0];
+      this.updatedAt = product['updated_at'].split(' +')[0];
   }
 }

@@ -13,18 +13,20 @@
 
     <div class="item-list">
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%">
-        <mat-card class="item mat-elevation-z1"
-                  *cdkVirtualFor="let object of cases" style="height: 53px">
-          <div class="case">
-            <div class="item-name">{{object.name}}</div>
-            <div class="menu-button menu">
-              <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
-                      (click)="dropdownMenuItemSelect = object">
-                <mat-icon class="menu">more_vert</mat-icon>
-              </button>
+        <ng-container *ngIf="(cases$ | async) as cases">
+          <mat-card class="item mat-elevation-z1"
+                    *cdkVirtualFor="let object of cases" style="height: 53px">
+            <div class="case">
+              <div class="item-name">{{object.name}}</div>
+              <div class="menu-button menu">
+                <button mat-icon-button [matMenuTriggerFor]="menu" class="menu"
+                        (click)="dropdownMenuItemSelect = object">
+                  <mat-icon class="menu">more_vert</mat-icon>
+                </button>
+              </div>
             </div>
-          </div>
-        </mat-card>
+          </mat-card>
+        </ng-container>
       </cdk-virtual-scroll-viewport>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="copy_name()">

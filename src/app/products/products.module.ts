@@ -7,7 +7,10 @@ import {TopToolbarComponent} from '../top-toolbar/top-toolbar.component';
 import {TokenComponent, TokenDialogComponent} from '../top-toolbar/token/token.component';
 import {InviteComponent, InviteDialogComponent} from '../top-toolbar/invite/invite.component';
 import {AboutComponent, AboutDialogComponent} from '../top-toolbar/about/about.component';
-import {StatusSettingsComponent, StatusSettingsDialogComponent} from '../top-toolbar/status-settings/status-settings.component';
+import {
+  StatusSettingsComponent,
+  StatusSettingsDialogComponent
+} from '../top-toolbar/status-settings/status-settings.component';
 import {PlansComponent, PlansSettingsComponent} from '../plans/plans.component';
 import {RunsComponent, RunsSettingsComponent} from '../runs/runs.component';
 import {ResultSetsComponent, ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
@@ -18,7 +21,8 @@ import {StatisticService} from '../../services/statistic.service';
 import {StanceService} from '../../services/stance.service';
 import {CasesComponent} from '../cases/cases.component';
 import {PointComponent} from '../point/point.component';
-import {StatisticComponent} from '../statistic/statistic.component';
+import {StatisticBarComponent} from '../statistic-bar/statistic-bar.component';
+import { StatisticComponent } from '../statistic/statistic.component';
 
 const productRoutes: Routes = [{
   path: '', component: ProductsComponent, children: [
@@ -28,20 +32,21 @@ const productRoutes: Routes = [{
           path: 'plan/:id', component: RunsComponent, children: [
             {
               path: 'run/:id', component: ResultSetsComponent, children: [
-                {path: 'result_set/:id', component: ResultsComponent},
-                {path: 'case_history/:id', component: CaseHistoryComponent},
+                {path: 'result_set/:id', component: ResultsComponent, children: [
+                    {path: 'case_history', component: CaseHistoryComponent}
+                  ]},
               ]
             }, {path: 'suite/:id', component: CasesComponent}
           ]
         }
       ]
     },
-    {path: 'settings', loadChildren: '../settings/settings.module#SettingsModule'}
+    {path: 'settings', loadChildren: () => import('../settings/settings.module').then(m => m.SettingsModule)}
   ]
 }];
 
 @NgModule({
-  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent, StatisticComponent,
+  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent, StatisticBarComponent, StatisticComponent,
     TopToolbarComponent,
     TokenComponent, TokenDialogComponent,
     InviteComponent, InviteDialogComponent,

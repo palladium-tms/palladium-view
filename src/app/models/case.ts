@@ -9,18 +9,19 @@ export class Case {
   selected = false;
   active = false;
   deleting = false;
-  constructor (current_case) {
-    if (current_case.path === 'result_set') {
-      current_case = this.create_case_by_result_set(current_case);
+  constructor (currentCase) {
+    if (currentCase.path === 'result_set') {
+      currentCase = this.create_case_by_result_set(currentCase);
     }
-    this.id = current_case['id'];
-    this.name = current_case['name'];
-    this.suite_id = current_case['suite_id'];
-    this.created_at = current_case['created_at'].split(' +')[0];
-    this.updated_at = current_case['updated_at'].split(' +')[0];
+    this.id = currentCase['id'];
+    this.name = currentCase['name'];
+    this.suite_id = currentCase['suite_id'];
+    this.created_at = currentCase['created_at'].split(' +')[0];
+    this.updated_at = currentCase['updated_at'].split(' +')[0];
   }
-  create_case_by_result_set(result_set) {
-    return {'id': result_set.id, 'name': result_set.name, 'suite_id': 0,
-      'created_at': result_set.created_at, 'updated_at': result_set.updated_at};
+
+  create_case_by_result_set(resultSet) {
+    return {'id': resultSet.id, 'name': resultSet.name, 'suite_id': 0,
+      'created_at': resultSet.created_at, 'updated_at': resultSet.updated_at};
   }
 }

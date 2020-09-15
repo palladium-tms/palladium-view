@@ -1,22 +1,5 @@
-<ng-container *ngIf="statistic">
-  <div class="statistic-bar">
-    <div class="status-elements-no-empty" [ngStyle]="{ 'width': ((statistic.all / this.palladiumApiService.case_count(stance.productId())) * 100) + '%'}">
-      <div *ngFor="let point of statistic.points" class="status-element"
-           [ngStyle]="{ 'width': (point.attitude * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses[point.status].color}">
-      </div>
-    </div>
-    <div class="status-element"
-         [ngStyle]="{ 'width': ((1 - statistic.all / this.palladiumApiService.case_count(stance.productId())) * 100) + '%',
-                  'background-color': this.palladiumApiService.statuses['0'].color}"></div>
-  </div>
-  <div *ngIf="statistic">{{statistic.all / palladiumApiService.case_count(stance.productId()) || 0 | percent}}</div>
-
-</ng-container>
-
-<ng-container *ngIf="!statistic">
-  <div class="statistic-bar">
-    <div class="status-element-loading"></div>
-  </div>
-  <div>&#8734;</div>
-</ng-container>
+<app-statistic-bar [statistic$] = statistic$ [caseCount$] = caseCount$></app-statistic-bar>
+<div class="item-statistic">
+  <app-point [point] = point *ngFor="let point of (statistic$ | async)?.points" [filter] = filter></app-point>
+  <app-point [point] = untestedPoint [filter] = filter ></app-point>
+</div>

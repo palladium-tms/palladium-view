@@ -10,13 +10,14 @@ import {HttpService} from '../services/http-request.service';
 import {MainComponent} from './main/main.component';
 import {DetailResultComponent} from './detail-result/detail-result.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 const appRoutes: Routes = [
-  {path: 'singin', loadChildren: './login/login.module#LoginModule'},
-  {path: 'registration', loadChildren: './registration/registration.module#RegistrationModule'},
+  {path: 'singin', loadChildren: () => import('./login/login.module').then(m => m.LoginModule)},
+  {path: 'registration', loadChildren: () => import('./registration/registration.module').then(m => m.RegistrationModule)},
   {
-    path: '', loadChildren: './products/products.module#ProductsModule', canActivate: [AuthGuard]
+    path: '', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule), canActivate: [AuthGuard]
   },
   {path: 'result/:id', component: DetailResultComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: '/404'},
@@ -27,7 +28,8 @@ const appRoutes: Routes = [
     MainComponent,
     DetailResultComponent,
   ],
-  imports: [BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes),  BrowserAnimationsModule],
+  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.OFF}),
+    BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes),  BrowserAnimationsModule],
   providers: [AuthGuard, AuthenticationService, PalladiumApiService, HttpService,
     {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
   bootstrap: [MainComponent],

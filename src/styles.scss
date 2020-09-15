@@ -127,13 +127,9 @@ figure {
   align-items: center;
 }
 
-.item-statistic {
-  min-height: 0.3em;
-  padding-top: 0.2em;
-  margin-bottom: 0;
-}
 .status-elements-no-empty {
   display: flex;
+  width: 100%;
 }
 
 .status-name {
