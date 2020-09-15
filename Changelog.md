@@ -1,5 +1,6 @@
 # Changelog
 ## master (unreleased)
+## [0.7.0]
 ## Added
     * Added async loading for plan object and statistic
     * Added new button in suite menu - "Make Run". It need for make run from suite, and adding results for case by interface
