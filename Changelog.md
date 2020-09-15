@@ -8,6 +8,7 @@
     * Style for selected items
     * No routing after click to selected object
     * Now new invite will generated every time, when you open this menu 
+    * Style of created_at in result because need to show tomesoze from settings
 ## Fixed
     * Fix untested filter
     * Fix: show more button is hided after click
@@ -16,9 +17,6 @@
     * Fix: error plan name change
     * Fix: product list not updated after name changing
     * Fix: product not selected after opening by link
-## [0.6.5]
-## Changed 
-    * Style of created_at in result because need to show tomesoze from settings
 ## [0.6.4]
 ## Added
     * Plan statistic update
