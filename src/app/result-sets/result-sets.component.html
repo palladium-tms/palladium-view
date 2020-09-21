@@ -12,6 +12,10 @@
         <mat-icon>library_add</mat-icon>
         {{selectedCount}}
       </button>
+      <button mat-button (click)="delete_all()" [disabled]="!selectedCount">
+        <mat-icon *ngIf="!deleting">delete_forever</mat-icon>
+        <mat-spinner color="warn" class="mini-loader" [diameter]='30' *ngIf="deleting"></mat-spinner>
+      </button>
       <div class="divider"></div>
       <button mat-icon-button (click)="update_click()" [disabled]="loading">
         <mat-icon>refresh</mat-icon>

@@ -38,8 +38,8 @@ export class Suite {
       'statistic': {0: 0}};
   }
 
-  decrease_case_count() {
-    this.caseCount -=1;
+  decrease_case_count(value = 1) {
+    this.caseCount -= value;
     this.caseCount$.next(this.caseCount);
   }
 
