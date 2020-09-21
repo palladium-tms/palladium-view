@@ -276,17 +276,24 @@ export class PalladiumApiService {
   // }
   //
   delete_case(caseId, productId, plan_id): void {
-    this.httpService.postData('/case_delete', { case_data: { id: caseId, plan_id: plan_id } }).map(response => {
+    this.delete_case_obs(caseId, productId, plan_id).subscribe();
+  }
+
+  delete_case_obs(caseId, productId, plan_id) {
+    if (!(caseId instanceof Array)) {
+      caseId = [caseId]
+    }
+    return this.httpService.postData('/case_delete', { case_data: { id: caseId, plan_id: plan_id } }).map(response => {
       const suiteId = response['case']['suite_id'];
-      this._cases[suiteId] = this._cases[suiteId].filter(_case => _case.id !== caseId);
+      this._cases[suiteId] = this._cases[suiteId].filter(_case => !caseId.includes(_case.id));
       this.cases$.next(this._cases);
       this.currentCases$.next(this._cases[suiteId]);
       const plan = this._plans[productId].find(plan => plan.id == plan_id);
       plan.suites$.take(1).map(suites => {
-        suites.find(suite => suite.id == suiteId).decrease_case_count();
+        suites.find(suite => suite.id == suiteId).decrease_case_count(caseId.length);
         plan.recalculate_case_count();
       }).subscribe()
-    }).subscribe();
+    })
   }
 
   get_history(caseData: ({ id: number } | { result_set_id: number })): void {
@@ -555,8 +562,12 @@ export class PalladiumApiService {
     });
   }
 
-  delete_result_set(id, runId) {
+  delete_result_set(id: number, runId: number) {
     return this.httpService.postData('/result_set_delete', { result_set_data: { id } });
+  }
+
+  delete_all_result_sets(ids: number[], runId: number) {
+    return this.httpService.postData('/result_set_delete', { result_set_data: { id: ids } });
   }
   //#endregion
 

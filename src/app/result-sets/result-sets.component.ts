@@ -62,6 +62,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   resultSetCheckboxes: ObjectCheckbox;
 
   loading = false;
+  deleting = false;
   refreshButtonStatus: ('disabled' | 'active') = 'disabled';
 
   addResultOpen = false;
@@ -140,7 +141,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       return this.palladiumApiService.plans$.switchMap(allPlans => {
         const plans = allPlans[this.stance.productId()];
         this.plan = plans.find(plan => plan.id === this.stance.planId());
-        console.log(this.plan.runs$);
         return this.plan.runs$.map(runs => {
           this.run = runs.find(run => run.id === this.stance.runId())
           this.resultSets$ = this.run.resultSets$.map(resultSets => {
@@ -398,6 +398,37 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.selectAllFlag = false;
     }
     this.cd.detectChanges();
+  }
+
+  delete_all() {
+    if (confirm('A u shuare? It is very fucking dangeros')) {
+      this.deleting = true;
+      const selectedObjects = this.get_selected_objects();
+      const selectedResultSetIds = selectedObjects.filter(obj => !obj.suite_id).map(object => object.id);
+      const selectedCaseIds = selectedObjects.filter(obj => obj.suite_id).map(object => object.id);
+      this.palladiumApiService.delete_all_result_sets(selectedResultSetIds, this.stance.runId()).map(results => {
+        if (results['errors'].length == 0) {
+          this.run.resultSets$.take(1).map(resultSets => {
+            this.run.resultSets$.next(resultSets.filter(resultSet => !selectedResultSetIds.includes(resultSet.id)))
+          }).subscribe();
+          this.run.statistic$.take(1).subscribe(statistic => {
+            this.statistic$.next(statistic);
+          })
+        } else {
+          // error) TODO
+        }
+      }).switchMap(() => {
+        if (selectedCaseIds.length > 0) {
+          return this.palladiumApiService.delete_case_obs(selectedCaseIds, this.stance.productId(), this.stance.planId());
+        } else {
+          return Observable.create(observer => observer.next());
+        }
+
+      }).subscribe(() => {
+        this.unselect_all();
+        this.deleting = false;
+      });
+    }
   }
 
   ngOnDestroy() {
