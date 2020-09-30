@@ -13,7 +13,6 @@ import {StanceService} from '../../services/stance.service';
 import {Router} from '@angular/router';
 import {ProductSettingsComponent} from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {StatisticService} from '../../services/statistic.service';
 import {Plan} from "../models/plan";
 import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -42,7 +41,6 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   constructor(public palladiumApiService: PalladiumApiService,
               public stance: StanceService,
-              private statisticService: StatisticService,
               private activatedRoute: ActivatedRoute,
               private router: Router, private dialog: MatDialog,
               private cd: ChangeDetectorRef) {}
@@ -52,6 +50,9 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.init_plans(id);
       return +id;
     });
+    this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+      this.loading = false;
+    })
 
     this.activeRoute$.switchMap((id: number) => {
       return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
@@ -72,6 +73,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   init_plans(id) {
+    this.loading = true;
     this.palladiumApiService.init_plans(id, this.stance.planId());
   }
 

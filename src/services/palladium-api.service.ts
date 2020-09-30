@@ -451,6 +451,8 @@ export class PalladiumApiService {
         params['plan_data']['plan_id'] = planId;
       }
       this.get_plans(params);
+    } else {
+      this.plans$.next(this._plans);
     }
   }
 
