@@ -6,7 +6,8 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 80",
     "serve": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build --prod"
+    "build": "ng build --aot=true --prod=true",
+    "postinstall": "ngcc"
   },
   "private": true,
   "dependencies": {
@@ -35,7 +36,6 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.1001.3",
-    "@angular-devkit/buildgit-angular": "^0.1001.3",
     "@angular/cli": "^9.1.0",
     "@angular/compiler-cli": "^9.1.0",
     "@types/node": "^12.12.32",
