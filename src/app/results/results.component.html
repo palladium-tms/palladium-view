@@ -1,7 +1,7 @@
 <mat-tab-group animationDuration="0ms" (selectedTabChange)="open_history_page($event)" class="group-tab" color="accent" #tabs>
   <mat-tab label="Results">
     <div class="result-space">
-      <div class="result-list item-list">
+      <div class="result-list item-list" [hidden]="loading">
         <mat-accordion *ngIf="(results$ | async) as results">
           <mat-expansion-panel class="result-item"
                                *ngFor="let result of results | sortByCreatedAt:'desc';  first as isFirst"
@@ -34,9 +34,9 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <ng-template #loading>
-        <mat-spinner color="accent" class="loader"></mat-spinner>
-      </ng-template>
+      <div [hidden]="!loading" class="loader">
+        <mat-spinner color="accent"></mat-spinner>
+      </div>
     </div>
   </mat-tab>
 

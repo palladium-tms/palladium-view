@@ -20,6 +20,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
   statuses$: Observable<StructuredStatuses>;
   results$: Observable<Result[]>;
   timeZoneOffset$: Observable<string>;
+  loading = false;
   @ViewChild("tabs", { static: false }) tabs: MatTabGroup;
 
   constructor(private palladiumApiService: PalladiumApiService,
@@ -36,6 +37,8 @@ export class ResultsComponent implements OnInit, OnDestroy {
       id => {
         this.open_result_tab(this.tabs);
         this.cd.detectChanges();
+        this.loading = true;
+        console.log('asdas')
         this.palladiumApiService.get_results(id);
         return id;
       }).switchMap(resultSetId => {
@@ -46,6 +49,7 @@ export class ResultsComponent implements OnInit, OnDestroy {
             let run = runs.find(run => run.id === this.stance.runId())
             return run.resultSets$.map(resultSets => {
               this.results$ = resultSets.find(resultSet => resultSet.id === resultSetId)?.results$
+              this.results$.take(1).subscribe(() => this.loading = false)
             });
           })
         });
