@@ -1,7 +1,10 @@
 # Changelog
 ## master (unreleased)
+## [0.7.1]
 ## Added
     * Adility to delete cases and result_sets multiple
+### Changes
+    * Some packages from package.json will be updated
 ## [0.7.0]
 ## Added
     * Added async loading for plan object and statistic
