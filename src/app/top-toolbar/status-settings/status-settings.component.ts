@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {PalladiumApiService, StructuredStatuses} from '../../../services/palladium-api.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { PalladiumApiService, StructuredStatuses } from '../../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-status-settings',
@@ -10,7 +11,7 @@ import {Observable} from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusSettingsComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog) { }
 
   open() {
     this.dialog.open(StatusSettingsDialogComponent);
@@ -33,7 +34,7 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
     color: new FormControl('', [Validators.required])
   });
 
-  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
+  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) { }
 
   get name() {
     return this.statusForm.get('name');
@@ -44,12 +45,12 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.statuses$ = this.palladiumApiService.statuses$.map(statuses => {
+    this.statuses$ = this.palladiumApiService.statuses$.pipe(map(statuses => {
       if (statuses === {}) {
         this.mode = 'empty';
       }
       return Object.values(statuses).filter(status => !status.block);
-    });
+    }));
   }
 
   edit(status) {
@@ -86,7 +87,7 @@ export class StatusSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   getStyles(object) {
-    return {'border-left': '7px solid ' + object.color};
+    return { 'border-left': '7px solid ' + object.color };
   }
 
   ngOnDestroy(): void {

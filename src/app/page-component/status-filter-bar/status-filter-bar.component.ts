@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Point, PointActivityInterface, Statistic } from '../../models/statistic';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-status-filter-bar',
@@ -24,8 +25,8 @@ export class StatusFilterBarComponent implements OnInit {
   }
 
   init_point_activity() {
-    this.pointsActivity$ = this.statistic$.switchMap(statistic => {
-      return this.caseCount$.map(caseCount => {
+    this.pointsActivity$ = this.statistic$.pipe(switchMap(statistic => {
+      return this.caseCount$.pipe(map(caseCount => {
         this.update_pointsActivityCache();
         this.pointsActivity = [];
         let allResults = 0;
@@ -41,8 +42,8 @@ export class StatusFilterBarComponent implements OnInit {
         }
         this.clear_empty_filter();
         return this.pointsActivity;
-      })
-    });
+      }));
+    }));
   }
 
   unactivate_empty_activity_from_cache(statistic: Statistic): void {

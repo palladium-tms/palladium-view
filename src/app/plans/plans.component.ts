@@ -6,17 +6,17 @@ import {
   OnInit,
   ViewEncapsulation
 } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {PalladiumApiService, StructuredPlans} from '../../services/palladium-api.service';
-import {StanceService} from '../../services/stance.service';
-import {Router} from '@angular/router';
-import {ProductSettingsComponent} from '../products/products.component';
+import { ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { PalladiumApiService, StructuredPlans } from '../../services/palladium-api.service';
+import { StanceService } from '../../services/stance.service';
+import { Router } from '@angular/router';
+import { ProductSettingsComponent } from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {Plan} from "../models/plan";
-import {BehaviorSubject, Observable, of, ReplaySubject, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {Product} from '../models/product';
+import { Plan } from "../models/plan";
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { Product } from '../models/product';
 
 @Component({
   selector: 'app-plans',
@@ -26,7 +26,7 @@ import {Product} from '../models/product';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlansComponent implements OnInit, OnDestroy {
-  plans$: ReplaySubject<Plan[]> =  new ReplaySubject(1);
+  plans$: ReplaySubject<Plan[]> = new ReplaySubject(1);
   zoroCaseCount$ = new BehaviorSubject(0);
 
   activeRoute$: Observable<{}>;
@@ -40,34 +40,34 @@ export class PlansComponent implements OnInit, OnDestroy {
   currentProduct$: Observable<Product>;
 
   constructor(public palladiumApiService: PalladiumApiService,
-              public stance: StanceService,
-              private activatedRoute: ActivatedRoute,
-              private router: Router, private dialog: MatDialog,
-              private cd: ChangeDetectorRef) {}
+    public stance: StanceService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router, private dialog: MatDialog,
+    private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => {
+    this.activeRoute$ = this.activatedRoute.params.pipe(pluck('id'), map(id => {
       this.init_plans(id);
       return +id;
-    });
+    }));
     this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe(() => {
       this.loading = false;
     })
 
-    this.activeRoute$.switchMap((id: number) => {
-      return this.palladiumApiService.plans$.map((plans: StructuredPlans) => this.plans$.next(plans[id]));
-    }).pipe(takeUntil(this.unsubscribe)).subscribe();
+    this.activeRoute$.pipe(switchMap((id: number) => {
+      return this.palladiumApiService.plans$.pipe(map((plans: StructuredPlans) => this.plans$.next(plans[id])));
+    }), takeUntil(this.unsubscribe)).subscribe();
 
-     this.currentProduct$ = this.palladiumApiService.products$.map((products: Product[]) => {
-       const productId = this.stance.productId();
+    this.currentProduct$ = this.palladiumApiService.products$.pipe(map((products: Product[]) => {
+      const productId = this.stance.productId();
       return products.find(product => product.id === productId);
-    });
+    }));
   }
 
   clicked(event, plan) {
     if (!event.target.classList.contains('mat-icon') && !event.target.classList.contains('mat-icon-button')) {
       this.selectedPlanId = plan.id;
-      this.router.navigate(['plan', plan.id], {relativeTo: this.activatedRoute}).then(() => { this.cd.detectChanges()});
+      this.router.navigate(['plan', plan.id], { relativeTo: this.activatedRoute }).then(() => { this.cd.detectChanges() });
       this.cd.detectChanges();
     }
   }
@@ -89,7 +89,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().pipe(takeUntil(this.unsubscribe)).subscribe(result => {
-        this.cd.detectChanges();
+      this.cd.detectChanges();
     });
   }
 
@@ -125,12 +125,12 @@ export class PlansSettingsComponent implements OnInit {
   });
 
   constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
-              private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
+    private palladiumApiService: PalladiumApiService, private router: Router, @Inject(MAT_DIALOG_DATA) public data) {
   }
 
   ngOnInit(): void {
     this.item = this.data.plan;
-    this.planForm.patchValue({name: this.item.name});
+    this.planForm.patchValue({ name: this.item.name });
   }
 
   get name() {

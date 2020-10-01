@@ -1,7 +1,8 @@
-import {Component, Input, OnChanges, OnInit, ViewEncapsulation} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
-import {Point, Statistic} from '../models/statistic';
-import {PalladiumApiService, StructuredStatuses} from '../../services/palladium-api.service';
+import { Component, Input, OnChanges, OnInit, ViewEncapsulation } from '@angular/core';
+import { Observable, ReplaySubject } from 'rxjs';
+import { Point, Statistic } from '../models/statistic';
+import { PalladiumApiService, StructuredStatuses } from '../../services/palladium-api.service';
+import { map, switchMap, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-statistic',
@@ -24,7 +25,7 @@ export class StatisticComponent implements OnInit, OnChanges {
     this.statistic$?.subscribe(() => {
       this.get_untested_point();
     });
-    this.caseCount$.subscribe(_ =>{
+    this.caseCount$.subscribe(_ => {
       this.get_untested_point();
     });
   }
@@ -36,14 +37,14 @@ export class StatisticComponent implements OnInit, OnChanges {
   get_untested_point() {
     if (this.statistic$ && this.caseCount$) {
       //is a run
-      this.statistic$.switchMap(statistic => {
-        return this.caseCount$.map(caseCount => {
+      this.statistic$.pipe(switchMap(statistic => {
+        return this.caseCount$.pipe(map(caseCount => {
           this.untestedPoint = new Point(0, caseCount - statistic.all, caseCount);
-        });
-      }).take(1).subscribe();
+        }));
+      }), take(1)).subscribe();
     } else if (this.caseCount$) {
       // is a suite
-      this.caseCount$.take(1).subscribe(caseCount => {
+      this.caseCount$.pipe(take(1)).subscribe(caseCount => {
         this.untestedPoint = new Point(0, caseCount, caseCount);
       });
     }

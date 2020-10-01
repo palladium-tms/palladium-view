@@ -1,11 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {PalladiumApiService} from '../../services/palladium-api.service';
-import {MatDialog} from '@angular/material/dialog';
-import {ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
-import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
-import {StanceService} from "../../services/stance.service";
-import {Case} from "../models/case";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PalladiumApiService } from '../../services/palladium-api.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ResultSetsSettingsComponent } from '../result-sets/result-sets.component';
+import { Observable } from "rxjs";
+import { StanceService } from "../../services/stance.service";
+import { Case } from "../models/case";
+import { map, pluck } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cases',
@@ -21,16 +22,16 @@ export class CasesComponent implements OnInit {
   dropdownMenuItemSelect;
 
   constructor(private activatedRoute: ActivatedRoute,
-              private palladiumApiService: PalladiumApiService, private router: Router,
-              private dialog: MatDialog,
-              private cd: ChangeDetectorRef, private stance: StanceService,) {
+    private palladiumApiService: PalladiumApiService, private router: Router,
+    private dialog: MatDialog,
+    private cd: ChangeDetectorRef, private stance: StanceService,) {
   }
 
   ngOnInit() {
-    this.cases$ = this.palladiumApiService.cases$.map(cases => cases[this.stance.suiteId()]).map(x => { this.loading = false; return x; });
-    this.activatedRoute.params.pluck('id').map(id => +id).map(id => {
+    this.cases$ = this.palladiumApiService.cases$.pipe(map(cases => cases[this.stance.suiteId()]), map(x => { this.loading = false; return x; }));
+    this.activatedRoute.params.pipe(pluck('id'), map(id => +id), map(id => {
       this.palladiumApiService.get_cases(id, this.stance.planId());
-    }).subscribe();
+    })).subscribe();
   }
 
   get_cases() {
@@ -73,8 +74,7 @@ export class CasesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // this.cases = this.cases$.value().filter(obj => (obj.id !== result.id));
-        this.router.navigate([/\S*suite\/(\d+)/.exec(this.router.url)[0]], {relativeTo: this.activatedRoute});
+        this.router.navigate([/\S*suite\/(\d+)/.exec(this.router.url)[0]], { relativeTo: this.activatedRoute });
       }
       this.cd.detectChanges();
     });
