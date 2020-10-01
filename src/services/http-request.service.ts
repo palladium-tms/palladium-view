@@ -2,10 +2,8 @@ import {Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {AuthenticationService} from 'services/authentication.service';
-import 'rxjs/add/operator/catch'; // don't forget this, or you'll get a runtime error
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import {delay} from "rxjs/internal/operators";
 
 @Injectable()
 
