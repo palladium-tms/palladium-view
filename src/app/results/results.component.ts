@@ -1,10 +1,10 @@
-import {Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild} from '@angular/core';
-import {Result} from '../models/result';
-import {ActivatedRoute} from '@angular/router';
-import {PalladiumApiService, StructuredResults, StructuredStatuses} from '../../services/palladium-api.service';
-import {Observable, Subject} from 'rxjs';
-import {takeUntil} from "rxjs/operators";
-import {MatTabGroup} from "@angular/material/tabs";
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Result } from '../models/result';
+import { ActivatedRoute } from '@angular/router';
+import { PalladiumApiService, StructuredStatuses } from '../../services/palladium-api.service';
+import { Observable, Subject } from 'rxjs';
+import { map, pluck, switchMap, take, takeUntil } from "rxjs/operators";
+import { MatTabGroup } from "@angular/material/tabs";
 import { StanceService } from 'services/stance.service';
 
 @Component({
@@ -24,46 +24,45 @@ export class ResultsComponent implements OnInit, OnDestroy {
   @ViewChild("tabs", { static: false }) tabs: MatTabGroup;
 
   constructor(private palladiumApiService: PalladiumApiService,
-              private activatedRoute: ActivatedRoute,
-              private stance: StanceService,
-              private cd: ChangeDetectorRef) {
+    private activatedRoute: ActivatedRoute,
+    private stance: StanceService,
+    private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    this.activeRoute$ = this.activatedRoute.params.pluck('id').map(id => +id);
+    this.activeRoute$ = this.activatedRoute.params.pipe(pluck('id'), map(id => +id));
     this.statuses$ = this.palladiumApiService.statuses$;
 
-    this.activeRoute$.map(
+    this.activeRoute$.pipe(map(
       id => {
         this.open_result_tab(this.tabs);
         this.cd.detectChanges();
         this.loading = true;
-        console.log('asdas')
         this.palladiumApiService.get_results(id);
         return id;
-      }).switchMap(resultSetId => {
-        return this.palladiumApiService.plans$.switchMap(allPlans => {
+      }), switchMap(resultSetId => {
+        return this.palladiumApiService.plans$.pipe(switchMap(allPlans => {
           const plans = allPlans[this.stance.productId()];
           const plan = plans.find(plan => plan.id === this.stance.planId());
-          return plan.runs$.switchMap(runs => {
+          return plan.runs$.pipe(switchMap(runs => {
             let run = runs.find(run => run.id === this.stance.runId())
-            return run.resultSets$.map(resultSets => {
+            return run.resultSets$.pipe(map(resultSets => {
               this.results$ = resultSets.find(resultSet => resultSet.id === resultSetId)?.results$
-              this.results$.take(1).subscribe(() => this.loading = false)
-            });
-          })
-        });
-      }).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
+              this.results$.pipe(take(1)).subscribe(() => this.loading = false)
+            }));
+          }))
+        }));
+      })).pipe(takeUntil(this.unsubscribe)).subscribe(() => this.cd.detectChanges());
 
 
-    this.timeZoneOffset$ = this.palladiumApiService.userSettings.timeZone.map(timezone => {
+    this.timeZoneOffset$ = this.palladiumApiService.userSettings.timeZone.pipe(map(timezone => {
       return this.palladiumApiService.timeZoneOffset(timezone);
-    });
+    }));
   }
 
   open_history_page($event) {
     if ($event.index === 1) {
-      this.palladiumApiService.get_history({result_set_id: this.activatedRoute.snapshot.params['id']});
+      this.palladiumApiService.get_history({ result_set_id: this.activatedRoute.snapshot.params['id'] });
     }
   }
 

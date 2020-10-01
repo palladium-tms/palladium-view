@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
-import {PalladiumApiService} from '../../../services/palladium-api.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { PalladiumApiService } from '../../../services/palladium-api.service';
 import { MatDialog } from '@angular/material/dialog';
-import {Observable} from "rxjs";
-import {Invite} from "../../models/invite";
+import { Observable } from "rxjs";
+import { Invite } from "../../models/invite";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-invite',
@@ -10,7 +11,7 @@ import {Invite} from "../../models/invite";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InviteComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog) { }
 
   open() {
     this.dialog.open(InviteDialogComponent);
@@ -24,13 +25,13 @@ export class InviteComponent {
 })
 export class InviteDialogComponent implements OnInit, OnDestroy {
   invite$: Observable<Invite>;
-  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) {}
+  constructor(private palladiumApiService: PalladiumApiService, private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.palladiumApiService.generate_invite();
-    this.invite$ = this.palladiumApiService.invite$.map(x => {
+    this.invite$ = this.palladiumApiService.invite$.pipe(map(x => {
       return x;
-    });
+    }));
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,8 @@
-import {Pipe, PipeTransform} from '@angular/core';
-import {Suite} from '../../models/suite';
-import {Run} from '../../models/run';
-import {Observable, of} from "rxjs";
+import { Pipe, PipeTransform } from '@angular/core';
+import { Suite } from '../../models/suite';
+import { Run } from '../../models/run';
+import { Observable, of } from "rxjs";
+import { map } from 'rxjs/operators';
 
 @Pipe({
   name: 'statisticFilter',
@@ -26,7 +27,7 @@ export class StatisticFilterPipe implements PipeTransform {
     const filters = data[0];
     const countes = data[1];
     const planisArchived = data[2];
-    return of(value).map(elements => {
+    return of(value).pipe(map(elements => {
       const newElementPack = [];
       if (planisArchived) {
         console.log('aaa')
@@ -38,14 +39,14 @@ export class StatisticFilterPipe implements PipeTransform {
       } else {
         elements.forEach(element => {
           if (this.is_suite(element) ||
-              this.is_not_full_complete(element, countes[element.name]) ||
-              this.contain_filtered_status(element, filters)) {
+            this.is_not_full_complete(element, countes[element.name]) ||
+            this.contain_filtered_status(element, filters)) {
             newElementPack.push(element);
           }
         });
       }
       return newElementPack;
-    });
+    }));
   }
 
   is_suite(element: Run | Suite): boolean {
@@ -61,7 +62,7 @@ export class StatisticFilterPipe implements PipeTransform {
   }
 
   filtered_value(value, filters) {
-    const newValue = value.filter( element => (this.contain_filtered_status(element, filters)));
+    const newValue = value.filter(element => (this.contain_filtered_status(element, filters)));
     return of(newValue);
   }
 }
