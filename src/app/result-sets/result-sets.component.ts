@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestro
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Statistic } from '../models/statistic';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PalladiumApiService, StructuredStatuses } from '../../services/palladium-api.service';
+import { PalladiumApiService, StructuredResultSets, StructuredStatuses } from '../../services/palladium-api.service';
 import { StanceService } from '../../services/stance.service';
 import { ProductSettingsComponent } from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { SearchPipe } from '../pipes/search/search.pipe';
 import { CasefillingPipe } from './casefilling.pipe';
 import { StatusFilterPipe } from '../pipes/status_filter_pipe/status-filter.pipe';
 import { ResultSet } from '../models/result_set';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Observable, ReplaySubject, Subject } from 'rxjs';
 import { Status } from '../models/status';
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Case } from '../models/case';
@@ -72,33 +72,27 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   statuses;
   resultSetsAndCases = [];
   filter: number[] = [];
-  filter$: ReplaySubject<number[]> = new ReplaySubject(1);
+  filter$: BehaviorSubject<number[]> = new BehaviorSubject([]);
   selectAllFlag = false;
   selectedCount = 0;
   dropdownMenuItemSelect;
   searchToggle: SearchToggle;
-  searchValue;
+
+  searchFormControl = new FormControl();
+
 
   constructor(private activatedRoute: ActivatedRoute, private stance: StanceService,
     private palladiumApiService: PalladiumApiService, private router: Router,
-    private dialog: MatDialog, private cd: ChangeDetectorRef,
-    private searchPipe: SearchPipe) {
+    private dialog: MatDialog, private cd: ChangeDetectorRef) {
     this.searchToggle = { 'toggle': false, 'color': 'none' };
 
-    this.filteredCases$ = this.filter$.pipe(switchMap(filter => {
+    this.filteredCases$ = merge(this.searchFormControl.valueChanges, this.filter$).pipe(switchMap(filter => {
       return this.cases$.pipe(switchMap(cases => {
         if (cases.length !== 0) {
           return this.resultSets$.pipe(map(resultSets => {
-            let newElementPack = []
-            cases.forEach(currentCase => {
-              if (this.contain_filtered_status(resultSets[currentCase.name], filter) || filter.length == 0) {
-                newElementPack.push(currentCase);
-              }
-            });
-            if (newElementPack.length === 0) {
-              newElementPack = cases;
-              this.select_filter([]);
-            }
+            let newElementPack = cases;
+            newElementPack = this.filter_by_search(newElementPack, this.searchFormControl.value);
+            newElementPack = this.filter_by_status(resultSets, newElementPack, this.filter$.getValue());
             return newElementPack;
           }))
         } else {
@@ -111,7 +105,26 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     }))
   }
 
-  contain_filtered_status(element, filters) {
+  filter_by_status(resultSets: StructuredResultSets, cases: Case[], filter: number[]): Case[] {
+    let newElementPack = []
+    cases.forEach(currentCase => {
+      if (this.contain_filtered_status(resultSets[currentCase.name], filter) || filter.length == 0) {
+        newElementPack.push(currentCase);
+      }
+    });
+    return newElementPack;
+  }
+
+  filter_by_search(cases: Case[], filter: string): Case[] {
+    if (filter?.length > 0) {
+      filter = filter.toLowerCase();
+      return cases.filter(item => item.name.toLowerCase().includes(filter));
+    } else {
+      return cases;
+    }
+  }
+
+  contain_filtered_status(element, filters: number[]) {
     if (element) {
       return filters.indexOf(+element.status) >= 0;
     } else {
@@ -408,7 +421,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
     this.searchToggle.toggle = !this.searchToggle.toggle;
     this.searchToggle.color = this.searchToggle.toggle ? 'accent' : 'none';
     if (!this.searchToggle.toggle) {
-      this.searchValue = '';
+      this.searchFormControl.reset()
     }
   }
 

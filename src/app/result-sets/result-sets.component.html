@@ -29,22 +29,25 @@
       <!--</button>-->
     </div>
   </div>
+
   <mat-card class="search-bar" *ngIf="searchToggle.toggle">
     <mat-form-field color="accent" class="search-input" floatLabel="never">
-      <input matInput type="text" class="search-bar-input" [(ngModel)]="searchValue" autocomplete="off"
+      <input matInput type="text" class="search-bar-input"  [formControl]="searchFormControl" autocomplete="off"
         placeholder="Search" autofocus>
-      <button mat-button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+        <button type="button" mat-button *ngIf="searchFormControl.value" matSuffix mat-icon-button
+        (click)="searchFormControl.reset()">
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
   </mat-card>
+
   <ng-container *ngIf="!loading else loadingSpinner">
     <div class="item-list" *ngIf="(resultSets$ | async) as resultSets">
       <cdk-virtual-scroll-viewport [itemSize]="53" style="height: 100%; width: 100%" id="scroll" #scroll>
 
 
         <mat-card class="item mat-elevation-z1"
-          *cdkVirtualFor="let object of (filteredCases$ | async) | search: searchValue| sortByCreatedAt: 'desc'"
+          *cdkVirtualFor="let object of (filteredCases$ | async) | sortByCreatedAt: 'desc'"
           [ngStyle]="{'border-right': '2px solid ' + (statuses$ | async)[(resultSets[object.name]?resultSets[object.name]:object).status].color}"
           [ngClass]="{'selected': (resultSets[object.name]?resultSets[object.name]:object).id === activeElement?.id, 'case': !resultSets[object.name]}"
           style="height: 53px">
