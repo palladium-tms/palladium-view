@@ -163,20 +163,21 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         const plans = allPlans[this.stance.productId()];
         this.plan = plans.find(plan => plan.id === this.stance.planId());
         return this.plan.runs$.pipe(map(runs => {
-          this.run = runs.find(run => run.id === this.stance.runId())
-          this.resultSets$ = this.run.resultSets$.pipe(map(resultSets => {
-            this.init_active_element(resultSets);
-            let object = {};
-            resultSets.forEach(retulsSet => {
-              object[retulsSet.name] = retulsSet;
-            })
-            this.refreshButtonStatus = 'active';
-            return object;
-          }));
-
-          this.update_run_statistic_from_filter(this.run);
-
-          this.cd.detectChanges();
+          const runId = this.stance.runId();
+          if (this.run?.id !== +runId) {
+            this.run = runs.find(run => run.id === this.stance.runId())
+            this.resultSets$ = this.run.resultSets$.pipe(map(resultSets => {
+              this.init_active_element(resultSets);
+              let object = {};
+              resultSets.forEach(retulsSet => {
+                object[retulsSet.name] = retulsSet;
+              })
+              this.refreshButtonStatus = 'active';
+              return object;
+            }));
+            this.update_run_statistic_from_filter(this.run);
+            this.cd.detectChanges();
+          }
         }))
       }));
     }), takeUntil(this.unsubscribe)).subscribe();
