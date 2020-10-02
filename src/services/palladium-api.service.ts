@@ -244,8 +244,8 @@ export class PalladiumApiService {
     })).subscribe();
   }
 
-  get_cases_by_run_id(runId, productId, planId): void {
-    this.httpService.postData('/cases', {
+  get_cases_by_run_id(runId: string, productId, planId): Observable<[Case[], string]> {
+    return this.httpService.postData('/cases', {
       case_data: {
         run_id: runId,
         product_id: productId,
@@ -256,10 +256,10 @@ export class PalladiumApiService {
       Object(resp['cases']).forEach(currentCase => {
         _cases.push(new Case(currentCase));
       });
-      this.currentCases$.next(_cases);
       this._cases[resp['suite']['id']] = _cases;
       this.cases$.next(this._cases);
-    })).subscribe();
+      return [_cases, runId]
+    }));
   }
 
   edit_case_by_result_set_id(resultSetId, runId, name): void {

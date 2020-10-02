@@ -44,7 +44,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   });
 
   resultSets$: Observable<{}>;
-  cases$: Observable<Case[]>;
+  cases$: ReplaySubject<Case[]>;
   filteredCases$: Observable<Case[]>;
   cases: Case[] = [];
   selectedResultSet$ = new ReplaySubject(1);
@@ -87,19 +87,26 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
     this.filteredCases$ = this.filter$.pipe(switchMap(filter => {
       return this.cases$.pipe(switchMap(cases => {
-        return this.resultSets$.pipe(map(resultSets => {
-          let newElementPack = []
-          cases.forEach(currentCase => {
-            if (this.contain_filtered_status(resultSets[currentCase.name], filter) || filter.length == 0) {
-              newElementPack.push(currentCase);
+        if (cases.length !== 0) {
+          return this.resultSets$.pipe(map(resultSets => {
+            let newElementPack = []
+            cases.forEach(currentCase => {
+              if (this.contain_filtered_status(resultSets[currentCase.name], filter) || filter.length == 0) {
+                newElementPack.push(currentCase);
+              }
+            });
+            if (newElementPack.length === 0) {
+              newElementPack = cases;
+              this.select_filter([]);
             }
+            return newElementPack;
+          }))
+        } else {
+          // is a workaround for problem with showing cases from preview run after click to other run
+          return new Observable<[]>((observer) => {
+            return observer;
           });
-          if (newElementPack.length === 0) {
-            newElementPack = cases;
-            this.select_filter([]);
-          }
-          return newElementPack;
-        }))
+        }
       }))
     }))
   }
@@ -145,15 +152,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         return this.plan.runs$.pipe(map(runs => {
           this.run = runs.find(run => run.id === this.stance.runId())
           this.resultSets$ = this.run.resultSets$.pipe(map(resultSets => {
-            const resultSetId = this.stance.resultSetId();
-            if (resultSetId) {
-              this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
-              if (!this.activeElement) {
-                this.navigate_to_run_show();
-              }
-            } else {
-              this.activeElement = undefined;
-            }
+            this.init_active_element(resultSets);
             let object = {};
             resultSets.forEach(retulsSet => {
               object[retulsSet.name] = retulsSet;
@@ -168,6 +167,18 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
         }))
       }));
     }), takeUntil(this.unsubscribe)).subscribe();
+  }
+
+  init_active_element(resultSets) {
+    const resultSetId = this.stance.resultSetId();
+    if (resultSetId) {
+      this.activeElement = resultSets.find(currentRs => currentRs.id === resultSetId);
+      if (!this.activeElement) {
+        this.navigate_to_run_show();
+      }
+    } else {
+      this.activeElement = undefined;
+    }
   }
 
   update_run_statistic_from_filter(run: Run) {
@@ -187,13 +198,21 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   }
 
   init_data(id) {
+    this.cases$.next([]);
+
     const productId = this.stance.productId();
     const planId = this.stance.planId();
     this.palladiumApiService.get_result_sets(id, productId).subscribe(() => {
       this.loading = false;
       this.cd.detectChanges();
     });
-    this.palladiumApiService.get_cases_by_run_id(id, productId, planId);
+    this.palladiumApiService.get_cases_by_run_id(id, productId, planId).subscribe((result: [Case[], string]) => {
+      const _cases = result[0]
+      const runIdBubbered = result[1]
+      if (+runIdBubbered === this.stance.runId()) {
+        this.cases$.next(_cases);
+      }
+    });
   }
 
   open_settings() {
