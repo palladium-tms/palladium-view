@@ -520,6 +520,19 @@ export class PalladiumApiService {
     return _statistic;
   }
 
+  create_plan(name: String, product_id: Number): Observable<{plan: Plan, request_status: string}> {
+    return this.httpService.postData('/plan_new', { plan_data: { name: name, api_created: false, product_id: product_id } })
+      .pipe(map(response => {
+        this.logger.debug('plan_new. name: ', name);
+        const _plan = new Plan(response['plan']);
+        if (!response['request_status']) {
+          this._plans[_plan.product_id].push(_plan);
+          this.plans$.next(this._plans);
+        }
+        return {plan: _plan, request_status: response['request_status']}
+      }));
+  }
+
   edit_plan(id, name): void {
     this.httpService.postData('/plan_edit', { plan_data: { plan_name: name, id } })
       .pipe(map(response => {
@@ -529,6 +542,7 @@ export class PalladiumApiService {
         plan.name = response['plan']['name'];
         plan.updated_at = response['plan']['updated_at'];
         this.plans$.next(this._plans);
+        this.get_plans_statistic([plan.id], productId);
       })).subscribe();
   }
 

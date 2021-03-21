@@ -1,11 +1,27 @@
 <div class="plan-space">
+  <div class="toolbar">
+    <div class="filter">
+      <button mat-button [matMenuTriggerFor]="menu">{{plan_filters_object.active$ | async}}</button>
+
+    </div>
+    <div class="create_new_button">
+      <button mat-mini-fab (click)="open_create_plan()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item *ngFor="let element of plan_filters_object.varialts" (click)="plans_filter(element)">
+      {{element}}
+    </button>
+  </mat-menu>
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of (plans$ | async) | sortByCreatedAt:'desc'"
+              *ngFor="let plan of (filteredPlans$ | async) | sortByCreatedAt:'desc'"
               [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}"
               (click)="clicked($event, plan)">
       <div class="plan-name">
-        <div class="name">{{plan.name}}</div>
+        <div class="name"><mat-icon *ngIf="!plan.apiCreated">face</mat-icon> {{plan.name}}</div>
         <div class="settings-menu">
           <button mat-icon-button [matMenuTriggerFor]="menu" (click)="planForSettings = plan">
             <mat-icon>more_vert</mat-icon>
