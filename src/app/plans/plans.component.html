@@ -1,7 +1,7 @@
 <div class="plan-space">
   <div class="toolbar">
     <div class="filter">
-      <button mat-button [matMenuTriggerFor]="menu">{{plan_filters_object.active$ | async}}</button>
+      <button mat-button [matMenuTriggerFor]="menu_filter">{{plan_filters_object.active$ | async}}</button>
 
     </div>
     <div class="create_new_button">
@@ -10,7 +10,7 @@
       </button>
     </div>
   </div>
-  <mat-menu #menu="matMenu">
+  <mat-menu #menu_filter="matMenu">
     <button mat-menu-item *ngFor="let element of plan_filters_object.varialts" (click)="plans_filter(element)">
       {{element}}
     </button>
