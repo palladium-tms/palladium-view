@@ -433,6 +433,8 @@ export class PalladiumApiService {
         this.plans$.next(this._plans);
         const plansId = Object(response['plans']).map(plan => plan.id);
         this.get_plans_statistic(plansId, productId);
+      } else {
+        this.plans$.next([])
       }
     })).subscribe();
   }

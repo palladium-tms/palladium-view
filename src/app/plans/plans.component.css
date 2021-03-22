@@ -60,3 +60,6 @@
 .filter {
   flex: 1;
 }
+.no_plans_message {
+  text-align: center;
+}

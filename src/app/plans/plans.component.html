@@ -2,7 +2,6 @@
   <div class="toolbar">
     <div class="filter">
       <button mat-button [matMenuTriggerFor]="menu_filter">{{plan_filters_object.active$ | async}}</button>
-
     </div>
     <div class="create_new_button">
       <button mat-mini-fab (click)="open_create_plan()">
@@ -16,23 +15,34 @@
     </button>
   </mat-menu>
   <div class="item-list" [hidden]="loading">
-    <mat-card class="plan-item mat-elevation-z1"
-              *ngFor="let plan of (filteredPlans$ | async) | sortByCreatedAt:'desc'"
-              [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}"
-              (click)="clicked($event, plan)">
+    <mat-card class="plan-item mat-elevation-z1" *ngFor="let plan of (filteredPlans$ | async) | sortByCreatedAt:'desc'"
+      [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}" (click)="clicked($event, plan)">
       <div class="plan-name">
-        <div class="name"><mat-icon *ngIf="!plan.apiCreated">face</mat-icon> {{plan.name}}</div>
+        <div class="name">
+          <mat-icon *ngIf="!plan.apiCreated">face</mat-icon> {{plan.name}}
+        </div>
         <div class="settings-menu">
           <button mat-icon-button [matMenuTriggerFor]="menu" (click)="planForSettings = plan">
             <mat-icon>more_vert</mat-icon>
           </button>
         </div>
       </div>
-      <app-statistic-bar [statistic$] = plan.statistic$ [caseCount$] = "plan.caseCount$"></app-statistic-bar>
+      <app-statistic-bar [statistic$]=plan.statistic$ [caseCount$]="plan.caseCount$"></app-statistic-bar>
     </mat-card>
-    <div class="show-more">
-      <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
+    <div *ngIf="((palladiumApiService.plans$ | async)?.length > 0) else no_plans_warning">
+      <div class="show-more">
+        <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
+      </div>
     </div>
+    <ng-template #no_plans_warning>
+      <div class="no_plans_message">
+      No plans found. Use
+       <button mat-mini-fab (click)="open_create_plan()">
+        <mat-icon>add</mat-icon>
+      </button>
+      button fot create new
+      </div>
+    </ng-template>
   </div>
   <div [hidden]="!loading" class="loader">
     <mat-spinner color="accent"></mat-spinner>
