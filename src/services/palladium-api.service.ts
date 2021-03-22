@@ -421,10 +421,9 @@ export class PalladiumApiService {
   //#endregion
 
   //#region Plans
-  get_plans(params): void {
+  get_plans(params) {
     const productId = params['plan_data']['product_id'];
-    this.httpService.postData('/plans', params).pipe(map(response => {
-      this.logger.debug('get_plans. params: ' + params);
+    return this.httpService.postData('/plans', params).pipe(map(response => {
       if (response['plans'].length !== 0) {
         response['plans'].forEach(plan => {
           const _plan = new Plan(plan);
@@ -434,7 +433,8 @@ export class PalladiumApiService {
         this.get_plans_statistic(plansId, productId);
       }
       this.plans$.next(this._plans);
-    })).subscribe();
+      return { plans: this._plans, request_status: response['request_status'] }
+    }));
   }
 
   oldest_plan(productId): number {
@@ -443,14 +443,13 @@ export class PalladiumApiService {
 
   init_plans(productId: number, planId: (number | undefined)): void {
     this.logger.debug('init_plans. productId: ' + productId);
-    console.log('init_plans. planId: ' + planId);
     if (!this._plans[productId]) {
       this._plans[productId] = [];
       const params = { plan_data: { product_id: productId } };
       if (planId) {
         params['plan_data']['plan_id'] = planId;
       }
-      this.get_plans(params);
+      this.get_plans(params).subscribe();
     } else {
       this.plans$.next(this._plans);
     }
@@ -484,9 +483,9 @@ export class PalladiumApiService {
   //   return tmpPlans === []; // there are not more plans for loading
   // }
 
-  get_plans_show_more(productId): void {
+  get_plans_show_more(productId: number) {
     const params = { plan_data: { product_id: productId, after_plan_id: this.oldest_plan(productId) } };
-    this.get_plans(params);
+    return this.get_plans(params);
   }
 
   get_plans_statistic(planIds: number[], productId: number): void {
@@ -495,12 +494,9 @@ export class PalladiumApiService {
 
   get_plans_statistic_obj(planIds: number[], productId: number) {
     return this.httpService.postData('/plans_statistic', { plan_data: planIds }).pipe(map(response => {
-      this.logger.debug('get_plans_statistic. planIds: ' + planIds + ' productId: ' + productId);
       let plans = {};
       planIds.forEach(planId => {
         const statistic: Statistic = new Statistic(this.reformatted_statistic_data(response['statistic'][planId]));
-        this.logger.debug('get_plans_statistic:');
-        this.logger.debug(statistic);
         const plan = this._plans[productId].find(plan => plan.id === planId);
         plan.statistic$.next(statistic);
         plans[planId] = plan;

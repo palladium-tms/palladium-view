@@ -120,7 +120,9 @@ export class PlansComponent implements OnInit, OnDestroy {
   }
 
   load_more_plans() {
-    this.palladiumApiService.get_plans_show_more(this.stance.productId());
+    this.palladiumApiService.get_plans_show_more(this.stance.productId()).subscribe(result => {
+      this.showMore = !(result.request_status == 'Is a last plans')
+    });
   }
 
   archive_open() {
