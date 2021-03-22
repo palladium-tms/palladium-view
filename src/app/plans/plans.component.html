@@ -29,7 +29,7 @@
       </div>
       <app-statistic-bar [statistic$]=plan.statistic$ [caseCount$]="plan.caseCount$"></app-statistic-bar>
     </mat-card>
-    <div *ngIf="((palladiumApiService.plans$ | async)?.length > 0) else no_plans_warning">
+    <div *ngIf="!no_plan_found_warning else no_plans_warning">
       <div class="show-more">
         <button mat-button class="show-more-button" (click)="load_more_plans()" *ngIf="showMore">Show more</button>
       </div>

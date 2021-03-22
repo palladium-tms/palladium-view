@@ -39,6 +39,7 @@ export class PlansComponent implements OnInit, OnDestroy {
   RUN_COMPONENT;
   loading = false;
   showMore = true;
+  no_plan_found_warning: boolean;
   currentProduct$: Observable<Product>;
   filteredPlans$: Observable<Plan[]>;
 
@@ -66,7 +67,8 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.init_plans(id);
       return +id;
     }));
-    this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe(() => {
+    this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe((plans) => {
+      this.no_plan_found_warning = Object(plans).keys?.length == 0;
       this.loading = false;
     })
 
