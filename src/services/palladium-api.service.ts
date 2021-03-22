@@ -430,12 +430,10 @@ export class PalladiumApiService {
           const _plan = new Plan(plan);
           this._plans[productId].push(_plan);
         });
-        this.plans$.next(this._plans);
         const plansId = Object(response['plans']).map(plan => plan.id);
         this.get_plans_statistic(plansId, productId);
-      } else {
-        this.plans$.next([])
       }
+      this.plans$.next(this._plans);
     })).subscribe();
   }
 
@@ -445,7 +443,7 @@ export class PalladiumApiService {
 
   init_plans(productId: number, planId: (number | undefined)): void {
     this.logger.debug('init_plans. productId: ' + productId);
-    this.logger.debug('init_plans. planId: ' + planId);
+    console.log('init_plans. planId: ' + planId);
     if (!this._plans[productId]) {
       this._plans[productId] = [];
       const params = { plan_data: { product_id: productId } };
@@ -522,7 +520,7 @@ export class PalladiumApiService {
     return _statistic;
   }
 
-  create_plan(name: String, product_id: Number): Observable<{plan: Plan, request_status: string}> {
+  create_plan(name: String, product_id: Number): Observable<{ plan: Plan, request_status: string }> {
     return this.httpService.postData('/plan_new', { plan_data: { name: name, api_created: false, product_id: product_id } })
       .pipe(map(response => {
         this.logger.debug('plan_new. name: ', name);
@@ -531,7 +529,7 @@ export class PalladiumApiService {
           this._plans[_plan.product_id].push(_plan);
           this.plans$.next(this._plans);
         }
-        return {plan: _plan, request_status: response['request_status']}
+        return { plan: _plan, request_status: response['request_status'] }
       }));
   }
 
