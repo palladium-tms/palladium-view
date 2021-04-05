@@ -363,9 +363,16 @@ export class PalladiumApiService {
     return this.httpService.postData('/run_new', { run_data: { plan_id: planId, name: runName } }).pipe(map(res => {
       // change link to array for trigger unpure pipes
       const newRun = new Run(res['run']);
-      this._runs[res['plan']['id']] = this._runs[res['plan']['id']].slice(0);
+      if(!!this._runs[res['plan']['id']]) {
+        this._runs[res['plan']['id']] = this._runs[res['plan']['id']].slice(0);
+      } else {
+        this._runs[res['plan']['id']] = [];
+      }
+      const plan_index = this._plans[res['plan'].product_id].findIndex(x => x.id === planId);
+      const plan = this._plans[res['plan'].product_id][plan_index];
       this._runs[res['plan']['id']].push(newRun);
       this.runs$.next(this._runs);
+      plan.runs$.next(this._runs[res['plan']['id']])
       return newRun;
     }));
   }
