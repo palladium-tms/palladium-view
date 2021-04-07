@@ -1,11 +1,10 @@
 <ng-container>
-  <h1 mat-dialog-title>Creating manual plan</h1>
+  <h1 mat-dialog-title>Creating plan</h1>
   <mat-dialog-content>
     <form  (ngSubmit)="create()">
       <mat-form-field color="accent" style="width: 100%">
         <input matInput [formControl]="nameFormControl" placeholder="New plan name" [errorStateMatcher]="newerrorStateMatcher"
                autocomplete="off" required>
-        <mat-icon matSuffix>face</mat-icon>
         <mat-error *ngIf="nameFormControl.invalid">{{getErrorMessage(plans)}}</mat-error>
       </mat-form-field>
     </form>

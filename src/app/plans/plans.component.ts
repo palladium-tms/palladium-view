@@ -34,7 +34,6 @@ export class PlansComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
   selectedPlanId = 0;
-  plan_filters_object = {varialts: [], active$: new ReplaySubject(1), varialts_all: ['All', 'Manual Plans', 'Autotests'], default: 'All'};
   planForSettings: Plan;
   RUN_COMPONENT;
   loading = false;
@@ -48,18 +47,7 @@ export class PlansComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router, private dialog: MatDialog,
     private cd: ChangeDetectorRef) {
-      this.plans_filter(this.plan_filters_object.default)
-      this.filteredPlans$ = merge(this.plan_filters_object.active$).pipe(switchMap(filter => {
-        return this.plans$.pipe(map((plans: Plan[]) => {
-          if (filter == 'Autotests') {
-            return plans.filter(plan => plan.apiCreated)
-          } else if (filter == 'Manual Plans') {
-            return plans.filter(plan => !plan.apiCreated)
-          } else {
-            return plans
-          }
-        }))
-      }))
+      this.filteredPlans$ = this.plans$;
     }
 
   ngOnInit() {
@@ -129,11 +117,6 @@ export class PlansComponent implements OnInit, OnDestroy {
     if (confirm('Attention!! You will can not to undo this action')) {
       this.palladiumApiService.archive_plane(this.planForSettings.id);
     }
-  }
-
-  plans_filter(filter: string) {
-    this.plan_filters_object.varialts = this.plan_filters_object.varialts_all.filter(variant => variant !== filter)
-    this.plan_filters_object.active$.next(filter)
   }
 
   ngOnDestroy() {
