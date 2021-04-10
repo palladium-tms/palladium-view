@@ -11,7 +11,7 @@ import {
   StatusSettingsComponent,
   StatusSettingsDialogComponent
 } from '../top-toolbar/status-settings/status-settings.component';
-import {PlansComponent, PlansSettingsComponent} from '../plans/plans.component';
+import {PlansComponent, PlansSettingsComponent, PlansCreateComponent} from '../plans/plans.component';
 import {RunsComponent, RunsSettingsComponent} from '../runs/runs.component';
 import {ResultSetsComponent, ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
 import {ResultsComponent} from 'app/results/results.component';
@@ -52,7 +52,8 @@ const productRoutes: Routes = [{
     InviteComponent, InviteDialogComponent,
     AboutComponent, AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent, PlansComponent, RunsComponent, ResultSetsComponent, ResultsComponent, CaseHistoryComponent, ResultSetsSettingsComponent, PlansSettingsComponent, RunsSettingsComponent],
+    StatusSettingsDialogComponent, PlansComponent, RunsComponent, ResultSetsComponent, ResultsComponent, CaseHistoryComponent, ResultSetsSettingsComponent,
+    PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent],
   imports: [
     RouterModule.forChild(productRoutes),
     AppMaterialModule, DragDropModule, ScrollingModule
@@ -61,7 +62,7 @@ const productRoutes: Routes = [{
     AboutComponent,
     AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent, ResultSetsSettingsComponent, PlansSettingsComponent, RunsSettingsComponent],
+    StatusSettingsDialogComponent, ResultSetsSettingsComponent, PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent],
   providers: [StatisticService, StanceService]
 })
 export class ProductsModule {

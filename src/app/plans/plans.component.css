@@ -56,3 +56,10 @@
 .archived {
   background: #f0f2f300;
 }
+
+.filter {
+  flex: 1;
+}
+.no_plans_message {
+  text-align: center;
+}

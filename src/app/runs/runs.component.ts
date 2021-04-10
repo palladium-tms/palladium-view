@@ -90,6 +90,7 @@ export class RunsComponent implements OnInit, OnDestroy {
     this.statuses$ = this.palladiumApiService.statuses$;
 
     this.activeRoute$.pipe(map((id: number) => {
+      this.activeObject = undefined;
       this.loading = true;
       return id;
     }), switchMap(id => {

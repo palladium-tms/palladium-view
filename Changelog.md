@@ -1,5 +1,9 @@
 # Changelog
 ## master (unreleased)
+## Added
+    * Ability to create plans from interface
+    * Ability to filter plans by creating type (api or manual creating)
+
 ## [0.7.1]
 ## Added
     * Adility to delete cases and result_sets multiple
