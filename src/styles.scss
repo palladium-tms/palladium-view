@@ -180,3 +180,11 @@ figure {
 .cdk-virtual-scroll-content-wrapper {
   width: 100%;
 }
+
+a.action-link {
+  text-decoration: none;
+}
+
+a.action-link:hover {
+  border-bottom: 1px solid;
+}

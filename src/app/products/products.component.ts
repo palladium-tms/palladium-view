@@ -23,6 +23,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   products;
   authorize;
   pinned = true;
+  dashboard_status: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
 
 
@@ -73,6 +74,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
         products: this.products,
       }
     });
+  }
+
+  dashboard_activate(status: boolean): void {
+    console.log(this.dashboard_status)
+    this.dashboard_status = status;
   }
 
   pin_list() {

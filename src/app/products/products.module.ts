@@ -23,6 +23,7 @@ import {CasesComponent} from '../cases/cases.component';
 import {PointComponent} from '../point/point.component';
 import {StatisticBarComponent} from '../statistic-bar/statistic-bar.component';
 import { StatisticComponent } from '../statistic/statistic.component';
+import { NgDatePipesModule } from 'ngx-pipes';
 
 const productRoutes: Routes = [{
   path: '', component: ProductsComponent, children: [
@@ -53,10 +54,11 @@ const productRoutes: Routes = [{
     AboutComponent, AboutDialogComponent,
     StatusSettingsComponent,
     StatusSettingsDialogComponent, PlansComponent, RunsComponent, ResultSetsComponent, ResultsComponent, CaseHistoryComponent, ResultSetsSettingsComponent,
-    PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent],
+    PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent
+],
   imports: [
     RouterModule.forChild(productRoutes),
-    AppMaterialModule, DragDropModule, ScrollingModule
+    AppMaterialModule, DragDropModule, ScrollingModule, NgDatePipesModule,
   ],
   entryComponents: [ProductSettingsComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
     AboutComponent,

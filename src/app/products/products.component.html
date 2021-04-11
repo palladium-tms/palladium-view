@@ -30,6 +30,38 @@
     </div>
   </mat-sidenav>
   <mat-sidenav-content class="sidebar-content">
-    <router-outlet></router-outlet>
+    <div class="dashboard" *ngIf="dashboard_status">
+      <mat-toolbar class="dashboard-header">
+        <span>Projects</span>
+        <span class="example-spacer"></span>
+        <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-toolbar>
+      <div class="dashboard-list">
+      <mat-card *ngFor="let product of products" class="product-elemement mat-elevation-z1">
+        <div class="section-wrapper">
+          <p class="section-wrapper-data">
+            <a class="action-link" [routerLink]="['/product', product.id]">
+              {{product?.name}}
+            </a>
+          </p>
+        </div>
+        <div class="section-wrapper">
+          <span class="section-wrapper-attr-name">LAST PLAN</span>
+          <p class="section-wrapper-data">
+            <a class="action-link" [routerLink]="['/product', product.id, 'plan', product.last_plan.id]">
+              {{product.last_plan.name}}
+            </a>
+          </p>
+        </div>
+        <div class="section-wrapper" style="min-width: 6em;">
+          <span class="section-wrapper-attr-name">PLAN UPDATE</span>
+          <p class="section-wrapper-data">{{product.last_plan.updated_at | timeAgo}}</p>
+        </div>
+      </mat-card>
+      </div>
+    </div>
+    <router-outlet (activate)='dashboard_activate(false)' (deactivate)='dashboard_activate(true)'></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

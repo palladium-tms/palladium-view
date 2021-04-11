@@ -18,6 +18,7 @@ import { BehaviorSubject, merge, Observable, of, ReplaySubject, Subject, Subscri
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Product } from '../models/product';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { SidenavService } from 'services/sidenav.service';
 
 @Component({
   selector: 'app-plans',
@@ -44,6 +45,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   constructor(public palladiumApiService: PalladiumApiService,
     public stance: StanceService,
+    public sidenavService: SidenavService,
     private activatedRoute: ActivatedRoute,
     private router: Router, private dialog: MatDialog,
     private cd: ChangeDetectorRef) {
@@ -52,9 +54,11 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pipe(pluck('id'), map(id => {
+      this.set_current_product_name(+id)
       this.init_plans(id);
       return +id;
     }));
+
     this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe((plans) => {
       this.no_plan_found_warning = Object(plans).keys?.length == 0;
       this.loading = false;
@@ -66,7 +70,9 @@ export class PlansComponent implements OnInit, OnDestroy {
 
     this.currentProduct$ = this.palladiumApiService.products$.pipe(map((products: Product[]) => {
       const productId = this.stance.productId();
-      return products.find(product => product.id === productId);
+      const current_product = products.find(product => product.id === productId);
+      this.sidenavService.selectedProductName$.next(current_product.name);
+      return current_product
     }));
   }
 
@@ -76,6 +82,13 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.router.navigate(['plan', plan.id], { relativeTo: this.activatedRoute }).then(() => { this.cd.detectChanges() });
       this.cd.detectChanges();
     }
+  }
+
+  set_current_product_name(id: number) {
+    this.palladiumApiService.products$.pipe(take(1), map((products: Product[]) => {
+      const current_product = products.find(product => product.id === id);
+      this.sidenavService.selectedProductName$.next(current_product.name);
+    })).subscribe();
   }
 
   init_plans(id: number) {
