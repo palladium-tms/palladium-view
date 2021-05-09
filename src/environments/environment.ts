@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  host: 'http://0.0.0.0:9292'
+  host: 'http://palladium.teamlab.info'
 };
