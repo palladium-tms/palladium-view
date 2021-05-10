@@ -40,22 +40,22 @@
       </mat-toolbar>
       <div class="dashboard-list">
       <mat-card *ngFor="let product of products" class="product-elemement mat-elevation-z1">
-        <div class="section-wrapper">
-          <p class="section-wrapper-data">
+        <div class="section-wrapper" style="flex: 1; align-items: flex-start; min-width: 8em;">
+          <p class="section-wrapper-data" style="margin: auto;">
             <a class="action-link" [routerLink]="['/product', product.id]">
               {{product?.name}}
             </a>
           </p>
         </div>
-        <div class="section-wrapper" *ngIf="product.last_plan?.name">
+        <div class="section-wrapper" *ngIf="product.last_plan?.name" style="flex: 3;">
           <span class="section-wrapper-attr-name">LAST PLAN</span>
-          <p class="section-wrapper-data" *ngIf="product.last_plan?.name">
-            <a class="action-link" [routerLink]="['/product', product.id, 'plan', product.last_plan?.id]">
-              {{product.last_plan?.name}}
-            </a>
-          </p>
+            <p class="section-wrapper-data" *ngIf="product.last_plan?.name">
+              <a class="action-link" [routerLink]="['/product', product.id, 'plan', product.last_plan?.id]">
+                {{product.last_plan?.name}}
+              </a>
+            </p>
         </div>
-        <div class="section-wrapper" style="min-width: 6em;" *ngIf="product.last_plan?.name">
+        <div class="section-wrapper" style="flex: 1" *ngIf="product.last_plan?.name">
           <span class="section-wrapper-attr-name">PLAN UPDATE</span>
           <p class="section-wrapper-data">{{product.last_plan?.updated_at | timeAgo}}</p>
         </div>
