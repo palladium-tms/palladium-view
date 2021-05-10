@@ -407,6 +407,19 @@ export class PalladiumApiService {
     })).subscribe();
   }
 
+  create_product(name: string): Observable<{ product: Product, request_status: string }> {
+    return this.httpService.postData('/product_new', { product_data: { name: name} })
+      .pipe(map(response => {
+        this.logger.debug('product_new. name: ', name);
+        const _product = new Product(response['product']);
+        if (!response['request_status']) {
+          this._products.push(_product);
+          this.products$.next(this._products);
+        }
+        return { product: _product, request_status: response['request_status'] }
+      }));
+  }
+
   delete_product(id): void {
     this.httpService.postData('/product_delete', { product_data: { id } }).pipe(map(result => {
       this._products = this._products.filter(product => product.id !== id);
