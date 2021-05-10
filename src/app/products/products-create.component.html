@@ -3,7 +3,7 @@
   <mat-dialog-content>
     <form  (ngSubmit)="create()">
       <mat-form-field color="accent" style="width: 100%">
-        <input matInput [formControl]="nameFormControl" placeholder="New plan name" [errorStateMatcher]="newerrorStateMatcher"
+        <input matInput [formControl]="nameFormControl" placeholder="New product name" [errorStateMatcher]="newerrorStateMatcher"
                autocomplete="off" required>
         <mat-error *ngIf="nameFormControl.invalid">{{getErrorMessage(plans)}}</mat-error>
       </mat-form-field>
