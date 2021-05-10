@@ -9,7 +9,10 @@ import {SidenavService} from '../../services/sidenav.service';
 import {StanceService} from '../../services/stance.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {map, takeUntil} from 'rxjs/operators';
+import { Product } from 'app/models/product';
+import { validateNameExists } from 'app/validates_and_matchers/name-exist.validate';
+import { InstantErrorStateMatcher } from 'app/validates_and_matchers/instant-error-state.matcher';
 
 @Component({
   selector: 'app-products',
@@ -77,7 +80,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   dashboard_activate(status: boolean): void {
-    console.log(this.dashboard_status)
     this.dashboard_status = status;
   }
 
@@ -98,6 +100,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.sidenav.close();
     this.sidenavService.selectedProductName$.next(product.name);
     this.router.navigate(['/product', product.id]);
+  }
+
+  open_create_product() {
+    const dialogRef = this.dialog.open(ProductsCreateComponent, {
+      data: {
+        products: this.products
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -168,5 +178,66 @@ export class ProductSettingsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.cd.detach();
+  }
+}
+
+
+export interface ProductCreationResponceInterface {
+  product: Product,
+  request_status?: string
+}
+
+@Component({
+  selector: 'app-products-create',
+  templateUrl: 'products-create.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ProductsCreateComponent implements OnInit {
+  nameFormControl: FormControl;
+  error_message: any;
+  newerrorStateMatcher = new InstantErrorStateMatcher();
+  product_creating_status: { waiting: boolean, existed_product?: Product, error_message?: string };
+
+  products: Product[] = [];
+
+  constructor(public dialogRef: MatDialogRef<ProductSettingsComponent>,
+    private palladiumApiService: PalladiumApiService, private router: Router,
+    private cd: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data) {
+  }
+
+  ngOnInit(): void {
+    this.product_creating_status = { waiting: false };
+    this.error_message = '';
+    this.nameFormControl = new FormControl(null, [Validators.required, validateNameExists(this.data.products)]);
+
+  }
+
+  create() {
+    this.product_creating_status.waiting = true;
+    this.palladiumApiService.create_product(this.nameFormControl.value).pipe(
+      map((plan_creating_responce: ProductCreationResponceInterface) => {
+        if (plan_creating_responce.request_status) {
+          this.product_creating_status = {
+            waiting: false,
+            error_message: plan_creating_responce.request_status,
+          };
+          this.nameFormControl.setErrors({'validateNameExists': true})
+          this.cd.detectChanges();
+        } else {
+          this.dialogRef.close();
+        }
+      })).subscribe()
+  }
+
+  getErrorMessage() {
+    if (this.nameFormControl.hasError('required')) {
+      return 'You must enter a value';
+    }
+
+    if (this.nameFormControl.hasError('validateNameExists')) {
+      this.product_creating_status['existed_product'] = this.products.find(product => product.name == this.nameFormControl.value)
+      return 'Product with this name is exist';
+    }
   }
 }

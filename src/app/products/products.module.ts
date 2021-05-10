@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {ProductsComponent, ProductSettingsComponent} from './products.component';
+import {ProductsComponent, ProductSettingsComponent, ProductsCreateComponent} from './products.component';
 import {RouterModule, Routes} from '@angular/router';
 import {AppMaterialModule} from '../app-material/app-material.module';
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -47,7 +47,7 @@ const productRoutes: Routes = [{
 }];
 
 @NgModule({
-  declarations: [ProductsComponent, ProductSettingsComponent, CasesComponent, PointComponent, StatisticBarComponent, StatisticComponent,
+  declarations: [ProductsComponent, ProductSettingsComponent, ProductsCreateComponent, CasesComponent, PointComponent, StatisticBarComponent, StatisticComponent,
     TopToolbarComponent,
     TokenComponent, TokenDialogComponent,
     InviteComponent, InviteDialogComponent,
@@ -60,7 +60,7 @@ const productRoutes: Routes = [{
     RouterModule.forChild(productRoutes),
     AppMaterialModule, DragDropModule, ScrollingModule, NgDatePipesModule,
   ],
-  entryComponents: [ProductSettingsComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
+  entryComponents: [ProductSettingsComponent, ProductsCreateComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
     AboutComponent,
     AboutDialogComponent,
     StatusSettingsComponent,

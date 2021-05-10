@@ -7,18 +7,19 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PalladiumApiService, StructuredPlans } from '../../services/palladium-api.service';
 import { StanceService } from '../../services/stance.service';
 import { Router } from '@angular/router';
 import { ProductSettingsComponent } from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Plan } from "../models/plan";
-import { BehaviorSubject, merge, Observable, of, ReplaySubject, Subject, Subscriber, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Product } from '../models/product';
-import { ErrorStateMatcher } from '@angular/material/core';
 import { SidenavService } from 'services/sidenav.service';
+import { validateNameExists } from 'app/validates_and_matchers/name-exist.validate';
+import { InstantErrorStateMatcher } from 'app/validates_and_matchers/instant-error-state.matcher';
 
 @Component({
   selector: 'app-plans',
@@ -201,7 +202,6 @@ export class PlansCreateComponent implements OnInit {
   nameFormControl: FormControl;
   newerrorStateMatcher = new InstantErrorStateMatcher();
   plan_creating_status: { waiting: boolean, existed_plan?: Plan, error_message?: string };
-  plan_creating = false;
   error_message: any;
 
   plans$: ReplaySubject<Plan[]> = new ReplaySubject(1);
@@ -221,7 +221,6 @@ export class PlansCreateComponent implements OnInit {
     this.plans$.pipe(take(1)).subscribe(plans => {
       this.nameFormControl = new FormControl(null, [Validators.required, validateNameExists(plans)]);
     })
-
   }
 
   create() {
@@ -265,21 +264,5 @@ export class PlansCreateComponent implements OnInit {
       })
       return 'Plan with this name is exist';
     }
-  }
-}
-
-export function validateNameExists(plans: Plan[]): ValidatorFn {
-  return (control: FormControl) => {
-    return !plans.some(plan => plan.name == control.value) ? null : {
-      validateNameExists: {
-        valid: false,
-      }
-    }
-  }
-}
-
-export class InstantErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null): boolean {
-    return control && control.invalid && control.dirty;
   }
 }

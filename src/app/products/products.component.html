@@ -34,7 +34,7 @@
       <mat-toolbar class="dashboard-header">
         <span>Projects</span>
         <span class="example-spacer"></span>
-        <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+        <button mat-icon-button (click)="open_create_product()">
           <mat-icon>add</mat-icon>
         </button>
       </mat-toolbar>
@@ -55,7 +55,7 @@
             </a>
           </p>
         </div>
-        <div class="section-wrapper" style="min-width: 6em;" *ngIf="product.last_plan?.updated_at">
+        <div class="section-wrapper" style="min-width: 6em;" *ngIf="product.last_plan?.name">
           <span class="section-wrapper-attr-name">PLAN UPDATE</span>
           <p class="section-wrapper-data">{{product.last_plan?.updated_at | timeAgo}}</p>
         </div>
