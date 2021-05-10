@@ -47,15 +47,15 @@
             </a>
           </p>
         </div>
-        <div class="section-wrapper">
+        <div class="section-wrapper" *ngIf="product.last_plan?.name">
           <span class="section-wrapper-attr-name">LAST PLAN</span>
-          <p class="section-wrapper-data">
+          <p class="section-wrapper-data" *ngIf="product.last_plan?.name">
             <a class="action-link" [routerLink]="['/product', product.id, 'plan', product.last_plan?.id]">
               {{product.last_plan?.name}}
             </a>
           </p>
         </div>
-        <div class="section-wrapper" style="min-width: 6em;">
+        <div class="section-wrapper" style="min-width: 6em;" *ngIf="product.last_plan?.updated_at">
           <span class="section-wrapper-attr-name">PLAN UPDATE</span>
           <p class="section-wrapper-data">{{product.last_plan?.updated_at | timeAgo}}</p>
         </div>
