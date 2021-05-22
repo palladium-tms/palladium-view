@@ -99,7 +99,7 @@ mat-sidenav {
 .dashboard {
   display: flex;
   flex-direction: column;
-  padding: 2em;
+  padding-top: 2em;
   max-width: 1024px;
   margin-left: auto;
   width: 100%;
