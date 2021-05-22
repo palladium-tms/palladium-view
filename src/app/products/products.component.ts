@@ -94,6 +94,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.products, event.previousIndex, event.currentIndex);
+    this.send_products_position();
   }
 
   select_product(product) {

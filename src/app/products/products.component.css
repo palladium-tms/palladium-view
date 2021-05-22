@@ -33,15 +33,6 @@
   min-height: 2em;
 }
 
-.cdk-drag-preview {
-  background-color: white;
-  box-sizing: border-box;
-  border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-  0 8px 10px 1px rgba(0, 0, 0, 0.14),
-  0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
-
 .cdk-drag-placeholder {
   opacity: 0;
 }
@@ -107,7 +98,8 @@ mat-sidenav {
 }
 
 .product-elemement {
-  padding: 0 0.5em;
+  text-align: center;
+  padding: 0 0.5em 0 0;
   margin-bottom: 1em;
   height: 4em;
   display: flex;
@@ -155,4 +147,11 @@ mat-sidenav {
   display: flex;
   align-items: center;
   flex-direction: column;
+}
+
+.drag-indicator {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  height: 100%;
 }
