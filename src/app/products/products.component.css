@@ -130,6 +130,7 @@ mat-sidenav {
     font-size: 10px;
     color: #9d9d9d;
     font-weight: 600;
+    user-select: none;
 }
 
 .section-wrapper-data {
