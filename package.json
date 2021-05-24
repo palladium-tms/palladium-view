@@ -42,7 +42,7 @@
     "randomatic": "^3.1.1",
     "serialize-javascript": "^3.1.0",
     "source-map-explorer": "^2.5.2",
-    "ts-node": "8.3.0",
+    "ts-node": "10.0.0",
     "tslint": "~6.1.0",
     "typescript": "4.0.3",
     "uglify-js": "^3.13.1"
