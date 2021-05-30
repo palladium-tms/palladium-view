@@ -88,8 +88,6 @@ mat-sidenav {
 }
 
 .dashboard {
-  display: flex;
-  flex-direction: column;
   padding-top: 2em;
   max-width: 1024px;
   margin-left: auto;
@@ -114,6 +112,8 @@ mat-sidenav {
 .dashboard-list {
   overflow: auto;
   text-align: center;
+  height: 100%;
+  flex-direction: column;
 }
 
 .section-wrapper-attr-name {
@@ -154,4 +154,11 @@ mat-sidenav {
   cursor: pointer;
   align-items: center;
   height: 100%;
+}
+mat-form-field.mat-form-field {
+  font-size: 14px;
+}
+
+.product_name_wrapper {
+  display: inline-block;
 }
