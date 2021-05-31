@@ -582,7 +582,7 @@ export class PalladiumApiService {
   // //#region Result Set
   get_result_sets(runId: number, productId: number) {
     return this.httpService.postData('/result_sets', { result_set_data: { run_id: runId } }).pipe(switchMap(response => {
-      return this.plans$.pipe(switchMap((strPlans: StructuredPlans) => {
+      return this.plans$.pipe(take(1), switchMap((strPlans: StructuredPlans) => {
         return strPlans[productId].find(plan => plan.id == response['run']['plan_id']).runs$.pipe(take(1), map(runs => {
           this._resultSets[runId] = [];
           response['result_sets'].forEach(resultSet => {

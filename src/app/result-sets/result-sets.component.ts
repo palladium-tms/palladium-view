@@ -157,12 +157,13 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
       this.resultSetCheckboxes = {};
       this.selectedCount = 0;
       this.loading = true;
-      this.init_data(id);
-    })).pipe(switchMap(() => {
+      return id
+    })).pipe(switchMap(id => {
       return this.palladiumApiService.plans$.pipe(switchMap(allPlans => {
         const plans = allPlans[this.stance.productId()];
         this.plan = plans.find(plan => plan.id === this.stance.planId());
         return this.plan.runs$.pipe(map(runs => {
+          this.init_data(id);
           this.run = runs.find(run => run.id === this.stance.runId())
           this.resultSets$ = this.run.resultSets$.pipe(map(resultSets => {
             this.init_active_element(resultSets);
@@ -176,7 +177,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
 
           this.update_run_statistic_from_filter(this.run);
 
-          this.cd.detectChanges();
+           this.cd.detectChanges();
         }))
       }));
     }), takeUntil(this.unsubscribe)).subscribe();
@@ -197,6 +198,7 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   update_run_statistic_from_filter(run: Run) {
     run.statistic$.pipe(take(1), map(statistic => {
       this.statistic$.next(statistic);
+        console.log('asdasdasd')
     })).subscribe()
   }
 
