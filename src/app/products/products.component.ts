@@ -26,6 +26,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   products;
   authorize;
   pinned = true;
+  loading = false;
   dashboard_status: boolean = true;
   private unsubscribe: Subject<void> = new Subject();
 
@@ -77,6 +78,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
         products: this.products,
       }
     });
+  }
+
+  get_products() {
+    this.loading = true;
+    this.palladiumApiService.get_products_obs().subscribe(() => {
+    this.loading = false;
+    this.cd.detectChanges();
+    })
   }
 
   dashboard_activate(status: boolean): void {

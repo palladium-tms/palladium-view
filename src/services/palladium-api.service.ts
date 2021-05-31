@@ -396,7 +396,11 @@ export class PalladiumApiService {
 
   //#region Products
   get_products(): void {
-    this.httpService.postData('/products', '').pipe(map(response => {
+    this.get_products_obs().subscribe();
+  }
+
+  get_products_obs() {
+    return this.httpService.postData('/products', '').pipe(map(response => {
       this._products = response['products'].map(product => new Product(product));
       // Object.keys(this._suites).forEach(productId => {
       //   this._products.find(product => {
@@ -404,7 +408,7 @@ export class PalladiumApiService {
       //   }).suites$.next(this._suites[productId]);
       // });
       this.products$.next(this._products);
-    })).subscribe();
+    }))
   }
 
   create_product(name: string): Observable<{ product: Product, request_status: string }> {
