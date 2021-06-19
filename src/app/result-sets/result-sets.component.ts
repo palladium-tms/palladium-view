@@ -198,7 +198,6 @@ export class ResultSetsComponent implements OnInit, OnDestroy {
   update_run_statistic_from_filter(run: Run) {
     run.statistic$.pipe(take(1), map(statistic => {
       this.statistic$.next(statistic);
-        console.log('asdasdasd')
     })).subscribe()
   }
 
