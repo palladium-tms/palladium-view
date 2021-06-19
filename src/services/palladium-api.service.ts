@@ -396,7 +396,11 @@ export class PalladiumApiService {
 
   //#region Products
   get_products(): void {
-    this.httpService.postData('/products', '').pipe(map(response => {
+    this.get_products_obs().subscribe();
+  }
+
+  get_products_obs() {
+    return this.httpService.postData('/products', '').pipe(map(response => {
       this._products = response['products'].map(product => new Product(product));
       // Object.keys(this._suites).forEach(productId => {
       //   this._products.find(product => {
@@ -404,7 +408,20 @@ export class PalladiumApiService {
       //   }).suites$.next(this._suites[productId]);
       // });
       this.products$.next(this._products);
-    })).subscribe();
+    }))
+  }
+
+  create_product(name: string): Observable<{ product: Product, request_status: string }> {
+    return this.httpService.postData('/product_new', { product_data: { name: name} })
+      .pipe(map(response => {
+        this.logger.debug('product_new. name: ', name);
+        const _product = new Product(response['product']);
+        if (!response['request_status']) {
+          this._products.push(_product);
+          this.products$.next(this._products);
+        }
+        return { product: _product, request_status: response['request_status'] }
+      }));
   }
 
   delete_product(id): void {
@@ -569,7 +586,7 @@ export class PalladiumApiService {
   // //#region Result Set
   get_result_sets(runId: number, productId: number) {
     return this.httpService.postData('/result_sets', { result_set_data: { run_id: runId } }).pipe(switchMap(response => {
-      return this.plans$.pipe(switchMap((strPlans: StructuredPlans) => {
+      return this.plans$.pipe(take(1), switchMap((strPlans: StructuredPlans) => {
         return strPlans[productId].find(plan => plan.id == response['run']['plan_id']).runs$.pipe(take(1), map(runs => {
           this._resultSets[runId] = [];
           response['result_sets'].forEach(resultSet => {

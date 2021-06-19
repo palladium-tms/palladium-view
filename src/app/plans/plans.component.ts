@@ -7,17 +7,19 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PalladiumApiService, StructuredPlans } from '../../services/palladium-api.service';
 import { StanceService } from '../../services/stance.service';
 import { Router } from '@angular/router';
 import { ProductSettingsComponent } from '../products/products.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Plan } from "../models/plan";
-import { BehaviorSubject, merge, Observable, of, ReplaySubject, Subject, Subscriber, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Product } from '../models/product';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { SidenavService } from 'services/sidenav.service';
+import { validateNameExists } from 'app/validates_and_matchers/name-exist.validate';
+import { InstantErrorStateMatcher } from 'app/validates_and_matchers/instant-error-state.matcher';
 
 @Component({
   selector: 'app-plans',
@@ -44,6 +46,7 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   constructor(public palladiumApiService: PalladiumApiService,
     public stance: StanceService,
+    public sidenavService: SidenavService,
     private activatedRoute: ActivatedRoute,
     private router: Router, private dialog: MatDialog,
     private cd: ChangeDetectorRef) {
@@ -52,9 +55,11 @@ export class PlansComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.activeRoute$ = this.activatedRoute.params.pipe(pluck('id'), map(id => {
+      this.set_current_product_name(+id)
       this.init_plans(id);
       return +id;
     }));
+
     this.palladiumApiService.plans$.pipe(takeUntil(this.unsubscribe)).subscribe((plans) => {
       this.no_plan_found_warning = Object(plans).keys?.length == 0;
       this.loading = false;
@@ -66,7 +71,9 @@ export class PlansComponent implements OnInit, OnDestroy {
 
     this.currentProduct$ = this.palladiumApiService.products$.pipe(map((products: Product[]) => {
       const productId = this.stance.productId();
-      return products.find(product => product.id === productId);
+      const current_product = products.find(product => product.id === productId);
+      this.sidenavService.selectedProductName$.next(current_product.name);
+      return current_product
     }));
   }
 
@@ -76,6 +83,13 @@ export class PlansComponent implements OnInit, OnDestroy {
       this.router.navigate(['plan', plan.id], { relativeTo: this.activatedRoute }).then(() => { this.cd.detectChanges() });
       this.cd.detectChanges();
     }
+  }
+
+  set_current_product_name(id: number) {
+    this.palladiumApiService.products$.pipe(take(1), map((products: Product[]) => {
+      const current_product = products.find(product => product.id === id);
+      this.sidenavService.selectedProductName$.next(current_product.name);
+    })).subscribe();
   }
 
   init_plans(id: number) {
@@ -188,7 +202,6 @@ export class PlansCreateComponent implements OnInit {
   nameFormControl: FormControl;
   newerrorStateMatcher = new InstantErrorStateMatcher();
   plan_creating_status: { waiting: boolean, existed_plan?: Plan, error_message?: string };
-  plan_creating = false;
   error_message: any;
 
   plans$: ReplaySubject<Plan[]> = new ReplaySubject(1);
@@ -208,7 +221,6 @@ export class PlansCreateComponent implements OnInit {
     this.plans$.pipe(take(1)).subscribe(plans => {
       this.nameFormControl = new FormControl(null, [Validators.required, validateNameExists(plans)]);
     })
-
   }
 
   create() {
@@ -252,21 +264,5 @@ export class PlansCreateComponent implements OnInit {
       })
       return 'Plan with this name is exist';
     }
-  }
-}
-
-export function validateNameExists(plans: Plan[]): ValidatorFn {
-  return (control: FormControl) => {
-    return !plans.some(plan => plan.name == control.value) ? null : {
-      validateNameExists: {
-        valid: false,
-      }
-    }
-  }
-}
-
-export class InstantErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null): boolean {
-    return control && control.invalid && control.dirty;
   }
 }

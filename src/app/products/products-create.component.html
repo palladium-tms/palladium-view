@@ -1,17 +1,17 @@
 <ng-container>
-  <h1 mat-dialog-title>Creating plan</h1>
+  <h1 mat-dialog-title>Creating product</h1>
   <mat-dialog-content>
     <form  (ngSubmit)="create()">
       <mat-form-field color="accent" style="width: 100%">
-        <input matInput [formControl]="nameFormControl" placeholder="New plan name" [errorStateMatcher]="newerrorStateMatcher"
+        <input matInput [formControl]="nameFormControl" placeholder="New product name" [errorStateMatcher]="newerrorStateMatcher"
                autocomplete="off" required>
         <mat-error *ngIf="nameFormControl.invalid">{{getErrorMessage(plans)}}</mat-error>
       </mat-form-field>
     </form>
 
-      <div class="plan_creating_progress">
-        <mat-progress-bar mode="query" color="accent" *ngIf="plan_creating_status.waiting"></mat-progress-bar>
-      </div>
+    <div class="plan_creating_progress">
+      <mat-progress-bar mode="query" color="accent" *ngIf="product_creating_status.waiting"></mat-progress-bar>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">

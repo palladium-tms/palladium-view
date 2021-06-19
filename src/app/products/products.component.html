@@ -8,10 +8,10 @@
             <button mat-icon-button (click)="open_settings()">
               <mat-icon class="md-light">settings</mat-icon>
             </button>
-            <button mat-icon-button (click)="palladiumApiService.get_products()">
+            <button mat-icon-button (click)="palladiumApiService.get_products()" [disabled]="loading">
               <mat-icon class="md-light">cached</mat-icon>
             </button>
-            <button mat-icon-button (click)="pin_list()" >
+            <button mat-icon-button (click)="pin_list()">
               <mat-icon class="md-light" *ngIf="pinned">sort</mat-icon>
               <mat-icon class="md-light" *ngIf="!pinned">check</mat-icon>
             </button>
@@ -19,17 +19,55 @@
         </mat-toolbar-row>
       </mat-toolbar>
       <div cdkDropList class="item-list" (cdkDropListDropped)="drop($event)">
-        <a class="product-item"
-                  *ngFor="let product of products"
-                  cdkDrag [cdkDragDisabled]=pinned
-                  [ngClass]="{'product-selected': stance.productId() == product.id, 'mat-elevation-z1': !pinned}"
-                  (click)="select_product(product)">
+        <a class="product-item" *ngFor="let product of products" cdkDrag [cdkDragDisabled]=pinned
+          [ngClass]="{'product-selected': stance.productId() == product.id, 'mat-elevation-z1': !pinned}"
+          (click)="select_product(product)">
           {{product.name}}
         </a>
       </div>
     </div>
   </mat-sidenav>
   <mat-sidenav-content class="sidebar-content">
-    <router-outlet></router-outlet>
+    <div class="dashboard" *ngIf="dashboard_status">
+      <mat-toolbar class="dashboard-header">
+          <span>Projects</span>
+          <button mat-icon-button (click)="open_create_product()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <span style="flex: 1;"></span>
+          <button mat-icon-button (click)="get_products()" [disabled]="loading">
+            <mat-icon>cached</mat-icon>
+          </button>
+      </mat-toolbar>
+      <div class="dashboard-list" cdkDropList (cdkDropListDropped)="drop($event)">
+        <mat-card *ngFor="let product of products"
+         cdkDrag class="product-elemement mat-elevation-z1">
+
+          <div cdkDragHandle class="drag-indicator">
+            <mat-icon>drag_indicator</mat-icon>
+          </div>
+          <div class="section-wrapper" style="flex: 1; align-items: flex-start; min-width: 8em;">
+            <p class="section-wrapper-data" style="margin: auto;">
+              <a class="action-link" [routerLink]="['/product', product.id]">
+                {{product?.name}}
+              </a>
+            </p>
+          </div>
+          <div class="section-wrapper" *ngIf="product.last_plan?.name" style="flex: 3;">
+            <span class="section-wrapper-attr-name">LAST PLAN</span>
+            <p class="section-wrapper-data" *ngIf="product.last_plan?.name">
+              <a class="action-link" [routerLink]="['/product', product.id, 'plan', product.last_plan?.id]">
+                {{product.last_plan?.name}}
+              </a>
+            </p>
+          </div>
+          <div class="section-wrapper" style="flex: 1" *ngIf="product.last_plan?.name">
+            <span class="section-wrapper-attr-name">PLAN UPDATE</span>
+            <p class="section-wrapper-data">{{product.last_plan?.updated_at | timeAgo}}</p>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+    <router-outlet (activate)='dashboard_activate(false)' (deactivate)='dashboard_activate(true)'></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,11 +1,14 @@
 <div class="plan-space">
-  <div class="toolbar">
-    <div class="create_new_button">
-      <button mat-mini-fab (click)="open_create_plan()">
+  <mat-toolbar>
+    <div class="toolbar" style="align-items: center;">
+      <span>Plans</span>
+      <button mat-icon-button (click)="open_create_plan()">
         <mat-icon>add</mat-icon>
       </button>
+      <span style="flex: 1;"></span>
     </div>
-  </div>
+  </mat-toolbar>
+
   <div class="item-list" [hidden]="loading">
     <mat-card class="plan-item mat-elevation-z1" *ngFor="let plan of (filteredPlans$ | async) | sortByCreatedAt:'desc'"
       [ngClass]="{'selected': stance.planId() == plan.id, 'archived': plan.isArchived}" (click)="clicked($event, plan)">
@@ -28,11 +31,11 @@
     </div>
     <ng-template #no_plans_warning>
       <div class="no_plans_message">
-      No plans found. Use
-       <button mat-mini-fab (click)="open_create_plan()">
-        <mat-icon>add</mat-icon>
-      </button>
-      button fot create new
+        No plans found. Use
+        <button mat-mini-fab (click)="open_create_plan()">
+          <mat-icon>add</mat-icon>
+        </button>
+        button fot create new
       </div>
     </ng-template>
   </div>
