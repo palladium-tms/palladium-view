@@ -10,9 +10,9 @@ import {StanceService} from '../../services/stance.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {Subject} from 'rxjs';
 import {map, takeUntil} from 'rxjs/operators';
-import { Product } from 'app/models/product';
-import { validateNameExists } from 'app/validates_and_matchers/name-exist.validate';
-import { InstantErrorStateMatcher } from 'app/validates_and_matchers/instant-error-state.matcher';
+import { Product } from '../models/product';
+import { validateNameExists } from '../validates_and_matchers/name-exist.validate';
+import { InstantErrorStateMatcher } from '../validates_and_matchers/instant-error-state.matcher';
 
 @Component({
   selector: 'app-products',
@@ -249,5 +249,6 @@ export class ProductsCreateComponent implements OnInit {
       this.product_creating_status['existed_product'] = this.products.find(product => product.name == this.nameFormControl.value)
       return 'Product with this name is exist';
     }
+    return '';
   }
 }

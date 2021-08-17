@@ -19,7 +19,7 @@ import { ProductSettingsComponent } from '../products/products.component';
 import { Run } from '../models/run';
 import { BehaviorSubject, Observable, ReplaySubject, Subject, merge, of } from 'rxjs';
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
-import { Plan } from 'app/models/plan';
+import { Plan } from '../models/plan';
 
 @Component({
   selector: 'app-runs',

@@ -14,8 +14,8 @@ import { BehaviorSubject, merge, Observable, ReplaySubject, Subject } from 'rxjs
 import { Status } from '../models/status';
 import { map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { Case } from '../models/case';
-import { Run } from 'app/models/run';
-import { Plan } from 'app/models/plan';
+import { Run } from '../models/run';
+import { Plan } from '../models/plan';
 
 export interface SearchToggle {
   toggle: boolean;

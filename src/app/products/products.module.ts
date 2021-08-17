@@ -1,4 +1,5 @@
 import {NgModule} from '@angular/core';
+
 import {ProductsComponent, ProductSettingsComponent, ProductsCreateComponent} from './products.component';
 import {RouterModule, Routes} from '@angular/router';
 import {AppMaterialModule} from '../app-material/app-material.module';
@@ -14,7 +15,7 @@ import {
 import {PlansComponent, PlansSettingsComponent, PlansCreateComponent} from '../plans/plans.component';
 import {RunsComponent, RunsSettingsComponent} from '../runs/runs.component';
 import {ResultSetsComponent, ResultSetsSettingsComponent} from '../result-sets/result-sets.component';
-import {ResultsComponent} from 'app/results/results.component';
+import {ResultsComponent} from '../results/results.component';
 import {CaseHistoryComponent} from '../case-history/case-history.component';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {StatisticService} from '../../services/statistic.service';
@@ -24,6 +25,7 @@ import {PointComponent} from '../point/point.component';
 import {StatisticBarComponent} from '../statistic-bar/statistic-bar.component';
 import { StatisticComponent } from '../statistic/statistic.component';
 import { NgDatePipesModule } from 'ngx-pipes';
+import { ResultValueComponent } from '../page-component/result-value/result-value.component';
 
 const productRoutes: Routes = [{
   path: '', component: ProductsComponent, children: [
@@ -49,16 +51,16 @@ const productRoutes: Routes = [{
 @NgModule({
   declarations: [ProductsComponent, ProductSettingsComponent, ProductsCreateComponent, CasesComponent, PointComponent, StatisticBarComponent, StatisticComponent,
     TopToolbarComponent,
-    TokenComponent, TokenDialogComponent,
+    TokenComponent,
     InviteComponent, InviteDialogComponent,
     AboutComponent, AboutDialogComponent,
     StatusSettingsComponent,
-    StatusSettingsDialogComponent, PlansComponent, RunsComponent, ResultSetsComponent, ResultsComponent, CaseHistoryComponent, ResultSetsSettingsComponent,
-    PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent
+    StatusSettingsDialogComponent, RunsComponent, ResultSetsComponent, ResultSetsSettingsComponent,
+    PlansSettingsComponent, PlansCreateComponent, RunsSettingsComponent,
+     TokenDialogComponent, CaseHistoryComponent, PlansComponent, ResultsComponent, ResultValueComponent
 ],
   imports: [
-    RouterModule.forChild(productRoutes),
-    AppMaterialModule, DragDropModule, ScrollingModule, NgDatePipesModule,
+    AppMaterialModule, DragDropModule, ScrollingModule, NgDatePipesModule, RouterModule.forChild(productRoutes)
   ],
   entryComponents: [ProductSettingsComponent, ProductsCreateComponent, TopToolbarComponent, TokenComponent, TokenDialogComponent, InviteComponent, InviteDialogComponent,
     AboutComponent,

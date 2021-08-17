@@ -12,6 +12,7 @@ import {DetailResultComponent} from './detail-result/detail-result.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { AppMaterialModule } from '../app/app-material/app-material.module';
 
 const appRoutes: Routes = [
   {path: 'singin', loadChildren: () => import('./login/login.module').then(m => m.LoginModule)},
@@ -28,11 +29,11 @@ const appRoutes: Routes = [
     MainComponent,
     DetailResultComponent,
   ],
-  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.OFF}),
+  imports: [LoggerModule.forRoot({level: NgxLoggerLevel.OFF}), AppMaterialModule,
     BrowserModule, HttpClientModule, RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' }),  BrowserAnimationsModule],
   providers: [AuthGuard, AuthenticationService, PalladiumApiService, HttpService,
     {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher}],
-  bootstrap: [MainComponent],
+  bootstrap: [MainComponent]
 })
 export class AppModule {
 }

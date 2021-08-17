@@ -5,7 +5,7 @@ import { PalladiumApiService, StructuredStatuses } from '../../services/palladiu
 import { Observable, Subject } from 'rxjs';
 import { map, pluck, switchMap, take, takeUntil } from "rxjs/operators";
 import { MatTabGroup } from "@angular/material/tabs";
-import { StanceService } from 'services/stance.service';
+import { StanceService } from '../../services/stance.service';
 
 @Component({
   selector: 'app-results',

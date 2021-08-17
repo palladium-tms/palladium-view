@@ -7,53 +7,53 @@ import {Router} from '@angular/router';
 export class StanceService {
   constructor(private router: Router) { }
 
-  productId():number {
+  productId():any {
     const url = this.router.url.match(/product\/(\d+)/);
       if (url) {
         return +url[1];
       }
   }
 
-  planId():number {
+  planId():any {
     const url = this.router.url.match(/plan\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
 
-  runId():number {
+  runId():any {
     const url = this.router.url.match(/run\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
 
-  suiteId():number {
+  suiteId():any {
     const url = this.router.url.match(/suite\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
 
-  resultSetId():number {
+  resultSetId():any {
     const url = this.router.url.match(/result_set\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
 
-  caseId():number {
+  caseId():any {
     const url = this.router.url.match(/case\/(\d+)/i);
       if (url) {
         return +url[1];
       }
   }
 
-  is_current_result_set(object):boolean {
+  is_current_result_set(object):any {
     return object.path === 'result_set' && object.id === this.resultSetId();
   }
 
-  is_current_case(object):boolean {
+  is_current_case(object):any {
     return object.path === 'case' && object.id === this.caseId();
   }
 
