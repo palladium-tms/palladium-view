@@ -2,13 +2,11 @@
 
 ## master (unreleased)
 
-## [0.6.7]
-
 * Added
   * Ability to create plans from interface
   * Ability to filter plans by creating type (api or manual creating)
 
-## [0.6.6]
+## [0.7.1]
 
 * Added
   * Adility to delete cases and result_sets multiple
@@ -16,7 +14,7 @@
 * Changed
   * Some packages from package.json will be updated
 
-## [0.6.5]
+## [0.7.0]
 
 * Added
   * Added async loading for plan object and statistic
