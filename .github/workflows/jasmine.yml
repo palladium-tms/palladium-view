@@ -1,0 +1,23 @@
+name: Karma Jasmine Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  units:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t jasmine -f ./docker-build/docker-actions/Dockerfile .
+
+    - name: Run test
+      run: docker run jasmine
