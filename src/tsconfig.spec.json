@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/spec",
+    "baseUrl": "",
+    "types": [
+      "jasmine",
+      "node"
+    ],
+    "typeRoots": [ "../node_modules/@types" ]
+  },
+  "include": [
+    "src/**/*.spec.ts",
+    "test.ts",
+    "app/login/login.component.spec.ts"
+  ],
+}
