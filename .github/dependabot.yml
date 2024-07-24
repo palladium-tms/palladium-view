@@ -3,8 +3,8 @@ updates:
 - package-ecosystem: docker
   directories:
     - "/"
-    - "docker-build/"
-    - "docker-build/unit-test-runner/"
+    - "/docker-build"
+    - "/unit-test-runner"
   schedule:
     interval: daily
     time: "02:00"
