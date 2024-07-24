@@ -10,9 +10,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /palladium-view
-WORKDIR /palladium-view
 COPY . /palladium-view
+WORKDIR /palladium-view
 
 RUN npm install
 
-CMD ["npm", "run", "ng", "test"]
+ENTRYPOINT ["npm"]
+CMD ["run", "ng", "test"]
