@@ -4,7 +4,6 @@ updates:
   directories:
     - "/"
     - "/docker-build"
-    - "/unit-test-runner"
   schedule:
     interval: daily
     time: "02:00"
