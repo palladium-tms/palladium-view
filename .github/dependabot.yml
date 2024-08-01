@@ -1,5 +1,13 @@
 version: 2
 updates:
+- package-ecosystem: docker
+  directories:
+    - "/"
+    - "/docker-build"
+  schedule:
+    interval: daily
+    time: "02:00"
+  open-pull-requests-limit: 10
 - package-ecosystem: npm
   directory: "/"
   schedule:

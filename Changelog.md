@@ -3,6 +3,8 @@
 ## master (unreleased)
 
 * Added
+  * Fixed docker-build script
+  * Added unit tests on chrome browser via Karma Jasmine
   * Ability to create plans from interface
   * Ability to filter plans by creating type (api or manual creating)
 
