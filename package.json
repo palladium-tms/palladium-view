@@ -39,7 +39,7 @@
     "@types/jasmine": "^5.1.4",
     "@types/node": "^12.20.6",
     "codelyzer": "^6.0.2",
-    "elliptic": "^6.5.5",
+    "elliptic": "^6.6.0",
     "jasmine-core": "^5.1.2",
     "karma": "^6.4.3",
     "karma-chrome-launcher": "^3.2.0",
