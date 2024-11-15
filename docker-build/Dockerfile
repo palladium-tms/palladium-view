@@ -7,4 +7,4 @@ WORKDIR /palladium-view
 RUN npm install -g @angular/cli --unsafe-perm && npm install
 
 ENTRYPOINT ["ng"]
-CMD ["build", "--configuration production", "--aot=false"]
+CMD ["build", "--aot=false",  "--configuration production"]
