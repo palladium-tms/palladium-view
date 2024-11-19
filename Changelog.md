@@ -3,6 +3,7 @@
 ## master (unreleased)
 
 * Added
+  * Angular @core 12
   * Fixed docker-build script
   * Added unit tests on chrome browser via Karma Jasmine
   * Ability to create plans from interface

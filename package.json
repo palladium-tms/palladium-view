@@ -6,7 +6,9 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --port 80",
     "serve": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build --aot=true --configuration production",
+    "build": "ng build --configuration production",
+    "build-aot-disable": "ng build --configuration production --aot=false --build-optimizer=false",
+    "docker-build": "/bin/bash docker-build/build.sh",
     "postinstall": "ngcc"
   },
   "private": true,

@@ -1,10 +1,9 @@
 FROM node:16.17.1-buster
 
-RUN mkdir /palladium-view
-COPY . /palladium-view
 WORKDIR /palladium-view
+COPY . .
 
-RUN npm install -g @angular/cli --unsafe-perm && npm install
+RUN npm install
+RUN npm run build-aot-disable
 
-ENTRYPOINT ["ng"]
-CMD ["build", "--aot=false", "--configuration production"]
+CMD [ "ls", "-l", "dist" ]
