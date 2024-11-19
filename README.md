@@ -34,3 +34,11 @@ Install dependensies and run `ng test` to execute the unit tests via [Karma](htt
 
 To get more help on the Angular CLI use `ng help` or go check out the
 [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## How to release new version (for maintainers)
+
+1. Update `VERSION` file
+2. Update `CHANGELOG.md` by adding version line after master (unreleased)
+3. Create PR with those changes and merge to `master`
+4. On master run `make add_repo_tag`
+5. On GitHub create new release via web-browser and add info from `CHANGELOG.md`
