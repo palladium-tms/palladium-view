@@ -1,4 +1,4 @@
-FROM node:16.17.1-buster
+FROM node:20.15.0-buster
 
 RUN mkdir /palladium-view
 COPY . /palladium-view
