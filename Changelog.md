@@ -2,6 +2,8 @@
 
 ## master (unreleased)
 
+## [0.8.0]
+
 * Added
   * Angular @core 12
   * Fixed docker-build script

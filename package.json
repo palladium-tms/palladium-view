@@ -1,6 +1,6 @@
 {
   "name": "palladium",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,8 @@
     "build": "ng build --configuration production",
     "build-aot-disable": "ng build --configuration production --aot=false --build-optimizer=false",
     "docker-build": "/bin/bash docker-build/build.sh",
-    "postinstall": "ngcc"
+    "postinstall": "ngcc",
+    "add-repo-tag": "make add-repo-tag"
   },
   "private": true,
   "dependencies": {
