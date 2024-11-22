@@ -37,8 +37,9 @@ To get more help on the Angular CLI use `ng help` or go check out the
 
 ## How to release new version (for maintainers)
 
-1. Update `VERSION` file
-2. Update `CHANGELOG.md` by adding version line after master (unreleased)
-3. Create PR with those changes and merge to `master`
-4. On master run `npm run add_repo_tag`
-5. On GitHub create new release via web-browser and add info from `CHANGELOG.md`
+1. Manually edit the package.json **"version"**
+2. Update `VERSION` file
+3. Update `CHANGELOG.md` by adding version line after master (unreleased)
+4. Create PR with those changes and merge to `master`
+5. On master run `npm run add_repo_tag`
+6. On GitHub create new release via web-browser and add info from `CHANGELOG.md`
